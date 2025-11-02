@@ -1056,6 +1056,44 @@
             }
         }
         
+        // Función helper para crear imágenes con lazy loading optimizado
+        function createLazyImage(url, index, maxPreload = 2) {
+            const img = document.createElement('img');
+            img.dataset.url = url;
+            
+            if (isMobileDevice) {
+                // Solo precargar las primeras imágenes
+                if (index < maxPreload) {
+                    img.src = url;
+                } else {
+                    // Placeholder transparente de 1px
+                    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                    img.dataset.src = url;
+                }
+            } else {
+                img.loading = 'lazy';
+                img.src = url;
+            }
+            
+            return img;
+        }
+        
+        // IntersectionObserver global para lazy loading en móviles
+        let globalImageObserver = null;
+        if (isMobileDevice) {
+            globalImageObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        if (img.dataset.src && !img.src.includes(img.dataset.src)) {
+                            img.src = img.dataset.src;
+                            globalImageObserver.unobserve(img);
+                        }
+                    }
+                });
+            }, { rootMargin: '50px' });
+        }
+        
         let loadedModel;
         const modelParts = {
             head: null, torso: null, arms: [], legs: [],
@@ -1673,14 +1711,15 @@
 
         function updateEyeCarousel() {
             ui.eyesCarouselContainer.innerHTML = '';
-            eyeTextures.forEach(texture => {
-                const thumb = document.createElement('img');
-                thumb.loading = 'lazy'; // Lazy loading para reducir memoria
-                thumb.src = texture.url;
+            
+            eyeTextures.forEach((texture, index) => {
+                const thumb = createLazyImage(texture.url, index, 2);
                 thumb.className = 'w-12 h-12 rounded-lg cursor-pointer border-2 hover:border-cyan-400 object-fill';
-                thumb.dataset.url = texture.url;
+                
+                if (isMobileDevice && thumb.dataset.src && globalImageObserver) {
+                    globalImageObserver.observe(thumb);
+                }
 
-                // Resaltar la miniatura activa
                 thumb.classList.toggle('border-cyan-500', texture.url === currentEyeTextureURL);
                 thumb.classList.toggle('border-transparent', texture.url !== currentEyeTextureURL);
 
@@ -1759,14 +1798,15 @@
 
         function updateEyebrowCarousel() {
             ui.eyebrowsCarouselContainer.innerHTML = '';
-            eyebrowTextures.forEach(texture => {
-                const thumb = document.createElement('img');
-                thumb.loading = 'lazy';
-                thumb.src = texture.url;
+            
+            eyebrowTextures.forEach((texture, index) => {
+                const thumb = createLazyImage(texture.url, index, 2);
                 thumb.className = 'w-12 h-12 rounded-lg cursor-pointer border-2 hover:border-cyan-400 object-fill';
-                thumb.dataset.url = texture.url;
+                
+                if (isMobileDevice && thumb.dataset.src && globalImageObserver) {
+                    globalImageObserver.observe(thumb);
+                }
 
-                // Resaltar la miniatura activa
                 thumb.classList.toggle('border-cyan-500', texture.url === currentEyebrowTextureURL);
                 thumb.classList.toggle('border-transparent', texture.url !== currentEyebrowTextureURL);
 
