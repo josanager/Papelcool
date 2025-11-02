@@ -936,17 +936,64 @@
         // Configuración optimizada de texturas para móviles
         textureLoader.setCrossOrigin('anonymous');
         
-        // Función para redimensionar imagen a resolución máxima en móviles
-        function resizeImageToMaxResolution(image, maxSize = 1024) {
+        // Sistema de throttle para evitar cambios muy rápidos en móviles
+        const changeThrottles = {
+            eyes: { lastChange: 0, delay: 300 },
+            eyebrows: { lastChange: 0, delay: 300 },
+            nose: { lastChange: 0, delay: 300 },
+            ears: { lastChange: 0, delay: 300 },
+            hair: { lastChange: 0, delay: 400 },
+            torso: { lastChange: 0, delay: 400 },
+            legs: { lastChange: 0, delay: 400 },
+            arms: { lastChange: 0, delay: 400 }
+        };
+        
+        function canChangeTexture(type) {
+            if (!isMobileDevice) return true;
+            const now = Date.now();
+            const throttle = changeThrottles[type];
+            if (now - throttle.lastChange < throttle.delay) {
+                return false;
+            }
+            throttle.lastChange = now;
+            return true;
+        }
+        
+        // Registro de texturas activas para limitar memoria
+        const activeTextures = new Set();
+        const MAX_TEXTURES_MOBILE = 6;
+        
+        function registerTexture(texture) {
+            if (!isMobileDevice) return;
+            activeTextures.add(texture);
+            
+            // Si excedemos el límite, eliminar las más antiguas
+            if (activeTextures.size > MAX_TEXTURES_MOBILE) {
+                const texturesToRemove = Array.from(activeTextures).slice(0, activeTextures.size - MAX_TEXTURES_MOBILE);
+                texturesToRemove.forEach(tex => {
+                    if (tex && tex.dispose) {
+                        tex.dispose();
+                        activeTextures.delete(tex);
+                    }
+                });
+            }
+        }
+        
+        // Función para redimensionar imagen a resolución máxima en móviles con compresión
+        function resizeImageToMaxResolution(image, maxSize = 512) {
             if (!isMobileDevice) return image;
             
             const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
+            const ctx = canvas.getContext('2d', { 
+                alpha: true,
+                desynchronized: true,
+                willReadFrequently: false
+            });
             
             let width = image.width;
             let height = image.height;
             
-            // Solo redimensionar si excede el máximo
+            // Reducir aún más en móviles: 512x512 máximo
             if (width > maxSize || height > maxSize) {
                 const scale = Math.min(maxSize / width, maxSize / height);
                 width = Math.floor(width * scale);
@@ -955,6 +1002,10 @@
             
             canvas.width = width;
             canvas.height = height;
+            
+            // Usar interpolación de menor calidad para mayor velocidad
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'low';
             ctx.drawImage(image, 0, 0, width, height);
             
             return canvas;
@@ -965,9 +1016,9 @@
             return textureLoader.load(
                 url,
                 (texture) => {
-                    // Redimensionar imagen en móviles para reducir VRAM
+                    // Redimensionar imagen en móviles para reducir VRAM (512x512 máximo)
                     if (isMobileDevice && texture.image) {
-                        const resizedImage = resizeImageToMaxResolution(texture.image, 1024);
+                        const resizedImage = resizeImageToMaxResolution(texture.image, 512);
                         texture.image = resizedImage;
                     }
                     
@@ -976,9 +1027,13 @@
                         texture.minFilter = THREE.LinearFilter;
                         texture.magFilter = THREE.LinearFilter;
                         texture.generateMipmaps = false;
+                        texture.anisotropy = 1;
                     }
                     texture.encoding = THREE.sRGBEncoding;
                     texture.needsUpdate = true;
+                    
+                    // Registrar textura activa
+                    registerTexture(texture);
                     
                     if (onLoad) onLoad(texture);
                 },
@@ -990,10 +1045,14 @@
             );
         }
         
-        // Función para forzar limpieza de memoria
+        // Función para forzar limpieza de memoria más agresiva
         function forceMemoryCleanup() {
             if (isMobileDevice && renderer) {
                 renderer.renderLists.dispose();
+                // Forzar recolección de basura si está disponible
+                if (window.gc) {
+                    window.gc();
+                }
             }
         }
         
@@ -1558,6 +1617,7 @@
         
         function changeEyeTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
+            if (!isInitialLoad && !canChangeTexture('eyes')) return;
             
             // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
             if (isMobileDevice && eyesMesh && !isInitialLoad) {
@@ -1643,6 +1703,7 @@
 
         function changeEyebrowTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
+            if (!isInitialLoad && !canChangeTexture('eyebrows')) return;
             
             // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
             if (isMobileDevice && eyebrowsMesh && !isInitialLoad) {
@@ -1728,6 +1789,7 @@
 
         function changeNoseTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
+            if (!isInitialLoad && !canChangeTexture('nose')) return;
             
             // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
             if (isMobileDevice && noseMesh && !isInitialLoad) {
@@ -1843,6 +1905,7 @@
 
         function changeEarTexture(side, url, isInitialLoad = false) {
             if (!modelParts.head) return;
+            if (!isInitialLoad && !canChangeTexture('ears')) return;
             
             // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
             if (isMobileDevice && !isInitialLoad) {
@@ -1984,6 +2047,7 @@
 
         function changeHairTexture(frontUrl, backUrl, isInitialLoad = false) {
             if (!modelParts.head) return;
+            if (!isInitialLoad && !canChangeTexture('hair')) return;
             
             // Si frontUrl es null, significa "None" - remover el cabello
             if (frontUrl === null) {
@@ -2137,6 +2201,7 @@
 
         function changeTorsoClothing(frontUrl, backUrl, isInitialLoad = false) {
             if (!modelParts.torso) return;
+            if (!isInitialLoad && !canChangeTexture('torso')) return;
             
             // Si frontUrl es null, significa "None" - remover la ropa
             if (frontUrl === null) {
@@ -2240,6 +2305,7 @@
 
         function changeLegClothing(side, url, isInitialLoad = false) {
             if (modelParts.legs.length < 2) return;
+            if (!isInitialLoad && !canChangeTexture('legs')) return;
             
             const leftLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('l'));
             const rightLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('r'));
@@ -2485,6 +2551,7 @@
 
         function changeArmClothing(side, url, isInitialLoad = false) {
             if (modelParts.arms.length < 2) return;
+            if (!isInitialLoad && !canChangeTexture('arms')) return;
             
             const leftArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('l'));
             const rightArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('r'));
