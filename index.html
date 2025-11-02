@@ -1302,11 +1302,42 @@
         };
         
         function setIcons() {
-            Object.keys(ui.main).forEach(key => ui.main[key].innerHTML = icons[key]);
+            // Iconos para botones secundarios (head parts)
+            const secondaryButtons = {
+                'eyes-btn': icons.eyes,
+                'eyebrows-btn': icons.eyebrows,
+                'nose-btn': icons.nose,
+                'ears-btn': icons.ears,
+                'torso-btn': icons.torso,
+                'arms-btn': icons.arms,
+                'legs-btn': icons.legs
+            };
+            
+            Object.keys(secondaryButtons).forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn && secondaryButtons[id]) {
+                    btn.innerHTML = secondaryButtons[id];
+                }
+            });
+            
+            // Botón de hair (animado)
+            const hairBtn = document.getElementById('hair-btn');
+            if (hairBtn) {
+                createAnimatedHairButton();
+            }
+            
+            // Mantener compatibilidad con código antiguo
+            if (ui.main && ui.main.head) {
+                Object.keys(ui.main).forEach(key => {
+                    if (ui.main[key] && icons[key]) {
+                        ui.main[key].innerHTML = icons[key];
+                    }
+                });
+            }
             Object.keys(ui.headParts).forEach(key => {
                 if (key === 'hair') {
-                    // Crear contenedor especial para el botón de cabello animado
-                    createAnimatedHairButton();
+                    // Ya manejado arriba
+                    return;
                 } else {
                     ui.headParts[key].innerHTML = icons[key];
                 }
@@ -1318,7 +1349,9 @@
         
         // Función para crear el botón de cabello animado
         function createAnimatedHairButton() {
-            const hairBtn = ui.headParts.hair;
+            const hairBtn = document.getElementById('hair-btn') || ui.headParts?.hair;
+            if (!hairBtn) return;
+            
             hairBtn.innerHTML = ''; // Limpiar contenido
             hairBtn.style.position = 'relative';
             hairBtn.style.overflow = 'hidden';

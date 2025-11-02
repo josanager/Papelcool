@@ -18,8 +18,16 @@ export function mountBody(api) {
     bodyCategories.forEach(category => {
         const btn = document.getElementById(`${category}-btn`);
         if (btn) {
-            btn.style.display = '';
+            btn.style.display = 'block';
             btn.classList.remove('hidden');
+            
+            // Añadir event listener para cargar subcategoría
+            const clickHandler = (e) => {
+                e.preventDefault();
+                loadBodySubcategory(category, api);
+            };
+            btn.addEventListener('click', clickHandler);
+            activeListeners.push({ element: btn, event: 'click', handler: clickHandler });
         }
     });
     
