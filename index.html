@@ -936,11 +936,41 @@
         // Configuración optimizada de texturas para móviles
         textureLoader.setCrossOrigin('anonymous');
         
+        // Función para redimensionar imagen a resolución máxima en móviles
+        function resizeImageToMaxResolution(image, maxSize = 1024) {
+            if (!isMobileDevice) return image;
+            
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            let width = image.width;
+            let height = image.height;
+            
+            // Solo redimensionar si excede el máximo
+            if (width > maxSize || height > maxSize) {
+                const scale = Math.min(maxSize / width, maxSize / height);
+                width = Math.floor(width * scale);
+                height = Math.floor(height * scale);
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(image, 0, 0, width, height);
+            
+            return canvas;
+        }
+        
         // Función auxiliar para cargar texturas con optimización automática
         function loadOptimizedTexture(url, onLoad, onError) {
             return textureLoader.load(
                 url,
                 (texture) => {
+                    // Redimensionar imagen en móviles para reducir VRAM
+                    if (isMobileDevice && texture.image) {
+                        const resizedImage = resizeImageToMaxResolution(texture.image, 1024);
+                        texture.image = resizedImage;
+                    }
+                    
                     // Optimizar configuración de textura para móviles
                     if (isMobileDevice) {
                         texture.minFilter = THREE.LinearFilter;
@@ -948,6 +978,8 @@
                         texture.generateMipmaps = false;
                     }
                     texture.encoding = THREE.sRGBEncoding;
+                    texture.needsUpdate = true;
+                    
                     if (onLoad) onLoad(texture);
                 },
                 undefined,
@@ -956,6 +988,13 @@
                     if (onError) onError(error);
                 }
             );
+        }
+        
+        // Función para forzar limpieza de memoria
+        function forceMemoryCleanup() {
+            if (isMobileDevice && renderer) {
+                renderer.renderLists.dispose();
+            }
         }
         
         let loadedModel;
@@ -1519,6 +1558,17 @@
         
         function changeEyeTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
+            
+            // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
+            if (isMobileDevice && eyesMesh && !isInitialLoad) {
+                modelParts.head.remove(eyesMesh);
+                if (eyesMesh.material.map) eyesMesh.material.map.dispose();
+                eyesMesh.material.dispose();
+                eyesMesh.geometry.dispose();
+                eyesMesh = null;
+                forceMemoryCleanup();
+            }
+            
             loadOptimizedTexture(url,
                 (texture) => {
                     if (isInitialLoad || !eyesMesh) {
@@ -1534,7 +1584,7 @@
                         eyesMesh.position.set(0, 1.029, 1.129); 
                         modelParts.head.add(eyesMesh);
                     } else {
-                        // Solo actualiza la textura si el mesh ya existe
+                        // Solo actualiza la textura si el mesh ya existe (desktop)
                         const oldMap = eyesMesh.material.map;
                         eyesMesh.material.map = texture;
                         eyesMesh.material.needsUpdate = true;
@@ -1593,6 +1643,17 @@
 
         function changeEyebrowTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
+            
+            // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
+            if (isMobileDevice && eyebrowsMesh && !isInitialLoad) {
+                modelParts.head.remove(eyebrowsMesh);
+                if (eyebrowsMesh.material.map) eyebrowsMesh.material.map.dispose();
+                eyebrowsMesh.material.dispose();
+                eyebrowsMesh.geometry.dispose();
+                eyebrowsMesh = null;
+                forceMemoryCleanup();
+            }
+            
             loadOptimizedTexture(url,
                 (texture) => {
                     if (isInitialLoad || !eyebrowsMesh) {
@@ -1667,6 +1728,17 @@
 
         function changeNoseTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
+            
+            // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
+            if (isMobileDevice && noseMesh && !isInitialLoad) {
+                modelParts.head.remove(noseMesh);
+                if (noseMesh.material.map) noseMesh.material.map.dispose();
+                noseMesh.material.dispose();
+                noseMesh.geometry.dispose();
+                noseMesh = null;
+                forceMemoryCleanup();
+            }
+            
             loadOptimizedTexture(url,
                 (texture) => {
                     if (isInitialLoad || !noseMesh) {
@@ -1771,6 +1843,23 @@
 
         function changeEarTexture(side, url, isInitialLoad = false) {
             if (!modelParts.head) return;
+            
+            // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
+            if (isMobileDevice && !isInitialLoad) {
+                const oldEarMesh = side === 'left' ? earLeftMesh : earRightMesh;
+                if (oldEarMesh) {
+                    modelParts.head.remove(oldEarMesh);
+                    if (oldEarMesh.material.map) oldEarMesh.material.map.dispose();
+                    oldEarMesh.material.dispose();
+                    oldEarMesh.geometry.dispose();
+                    if (side === 'left') {
+                        earLeftMesh = null;
+                    } else {
+                        earRightMesh = null;
+                    }
+                    forceMemoryCleanup();
+                }
+            }
             
             loadOptimizedTexture(url,
                 (texture) => {
@@ -1912,7 +2001,27 @@
                     hairBackMesh.geometry.dispose();
                     hairBackMesh = null;
                 }
+                forceMemoryCleanup();
                 return;
+            }
+            
+            // En móviles, eliminar meshes antiguos completamente antes de crear nuevos
+            if (isMobileDevice && !isInitialLoad) {
+                if (hairFrontMesh) {
+                    modelParts.head.remove(hairFrontMesh);
+                    if (hairFrontMesh.material.map) hairFrontMesh.material.map.dispose();
+                    hairFrontMesh.material.dispose();
+                    hairFrontMesh.geometry.dispose();
+                    hairFrontMesh = null;
+                }
+                if (hairBackMesh) {
+                    modelParts.head.remove(hairBackMesh);
+                    if (hairBackMesh.material.map) hairBackMesh.material.map.dispose();
+                    hairBackMesh.material.dispose();
+                    hairBackMesh.geometry.dispose();
+                    hairBackMesh = null;
+                }
+                forceMemoryCleanup();
             }
             
             // Cargar front hair
@@ -2045,7 +2154,27 @@
                     torsoBackMesh.geometry.dispose();
                     torsoBackMesh = null;
                 }
+                forceMemoryCleanup();
                 return;
+            }
+            
+            // En móviles, eliminar meshes antiguos completamente antes de crear nuevos
+            if (isMobileDevice && !isInitialLoad) {
+                if (torsoFrontMesh) {
+                    modelParts.torso.remove(torsoFrontMesh);
+                    if (torsoFrontMesh.material.map) torsoFrontMesh.material.map.dispose();
+                    torsoFrontMesh.material.dispose();
+                    torsoFrontMesh.geometry.dispose();
+                    torsoFrontMesh = null;
+                }
+                if (torsoBackMesh) {
+                    modelParts.torso.remove(torsoBackMesh);
+                    if (torsoBackMesh.material.map) torsoBackMesh.material.map.dispose();
+                    torsoBackMesh.material.dispose();
+                    torsoBackMesh.geometry.dispose();
+                    torsoBackMesh = null;
+                }
+                forceMemoryCleanup();
             }
             
             // Cargar textura frontal del torso
@@ -2145,7 +2274,35 @@
                         legRightBackMesh = null;
                     }
                 }
+                forceMemoryCleanup();
                 return;
+            }
+            
+            // En móviles, eliminar meshes antiguos completamente antes de crear nuevos
+            if (isMobileDevice && !isInitialLoad) {
+                if (targetFrontMesh) {
+                    targetLeg.remove(targetFrontMesh);
+                    if (targetFrontMesh.material.map) targetFrontMesh.material.map.dispose();
+                    targetFrontMesh.material.dispose();
+                    targetFrontMesh.geometry.dispose();
+                    if (side === 'left') {
+                        legLeftFrontMesh = null;
+                    } else {
+                        legRightFrontMesh = null;
+                    }
+                }
+                if (targetBackMesh) {
+                    targetLeg.remove(targetBackMesh);
+                    if (targetBackMesh.material.map) targetBackMesh.material.map.dispose();
+                    targetBackMesh.material.dispose();
+                    targetBackMesh.geometry.dispose();
+                    if (side === 'left') {
+                        legLeftBackMesh = null;
+                    } else {
+                        legRightBackMesh = null;
+                    }
+                }
+                forceMemoryCleanup();
             }
             
             // Cargar textura de pierna (front)
@@ -2371,7 +2528,35 @@
                         armRightBackMesh = null;
                     }
                 }
+                forceMemoryCleanup();
                 return;
+            }
+            
+            // En móviles, eliminar meshes antiguos completamente antes de crear nuevos
+            if (isMobileDevice && !isInitialLoad) {
+                if (targetFrontMesh) {
+                    targetArm.remove(targetFrontMesh);
+                    if (targetFrontMesh.material.map) targetFrontMesh.material.map.dispose();
+                    targetFrontMesh.material.dispose();
+                    targetFrontMesh.geometry.dispose();
+                    if (side === 'left') {
+                        armLeftFrontMesh = null;
+                    } else {
+                        armRightFrontMesh = null;
+                    }
+                }
+                if (targetBackMesh) {
+                    targetArm.remove(targetBackMesh);
+                    if (targetBackMesh.material.map) targetBackMesh.material.map.dispose();
+                    targetBackMesh.material.dispose();
+                    targetBackMesh.geometry.dispose();
+                    if (side === 'left') {
+                        armLeftBackMesh = null;
+                    } else {
+                        armRightBackMesh = null;
+                    }
+                }
+                forceMemoryCleanup();
             }
             
             // Cargar textura de brazo (front)
