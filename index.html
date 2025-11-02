@@ -585,38 +585,13 @@
             </div>
 
             <div id="editor-container">
-                <!-- Botones principales: Head y Body -->
                 <div class="pt-2 border-t border-cyan-500/30">
-                    <h2 class="text-md font-bold text-cyan-300 mb-2">SELECCIONA ÁREA</h2>
-                    <div id="primary-parts-container" class="grid grid-cols-2 gap-2 pointer-events-auto">
-                        <button type="button" id="edit-head-btn" class="icon-btn p-3 text-lg font-bold">
-                            <span>🧑 CABEZA</span>
-                        </button>
-                        <button type="button" id="edit-body-btn" class="icon-btn p-3 text-lg font-bold">
-                            <span>👕 CUERPO</span>
-                        </button>
+                    <div id="main-parts-container" class="grid grid-cols-4 gap-2 pointer-events-auto">
+                        <button type="button" id="head-btn" class="icon-btn p-2"></button>
+                        <button type="button" id="torso-btn" class="icon-btn p-2"></button>
+                        <button type="button" id="arms-btn" class="icon-btn p-2"></button>
+                        <button type="button" id="legs-btn" class="icon-btn p-2"></button>
                     </div>
-                </div>
-                
-                <!-- Botones secundarios (ocultos inicialmente) -->
-                <div id="secondary-parts-container" class="pt-2 border-t border-cyan-500/30 hidden">
-                    <div class="grid grid-cols-5 gap-2 pointer-events-auto">
-                        <button type="button" id="eyes-btn" class="icon-btn p-2 hidden"></button>
-                        <button type="button" id="eyebrows-btn" class="icon-btn p-2 hidden"></button>
-                        <button type="button" id="nose-btn" class="icon-btn p-2 hidden"></button>
-                        <button type="button" id="ears-btn" class="icon-btn p-2 hidden"></button>
-                        <button type="button" id="hair-btn" class="icon-btn p-2 hidden"></button>
-                        <button type="button" id="torso-btn" class="icon-btn p-2 hidden"></button>
-                        <button type="button" id="arms-btn" class="icon-btn p-2 hidden"></button>
-                        <button type="button" id="legs-btn" class="icon-btn p-2 hidden"></button>
-                    </div>
-                </div>
-                
-                <!-- Botón para volver atrás -->
-                <div id="back-button-container" class="pt-2 hidden">
-                    <button type="button" id="back-to-main-btn" class="icon-btn p-2 w-full">
-                        ← VOLVER
-                    </button>
                 </div>
 
                 <!-- Panel para partes de la cabeza (inicialmente oculto) -->
@@ -1119,27 +1094,6 @@
             }, { rootMargin: '50px' });
         }
         
-        // Función para transformar URLs con CDN (Netlify Image CDN o fallback)
-        function getTransformedUrl(url, options = {}) {
-            if (!url) return url;
-            
-            const {
-                w = isMobileDevice ? 512 : 1024,
-                fm = 'webp',
-                q = 80,
-                dpr = window.devicePixelRatio || 1
-            } = options;
-            
-            // Intentar usar Netlify Image CDN
-            try {
-                const encodedUrl = encodeURIComponent(url);
-                return `/.netlify/images?url=${encodedUrl}&w=${w}&fm=${fm}&q=${q}&fit=cover&dpr=${Math.min(dpr, 2)}`;
-            } catch (e) {
-                console.warn('[CDN] Error transforming URL, using original:', e);
-                return url;
-            }
-        }
-        
         let loadedModel;
         const modelParts = {
             head: null, torso: null, arms: [], legs: [],
@@ -1302,42 +1256,11 @@
         };
         
         function setIcons() {
-            // Iconos para botones secundarios (head parts)
-            const secondaryButtons = {
-                'eyes-btn': icons.eyes,
-                'eyebrows-btn': icons.eyebrows,
-                'nose-btn': icons.nose,
-                'ears-btn': icons.ears,
-                'torso-btn': icons.torso,
-                'arms-btn': icons.arms,
-                'legs-btn': icons.legs
-            };
-            
-            Object.keys(secondaryButtons).forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn && secondaryButtons[id]) {
-                    btn.innerHTML = secondaryButtons[id];
-                }
-            });
-            
-            // Botón de hair (animado)
-            const hairBtn = document.getElementById('hair-btn');
-            if (hairBtn) {
-                createAnimatedHairButton();
-            }
-            
-            // Mantener compatibilidad con código antiguo
-            if (ui.main && ui.main.head) {
-                Object.keys(ui.main).forEach(key => {
-                    if (ui.main[key] && icons[key]) {
-                        ui.main[key].innerHTML = icons[key];
-                    }
-                });
-            }
+            Object.keys(ui.main).forEach(key => ui.main[key].innerHTML = icons[key]);
             Object.keys(ui.headParts).forEach(key => {
                 if (key === 'hair') {
-                    // Ya manejado arriba
-                    return;
+                    // Crear contenedor especial para el botón de cabello animado
+                    createAnimatedHairButton();
                 } else {
                     ui.headParts[key].innerHTML = icons[key];
                 }
@@ -1349,9 +1272,7 @@
         
         // Función para crear el botón de cabello animado
         function createAnimatedHairButton() {
-            const hairBtn = document.getElementById('hair-btn') || ui.headParts?.hair;
-            if (!hairBtn) return;
-            
+            const hairBtn = ui.headParts.hair;
             hairBtn.innerHTML = ''; // Limpiar contenido
             hairBtn.style.position = 'relative';
             hairBtn.style.overflow = 'hidden';
@@ -3243,144 +3164,22 @@
             renderer.render(scene, camera);
         }
         
-        // Sistema modular para Head/Body
-        let currentModule = null;
-        let currentModuleAPI = null;
-        
-        // API compartida para módulos
-        const moduleAPI = {
-            THREE,
-            scene,
-            renderer,
-            modelParts,
-            isMobileDevice,
-            globalImageObserver,
-            createLazyImage,
-            getTransformedUrl,
-            forceMemoryCleanup,
-            ui,
-            // Texturas
-            eyeTextures,
-            eyebrowTextures,
-            noseTextures,
-            earTextures,
-            hairTextures,
-            torsoTextures,
-            armTextures,
-            legTextures,
-            // URLs actuales
-            currentEyeTextureURL,
-            currentEyebrowTextureURL,
-            currentNoseTextureURL,
-            currentEarTextureURL,
-            currentHairFrontURL,
-            currentHairBackURL,
-            currentTorsoFrontURL,
-            currentTorsoBackURL,
-            // Funciones de cambio
-            changeEyeTexture,
-            changeEyebrowTexture,
-            changeNoseTexture,
-            changeEarTexture,
-            changeHairTexture,
-            changeTorsoClothing,
-            changeArmClothing,
-            changeLegClothing
-        };
-        
-        // Función para cargar módulo Head
-        async function loadHeadModule() {
-            console.log('[MAIN] Loading Head module...');
-            
-            // Desmontar módulo actual si existe
-            if (currentModule && currentModuleAPI) {
-                await currentModule.unmountHead?.(moduleAPI);
-                await currentModule.unmountBody?.(moduleAPI);
-            }
-            
-            try {
-                currentModule = await import('./modules/head.js');
-                currentModuleAPI = currentModule.mountHead(moduleAPI);
-                
-                // Mostrar contenedor de botones secundarios
-                document.getElementById('secondary-parts-container').classList.remove('hidden');
-                document.getElementById('back-button-container').classList.remove('hidden');
-                
-                console.log('[MAIN] Head module loaded successfully');
-            } catch (error) {
-                console.error('[MAIN] Error loading Head module:', error);
-                alert('Error cargando módulo de cabeza. Por favor recarga la página.');
-            }
-        }
-        
-        // Función para cargar módulo Body
-        async function loadBodyModule() {
-            console.log('[MAIN] Loading Body module...');
-            
-            // Desmontar módulo actual si existe
-            if (currentModule && currentModuleAPI) {
-                await currentModule.unmountHead?.(moduleAPI);
-                await currentModule.unmountBody?.(moduleAPI);
-            }
-            
-            try {
-                currentModule = await import('./modules/body.js');
-                currentModuleAPI = currentModule.mountBody(moduleAPI);
-                
-                // Mostrar contenedor de botones secundarios
-                document.getElementById('secondary-parts-container').classList.remove('hidden');
-                document.getElementById('back-button-container').classList.remove('hidden');
-                
-                console.log('[MAIN] Body module loaded successfully');
-            } catch (error) {
-                console.error('[MAIN] Error loading Body module:', error);
-                alert('Error cargando módulo de cuerpo. Por favor recarga la página.');
-            }
-        }
-        
-        // Función para volver al menú principal
-        function backToMain() {
-            console.log('[MAIN] Returning to main menu...');
-            
-            // Desmontar módulo actual
-            if (currentModule && currentModuleAPI) {
-                currentModule.unmountHead?.(moduleAPI);
-                currentModule.unmountBody?.(moduleAPI);
-            }
-            
-            currentModule = null;
-            currentModuleAPI = null;
-            
-            // Ocultar contenedor de botones secundarios
-            document.getElementById('secondary-parts-container').classList.add('hidden');
-            document.getElementById('back-button-container').classList.add('hidden');
-            
-            forceMemoryCleanup();
-        }
-        
-        // Event listeners para botones principales
-        document.getElementById('edit-head-btn').addEventListener('click', (e) => {
-            e.preventDefault();
-            loadHeadModule();
-        });
-        
-        document.getElementById('edit-body-btn').addEventListener('click', (e) => {
-            e.preventDefault();
-            loadBodyModule();
-        });
-        
-        document.getElementById('back-to-main-btn').addEventListener('click', (e) => {
-            e.preventDefault();
-            backToMain();
-        });
-        
-        // Inicialización básica (sin cargar carruseles)
+        // Inicialización
         setIcons();
         updatePaletteDOM(initialColors);
         updateButtons();
+        updateEyeCarousel(); // Llenar el carrusel al iniciar
+        updateEyebrowCarousel(); // Llenar el carrusel de cejas al iniciar
+        updateNoseCarousel(); // Llenar el carrusel de nariz al iniciar
+        updateEarLeftCarousel(); // Llenar el carrusel de oreja izquierda al iniciar
+        updateEarRightCarousel(); // Llenar el carrusel de oreja derecha al iniciar
+        updateHairCarousel(); // Llenar el carrusel de cabello al iniciar
+        updateTorsoClothingCarousel(); // Llenar el carrusel de vestimenta al iniciar
+        updateArmLeftCarousel(); // Llenar el carrusel de brazo izquierdo al iniciar
+        updateArmRightCarousel(); // Llenar el carrusel de brazo derecho al iniciar
+        updateLegLeftCarousel(); // Llenar el carrusel de pierna izquierda al iniciar
+        updateLegRightCarousel(); // Llenar el carrusel de pierna derecha al iniciar
         animate();
-        
-        console.log('[MAIN] App initialized with modular system');
     </script>
 </body>
 </html>
