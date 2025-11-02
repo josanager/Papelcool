@@ -1,0 +1,2893 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a0e27">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Papelcool - Editor 3D</title>
+    <!-- Tailwind CSS para un diseño moderno y adaptable -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts para un estilo futurista - Optimizado -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet"></noscript>
+    <!-- Import map para three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%);
+            position: relative;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        h1, h2 {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 10px rgba(0, 255, 255, 0.3);
+        }
+        
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            cursor: grab;
+            z-index: 0;
+        }
+        
+        #canvas-container:active { 
+            cursor: grabbing; 
+        }
+        
+        .ui-panel {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset,
+                0 20px 60px rgba(0, 255, 255, 0.1);
+            animation: fadeIn 0.8s ease-out;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+            will-change: transform;
+        }
+        
+        .ui-panel:hover {
+            box-shadow: 
+                0 12px 40px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+                0 20px 80px rgba(0, 255, 255, 0.15);
+        }
+        
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(-30px) scale(0.95);
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .color-swatch {
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .color-swatch::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.4s, height 0.4s;
+        }
+        
+        .color-swatch:hover {
+            transform: scale(1.2) translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(0, 255, 255, 0.4),
+                0 0 0 2px rgba(255, 255, 255, 0.2) inset;
+        }
+        
+        .color-swatch:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .color-swatch:active {
+            transform: scale(1.1) translateY(0);
+        }
+        
+        #loading-indicator {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 20px 40px;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            z-index: 100;
+        }
+        
+        .icon-btn {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        
+        .icon-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .icon-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2) 0%, rgba(138, 43, 226, 0.2) 100%);
+            border-color: rgba(0, 255, 255, 0.4);
+            color: white;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(0, 255, 255, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        }
+        
+        .icon-btn:hover::before {
+            left: 100%;
+        }
+        
+        .icon-btn:active {
+            transform: translateY(0) scale(1);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.3),
+                0 0 10px rgba(0, 255, 255, 0.2) inset;
+        }
+        
+        .icon-btn img {
+            width: 90%;
+            height: 90%;
+            object-fit: cover;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .active-btn {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.3) 0%, rgba(138, 43, 226, 0.3) 100%);
+            border: 2px solid rgba(0, 255, 255, 0.6);
+            color: white;
+            box-shadow: 
+                0 4px 20px rgba(0, 255, 255, 0.4),
+                0 0 30px rgba(0, 255, 255, 0.3);
+        }
+        
+        /* Estilos para el carrusel de ojos */
+        #eyes-carousel-container {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 255, 255, 0.4) rgba(255, 255, 255, 0.05);
+            -webkit-overflow-scrolling: touch;
+            scroll-behavior: smooth;
+        }
+        
+        #eyes-carousel-container::-webkit-scrollbar {
+            height: 6px;
+            -webkit-appearance: none;
+        }
+        
+        #eyes-carousel-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(90deg, rgba(0, 255, 255, 0.4), rgba(138, 43, 226, 0.4));
+            border-radius: 10px;
+            transition: background 0.3s;
+        }
+        
+        #eyes-carousel-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(90deg, rgba(0, 255, 255, 0.6), rgba(138, 43, 226, 0.6));
+        }
+        
+        #eyes-carousel-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        /* Miniaturas de ojos mejoradas */
+        #eyes-carousel-container img {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        #eyes-carousel-container img:hover {
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(0, 255, 255, 0.4);
+        }
+        
+        /* Mejora de los bordes de sección */
+        .border-cyan-500\/30 {
+            border-color: rgba(255, 255, 255, 0.1) !important;
+        }
+        
+        /* Animación de pulso sutil para elementos activos */
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 
+                    0 8px 24px rgba(0, 0, 0, 0.3),
+                    0 0 30px rgba(0, 255, 255, 0.4),
+                    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+            }
+            50% {
+                box-shadow: 
+                    0 8px 24px rgba(0, 0, 0, 0.3),
+                    0 0 40px rgba(0, 255, 255, 0.6),
+                    0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+            }
+        }
+        
+        .active-btn {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        /* Estilos responsivos para móviles y tablets */
+        #play-mode-btn-mobile {
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 50;
+            display: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            width: 56px !important;
+            height: 56px !important;
+            border-radius: 50% !important;
+            padding: 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #camera-toggle-btn {
+            position: fixed;
+            top: 5.5rem;
+            left: 1rem;
+            z-index: 50;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            width: 56px !important;
+            height: 56px !important;
+            border-radius: 50% !important;
+            padding: 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #editor-panel-wrapper {
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        /* Asegurar que el canvas ocupe todo el espacio */
+        #canvas-container canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+        
+        /* Mobile y Tablet (hasta 1024px) */
+        @media (max-width: 1024px) {
+            #play-mode-btn-mobile {
+                display: block;
+            }
+            
+            #camera-toggle-btn {
+                display: flex;
+            }
+            
+            #editor-panel-wrapper {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                max-width: 100%;
+                padding: 0.5rem;
+                z-index: 40;
+            }
+            
+            #editor-panel-wrapper.hidden-mobile {
+                transform: translateY(100%);
+            }
+            
+            #editor-panel-wrapper .ui-panel {
+                max-height: 55vh;
+                overflow-y: auto;
+                border-radius: 20px 20px 0 0;
+                padding: 1rem !important;
+            }
+            
+            #canvas-container {
+                height: 100vh;
+            }
+            
+            /* Ocultar el botón de modo dentro del panel en móvil */
+            #editor-panel-wrapper #play-mode-btn-desktop {
+                display: none;
+            }
+            
+            /* Ajustar grid de botones principales para móvil */
+            #main-parts-container {
+                grid-template-columns: repeat(4, 1fr) !important;
+                gap: 0.5rem !important;
+            }
+            
+            /* Ajustar grid de partes de cabeza para móvil */
+            #head-parts-container {
+                grid-template-columns: repeat(5, 1fr) !important;
+                gap: 0.5rem !important;
+                justify-items: center;
+            }
+            
+            /* Ajustar contenedores de botones principales en móvil */
+            #main-parts-container {
+                justify-items: center;
+            }
+            
+            /* Ajustar carruseles para mejor visualización en móvil */
+            .carousel-container {
+                padding-bottom: 0.5rem;
+            }
+            
+            /* Ajustar paleta de colores en móvil */
+            #color-palette {
+                grid-template-columns: repeat(6, 1fr) !important;
+                gap: 0.5rem !important;
+            }
+            
+            /* Títulos más pequeños en móvil */
+            h2 {
+                font-size: 0.875rem !important;
+            }
+            
+            /* Scrollbar más delgado en móvil */
+            #editor-panel-wrapper .ui-panel::-webkit-scrollbar {
+                width: 4px;
+            }
+        }
+        
+        /* Desktop (más de 1024px) */
+        @media (min-width: 1025px) {
+            #play-mode-btn-mobile {
+                display: none !important;
+            }
+            
+            #editor-panel-wrapper {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: auto;
+                max-width: 28rem;
+                padding: 1rem 1.5rem;
+            }
+            
+            #play-mode-btn-desktop {
+                display: block;
+            }
+            
+            /* Ocultar controles móviles en desktop */
+            #mobile-game-controls {
+                display: none !important;
+            }
+            
+            /* Botón de cámara en desktop - posicionado dentro del panel */
+            #camera-toggle-btn {
+                position: absolute;
+                top: 1rem;
+                right: 5rem;
+                left: auto;
+            }
+        }
+        
+        /* Estilos para controles de juego móvil */
+        #mobile-game-controls {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            display: none;
+            z-index: 45;
+            pointer-events: none;
+        }
+        
+        #mobile-game-controls.active {
+            display: flex;
+            pointer-events: auto;
+        }
+        
+        /* Joystick */
+        #joystick-container {
+            position: absolute;
+            bottom: 30px;
+            left: 30px;
+            width: 120px;
+            height: 120px;
+        }
+        
+        #joystick-base {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            position: relative;
+            touch-action: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        
+        #joystick-stick {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 255, 255, 0.6);
+            border: 3px solid rgba(0, 255, 255, 0.8);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 2px 10px rgba(0, 255, 255, 0.6);
+            pointer-events: none;
+            will-change: transform;
+        }
+        
+        /* Botón de salto */
+        #jump-button {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.6) 0%, rgba(138, 43, 226, 0.6) 100%);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-shadow: 0 2px 10px rgba(0, 255, 255, 0.8);
+            transition: all 0.2s ease;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        #jump-button:active {
+            transform: scale(0.9);
+            box-shadow: 0 2px 10px rgba(0, 255, 255, 0.6);
+        }
+    </style>
+</head>
+<body class="text-white">
+
+    <div id="canvas-container"></div>
+    <div id="loading-indicator">Cargando modelo...</div>
+
+    <!-- Botón de modo para móvil (siempre visible arriba a la izquierda) -->
+    <button type="button" id="play-mode-btn-mobile" class="icon-btn p-3 pointer-events-auto"></button>
+    
+    <!-- Botón de cambio de cámara (responsive - móvil y desktop) -->
+    <button type="button" id="camera-toggle-btn" class="icon-btn pointer-events-auto" style="display: none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="w-6 h-6 m-auto"><path fill="currentColor" d="M20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m-8 3c1.63 0 3.06.79 3.98 2H12c-1.66 0-3 1.34-3 3s1.34 3 3 3h3.98c-.92 1.21-2.35 2-3.98 2c-2.76 0-5-2.24-5-5s2.24-5 5-5m0 2c-1.66 0-3 1.34-3 3s1.34 3 3 3s3-1.34 3-3s-1.34-3-3-3"/></svg>
+    </button>
+    
+    <!-- Controles de juego para móvil -->
+    <div id="mobile-game-controls">
+        <div id="joystick-container">
+            <div id="joystick-base">
+                <div id="joystick-stick"></div>
+            </div>
+        </div>
+        <button type="button" id="jump-button">↑</button>
+    </div>
+
+    <!-- Panel del editor (responsivo) -->
+    <div id="editor-panel-wrapper" class="pointer-events-none">
+        <div class="ui-panel p-4 space-y-4">
+            <!-- Botón de modo para desktop (dentro del panel) -->
+            <div id="play-mode-btn-desktop" class="flex justify-end items-center" style="margin-bottom: -0.5rem;">
+                 <button type="button" id="play-mode-btn-desktop-btn" class="icon-btn pointer-events-auto" style="width: 56px; height: 56px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center;"></button>
+            </div>
+
+            <div id="editor-container">
+                <div class="pt-2 border-t border-cyan-500/30">
+                    <div id="main-parts-container" class="grid grid-cols-4 gap-2 pointer-events-auto">
+                        <button type="button" id="head-btn" class="icon-btn p-2"></button>
+                        <button type="button" id="torso-btn" class="icon-btn p-2"></button>
+                        <button type="button" id="arms-btn" class="icon-btn p-2"></button>
+                        <button type="button" id="legs-btn" class="icon-btn p-2"></button>
+                    </div>
+                </div>
+
+                <!-- Panel para partes de la cabeza (inicialmente oculto) -->
+                <div id="head-parts-panel" class="hidden pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">PARTES DE LA CABEZA</h2>
+                   <div id="head-parts-container" class="grid grid-cols-5 gap-2 pointer-events-auto">
+                       <button type="button" id="eyes-part-btn" class="icon-btn p-2"></button>
+                       <button type="button" id="eyebrows-part-btn" class="icon-btn p-2"></button>
+                       <button type="button" id="nose-part-btn" class="icon-btn p-2"></button>
+                       <button type="button" id="ears-part-btn" class="icon-btn p-2"></button>
+                       <button type="button" id="hair-part-btn" class="icon-btn p-2"></button>
+                   </div>
+               </div>
+
+               <!-- Panel para carrusel de ojos (inicialmente oculto) -->
+               <div id="eyes-carousel-panel" class="hidden pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">ESTILO DE OJOS</h2>
+                   <div id="eyes-carousel-container" class="flex space-x-2 p-2 overflow-x-auto pointer-events-auto">
+                       <!-- Las miniaturas de los ojos se generarán aquí -->
+                   </div>
+               </div>
+
+               <!-- Panel para carrusel de cejas (inicialmente oculto) -->
+               <div id="eyebrows-carousel-panel" class="hidden pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">ESTILO DE CEJAS</h2>
+                   <div id="eyebrows-carousel-container" class="flex space-x-2 p-2 overflow-x-auto pointer-events-auto">
+                       <!-- Las miniaturas de las cejas se generarán aquí -->
+                   </div>
+               </div>
+
+               <!-- Panel para carrusel de nariz (inicialmente oculto) -->
+               <div id="nose-carousel-panel" class="hidden pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">ESTILO DE NARIZ</h2>
+                   <div id="nose-carousel-container" class="flex space-x-2 p-2 overflow-x-auto pointer-events-auto">
+                       <!-- Las miniaturas de las narices se generarán aquí -->
+                   </div>
+               </div>
+
+               <!-- Panel para selección de lado de oreja (inicialmente oculto) -->
+               <div id="ear-side-panel" class="hidden pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">LADO DE OREJA</h2>
+                   <div id="ear-side-container" class="grid grid-cols-2 gap-2 pointer-events-auto">
+                       <button type="button" id="ear-left-btn" class="icon-btn p-2">IZQ</button>
+                       <button type="button" id="ear-right-btn" class="icon-btn p-2">DER</button>
+                   </div>
+               </div>
+
+               <!-- Panel para carrusel de oreja izquierda (inicialmente oculto) -->
+               <div id="ear-left-carousel-panel" class="hidden pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">OREJA IZQUIERDA</h2>
+                   <div id="ear-left-carousel-container" class="flex space-x-2 p-2 overflow-x-auto pointer-events-auto">
+                       <!-- Las miniaturas de las orejas izquierdas se generarán aquí -->
+                   </div>
+               </div>
+
+               <!-- Panel para carrusel de oreja derecha (inicialmente oculto) -->
+               <div id="ear-right-carousel-panel" class="hidden pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">OREJA DERECHA</h2>
+                   <div id="ear-right-carousel-container" class="flex space-x-2 p-2 overflow-x-auto pointer-events-auto">
+                       <!-- Las miniaturas de las orejas derechas se generarán aquí -->
+                   </div>
+               </div>
+
+               <!-- Panel para carrusel de cabello (inicialmente oculto) -->
+               <div id="hair-carousel-panel" class="hidden pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">ESTILO DE CABELLO</h2>
+                   <div id="hair-carousel-container" class="flex space-x-2 p-2 overflow-x-auto pointer-events-auto">
+                       <!-- Las miniaturas del cabello se generarán aquí -->
+                   </div>
+               </div>
+
+               <!-- Panel para carrusel de vestimenta del torso (inicialmente oculto) -->
+               <div id="torso-clothing-carousel-panel" class="hidden pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">VESTIMENTA</h2>
+                   <div id="torso-clothing-carousel-container" class="flex space-x-2 p-2 overflow-x-auto pointer-events-auto">
+                       <!-- Las miniaturas de la ropa se generarán aquí -->
+                   </div>
+               </div>
+
+               <!-- Panel para selección de lado de brazo (inicialmente oculto) -->
+               <div id="arm-side-panel" class="hidden pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">LADO DE BRAZO</h2>
+                   <div id="arm-side-container" class="grid grid-cols-2 gap-2 pointer-events-auto">
+                       <button type="button" id="arm-left-btn" class="icon-btn p-2">IZQ</button>
+                       <button type="button" id="arm-right-btn" class="icon-btn p-2">DER</button>
+                   </div>
+               </div>
+
+               <!-- Panel para carrusel de brazo izquierdo (inicialmente oculto) -->
+               <div id="arm-left-carousel-panel" class="hidden pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">BRAZO IZQUIERDO</h2>
+                   <div id="arm-left-carousel-container" class="flex space-x-2 p-2 overflow-x-auto pointer-events-auto">
+                       <!-- Las miniaturas del brazo izquierdo se generarán aquí -->
+                   </div>
+               </div>
+
+               <!-- Panel para carrusel de brazo derecho (inicialmente oculto) -->
+               <div id="arm-right-carousel-panel" class="hidden pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">BRAZO DERECHO</h2>
+                   <div id="arm-right-carousel-container" class="flex space-x-2 p-2 overflow-x-auto pointer-events-auto">
+                       <!-- Las miniaturas del brazo derecho se generarán aquí -->
+                   </div>
+               </div>
+
+               <!-- Panel para selección de lado de pierna (inicialmente oculto) -->
+               <div id="leg-side-panel" class="hidden pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">LADO DE PIERNA</h2>
+                   <div id="leg-side-container" class="grid grid-cols-2 gap-2 pointer-events-auto">
+                       <button type="button" id="leg-left-btn" class="icon-btn p-2">IZQ</button>
+                       <button type="button" id="leg-right-btn" class="icon-btn p-2">DER</button>
+                   </div>
+               </div>
+
+               <!-- Panel para carrusel de pierna izquierda (inicialmente oculto) -->
+               <div id="leg-left-carousel-panel" class="hidden pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">PIERNA IZQUIERDA</h2>
+                   <div id="leg-left-carousel-container" class="flex space-x-2 p-2 overflow-x-auto pointer-events-auto">
+                       <!-- Las miniaturas de la pierna izquierda se generarán aquí -->
+                   </div>
+               </div>
+
+               <!-- Panel para carrusel de pierna derecha (inicialmente oculto) -->
+               <div id="leg-right-carousel-panel" class="hidden pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">PIERNA DERECHA</h2>
+                   <div id="leg-right-carousel-container" class="flex space-x-2 p-2 overflow-x-auto pointer-events-auto">
+                       <!-- Las miniaturas de la pierna derecha se generarán aquí -->
+                   </div>
+               </div>
+
+                <div class="pt-2 border-t border-cyan-500/30">
+                   <h2 class="text-md font-bold text-cyan-300 mb-2">PALETA</h2>
+                   <div id="color-palette" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-5 gap-2 md:gap-3 pointer-events-auto"></div>
+                   
+                   <!-- Sliders de personalización -->
+                   <div class="mt-4 space-y-3 pointer-events-auto">
+                       <div>
+                           <label class="text-xs text-cyan-300 mb-1 block">Tono</label>
+                           <input type="range" id="hue-slider" min="0" max="360" value="0" class="w-full h-2 rounded-lg appearance-none cursor-pointer" style="background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);">
+                       </div>
+                       <div>
+                           <label class="text-xs text-cyan-300 mb-1 block">Luminosidad</label>
+                           <input type="range" id="lightness-slider" min="0" max="100" value="50" class="w-full h-2 rounded-lg appearance-none cursor-pointer bg-gradient-to-r from-black via-gray-500 to-white">
+                       </div>
+                   </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+        let appMode = 'edit';
+        let currentMainPart = 'torso';
+        let currentHeadPart = null;
+        const keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false, ' ': false };
+        let yVelocity = 0;
+        let isJumping = false;
+        let groundY = 0;
+        
+        // Variables para controles móviles
+        let joystickActive = false;
+        let joystickVector = { x: 0, y: 0 };
+        const mobileGameControls = document.getElementById('mobile-game-controls');
+        const joystickBase = document.getElementById('joystick-base');
+        const joystickStick = document.getElementById('joystick-stick');
+        const jumpButton = document.getElementById('jump-button');
+        
+        // Variables para control de cámara
+        let cameraView = 'back'; // 'back' o 'front'
+        let cameraAngle = 0; // Ángulo actual de la cámara alrededor del personaje
+        let targetCameraAngle = 0; // Ángulo objetivo
+        let isCameraTransitioning = false;
+
+        const canvasContainer = document.getElementById('canvas-container');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const scene = new THREE.Scene();
+        // Color de fondo oscuro que combina con el diseño
+        scene.background = new THREE.Color(0x0a0e27);
+        // También puedes usar un degradado con fog para más profundidad:
+        // scene.fog = new THREE.Fog(0x0a0e27, 10, 50);
+        
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const originalCameraPos = new THREE.Vector3(0, 1.5, 5);
+        camera.position.copy(originalCameraPos);
+
+        // Detectar si es móvil para reducir calidad y memoria
+        const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const pixelRatio = isMobileDevice ? Math.min(window.devicePixelRatio, 2) : window.devicePixelRatio;
+        
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: !isMobileDevice, // Desactivar antialiasing en móvil para ahorrar memoria
+            alpha: false,
+            powerPreference: 'high-performance'
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(pixelRatio); // Limitar pixel ratio en móvil
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        canvasContainer.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.minDistance = 3;  // Zoom in máximo (más cerca)
+        controls.maxDistance = 25; // Zoom out máximo (más lejos)
+        
+        scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+        const dirLight = new THREE.DirectionalLight(0xffffff, 2.5);
+        dirLight.position.set(5, 10, 7.5);
+        scene.add(dirLight);
+
+        const gridHelper = new THREE.GridHelper(200, 200, 0x00ffff);
+        gridHelper.material.opacity = 0.2;
+        gridHelper.material.transparent = true;
+        scene.add(gridHelper);
+        
+        const modelURL = './papelcool.glb';
+        
+        // --- DATA PARA OJOS ---
+        const eyeTextures = [
+            { name: 'Male', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Male-eyes.png' },
+            { name: 'Female', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Female-eyes.png' },
+            { name: 'Mira', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Mira-eyes.png' },
+            { name: 'Rumi', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Rumi-eyes.png' },
+            { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Zoey-eyes.png' }
+        ];
+        let currentEyeTextureURL = eyeTextures[0].url;
+
+        // --- DATA PARA CEJAS ---
+        const eyebrowTextures = [
+            { name: 'Male', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Male-eyesbrown.png' },
+            { name: 'Female', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Female-eyesbrown.png' },
+            { name: 'Mira', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Mira-eyesbrown.png' },
+            { name: 'Rumi', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Rumi-eyesbrown.png' },
+            { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Zoey-eyesbrown.png' }
+        ];
+        let currentEyebrowTextureURL = eyebrowTextures[0].url;
+
+        // --- DATA PARA NARIZ ---
+        const noseTextures = [
+            { name: 'Default', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/nose/Nose-default.png' }
+        ];
+        let currentNoseTextureURL = noseTextures[0].url;
+
+        // --- DATA PARA OREJAS ---
+        const earTextures = [
+            { name: 'Basic', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Basic-ears.png' },
+            { name: 'Mira', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Mira-ears.png' },
+            { name: 'Rumi', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Rumi-ears.png' },
+            { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Zoey-ears.png' }
+        ];
+        let currentEarTextureURL = earTextures[0].url;
+        let currentEarSide = null; // 'left' o 'right'
+
+        // --- DATA PARA CABELLO ---
+        const hairTextures = [
+            { name: 'None', frontUrl: null, backUrl: null }, // Opción sin cabello
+            { 
+                name: 'Mira', 
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Mira-front-hair.png',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Mira-back-hair.png'
+            },
+            { 
+                name: 'Rumi', 
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Rumi-front-hair.png',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Rumi-back-hair.png'
+            },
+            { 
+                name: 'Zoey', 
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Zoey-front-hair.png',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Zoey-back-hair.png'
+            }
+        ];
+        let currentHairFrontURL = hairTextures[0].frontUrl; // Por defecto 'None'
+        let currentHairBackURL = hairTextures[0].backUrl; // Por defecto 'None'
+
+        // --- DATA PARA VESTIMENTA DEL TORSO ---
+        const torsoClothingTextures = [
+            { name: 'None', frontUrl: null, backUrl: null }, // Opción sin ropa
+            { 
+                name: 'Mira', 
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/torso/Mira-torso.png',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/torso/back/Mira-torso-back.png'
+            },
+            { 
+                name: 'Rumi', 
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/torso/Rumi-torso.png',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/torso/back/Rumi-torso-back.png'
+            },
+            { 
+                name: 'Zoey', 
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/torso/Zoey-torso.png',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/torso/back/Zoey-torso-back.png'
+            }
+        ];
+        let currentTorsoFrontURL = torsoClothingTextures[0].frontUrl; // Por defecto 'None'
+        let currentTorsoBackURL = torsoClothingTextures[0].backUrl; // Por defecto 'None'
+
+        // --- DATA PARA ESTILOS DE BRAZOS ---
+        const armTextures = [
+            { name: 'None', leftUrl: null, rightUrl: null }, // Opción sin estilo
+            { 
+                name: 'Mira', 
+                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/left/Mira-arm-left.png',
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/right/Mira-arm-right.png'
+            }
+        ];
+        let currentArmLeftURL = armTextures[0].leftUrl; // Por defecto 'None'
+        let currentArmRightURL = armTextures[0].rightUrl; // Por defecto 'None'
+        let currentArmSide = null; // 'left' o 'right'
+
+        // --- DATA PARA ESTILOS DE PIERNAS ---
+        const legTextures = [
+            { name: 'None', leftUrl: null, rightUrl: null }, // Opción sin estilo
+            { 
+                name: 'Mira', 
+                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/left/Mira-leg-left.png',
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/right/Mira-leg-right.png'
+            },
+            { 
+                name: 'Rumi', 
+                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/left/Rumi-leg-left.png',
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/right/Rumi-leg-right.png'
+            },
+            { 
+                name: 'Zoey', 
+                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/left/Zoey-leg-left.png',
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/right/Zoey-leg-right.png'
+            }
+        ];
+        let currentLegLeftURL = legTextures[0].leftUrl; // Por defecto 'None'
+        let currentLegRightURL = legTextures[0].rightUrl; // Por defecto 'None'
+        let currentLegSide = null; // 'left' o 'right'
+
+        // Habilitar caché de THREE.js para evitar recargas de red
+        THREE.Cache.enabled = true;
+        
+        const loader = new GLTFLoader();
+        const textureLoader = new THREE.TextureLoader();
+        
+        // Configuración optimizada de texturas para móviles
+        textureLoader.setCrossOrigin('anonymous');
+        
+        // Función auxiliar para cargar texturas con optimización automática
+        function loadOptimizedTexture(url, onLoad, onError) {
+            return textureLoader.load(
+                url,
+                (texture) => {
+                    // Optimizar configuración de textura para móviles
+                    if (isMobileDevice) {
+                        texture.minFilter = THREE.LinearFilter;
+                        texture.magFilter = THREE.LinearFilter;
+                        texture.generateMipmaps = false;
+                    }
+                    texture.encoding = THREE.sRGBEncoding;
+                    if (onLoad) onLoad(texture);
+                },
+                undefined,
+                (error) => {
+                    console.error('Error cargando textura:', url, error);
+                    if (onError) onError(error);
+                }
+            );
+        }
+        
+        let loadedModel;
+        const modelParts = {
+            head: null, torso: null, arms: [], legs: [],
+            eyebrows: [], nose: null, ears: [], hair: null
+        };
+        const initialTransforms = new Map();
+        let modelCenter = new THREE.Vector3();
+        let eyesMesh = null;
+        let eyebrowsMesh = null;
+        let noseMesh = null;
+        let earLeftMesh = null;
+        let earRightMesh = null;
+        let hairFrontMesh = null;
+        let hairBackMesh = null;
+        let torsoFrontMesh = null;
+        let torsoBackMesh = null;
+        let armLeftFrontMesh = null;
+        let armLeftBackMesh = null;
+        let armRightFrontMesh = null;
+        let armRightBackMesh = null;
+        let legLeftFrontMesh = null;
+        let legLeftBackMesh = null;
+        let legRightFrontMesh = null;
+        let legRightBackMesh = null;
+
+        loader.load(
+            modelURL,
+            function (gltf) {
+                loadedModel = gltf.scene;
+                loadedModel.traverse((child) => {
+                    if (child.isMesh) {
+                        const name = child.name.toLowerCase();
+                        if (name.includes('head')) modelParts.head = child;
+                        else if (name.includes('torso')) modelParts.torso = child;
+                        else if (name.includes('arm')) {
+                            modelParts.arms.push(child);
+                            // Rotar brazo derecho 180 grados en el eje Y
+                            if (name.includes('r')) {
+                                child.rotation.y = Math.PI;
+                            }
+                        }
+                        else if (name.includes('leg')) modelParts.legs.push(child);
+                        else if (name.includes('eyebrow')) modelParts.eyebrows.push(child);
+                        else if (name.includes('nose')) modelParts.nose = child;
+                        else if (name.includes('ear')) modelParts.ears.push(child);
+                        else if (name.includes('hair')) modelParts.hair = child;
+                        
+                        initialTransforms.set(child, { 
+                            position: child.position.clone(),
+                            rotation: child.rotation.clone()
+                        });
+                    }
+                });
+                
+                const box = new THREE.Box3().setFromObject(loadedModel);
+                const size = box.getSize(new THREE.Vector3());
+                const center = box.getCenter(new THREE.Vector3());
+                const maxDim = Math.max(size.x, size.y, size.z);
+                const scale = 2.5 / maxDim;
+                loadedModel.scale.set(scale, scale, scale);
+                loadedModel.position.sub(center.multiplyScalar(scale));
+                const scaledHeight = size.y * scale;
+                groundY = scaledHeight / 2;
+                loadedModel.position.y = groundY;
+                modelCenter.set(0, groundY, 0);
+                controls.target.copy(modelCenter);
+                scene.add(loadedModel);
+                loadingIndicator.style.display = 'none';
+
+                if (modelParts.head) {
+                    changeEyeTexture(currentEyeTextureURL, true); // Cargar textura inicial
+                    changeEyebrowTexture(currentEyebrowTextureURL, true); // Cargar textura inicial de cejas
+                    changeNoseTexture(currentNoseTextureURL, true); // Cargar textura inicial de nariz
+                    changeEarTexture('left', currentEarTextureURL, true); // Cargar textura inicial de oreja izquierda
+                    changeEarTexture('right', currentEarTextureURL, true); // Cargar textura inicial de oreja derecha
+                    changeHairTexture(currentHairFrontURL, currentHairBackURL, true); // Cargar cabello inicial (none)
+                }
+                if (modelParts.torso) {
+                    changeTorsoClothing(currentTorsoFrontURL, currentTorsoBackURL, true); // Cargar vestimenta inicial (none)
+                }
+                if (modelParts.legs.length >= 2) {
+                    changeLegClothing('left', currentLegLeftURL, true); // Cargar estilo de pierna izquierda inicial (none)
+                    changeLegClothing('right', currentLegRightURL, true); // Cargar estilo de pierna derecha inicial (none)
+                }
+            },
+            (xhr) => {
+                if (xhr.lengthComputable) {
+                    loadingIndicator.textContent = `Cargando... ${((xhr.loaded / xhr.total) * 100).toFixed(2)}%`;
+                }
+            },
+            (error) => { 
+                console.error('Error al cargar modelo:', error); 
+                console.error('Detalles del error:', error.message, error.stack);
+                loadingIndicator.textContent = 'Error al cargar modelo'; 
+            }
+        );
+
+        // Array de imágenes para el botón de cabello animado
+        // Puedes añadir más URLs aquí para incluir más imágenes en la rotación
+        const hairButtonImages = [
+            'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/icon%20buttons/hair%20buttons/Mira-hair-button.png',
+            'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/icon%20buttons/hair%20buttons/Rumi-hair-button.png',
+            'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/icon%20buttons/hair%20buttons/Zoey-hair-button.png'
+            // Añade más URLs aquí si quieres más imágenes
+        ];
+        
+        const icons = {
+            play: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="w-6 h-6 m-auto"><path fill="currentColor" d="M8 5.14v14l11-7z"/></svg>`,
+            edit: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="w-6 h-6 m-auto"><path fill="currentColor" d="M14 19h4V5h-4M6 19h4V5H6z"/></svg>`,
+            head: `<img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/icon%20buttons/head-button.png" alt="Head">`,
+            torso: `<img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/icon%20buttons/torso-button.png" alt="Torso">`,
+            arms: `<img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/icon%20buttons/arms-button.png" alt="Arms">`,
+            legs: `<img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/icon%20buttons/legs-button.png" alt="Legs">`,
+            eyes: `<img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/icon%20buttons/eye-button.png" alt="Eyes">`,
+            eyebrows: `<img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/icon%20buttons/eyebrown-button.png" alt="Eyebrows">`,
+            nose: `<img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/icon%20buttons/nose-button.png" alt="Nose">`,
+            ears: `<img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/icon%20buttons/ears-button.png" alt="Ears">`,
+            hair: null, // Se generará dinámicamente con animación
+        };
+
+        const ui = {
+            main: { head: document.getElementById('head-btn'), torso: document.getElementById('torso-btn'), arms: document.getElementById('arms-btn'), legs: document.getElementById('legs-btn') },
+            headPartsPanel: document.getElementById('head-parts-panel'),
+            headParts: { eyes: document.getElementById('eyes-part-btn'), eyebrows: document.getElementById('eyebrows-part-btn'), nose: document.getElementById('nose-part-btn'), ears: document.getElementById('ears-part-btn'), hair: document.getElementById('hair-part-btn'), },
+            eyesCarouselPanel: document.getElementById('eyes-carousel-panel'),
+            eyesCarouselContainer: document.getElementById('eyes-carousel-container'),
+            eyebrowsCarouselPanel: document.getElementById('eyebrows-carousel-panel'),
+            eyebrowsCarouselContainer: document.getElementById('eyebrows-carousel-container'),
+            noseCarouselPanel: document.getElementById('nose-carousel-panel'),
+            noseCarouselContainer: document.getElementById('nose-carousel-container'),
+            earSidePanel: document.getElementById('ear-side-panel'),
+            earSideBtns: { left: document.getElementById('ear-left-btn'), right: document.getElementById('ear-right-btn') },
+            earLeftCarouselPanel: document.getElementById('ear-left-carousel-panel'),
+            earLeftCarouselContainer: document.getElementById('ear-left-carousel-container'),
+            earRightCarouselPanel: document.getElementById('ear-right-carousel-panel'),
+            earRightCarouselContainer: document.getElementById('ear-right-carousel-container'),
+            hairCarouselPanel: document.getElementById('hair-carousel-panel'),
+            hairCarouselContainer: document.getElementById('hair-carousel-container'),
+            torsoClothingCarouselPanel: document.getElementById('torso-clothing-carousel-panel'),
+            torsoClothingCarouselContainer: document.getElementById('torso-clothing-carousel-container'),
+            armSidePanel: document.getElementById('arm-side-panel'),
+            armSideBtns: { left: document.getElementById('arm-left-btn'), right: document.getElementById('arm-right-btn') },
+            armLeftCarouselPanel: document.getElementById('arm-left-carousel-panel'),
+            armLeftCarouselContainer: document.getElementById('arm-left-carousel-container'),
+            armRightCarouselPanel: document.getElementById('arm-right-carousel-panel'),
+            armRightCarouselContainer: document.getElementById('arm-right-carousel-container'),
+            legSidePanel: document.getElementById('leg-side-panel'),
+            legSideBtns: { left: document.getElementById('leg-left-btn'), right: document.getElementById('leg-right-btn') },
+            legLeftCarouselPanel: document.getElementById('leg-left-carousel-panel'),
+            legLeftCarouselContainer: document.getElementById('leg-left-carousel-container'),
+            legRightCarouselPanel: document.getElementById('leg-right-carousel-panel'),
+            legRightCarouselContainer: document.getElementById('leg-right-carousel-container'),
+            palette: document.getElementById('color-palette'),
+            playBtnMobile: document.getElementById('play-mode-btn-mobile'),
+            playBtnDesktop: document.getElementById('play-mode-btn-desktop-btn'),
+            editorPanelWrapper: document.getElementById('editor-panel-wrapper'),
+            editor: document.getElementById('editor-container'),
+            title: document.getElementById('title'),
+            subtitle: document.getElementById('subtitle')
+        };
+        
+        function setIcons() {
+            Object.keys(ui.main).forEach(key => ui.main[key].innerHTML = icons[key]);
+            Object.keys(ui.headParts).forEach(key => {
+                if (key === 'hair') {
+                    // Crear contenedor especial para el botón de cabello animado
+                    createAnimatedHairButton();
+                } else {
+                    ui.headParts[key].innerHTML = icons[key];
+                }
+            });
+            // Configurar ambos botones de modo
+            ui.playBtnMobile.innerHTML = icons.play;
+            ui.playBtnDesktop.innerHTML = icons.play;
+        }
+        
+        // Función para crear el botón de cabello animado
+        function createAnimatedHairButton() {
+            const hairBtn = ui.headParts.hair;
+            hairBtn.innerHTML = ''; // Limpiar contenido
+            hairBtn.style.position = 'relative';
+            hairBtn.style.overflow = 'hidden';
+            
+            // Crear dos capas de imagen para el efecto de desvanecimiento
+            const img1 = document.createElement('img');
+            const img2 = document.createElement('img');
+            
+            img1.className = 'absolute inset-0 w-full h-full object-fill transition-opacity duration-1000';
+            img2.className = 'absolute inset-0 w-full h-full object-fill transition-opacity duration-1000';
+            
+            img1.style.opacity = '1';
+            img2.style.opacity = '0';
+            
+            hairBtn.appendChild(img1);
+            hairBtn.appendChild(img2);
+            
+            let currentImageIndex = 0;
+            let activeLayer = 1; // 1 o 2
+            
+            // Establecer la primera imagen
+            img1.src = hairButtonImages[0];
+            
+            // Función para obtener un índice aleatorio diferente al actual
+            function getRandomDifferentIndex(currentIndex) {
+                if (hairButtonImages.length <= 1) return 0;
+                let newIndex;
+                do {
+                    newIndex = Math.floor(Math.random() * hairButtonImages.length);
+                } while (newIndex === currentIndex);
+                return newIndex;
+            }
+            
+            // Función para cambiar la imagen con efecto de desvanecimiento
+            function changeHairImage() {
+                const nextIndex = getRandomDifferentIndex(currentImageIndex);
+                
+                if (activeLayer === 1) {
+                    // Cargar nueva imagen en img2 y hacer fade
+                    img2.src = hairButtonImages[nextIndex];
+                    img2.style.opacity = '1';
+                    img1.style.opacity = '0';
+                    activeLayer = 2;
+                } else {
+                    // Cargar nueva imagen en img1 y hacer fade
+                    img1.src = hairButtonImages[nextIndex];
+                    img1.style.opacity = '1';
+                    img2.style.opacity = '0';
+                    activeLayer = 1;
+                }
+                
+                currentImageIndex = nextIndex;
+            }
+            
+            // Cambiar imagen cada segundo
+            setInterval(changeHairImage, 1000);
+        }
+
+        const initialColors = ['#F7D5CF','#E4B5A0','#D89C7D','#A86B4D','#5B382A'];
+        
+        let isAnimatingCamera = false;
+        let cameraTargetPos = new THREE.Vector3(), controlsTargetPos = new THREE.Vector3();
+        
+        function animateCameraTo(pos, target) { 
+            cameraTargetPos.copy(pos); 
+            controlsTargetPos.copy(target); 
+            isAnimatingCamera = true; 
+        }
+
+        function updateButtons() {
+            Object.values(ui.main).forEach(b=>b.classList.remove('active-btn'));
+            if(ui.main[currentMainPart]) ui.main[currentMainPart].classList.add('active-btn');
+            Object.values(ui.headParts).forEach(b=>b.classList.remove('active-btn'));
+            if(currentMainPart === 'head' && currentHeadPart && ui.headParts[currentHeadPart]) {
+                ui.headParts[currentHeadPart].classList.add('active-btn');
+            }
+        }
+
+        Object.entries(ui.main).forEach(([key, btn]) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (!loadedModel) return;
+                currentMainPart = key;
+                if (key === 'head') {
+                    ui.headPartsPanel.classList.remove('hidden');
+                    currentHeadPart = 'eyes'; // Predeterminado a 'eyes' al seleccionar la cabeza
+                    ui.eyesCarouselPanel.classList.remove('hidden');
+                    ui.eyebrowsCarouselPanel.classList.add('hidden');
+                    ui.noseCarouselPanel.classList.add('hidden');
+                    ui.earSidePanel.classList.add('hidden');
+                    ui.earLeftCarouselPanel.classList.add('hidden');
+                    ui.earRightCarouselPanel.classList.add('hidden');
+                    ui.hairCarouselPanel.classList.add('hidden');
+                    ui.torsoClothingCarouselPanel.classList.add('hidden');
+                } else if (key === 'torso') {
+                    ui.headPartsPanel.classList.add('hidden');
+                    ui.eyesCarouselPanel.classList.add('hidden');
+                    ui.eyebrowsCarouselPanel.classList.add('hidden');
+                    ui.noseCarouselPanel.classList.add('hidden');
+                    ui.earSidePanel.classList.add('hidden');
+                    ui.earLeftCarouselPanel.classList.add('hidden');
+                    ui.earRightCarouselPanel.classList.add('hidden');
+                    ui.hairCarouselPanel.classList.add('hidden');
+                    ui.torsoClothingCarouselPanel.classList.remove('hidden'); // Mostrar carrusel de ropa
+                    ui.armSidePanel.classList.add('hidden');
+                    ui.armLeftCarouselPanel.classList.add('hidden');
+                    ui.armRightCarouselPanel.classList.add('hidden');
+                    ui.legSidePanel.classList.add('hidden');
+                    ui.legLeftCarouselPanel.classList.add('hidden');
+                    ui.legRightCarouselPanel.classList.add('hidden');
+                    currentHeadPart = null;
+                } else if (key === 'arms') {
+                    ui.headPartsPanel.classList.add('hidden');
+                    ui.eyesCarouselPanel.classList.add('hidden');
+                    ui.eyebrowsCarouselPanel.classList.add('hidden');
+                    ui.noseCarouselPanel.classList.add('hidden');
+                    ui.earSidePanel.classList.add('hidden');
+                    ui.earLeftCarouselPanel.classList.add('hidden');
+                    ui.earRightCarouselPanel.classList.add('hidden');
+                    ui.hairCarouselPanel.classList.add('hidden');
+                    ui.torsoClothingCarouselPanel.classList.add('hidden');
+                    ui.armSidePanel.classList.remove('hidden'); // Mostrar panel de selección de lado
+                    ui.armLeftCarouselPanel.classList.add('hidden');
+                    ui.armRightCarouselPanel.classList.add('hidden');
+                    ui.legSidePanel.classList.add('hidden');
+                    ui.legLeftCarouselPanel.classList.add('hidden');
+                    ui.legRightCarouselPanel.classList.add('hidden');
+                    currentHeadPart = null;
+                } else if (key === 'legs') {
+                    ui.headPartsPanel.classList.add('hidden');
+                    ui.eyesCarouselPanel.classList.add('hidden');
+                    ui.eyebrowsCarouselPanel.classList.add('hidden');
+                    ui.noseCarouselPanel.classList.add('hidden');
+                    ui.earSidePanel.classList.add('hidden');
+                    ui.earLeftCarouselPanel.classList.add('hidden');
+                    ui.earRightCarouselPanel.classList.add('hidden');
+                    ui.hairCarouselPanel.classList.add('hidden');
+                    ui.torsoClothingCarouselPanel.classList.add('hidden');
+                    ui.legSidePanel.classList.remove('hidden'); // Mostrar panel de selección de lado
+                    ui.legLeftCarouselPanel.classList.add('hidden');
+                    ui.legRightCarouselPanel.classList.add('hidden');
+                    currentHeadPart = null;
+                } else {
+                    ui.headPartsPanel.classList.add('hidden');
+                    ui.eyesCarouselPanel.classList.add('hidden');
+                    ui.eyebrowsCarouselPanel.classList.add('hidden');
+                    ui.noseCarouselPanel.classList.add('hidden');
+                    ui.earSidePanel.classList.add('hidden');
+                    ui.earLeftCarouselPanel.classList.add('hidden');
+                    ui.earRightCarouselPanel.classList.add('hidden');
+                    ui.hairCarouselPanel.classList.add('hidden');
+                    ui.torsoClothingCarouselPanel.classList.add('hidden');
+                    ui.armSidePanel.classList.add('hidden');
+                    ui.armLeftCarouselPanel.classList.add('hidden');
+                    ui.armRightCarouselPanel.classList.add('hidden');
+                    ui.legSidePanel.classList.add('hidden');
+                    ui.legLeftCarouselPanel.classList.add('hidden');
+                    ui.legRightCarouselPanel.classList.add('hidden');
+                    currentHeadPart = null;
+                }
+                updateButtons();
+                animateCameraTo(originalCameraPos, modelCenter);
+            });
+        });
+
+        Object.entries(ui.headParts).forEach(([key, btn]) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentHeadPart = key;
+                ui.eyesCarouselPanel.classList.toggle('hidden', key !== 'eyes');
+                ui.eyebrowsCarouselPanel.classList.toggle('hidden', key !== 'eyebrows');
+                ui.noseCarouselPanel.classList.toggle('hidden', key !== 'nose');
+                ui.earSidePanel.classList.toggle('hidden', key !== 'ears');
+                ui.earLeftCarouselPanel.classList.add('hidden');
+                ui.earRightCarouselPanel.classList.add('hidden');
+                ui.hairCarouselPanel.classList.toggle('hidden', key !== 'hair');
+                currentEarSide = null;
+                updateButtons();
+            });
+        });
+
+        // Event listeners para los botones de lado de oreja
+        Object.entries(ui.earSideBtns).forEach(([side, btn]) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentEarSide = side;
+                ui.earLeftCarouselPanel.classList.toggle('hidden', side !== 'left');
+                ui.earRightCarouselPanel.classList.toggle('hidden', side !== 'right');
+                updateEarSideButtons();
+            });
+        });
+
+        // Event listeners para los botones de lado de brazo
+        Object.entries(ui.armSideBtns).forEach(([side, btn]) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentArmSide = side;
+                ui.armLeftCarouselPanel.classList.toggle('hidden', side !== 'left');
+                ui.armRightCarouselPanel.classList.toggle('hidden', side !== 'right');
+                updateArmSideButtons();
+            });
+        });
+
+        // Event listeners para los botones de lado de pierna
+        Object.entries(ui.legSideBtns).forEach(([side, btn]) => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                currentLegSide = side;
+                ui.legLeftCarouselPanel.classList.toggle('hidden', side !== 'left');
+                ui.legRightCarouselPanel.classList.toggle('hidden', side !== 'right');
+                updateLegSideButtons();
+            });
+        });
+
+        // Función para manejar el joystick
+        function setupJoystick() {
+            let touchId = null;
+            const maxDistance = 35; // Radio máximo del joystick
+            
+            joystickBase.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (touchId === null) {
+                    touchId = e.changedTouches[0].identifier;
+                    joystickActive = true;
+                }
+            });
+            
+            joystickBase.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                for (let touch of e.changedTouches) {
+                    if (touch.identifier === touchId) {
+                        const rect = joystickBase.getBoundingClientRect();
+                        const centerX = rect.left + rect.width / 2;
+                        const centerY = rect.top + rect.height / 2;
+                        
+                        let deltaX = touch.clientX - centerX;
+                        let deltaY = touch.clientY - centerY;
+                        
+                        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                        
+                        if (distance > maxDistance) {
+                            const angle = Math.atan2(deltaY, deltaX);
+                            deltaX = Math.cos(angle) * maxDistance;
+                            deltaY = Math.sin(angle) * maxDistance;
+                        }
+                        
+                        joystickStick.style.transform = `translate(calc(-50% + ${deltaX}px), calc(-50% + ${deltaY}px))`;
+                        
+                        // Normalizar valores para el movimiento
+                        joystickVector.x = deltaX / maxDistance;
+                        joystickVector.y = -deltaY / maxDistance; // Invertir Y
+                    }
+                }
+            });
+            
+            const resetJoystick = (e) => {
+                for (let touch of e.changedTouches) {
+                    if (touch.identifier === touchId) {
+                        touchId = null;
+                        joystickActive = false;
+                        joystickStick.style.transform = 'translate(-50%, -50%)';
+                        joystickVector.x = 0;
+                        joystickVector.y = 0;
+                    }
+                }
+            };
+            
+            joystickBase.addEventListener('touchend', resetJoystick);
+            joystickBase.addEventListener('touchcancel', resetJoystick);
+        }
+        
+        // Función para manejar el botón de salto
+        function setupJumpButton() {
+            jumpButton.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (!isJumping) {
+                    isJumping = true;
+                    yVelocity = 10; // jumpHeight
+                }
+            });
+        }
+        
+        // Función para alternar entre modo edición y juego
+        function togglePlayMode() {
+            appMode = appMode === 'edit' ? 'play' : 'edit';
+            const isMobile = window.innerWidth <= 1024;
+            
+            if (appMode === 'play') {
+                // Modo juego
+                ui.playBtnMobile.innerHTML = icons.edit;
+                ui.playBtnDesktop.innerHTML = icons.edit;
+                ui.playBtnMobile.classList.add('active-btn');
+                ui.playBtnDesktop.classList.add('active-btn');
+                
+                // En móvil, ocultar el panel del editor y mostrar controles de juego
+                if (isMobile) {
+                    ui.editorPanelWrapper.classList.add('hidden-mobile');
+                    mobileGameControls.classList.add('active');
+                } else {
+                    ui.editor.style.display = 'none';
+                }
+                
+                // Cambiar a vista trasera al entrar en modo juego
+                cameraView = 'back';
+                cameraAngle = 0;
+                targetCameraAngle = 0;
+                isCameraTransitioning = false;
+                
+                // Rotar el personaje 180 grados para que dé la espalda a la cámara
+                if (loadedModel) {
+                    loadedModel.rotation.y = Math.PI; // 180 grados
+                }
+                
+                // Mostrar botón de cambio de cámara
+                cameraToggleBtn.style.display = 'flex';
+                
+                controls.enabled = false;
+            } else {
+                // Modo edición
+                ui.playBtnMobile.innerHTML = icons.play;
+                ui.playBtnDesktop.innerHTML = icons.play;
+                ui.playBtnMobile.classList.remove('active-btn');
+                ui.playBtnDesktop.classList.remove('active-btn');
+                
+                // En móvil, mostrar el panel del editor y ocultar controles de juego
+                if (isMobile) {
+                    ui.editorPanelWrapper.classList.remove('hidden-mobile');
+                    mobileGameControls.classList.remove('active');
+                } else {
+                    ui.editor.style.display = 'block';
+                }
+                
+                // Ocultar botón de cambio de cámara
+                cameraToggleBtn.style.display = 'none';
+                
+                controls.enabled = true;
+                if(loadedModel) {
+                    loadedModel.position.set(0, groundY, 0);
+                    loadedModel.rotation.set(0, 0, 0);
+                }
+                animateCameraTo(originalCameraPos, modelCenter);
+            }
+        }
+        
+        // Event listeners para ambos botones de modo
+        ui.playBtnMobile.addEventListener('click', (e) => {
+            e.preventDefault();
+            togglePlayMode();
+        });
+        ui.playBtnDesktop.addEventListener('click', (e) => {
+            e.preventDefault();
+            togglePlayMode();
+        });
+        
+        // Inicializar controles móviles
+        setupJoystick();
+        setupJumpButton();
+        
+        // Botón de cambio de cámara
+        const cameraToggleBtn = document.getElementById('camera-toggle-btn');
+        cameraToggleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            toggleCameraView();
+        });
+        
+        // Manejar cambios de tamaño de ventana
+        window.addEventListener('resize', () => {
+            const isMobile = window.innerWidth <= 1024;
+            // Ajustar visibilidad del panel según el modo y tamaño de pantalla
+            if (appMode === 'play' && isMobile) {
+                ui.editorPanelWrapper.classList.add('hidden-mobile');
+                mobileGameControls.classList.add('active');
+            } else if (appMode === 'edit' && isMobile) {
+                ui.editorPanelWrapper.classList.remove('hidden-mobile');
+                mobileGameControls.classList.remove('active');
+            } else if (!isMobile) {
+                mobileGameControls.classList.remove('active');
+            }
+        });
+        
+        function changeEyeTexture(url, isInitialLoad = false) {
+            if (!modelParts.head) return;
+            loadOptimizedTexture(url,
+                (texture) => {
+                    if (isInitialLoad || !eyesMesh) {
+                        // Creación inicial de los ojos
+                        const eyeMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide, alphaTest: 0.5 });
+                        // Estas dimensiones están ajustadas para el modelo 'papelcool.glb'
+                        const planeHeight = 2.256; 
+                        const aspect = texture.image.width / texture.image.height;
+                        const planeWidth = planeHeight * aspect;
+                        const eyeGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                        eyesMesh = new THREE.Mesh(eyeGeometry, eyeMaterial);
+                        // Esta posición está ajustada para el modelo 'papelcool.glb'
+                        eyesMesh.position.set(0, 1.029, 1.129); 
+                        modelParts.head.add(eyesMesh);
+                    } else {
+                        // Solo actualiza la textura si el mesh ya existe
+                        const oldMap = eyesMesh.material.map;
+                        eyesMesh.material.map = texture;
+                        eyesMesh.material.needsUpdate = true;
+                        // Liberar textura antigua para evitar fuga de memoria
+                        if (oldMap && oldMap !== texture) {
+                            oldMap.dispose();
+                        }
+                    }
+                },
+                undefined,
+                (error) => {
+                    console.error("No se pudo cargar la textura de los ojos.", error);
+                    // Fallback si la textura falla al cargar (crea un placeholder rojo)
+                    if (isInitialLoad && !eyesMesh) {
+                        const placeholderMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+                        const headBox = new THREE.Box3().setFromObject(modelParts.head);
+                        const headSize = headBox.getSize(new THREE.Vector3());
+                        const eyeGeometry = new THREE.PlaneGeometry(headSize.x * 0.5, headSize.y * 0.2);
+                        eyesMesh = new THREE.Mesh(eyeGeometry, placeholderMaterial);
+                        eyesMesh.position.set(0, 0, headSize.z / 2 + 0.05); // Posición genérica
+                        modelParts.head.add(eyesMesh);
+                    }
+                }
+            );
+        }
+
+        function updateEyeCarousel() {
+            ui.eyesCarouselContainer.innerHTML = '';
+            eyeTextures.forEach(texture => {
+                const thumb = document.createElement('img');
+                thumb.loading = 'lazy'; // Lazy loading para reducir memoria
+                thumb.src = texture.url;
+                thumb.className = 'w-12 h-12 rounded-lg cursor-pointer border-2 hover:border-cyan-400 object-fill';
+                thumb.dataset.url = texture.url;
+
+                // Resaltar la miniatura activa
+                thumb.classList.toggle('border-cyan-500', texture.url === currentEyeTextureURL);
+                thumb.classList.toggle('border-transparent', texture.url !== currentEyeTextureURL);
+
+                thumb.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const newURL = e.target.dataset.url;
+                    if (newURL !== currentEyeTextureURL) {
+                        currentEyeTextureURL = newURL;
+                        changeEyeTexture(newURL);
+                        // Solo actualizar clases sin regenerar HTML
+                        document.querySelectorAll('#eyes-carousel-container img').forEach(img => {
+                            img.classList.toggle('border-cyan-500', img.dataset.url === newURL);
+                            img.classList.toggle('border-transparent', img.dataset.url !== newURL);
+                        });
+                    }
+                });
+                ui.eyesCarouselContainer.appendChild(thumb);
+            });
+        }
+
+        function changeEyebrowTexture(url, isInitialLoad = false) {
+            if (!modelParts.head) return;
+            loadOptimizedTexture(url,
+                (texture) => {
+                    if (isInitialLoad || !eyebrowsMesh) {
+                        // Creación inicial de las cejas
+                        const eyebrowMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide, alphaTest: 0.5 });
+                        // Mismas dimensiones que los ojos
+                        const planeHeight = 2.256; 
+                        const aspect = texture.image.width / texture.image.height;
+                        const planeWidth = planeHeight * aspect;
+                        const eyebrowGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                        eyebrowsMesh = new THREE.Mesh(eyebrowGeometry, eyebrowMaterial);
+                        // Misma posición que los ojos
+                        eyebrowsMesh.position.set(0, 1.029, 1.129); 
+                        modelParts.head.add(eyebrowsMesh);
+                    } else {
+                        // Solo actualiza la textura si el mesh ya existe
+                        const oldMap = eyebrowsMesh.material.map;
+                        eyebrowsMesh.material.map = texture;
+                        eyebrowsMesh.material.needsUpdate = true;
+                        // Liberar textura antigua
+                        if (oldMap && oldMap !== texture) {
+                            oldMap.dispose();
+                        }
+                    }
+                },
+                undefined,
+                (error) => {
+                    console.error("No se pudo cargar la textura de las cejas.", error);
+                    // Fallback si la textura falla al cargar
+                    if (isInitialLoad && !eyebrowsMesh) {
+                        const placeholderMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+                        const headBox = new THREE.Box3().setFromObject(modelParts.head);
+                        const headSize = headBox.getSize(new THREE.Vector3());
+                        const eyebrowGeometry = new THREE.PlaneGeometry(headSize.x * 0.5, headSize.y * 0.2);
+                        eyebrowsMesh = new THREE.Mesh(eyebrowGeometry, placeholderMaterial);
+                        eyebrowsMesh.position.set(0, 0, headSize.z / 2 + 0.05);
+                        modelParts.head.add(eyebrowsMesh);
+                    }
+                }
+            );
+        }
+
+        function updateEyebrowCarousel() {
+            ui.eyebrowsCarouselContainer.innerHTML = '';
+            eyebrowTextures.forEach(texture => {
+                const thumb = document.createElement('img');
+                thumb.loading = 'lazy';
+                thumb.src = texture.url;
+                thumb.className = 'w-12 h-12 rounded-lg cursor-pointer border-2 hover:border-cyan-400 object-fill';
+                thumb.dataset.url = texture.url;
+
+                // Resaltar la miniatura activa
+                thumb.classList.toggle('border-cyan-500', texture.url === currentEyebrowTextureURL);
+                thumb.classList.toggle('border-transparent', texture.url !== currentEyebrowTextureURL);
+
+                thumb.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const newURL = e.target.dataset.url;
+                    if (newURL !== currentEyebrowTextureURL) {
+                        currentEyebrowTextureURL = newURL;
+                        changeEyebrowTexture(newURL);
+                        // Solo actualizar clases sin regenerar HTML
+                        document.querySelectorAll('#eyebrows-carousel-container img').forEach(img => {
+                            img.classList.toggle('border-cyan-500', img.dataset.url === newURL);
+                            img.classList.toggle('border-transparent', img.dataset.url !== newURL);
+                        });
+                    }
+                });
+                ui.eyebrowsCarouselContainer.appendChild(thumb);
+            });
+        }
+
+        function changeNoseTexture(url, isInitialLoad = false) {
+            if (!modelParts.head) return;
+            loadOptimizedTexture(url,
+                (texture) => {
+                    if (isInitialLoad || !noseMesh) {
+                        // Creación inicial de la nariz con color aplicable
+                        const noseMaterial = new THREE.MeshBasicMaterial({ 
+                            map: texture, 
+                            transparent: true, 
+                            side: THREE.DoubleSide, 
+                            alphaTest: 0.5,
+                            color: 0xffffff // Color base que se puede modificar
+                        });
+                        // Mismas dimensiones que los ojos
+                        const planeHeight = 2.256; 
+                        const aspect = texture.image.width / texture.image.height;
+                        const planeWidth = planeHeight * aspect;
+                        const noseGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                        noseMesh = new THREE.Mesh(noseGeometry, noseMaterial);
+                        // Misma posición que los ojos
+                        noseMesh.position.set(0, 1.029, 1.129); 
+                        modelParts.head.add(noseMesh);
+                        
+                        // Aplicar el color inicial de la cabeza si existe
+                        if (modelParts.head && modelParts.head.material) {
+                            applyNoseColor(modelParts.head.material.color.getHex());
+                        }
+                    } else {
+                        // Solo actualiza la textura si el mesh ya existe
+                        const oldMap = noseMesh.material.map;
+                        noseMesh.material.map = texture;
+                        noseMesh.material.needsUpdate = true;
+                        // Liberar textura antigua
+                        if (oldMap && oldMap !== texture) {
+                            oldMap.dispose();
+                        }
+                    }
+                },
+                undefined,
+                (error) => {
+                    console.error("No se pudo cargar la textura de la nariz.", error);
+                    // Fallback si la textura falla al cargar
+                    if (isInitialLoad && !noseMesh) {
+                        const placeholderMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+                        const headBox = new THREE.Box3().setFromObject(modelParts.head);
+                        const headSize = headBox.getSize(new THREE.Vector3());
+                        const noseGeometry = new THREE.PlaneGeometry(headSize.x * 0.5, headSize.y * 0.2);
+                        noseMesh = new THREE.Mesh(noseGeometry, placeholderMaterial);
+                        noseMesh.position.set(0, 0, headSize.z / 2 + 0.05);
+                        modelParts.head.add(noseMesh);
+                    }
+                }
+            );
+        }
+
+        // Función para aplicar color a la nariz (50% más oscuro que la cabeza)
+        function applyNoseColor(headColorHex) {
+            if (!noseMesh) return;
+            
+            // Convertir el color hex a RGB
+            const color = new THREE.Color(headColorHex);
+            
+            // Oscurecer el color un 50% (multiplicar por 0.5)
+            const darkenedColor = new THREE.Color(
+                color.r * 0.5,
+                color.g * 0.5,
+                color.b * 0.5
+            );
+            
+            // Aplicar el color oscurecido a la nariz
+            noseMesh.material.color.copy(darkenedColor);
+            noseMesh.material.needsUpdate = true;
+        }
+
+        function updateNoseCarousel() {
+            ui.noseCarouselContainer.innerHTML = '';
+            noseTextures.forEach(texture => {
+                const thumb = document.createElement('img');
+                thumb.loading = 'lazy';
+                thumb.src = texture.url;
+                thumb.className = 'w-12 h-12 rounded-lg cursor-pointer border-2 hover:border-cyan-400 object-fill';
+                thumb.dataset.url = texture.url;
+
+                // Resaltar la miniatura activa
+                thumb.classList.toggle('border-cyan-500', texture.url === currentNoseTextureURL);
+                thumb.classList.toggle('border-transparent', texture.url !== currentNoseTextureURL);
+
+                thumb.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const newURL = e.target.dataset.url;
+                    if (newURL !== currentNoseTextureURL) {
+                        currentNoseTextureURL = newURL;
+                        changeNoseTexture(newURL);
+                        // Solo actualizar clases sin regenerar HTML
+                        document.querySelectorAll('#nose-carousel-container img').forEach(img => {
+                            img.classList.toggle('border-cyan-500', img.dataset.url === newURL);
+                            img.classList.toggle('border-transparent', img.dataset.url !== newURL);
+                        });
+                    }
+                });
+                ui.noseCarouselContainer.appendChild(thumb);
+            });
+        }
+
+        function changeEarTexture(side, url, isInitialLoad = false) {
+            if (!modelParts.head) return;
+            
+            loadOptimizedTexture(url,
+                (texture) => {
+                    const earMesh = side === 'left' ? earLeftMesh : earRightMesh;
+                    
+                    if (isInitialLoad || !earMesh) {
+                        // Creación inicial de la oreja
+                        const earMaterial = new THREE.MeshBasicMaterial({ 
+                            map: texture, 
+                            transparent: true, 
+                            side: THREE.DoubleSide, 
+                            alphaTest: 0.5
+                        });
+                        const planeHeight = 2.256;
+                        const aspect = texture.image.width / texture.image.height;
+                        const planeWidth = planeHeight * aspect;
+                        const earGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                        const newEarMesh = new THREE.Mesh(earGeometry, earMaterial);
+                        
+                        // Posición y rotación según el lado
+                        if (side === 'left') {
+                            newEarMesh.position.set(-1.129, 1.029, 0); // Lado izquierdo
+                            newEarMesh.rotation.y = Math.PI / 2; // Rotar 90 grados hacia la izquierda
+                            newEarMesh.scale.x = -1; // Invertir horizontalmente para oreja izquierda
+                            earLeftMesh = newEarMesh;
+                        } else {
+                            newEarMesh.position.set(1.129, 1.029, 0); // Lado derecho
+                            newEarMesh.rotation.y = -Math.PI / 2; // Rotar 90 grados hacia la derecha
+                            earRightMesh = newEarMesh;
+                        }
+                        
+                        modelParts.head.add(newEarMesh);
+                    } else {
+                        // Solo actualiza la textura si el mesh ya existe
+                        if (side === 'left' && earLeftMesh) {
+                            const oldMap = earLeftMesh.material.map;
+                            earLeftMesh.material.map = texture;
+                            earLeftMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        } else if (side === 'right' && earRightMesh) {
+                            const oldMap = earRightMesh.material.map;
+                            earRightMesh.material.map = texture;
+                            earRightMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        }
+                    }
+                },
+                undefined,
+                (error) => {
+                    console.error(`No se pudo cargar la textura de la oreja ${side}.`, error);
+                }
+            );
+        }
+
+        function updateEarLeftCarousel() {
+            ui.earLeftCarouselContainer.innerHTML = '';
+            earTextures.forEach(texture => {
+                const thumb = document.createElement('img');
+                thumb.loading = 'lazy';
+                thumb.src = texture.url;
+                thumb.className = 'w-12 h-12 rounded-lg cursor-pointer border-2 hover:border-cyan-400 object-fill';
+                thumb.style.transform = 'scaleX(-1)'; // Invertir miniatura para oreja izquierda
+                thumb.dataset.url = texture.url;
+
+                thumb.classList.toggle('border-cyan-500', texture.url === currentEarTextureURL);
+                thumb.classList.toggle('border-transparent', texture.url !== currentEarTextureURL);
+
+                thumb.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const newURL = e.target.dataset.url;
+                    if (newURL !== currentEarTextureURL) {
+                        currentEarTextureURL = newURL;
+                        changeEarTexture('left', newURL);
+                        changeEarTexture('right', newURL);
+                        // Solo actualizar clases
+                        document.querySelectorAll('#ear-left-carousel-container img, #ear-right-carousel-container img').forEach(img => {
+                            img.classList.toggle('border-cyan-500', img.dataset.url === newURL);
+                            img.classList.toggle('border-transparent', img.dataset.url !== newURL);
+                        });
+                    }
+                });
+                ui.earLeftCarouselContainer.appendChild(thumb);
+            });
+        }
+
+        function updateEarRightCarousel() {
+            ui.earRightCarouselContainer.innerHTML = '';
+            earTextures.forEach(texture => {
+                const thumb = document.createElement('img');
+                thumb.loading = 'lazy';
+                thumb.src = texture.url;
+                thumb.className = 'w-12 h-12 rounded-lg cursor-pointer border-2 hover:border-cyan-400 object-fill';
+                thumb.dataset.url = texture.url;
+
+                thumb.classList.toggle('border-cyan-500', texture.url === currentEarTextureURL);
+                thumb.classList.toggle('border-transparent', texture.url !== currentEarTextureURL);
+
+                thumb.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const newURL = e.target.dataset.url;
+                    if (newURL !== currentEarTextureURL) {
+                        currentEarTextureURL = newURL;
+                        changeEarTexture('left', newURL);
+                        changeEarTexture('right', newURL);
+                        // Solo actualizar clases
+                        document.querySelectorAll('#ear-left-carousel-container img, #ear-right-carousel-container img').forEach(img => {
+                            img.classList.toggle('border-cyan-500', img.dataset.url === newURL);
+                            img.classList.toggle('border-transparent', img.dataset.url !== newURL);
+                        });
+                    }
+                });
+                ui.earRightCarouselContainer.appendChild(thumb);
+            });
+        }
+
+        function updateEarSideButtons() {
+            Object.values(ui.earSideBtns).forEach(b => b.classList.remove('active-btn'));
+            if (currentEarSide && ui.earSideBtns[currentEarSide]) {
+                ui.earSideBtns[currentEarSide].classList.add('active-btn');
+            }
+        }
+
+        function changeHairTexture(frontUrl, backUrl, isInitialLoad = false) {
+            if (!modelParts.head) return;
+            
+            // Si frontUrl es null, significa "None" - remover el cabello
+            if (frontUrl === null) {
+                if (hairFrontMesh) {
+                    modelParts.head.remove(hairFrontMesh);
+                    if (hairFrontMesh.material.map) hairFrontMesh.material.map.dispose();
+                    hairFrontMesh.material.dispose();
+                    hairFrontMesh.geometry.dispose();
+                    hairFrontMesh = null;
+                }
+                if (hairBackMesh) {
+                    modelParts.head.remove(hairBackMesh);
+                    if (hairBackMesh.material.map) hairBackMesh.material.map.dispose();
+                    hairBackMesh.material.dispose();
+                    hairBackMesh.geometry.dispose();
+                    hairBackMesh = null;
+                }
+                return;
+            }
+            
+            // Cargar front hair
+            loadOptimizedTexture(frontUrl,
+                (texture) => {
+                    if (isInitialLoad || !hairFrontMesh) {
+                        // Creación inicial del cabello frontal
+                        const hairMaterial = new THREE.MeshBasicMaterial({ 
+                            map: texture, 
+                            transparent: true, 
+                            side: THREE.DoubleSide, 
+                            alphaTest: 0.5
+                        });
+                        const planeHeight = 5.556;
+                        const aspect = texture.image.width / texture.image.height;
+                        const planeWidth = planeHeight * aspect;
+                        const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                        hairFrontMesh = new THREE.Mesh(hairGeometry, hairMaterial);
+                        // Posición del cabello frontal
+                        hairFrontMesh.position.set(0, 0.563, 1.130);
+                        modelParts.head.add(hairFrontMesh);
+                    } else {
+                        // Solo actualiza la textura si el mesh ya existe
+                        const oldMap = hairFrontMesh.material.map;
+                        hairFrontMesh.material.map = texture;
+                        hairFrontMesh.material.needsUpdate = true;
+                        if (oldMap && oldMap !== texture) oldMap.dispose();
+                    }
+                },
+                undefined,
+                (error) => {
+                    console.error("No se pudo cargar la textura del cabello frontal.", error);
+                }
+            );
+            
+            // Cargar back hair
+            loadOptimizedTexture(backUrl,
+                (texture) => {
+                    if (isInitialLoad || !hairBackMesh) {
+                        // Creación inicial del cabello trasero
+                        const hairMaterial = new THREE.MeshBasicMaterial({ 
+                            map: texture, 
+                            transparent: true, 
+                            side: THREE.DoubleSide, 
+                            alphaTest: 0.5
+                        });
+                        const planeHeight = 5.556;
+                        const aspect = texture.image.width / texture.image.height;
+                        const planeWidth = planeHeight * aspect;
+                        const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                        hairBackMesh = new THREE.Mesh(hairGeometry, hairMaterial);
+                        // Posición del cabello trasero (detrás de la cabeza)
+                        hairBackMesh.position.set(0, 0.563, -1.130);
+                        modelParts.head.add(hairBackMesh);
+                    } else {
+                        // Solo actualiza la textura si el mesh ya existe
+                        const oldMap = hairBackMesh.material.map;
+                        hairBackMesh.material.map = texture;
+                        hairBackMesh.material.needsUpdate = true;
+                        if (oldMap && oldMap !== texture) oldMap.dispose();
+                    }
+                },
+                undefined,
+                (error) => {
+                    console.error("No se pudo cargar la textura del cabello trasero.", error);
+                }
+            );
+        }
+
+        function updateHairCarousel() {
+            ui.hairCarouselContainer.innerHTML = '';
+            hairTextures.forEach(hair => {
+                const thumb = document.createElement('div');
+                thumb.className = 'w-12 h-12 rounded-lg cursor-pointer border-2 hover:border-cyan-400 flex items-center justify-center';
+                
+                if (hair.frontUrl === null) {
+                    // Opción "None" - mostrar un icono o texto
+                    thumb.innerHTML = '<span class="text-xs text-cyan-300">None</span>';
+                    thumb.style.backgroundColor = 'rgba(30, 41, 59, 0.5)';
+                } else {
+                    // Mostrar imagen del cabello frontal
+                    const img = document.createElement('img');
+                    img.src = hair.frontUrl;
+                    img.className = 'w-full h-full object-fill rounded-lg';
+                    thumb.appendChild(img);
+                }
+                
+                thumb.dataset.frontUrl = hair.frontUrl;
+                thumb.dataset.backUrl = hair.backUrl;
+
+                // Resaltar la miniatura activa
+                thumb.classList.toggle('border-cyan-500', hair.frontUrl === currentHairFrontURL);
+                thumb.classList.toggle('border-transparent', hair.frontUrl !== currentHairFrontURL);
+
+                thumb.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const newFrontURL = e.currentTarget.dataset.frontUrl === 'null' ? null : e.currentTarget.dataset.frontUrl;
+                    const newBackURL = e.currentTarget.dataset.backUrl === 'null' ? null : e.currentTarget.dataset.backUrl;
+                    if (newFrontURL !== currentHairFrontURL) {
+                        currentHairFrontURL = newFrontURL;
+                        currentHairBackURL = newBackURL;
+                        changeHairTexture(newFrontURL, newBackURL);
+                        // Solo actualizar clases
+                        document.querySelectorAll('#hair-carousel-container > div').forEach(div => {
+                            div.classList.toggle('border-cyan-500', div.dataset.frontUrl === newFrontURL);
+                            div.classList.toggle('border-transparent', div.dataset.frontUrl !== newFrontURL);
+                        });
+                    }
+                });
+                ui.hairCarouselContainer.appendChild(thumb);
+            });
+        }
+
+        function changeTorsoClothing(frontUrl, backUrl, isInitialLoad = false) {
+            if (!modelParts.torso) return;
+            
+            // Si frontUrl es null, significa "None" - remover la ropa
+            if (frontUrl === null) {
+                if (torsoFrontMesh) {
+                    modelParts.torso.remove(torsoFrontMesh);
+                    if (torsoFrontMesh.material.map) torsoFrontMesh.material.map.dispose();
+                    torsoFrontMesh.material.dispose();
+                    torsoFrontMesh.geometry.dispose();
+                    torsoFrontMesh = null;
+                }
+                if (torsoBackMesh) {
+                    modelParts.torso.remove(torsoBackMesh);
+                    if (torsoBackMesh.material.map) torsoBackMesh.material.map.dispose();
+                    torsoBackMesh.material.dispose();
+                    torsoBackMesh.geometry.dispose();
+                    torsoBackMesh = null;
+                }
+                return;
+            }
+            
+            // Cargar textura frontal del torso
+            loadOptimizedTexture(frontUrl,
+                (texture) => {
+                    if (isInitialLoad || !torsoFrontMesh) {
+                        const clothingMaterial = new THREE.MeshBasicMaterial({ 
+                            map: texture, 
+                            transparent: true, 
+                            side: THREE.DoubleSide, 
+                            alphaTest: 0.5
+                        });
+                        const planeHeight = 2.145; 
+                        const aspect = texture.image.width / texture.image.height;
+                        const planeWidth = planeHeight * aspect;
+                        const clothingGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                        torsoFrontMesh = new THREE.Mesh(clothingGeometry, clothingMaterial);
+                        torsoFrontMesh.position.set(0, -1.176, 0.453); // Torso frontal
+                        modelParts.torso.add(torsoFrontMesh);
+                    } else {
+                        const oldMap = torsoFrontMesh.material.map;
+                        torsoFrontMesh.material.map = texture;
+                        torsoFrontMesh.material.needsUpdate = true;
+                        if (oldMap && oldMap !== texture) oldMap.dispose();
+                    }
+                },
+                undefined,
+                (error) => {
+                    console.error("No se pudo cargar la textura frontal del torso.", error);
+                }
+            );
+            
+            // Cargar textura trasera del torso
+            loadOptimizedTexture(backUrl,
+                (texture) => {
+                    if (isInitialLoad || !torsoBackMesh) {
+                        const clothingMaterial = new THREE.MeshBasicMaterial({ 
+                            map: texture, 
+                            transparent: true, 
+                            side: THREE.DoubleSide, 
+                            alphaTest: 0.5
+                        });
+                        const planeHeight = 2.145; 
+                        const aspect = texture.image.width / texture.image.height;
+                        const planeWidth = planeHeight * aspect;
+                        const clothingGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                        torsoBackMesh = new THREE.Mesh(clothingGeometry, clothingMaterial);
+                        torsoBackMesh.position.set(0, -1.176, -0.453); // Torso trasero (Z invertido)
+                        modelParts.torso.add(torsoBackMesh);
+                    } else {
+                        const oldMap = torsoBackMesh.material.map;
+                        torsoBackMesh.material.map = texture;
+                        torsoBackMesh.material.needsUpdate = true;
+                        if (oldMap && oldMap !== texture) oldMap.dispose();
+                    }
+                },
+                undefined,
+                (error) => {
+                    console.error("No se pudo cargar la textura trasera del torso.", error);
+                }
+            );
+        }
+
+        function changeLegClothing(side, url, isInitialLoad = false) {
+            if (modelParts.legs.length < 2) return;
+            
+            const leftLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('l'));
+            const rightLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('r'));
+            
+            if (!leftLeg || !rightLeg) return;
+            
+            const targetLeg = side === 'left' ? leftLeg : rightLeg;
+            const targetFrontMesh = side === 'left' ? legLeftFrontMesh : legRightFrontMesh;
+            const targetBackMesh = side === 'left' ? legLeftBackMesh : legRightBackMesh;
+            
+            // Si url es null, significa "None" - remover el estilo
+            if (url === null) {
+                if (targetFrontMesh) {
+                    targetLeg.remove(targetFrontMesh);
+                    if (targetFrontMesh.material.map) targetFrontMesh.material.map.dispose();
+                    targetFrontMesh.material.dispose();
+                    targetFrontMesh.geometry.dispose();
+                    if (side === 'left') {
+                        legLeftFrontMesh = null;
+                    } else {
+                        legRightFrontMesh = null;
+                    }
+                }
+                if (targetBackMesh) {
+                    targetLeg.remove(targetBackMesh);
+                    if (targetBackMesh.material.map) targetBackMesh.material.map.dispose();
+                    targetBackMesh.material.dispose();
+                    targetBackMesh.geometry.dispose();
+                    if (side === 'left') {
+                        legLeftBackMesh = null;
+                    } else {
+                        legRightBackMesh = null;
+                    }
+                }
+                return;
+            }
+            
+            // Cargar textura de pierna (front)
+            loadOptimizedTexture(url,
+                (texture) => {
+                    if (isInitialLoad || !targetFrontMesh) {
+                        // Creación inicial del estilo de pierna frontal
+                        const clothingMaterial = new THREE.MeshBasicMaterial({ 
+                            map: texture, 
+                            transparent: true, 
+                            side: THREE.DoubleSide, 
+                            alphaTest: 0.5
+                        });
+                        const planeHeight = 2.145; 
+                        const aspect = texture.image.width / texture.image.height;
+                        const planeWidth = planeHeight * aspect;
+                        const clothingGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                        const newMesh = new THREE.Mesh(clothingGeometry, clothingMaterial);
+                        
+                        // Posición según el lado - front leg (relativa a cada pierna)
+                        if (side === 'left') {
+                            newMesh.position.set(0, -1.176, 0.452); // Pierna izquierda frontal
+                            legLeftFrontMesh = newMesh;
+                        } else {
+                            newMesh.position.set(0, -1.176, 0.452); // Pierna derecha frontal
+                            newMesh.rotation.y = Math.PI; // Rotar 180 grados
+                            legRightFrontMesh = newMesh;
+                        }
+                        
+                        targetLeg.add(newMesh);
+                    } else {
+                        if (side === 'left' && legLeftFrontMesh) {
+                            const oldMap = legLeftFrontMesh.material.map;
+                            legLeftFrontMesh.material.map = texture;
+                            legLeftFrontMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        } else if (side === 'right' && legRightFrontMesh) {
+                            const oldMap = legRightFrontMesh.material.map;
+                            legRightFrontMesh.material.map = texture;
+                            legRightFrontMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        }
+                    }
+                },
+                undefined,
+                (error) => {
+                    console.error(`No se pudo cargar la textura frontal de la pierna ${side}.`, error);
+                }
+            );
+            
+            // Cargar textura de pierna (back) - duplicado
+            loadOptimizedTexture(url,
+                (texture) => {
+                    if (isInitialLoad || !targetBackMesh) {
+                        // Creación inicial del estilo de pierna trasera (duplicado)
+                        const clothingMaterial = new THREE.MeshBasicMaterial({ 
+                            map: texture, 
+                            transparent: true, 
+                            side: THREE.DoubleSide, 
+                            alphaTest: 0.5
+                        });
+                        const planeHeight = 2.145; 
+                        const aspect = texture.image.width / texture.image.height;
+                        const planeWidth = planeHeight * aspect;
+                        const clothingGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                        const newMesh = new THREE.Mesh(clothingGeometry, clothingMaterial);
+                        
+                        // Posición según el lado - back leg (detrás, relativa a cada pierna)
+                        if (side === 'left') {
+                            newMesh.position.set(0, -1.176, -0.452); // Pierna izquierda trasera
+                            legLeftBackMesh = newMesh;
+                        } else {
+                            newMesh.position.set(0, -1.176, -0.452); // Pierna derecha trasera
+                            newMesh.rotation.y = Math.PI; // Rotar 180 grados
+                            legRightBackMesh = newMesh;
+                        }
+                        
+                        targetLeg.add(newMesh);
+                    } else {
+                        if (side === 'left' && legLeftBackMesh) {
+                            const oldMap = legLeftBackMesh.material.map;
+                            legLeftBackMesh.material.map = texture;
+                            legLeftBackMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        } else if (side === 'right' && legRightBackMesh) {
+                            const oldMap = legRightBackMesh.material.map;
+                            legRightBackMesh.material.map = texture;
+                            legRightBackMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        }
+                    }
+                },
+                undefined,
+                (error) => {
+                    console.error(`No se pudo cargar la textura trasera de la pierna ${side}.`, error);
+                }
+            );
+        }
+
+        function updateLegLeftCarousel() {
+            ui.legLeftCarouselContainer.innerHTML = '';
+            legTextures.forEach(texture => {
+                const thumb = document.createElement('div');
+                thumb.className = 'w-12 h-12 rounded-lg cursor-pointer border-2 hover:border-cyan-400 flex items-center justify-center';
+                
+                if (texture.leftUrl === null) {
+                    thumb.innerHTML = '<span class="text-xs text-cyan-300">None</span>';
+                    thumb.style.backgroundColor = 'rgba(30, 41, 59, 0.5)';
+                } else {
+                    const img = document.createElement('img');
+                    img.src = texture.leftUrl;
+                    img.className = 'w-full h-full object-fill rounded-lg';
+                    thumb.appendChild(img);
+                }
+                
+                thumb.dataset.url = texture.leftUrl;
+                thumb.classList.toggle('border-cyan-500', texture.leftUrl === currentLegLeftURL);
+                thumb.classList.toggle('border-transparent', texture.leftUrl !== currentLegLeftURL);
+
+                thumb.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const newURL = e.currentTarget.dataset.url === 'null' ? null : e.currentTarget.dataset.url;
+                    if (newURL !== currentLegLeftURL) {
+                        currentLegLeftURL = newURL;
+                        changeLegClothing('left', newURL);
+                        // Solo actualizar clases
+                        document.querySelectorAll('#leg-left-carousel-container > div').forEach(div => {
+                            div.classList.toggle('border-cyan-500', div.dataset.url === newURL);
+                            div.classList.toggle('border-transparent', div.dataset.url !== newURL);
+                        });
+                    }
+                });
+                ui.legLeftCarouselContainer.appendChild(thumb);
+            });
+        }
+
+        function updateLegRightCarousel() {
+            ui.legRightCarouselContainer.innerHTML = '';
+            legTextures.forEach(texture => {
+                const thumb = document.createElement('div');
+                thumb.className = 'w-12 h-12 rounded-lg cursor-pointer border-2 hover:border-cyan-400 flex items-center justify-center';
+                
+                if (texture.rightUrl === null) {
+                    thumb.innerHTML = '<span class="text-xs text-cyan-300">None</span>';
+                    thumb.style.backgroundColor = 'rgba(30, 41, 59, 0.5)';
+                } else {
+                    const img = document.createElement('img');
+                    img.src = texture.rightUrl;
+                    img.className = 'w-full h-full object-fill rounded-lg';
+                    thumb.appendChild(img);
+                }
+                
+                thumb.dataset.url = texture.rightUrl;
+                thumb.classList.toggle('border-cyan-500', texture.rightUrl === currentLegRightURL);
+                thumb.classList.toggle('border-transparent', texture.rightUrl !== currentLegRightURL);
+
+                thumb.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const newURL = e.currentTarget.dataset.url === 'null' ? null : e.currentTarget.dataset.url;
+                    if (newURL !== currentLegRightURL) {
+                        currentLegRightURL = newURL;
+                        changeLegClothing('right', newURL);
+                        // Solo actualizar clases
+                        document.querySelectorAll('#leg-right-carousel-container > div').forEach(div => {
+                            div.classList.toggle('border-cyan-500', div.dataset.url === newURL);
+                            div.classList.toggle('border-transparent', div.dataset.url !== newURL);
+                        });
+                    }
+                });
+                ui.legRightCarouselContainer.appendChild(thumb);
+            });
+        }
+
+        function updateLegSideButtons() {
+            Object.values(ui.legSideBtns).forEach(b => b.classList.remove('active-btn'));
+            if (currentLegSide && ui.legSideBtns[currentLegSide]) {
+                ui.legSideBtns[currentLegSide].classList.add('active-btn');
+            }
+        }
+
+        function changeArmClothing(side, url, isInitialLoad = false) {
+            if (modelParts.arms.length < 2) return;
+            
+            const leftArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('l'));
+            const rightArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('r'));
+            
+            if (!leftArm || !rightArm) return;
+            
+            // La imagen del brazo izquierdo sigue al brazo derecho, la imagen del brazo derecho sigue al brazo izquierdo
+            const targetArm = side === 'left' ? rightArm : leftArm;
+            const targetFrontMesh = side === 'left' ? armLeftFrontMesh : armRightFrontMesh;
+            const targetBackMesh = side === 'left' ? armLeftBackMesh : armRightBackMesh;
+            
+            // Posiciones y tamaño unificados para front y back
+            const armPositions = {
+                left: { x: -1.288, y: -0.934, zFront: -0.001, zBack: 0.006 },
+                right: { x: -1.288, y: -0.934, zFront: 0.001, zBack: -0.006 }
+            };
+            const armSize = 1.677; // Tamaño unificado para ambos brazos (frontal y trasero)
+            const pos = armPositions[side];
+            
+            // Si url es null, significa "None" - remover el estilo
+            if (url === null) {
+                if (targetFrontMesh) {
+                    targetArm.remove(targetFrontMesh);
+                    if (targetFrontMesh.material.map) targetFrontMesh.material.map.dispose();
+                    targetFrontMesh.material.dispose();
+                    targetFrontMesh.geometry.dispose();
+                    if (side === 'left') {
+                        armLeftFrontMesh = null;
+                    } else {
+                        armRightFrontMesh = null;
+                    }
+                }
+                if (targetBackMesh) {
+                    targetArm.remove(targetBackMesh);
+                    if (targetBackMesh.material.map) targetBackMesh.material.map.dispose();
+                    targetBackMesh.material.dispose();
+                    targetBackMesh.geometry.dispose();
+                    if (side === 'left') {
+                        armLeftBackMesh = null;
+                    } else {
+                        armRightBackMesh = null;
+                    }
+                }
+                return;
+            }
+            
+            // Cargar textura de brazo (front)
+            loadOptimizedTexture(url,
+                (texture) => {
+                    if (isInitialLoad || !targetFrontMesh) {
+                        const clothingMaterial = new THREE.MeshBasicMaterial({ 
+                            map: texture, 
+                            transparent: true, 
+                            side: THREE.DoubleSide, 
+                            alphaTest: 0.5
+                        });
+                        const aspect = texture.image.width / texture.image.height;
+                        const planeWidth = armSize * aspect;
+                        const clothingGeometry = new THREE.PlaneGeometry(planeWidth, armSize);
+                        const newMesh = new THREE.Mesh(clothingGeometry, clothingMaterial);
+                        
+                        // Posición según el lado - front arm (usa posición unificada)
+                        newMesh.position.set(pos.x, pos.y, pos.zFront);
+                        if (side === 'left') {
+                            newMesh.rotation.y = Math.PI; // 180 grados en el eje Y
+                            armLeftFrontMesh = newMesh;
+                        } else {
+                            newMesh.rotation.y = 0; // Sin rotación
+                            armRightFrontMesh = newMesh;
+                        }
+                        
+                        targetArm.add(newMesh);
+                    } else {
+                        if (side === 'left' && armLeftFrontMesh) {
+                            const oldMap = armLeftFrontMesh.material.map;
+                            armLeftFrontMesh.material.map = texture;
+                            armLeftFrontMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        } else if (side === 'right' && armRightFrontMesh) {
+                            const oldMap = armRightFrontMesh.material.map;
+                            armRightFrontMesh.material.map = texture;
+                            armRightFrontMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        }
+                    }
+                },
+                undefined,
+                (error) => {
+                    console.error(`No se pudo cargar la textura frontal del brazo ${side}.`, error);
+                }
+            );
+            
+            // Cargar textura de brazo (back) - duplicado
+            loadOptimizedTexture(url,
+                (texture) => {
+                    if (isInitialLoad || !targetBackMesh) {
+                        const clothingMaterial = new THREE.MeshBasicMaterial({ 
+                            map: texture, 
+                            transparent: true, 
+                            side: THREE.DoubleSide, 
+                            alphaTest: 0.5
+                        });
+                        const aspect = texture.image.width / texture.image.height;
+                        const planeWidth = armSize * aspect;
+                        const clothingGeometry = new THREE.PlaneGeometry(planeWidth, armSize);
+                        const newMesh = new THREE.Mesh(clothingGeometry, clothingMaterial);
+                        
+                        // Posición según el lado - back arm (usa posición unificada)
+                        newMesh.position.set(pos.x, pos.y, pos.zBack);
+                        if (side === 'left') {
+                            newMesh.rotation.y = Math.PI; // 180 grados en el eje Y
+                            armLeftBackMesh = newMesh;
+                        } else {
+                            newMesh.rotation.y = 0; // Sin rotación
+                            armRightBackMesh = newMesh;
+                        }
+                        
+                        targetArm.add(newMesh);
+                    } else {
+                        if (side === 'left' && armLeftBackMesh) {
+                            const oldMap = armLeftBackMesh.material.map;
+                            armLeftBackMesh.material.map = texture;
+                            armLeftBackMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        } else if (side === 'right' && armRightBackMesh) {
+                            const oldMap = armRightBackMesh.material.map;
+                            armRightBackMesh.material.map = texture;
+                            armRightBackMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        }
+                    }
+                },
+                undefined,
+                (error) => {
+                    console.error(`No se pudo cargar la textura trasera del brazo ${side}.`, error);
+                }
+            );
+        }
+
+        function updateArmLeftCarousel() {
+            ui.armLeftCarouselContainer.innerHTML = '';
+            armTextures.forEach(texture => {
+                const thumb = document.createElement('div');
+                thumb.className = 'w-12 h-12 rounded-lg cursor-pointer border-2 hover:border-cyan-400 flex items-center justify-center';
+                
+                if (texture.leftUrl === null) {
+                    thumb.innerHTML = '<span class="text-xs text-cyan-300">None</span>';
+                    thumb.style.backgroundColor = 'rgba(30, 41, 59, 0.5)';
+                } else {
+                    const img = document.createElement('img');
+                    img.src = texture.leftUrl;
+                    img.className = 'w-full h-full object-fill rounded-lg';
+                    thumb.appendChild(img);
+                }
+                
+                thumb.dataset.url = texture.leftUrl;
+                thumb.classList.toggle('border-cyan-500', texture.leftUrl === currentArmLeftURL);
+                thumb.classList.toggle('border-transparent', texture.leftUrl !== currentArmLeftURL);
+
+                thumb.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const newURL = e.currentTarget.dataset.url === 'null' ? null : e.currentTarget.dataset.url;
+                    if (newURL !== currentArmLeftURL) {
+                        currentArmLeftURL = newURL;
+                        changeArmClothing('left', newURL);
+                        // Solo actualizar clases
+                        document.querySelectorAll('#arm-left-carousel-container > div').forEach(div => {
+                            div.classList.toggle('border-cyan-500', div.dataset.url === newURL);
+                            div.classList.toggle('border-transparent', div.dataset.url !== newURL);
+                        });
+                    }
+                });
+                ui.armLeftCarouselContainer.appendChild(thumb);
+            });
+        }
+
+        function updateArmRightCarousel() {
+            ui.armRightCarouselContainer.innerHTML = '';
+            armTextures.forEach(texture => {
+                const thumb = document.createElement('div');
+                thumb.className = 'w-12 h-12 rounded-lg cursor-pointer border-2 hover:border-cyan-400 flex items-center justify-center';
+                
+                if (texture.rightUrl === null) {
+                    thumb.innerHTML = '<span class="text-xs text-cyan-300">None</span>';
+                    thumb.style.backgroundColor = 'rgba(30, 41, 59, 0.5)';
+                } else {
+                    const img = document.createElement('img');
+                    img.src = texture.rightUrl;
+                    img.className = 'w-full h-full object-fill rounded-lg';
+                    thumb.appendChild(img);
+                }
+                
+                thumb.dataset.url = texture.rightUrl;
+                thumb.classList.toggle('border-cyan-500', texture.rightUrl === currentArmRightURL);
+                thumb.classList.toggle('border-transparent', texture.rightUrl !== currentArmRightURL);
+
+                thumb.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const newURL = e.currentTarget.dataset.url === 'null' ? null : e.currentTarget.dataset.url;
+                    if (newURL !== currentArmRightURL) {
+                        currentArmRightURL = newURL;
+                        changeArmClothing('right', newURL);
+                        // Solo actualizar clases
+                        document.querySelectorAll('#arm-right-carousel-container > div').forEach(div => {
+                            div.classList.toggle('border-cyan-500', div.dataset.url === newURL);
+                            div.classList.toggle('border-transparent', div.dataset.url !== newURL);
+                        });
+                    }
+                });
+                ui.armRightCarouselContainer.appendChild(thumb);
+            });
+        }
+
+        function updateArmSideButtons() {
+            Object.values(ui.armSideBtns).forEach(b => b.classList.remove('active-btn'));
+            if (currentArmSide && ui.armSideBtns[currentArmSide]) {
+                ui.armSideBtns[currentArmSide].classList.add('active-btn');
+            }
+        }
+
+        function updateTorsoClothingCarousel() {
+            ui.torsoClothingCarouselContainer.innerHTML = '';
+            torsoClothingTextures.forEach(clothing => {
+                const thumb = document.createElement('div');
+                thumb.className = 'w-12 h-12 rounded-lg cursor-pointer border-2 hover:border-cyan-400 flex items-center justify-center';
+                
+                if (clothing.frontUrl === null) {
+                    // Opción "None" - mostrar un icono o texto
+                    thumb.innerHTML = '<span class="text-xs text-cyan-300">None</span>';
+                    thumb.style.backgroundColor = 'rgba(30, 41, 59, 0.5)';
+                } else {
+                    // Mostrar imagen frontal de la prenda
+                    const img = document.createElement('img');
+                    img.src = clothing.frontUrl;
+                    img.className = 'w-full h-full object-fill rounded-lg';
+                    thumb.appendChild(img);
+                }
+                
+                thumb.dataset.frontUrl = clothing.frontUrl;
+                thumb.dataset.backUrl = clothing.backUrl;
+
+                // Resaltar la miniatura activa
+                thumb.classList.toggle('border-cyan-500', clothing.frontUrl === currentTorsoFrontURL);
+                thumb.classList.toggle('border-transparent', clothing.frontUrl !== currentTorsoFrontURL);
+
+                thumb.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const newFrontURL = e.currentTarget.dataset.frontUrl === 'null' ? null : e.currentTarget.dataset.frontUrl;
+                    const newBackURL = e.currentTarget.dataset.backUrl === 'null' ? null : e.currentTarget.dataset.backUrl;
+                    if (newFrontURL !== currentTorsoFrontURL) {
+                        currentTorsoFrontURL = newFrontURL;
+                        currentTorsoBackURL = newBackURL;
+                        changeTorsoClothing(newFrontURL, newBackURL);
+                        // Solo actualizar clases
+                        document.querySelectorAll('#torso-clothing-carousel-container > div').forEach(div => {
+                            div.classList.toggle('border-cyan-500', div.dataset.frontUrl === newFrontURL);
+                            div.classList.toggle('border-transparent', div.dataset.frontUrl !== newFrontURL);
+                        });
+                    }
+                });
+                ui.torsoClothingCarouselContainer.appendChild(thumb);
+            });
+        }
+
+        function updatePaletteDOM(colors){
+            ui.palette.innerHTML = '';
+            colors.forEach(hex => {
+                const swatch = document.createElement('div');
+                swatch.className='w-8 h-8 md:w-9 md:h-9 rounded-full cursor-pointer transition-transform duration-200 color-swatch';
+                swatch.style.backgroundColor = hex;
+                swatch.dataset.color = hex.replace('#', '0x');
+                swatch.addEventListener('click', e => {
+                    const newColor = parseInt(e.target.dataset.color, 16);
+                    if (!loadedModel) return;
+
+                    if (currentMainPart === 'head' && currentHeadPart) {
+                        // Aplicar color a sub-parte de la cabeza
+                        switch (currentHeadPart) {
+                            case 'eyes': 
+                                if (modelParts.head) {
+                                    modelParts.head.material.color.setHex(newColor);
+                                    applyNoseColor(newColor); // Aplicar color a la nariz también
+                                }
+                                break;
+                            case 'eyebrows': modelParts.eyebrows.forEach(eb => eb.material.color.setHex(newColor)); break;
+                            case 'nose': if (modelParts.nose) modelParts.nose.material.color.setHex(newColor); break;
+                            case 'ears': modelParts.ears.forEach(ear => ear.material.color.setHex(newColor)); break;
+                            case 'hair': if (modelParts.hair) modelParts.hair.material.color.setHex(newColor); break;
+                        }
+                    } else {
+                        // Aplicar color a parte principal
+                        switch (currentMainPart) {
+                            case 'head': 
+                                if (modelParts.head) {
+                                    modelParts.head.material.color.setHex(newColor);
+                                    applyNoseColor(newColor); // Aplicar color a la nariz también
+                                }
+                                break;
+                            case 'torso': if (modelParts.torso) modelParts.torso.material.color.setHex(newColor); break;
+                            case 'arms': modelParts.arms.forEach(arm => arm.material.color.setHex(newColor)); break;
+                            case 'legs': modelParts.legs.forEach(leg => leg.material.color.setHex(newColor)); break;
+                        }
+                    }
+                });
+                ui.palette.appendChild(swatch);
+            });
+        }
+        
+        // Sliders de personalización de color
+        const hueSlider = document.getElementById('hue-slider');
+        const lightnessSlider = document.getElementById('lightness-slider');
+        
+        function applyCustomColor() {
+            const hue = hueSlider.value;
+            const lightness = lightnessSlider.value;
+            const saturation = 70; // Saturación fija para colores vibrantes
+            
+            // Convertir HSL a Hex
+            const hslToHex = (h, s, l) => {
+                l /= 100;
+                const a = s * Math.min(l, 1 - l) / 100;
+                const f = n => {
+                    const k = (n + h / 30) % 12;
+                    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+                    return Math.round(255 * color).toString(16).padStart(2, '0');
+                };
+                return `#${f(0)}${f(8)}${f(4)}`;
+            };
+            
+            const customColor = hslToHex(hue, saturation, lightness);
+            const colorHex = parseInt(customColor.replace('#', '0x'), 16);
+            
+            if (!loadedModel) return;
+            
+            // Aplicar el color personalizado según la parte seleccionada
+            if (currentMainPart === 'head' && currentHeadPart) {
+                switch (currentHeadPart) {
+                    case 'eyes': 
+                        if (modelParts.head) {
+                            modelParts.head.material.color.setHex(colorHex);
+                            applyNoseColor(colorHex);
+                        }
+                        break;
+                    case 'eyebrows': modelParts.eyebrows.forEach(eb => eb.material.color.setHex(colorHex)); break;
+                    case 'nose': if (modelParts.nose) modelParts.nose.material.color.setHex(colorHex); break;
+                    case 'ears': modelParts.ears.forEach(ear => ear.material.color.setHex(colorHex)); break;
+                    case 'hair': if (modelParts.hair) modelParts.hair.material.color.setHex(colorHex); break;
+                }
+            } else {
+                switch (currentMainPart) {
+                    case 'head': 
+                        if (modelParts.head) {
+                            modelParts.head.material.color.setHex(colorHex);
+                            applyNoseColor(colorHex);
+                        }
+                        break;
+                    case 'torso': if (modelParts.torso) modelParts.torso.material.color.setHex(colorHex); break;
+                    case 'arms': modelParts.arms.forEach(arm => arm.material.color.setHex(colorHex)); break;
+                    case 'legs': modelParts.legs.forEach(leg => leg.material.color.setHex(colorHex)); break;
+                }
+            }
+        }
+        
+        hueSlider.addEventListener('input', applyCustomColor);
+        lightnessSlider.addEventListener('input', applyCustomColor);
+        
+        window.addEventListener('keydown', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = true; });
+        window.addEventListener('keyup', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = false; });
+        window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});
+        
+        const moveSpeed = 5, turnSpeed = 3, jumpHeight = 10, gravity = -30;
+        function handlePlayerControls(dt) {
+            if (!loadedModel) return;
+            
+            // Manejar salto (teclado o botón móvil)
+            if (keys[' '] && !isJumping) { isJumping = true; yVelocity = jumpHeight; }
+            if (isJumping) {
+                yVelocity += gravity * dt;
+                loadedModel.position.y += yVelocity * dt;
+                if (loadedModel.position.y <= groundY) {
+                    loadedModel.position.y = groundY;
+                    isJumping = false;
+                    yVelocity = 0;
+                }
+            }
+            
+            // Controles de teclado
+            if (keys.ArrowLeft) loadedModel.rotation.y += turnSpeed * dt;
+            if (keys.ArrowRight) loadedModel.rotation.y -= turnSpeed * dt;
+            const forward = new THREE.Vector3(0, 0, 1).applyQuaternion(loadedModel.quaternion);
+            if (keys.ArrowUp) loadedModel.position.add(forward.multiplyScalar(moveSpeed * dt));
+            if (keys.ArrowDown) loadedModel.position.add(forward.multiplyScalar(-moveSpeed * dt));
+            
+            // Controles de joystick móvil
+            if (joystickActive) {
+                // Rotación basada en el eje X del joystick
+                if (Math.abs(joystickVector.x) > 0.1) {
+                    loadedModel.rotation.y -= joystickVector.x * turnSpeed * dt;
+                }
+                
+                // Movimiento adelante/atrás basado en el eje Y del joystick
+                if (Math.abs(joystickVector.y) > 0.1) {
+                    const forwardJoy = new THREE.Vector3(0, 0, 1).applyQuaternion(loadedModel.quaternion);
+                    loadedModel.position.add(forwardJoy.multiplyScalar(joystickVector.y * moveSpeed * dt));
+                }
+            }
+        }
+
+        const cameraDistance = 6;
+        const cameraHeight = 2;
+        
+        function updatePlayCamera() {
+            if (!loadedModel) return;
+            
+            // Interpolar suavemente el ángulo actual hacia el ángulo objetivo
+            if (isCameraTransitioning) {
+                const angleDiff = targetCameraAngle - cameraAngle;
+                cameraAngle += angleDiff * 0.1; // Interpolación suave
+                
+                // Si estamos muy cerca del objetivo, finalizar la transición
+                if (Math.abs(angleDiff) < 0.01) {
+                    cameraAngle = targetCameraAngle;
+                    isCameraTransitioning = false;
+                }
+            }
+            
+            // Calcular la posición de la cámara basada en el ángulo y la rotación del modelo
+            const modelRotation = loadedModel.rotation.y;
+            const totalAngle = modelRotation + cameraAngle;
+            
+            // Posición relativa de la cámara (girando alrededor del eje Y)
+            const offsetX = Math.sin(totalAngle) * cameraDistance;
+            const offsetZ = Math.cos(totalAngle) * cameraDistance;
+            
+            const desiredPos = loadedModel.position.clone();
+            desiredPos.x += offsetX;
+            desiredPos.y += cameraHeight;
+            desiredPos.z += offsetZ;
+            
+            camera.position.lerp(desiredPos, 0.1);
+            
+            const lookAtPos = loadedModel.position.clone();
+            lookAtPos.y = modelCenter.y;
+            controls.target.lerp(lookAtPos, 0.1);
+        }
+        
+        function toggleCameraView() {
+            cameraView = cameraView === 'back' ? 'front' : 'back';
+            targetCameraAngle = cameraView === 'back' ? 0 : Math.PI; // 0° para atrás, 180° para adelante
+            isCameraTransitioning = true;
+        }
+        
+        // Handler de resize optimizado con debounce
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }, 150); // Debounce de 150ms
+        });
+        
+        const clock = new THREE.Clock();
+        const animationSpeed = 10, animationAmplitude = 0.6;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const dt = Math.min(clock.getDelta(), 0.1); // Limitar dt para evitar grandes saltos
+            const elapsedTime = clock.getElapsedTime();
+
+            if (appMode === 'play') {
+                 handlePlayerControls(dt);
+                 updatePlayCamera();
+            }
+            
+            // Lógica de animación de caminar
+            if (loadedModel && modelParts.arms.length >= 2 && modelParts.legs.length >= 2) {
+                const isMoving = appMode === 'play' && (keys.ArrowUp || keys.ArrowDown || (joystickActive && Math.abs(joystickVector.y) > 0.1));
+                const leftArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('l'));
+                const rightArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('r'));
+                const leftLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('l'));
+                const rightLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('r'));
+                
+                if(leftArm && rightArm && leftLeg && rightLeg) {
+                     if (isMoving) {
+                         const angle = Math.sin(elapsedTime * animationSpeed) * animationAmplitude;
+                         const initialLeftArmRot = initialTransforms.get(leftArm).rotation;
+                         const initialRightArmRot = initialTransforms.get(rightArm).rotation;
+                         const initialLeftLegRot = initialTransforms.get(leftLeg).rotation;
+                         const initialRightLegRot = initialTransforms.get(rightLeg).rotation;
+                         // Pierna derecha adelante, brazo izquierdo adelante
+                         rightLeg.rotation.x = initialRightLegRot.x + angle;
+                         leftArm.rotation.x = initialLeftArmRot.x - angle;  // INVERTIDO
+                         // Pierna izquierda adelante, brazo derecho adelante
+                         leftLeg.rotation.x = initialLeftLegRot.x - angle;
+                         rightArm.rotation.x = initialRightArmRot.x + angle;  // INVERTIDO
+                     } else {
+                         // Volver a la pose original
+                         [leftArm, rightArm, leftLeg, rightLeg].forEach(limb => {
+                             const initial = initialTransforms.get(limb);
+                             if(initial) {
+                                 limb.rotation.x = THREE.MathUtils.lerp(limb.rotation.x, initial.rotation.x, 0.1);
+                                 limb.rotation.y = THREE.MathUtils.lerp(limb.rotation.y, initial.rotation.y, 0.1);
+                                 limb.rotation.z = THREE.MathUtils.lerp(limb.rotation.z, initial.rotation.z, 0.1);
+                             }
+                         });
+                     }
+                }
+            }
+            
+            // Control de visibilidad del cabello trasero según ángulo de cámara
+            if (hairBackMesh && loadedModel) {
+                // Obtener la dirección de la cámara hacia el modelo
+                const cameraDirection = new THREE.Vector3();
+                camera.getWorldDirection(cameraDirection);
+                
+                // Obtener la dirección "adelante" del modelo (eje Z negativo en world space)
+                const modelForward = new THREE.Vector3(0, 0, -1);
+                modelForward.applyQuaternion(loadedModel.quaternion);
+                
+                // Calcular el ángulo entre la cámara y el frente del modelo
+                const angle = Math.acos(cameraDirection.dot(modelForward));
+                const angleDegrees = THREE.MathUtils.radToDeg(angle);
+                
+                // Ocultar solo si el ángulo está entre 91 y 95 grados
+                const isLateralView = angleDegrees >= 95 && angleDegrees <= 100;
+                hairBackMesh.visible = !isLateralView;
+            }
+
+             if(isAnimatingCamera){
+                 camera.position.lerp(cameraTargetPos, 0.1);
+                 controls.target.lerp(controlsTargetPos, 0.1);
+                 if(camera.position.distanceTo(cameraTargetPos) < 0.1){
+                     isAnimatingCamera = false;
+                     camera.position.copy(cameraTargetPos);
+                     controls.target.copy(controlsTargetPos);
+                 }
+             }
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        
+        // Inicialización
+        setIcons();
+        updatePaletteDOM(initialColors);
+        updateButtons();
+        updateEyeCarousel(); // Llenar el carrusel al iniciar
+        updateEyebrowCarousel(); // Llenar el carrusel de cejas al iniciar
+        updateNoseCarousel(); // Llenar el carrusel de nariz al iniciar
+        updateEarLeftCarousel(); // Llenar el carrusel de oreja izquierda al iniciar
+        updateEarRightCarousel(); // Llenar el carrusel de oreja derecha al iniciar
+        updateHairCarousel(); // Llenar el carrusel de cabello al iniciar
+        updateTorsoClothingCarousel(); // Llenar el carrusel de vestimenta al iniciar
+        updateArmLeftCarousel(); // Llenar el carrusel de brazo izquierdo al iniciar
+        updateArmRightCarousel(); // Llenar el carrusel de brazo derecho al iniciar
+        updateLegLeftCarousel(); // Llenar el carrusel de pierna izquierda al iniciar
+        updateLegRightCarousel(); // Llenar el carrusel de pierna derecha al iniciar
+        animate();
+    </script>
+</body>
+</html>

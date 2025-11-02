@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+
+# Deployment
+.netlify/
+windsurf_deployment.yaml
+
+# Logs
+*.log
+npm-debug.log*
