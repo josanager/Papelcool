@@ -623,19 +623,7 @@
             box-shadow: 0 2px 10px rgba(0, 255, 255, 0.6);
         }
         
-        /* Botones de showcase inicial - Glassmorphism 3D */
-        @property --angle-1 {
-            syntax: "<angle>";
-            inherits: false;
-            initial-value: -75deg;
-        }
-        
-        @property --angle-2 {
-            syntax: "<angle>";
-            inherits: false;
-            initial-value: -45deg;
-        }
-        
+        /* Botones de showcase inicial - Push Button Style */
         #showcase-buttons-container {
             position: fixed;
             bottom: 60px;
@@ -660,187 +648,135 @@
             max-width: 100%;
         }
         
-        /* Button Wrap Container */
+        /* Push Button Container */
         .button-wrap {
             position: relative;
-            z-index: 2;
-            border-radius: 999vw;
-            background: transparent;
-            pointer-events: none;
-            transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
-        }
-        
-        /* Button Shadow Container */
-        .button-shadow {
-            --shadow-cuttoff-fix: 2em;
-            position: absolute;
-            width: calc(100% + var(--shadow-cuttoff-fix));
-            height: calc(100% + var(--shadow-cuttoff-fix));
-            top: calc(0% - var(--shadow-cuttoff-fix) / 2);
-            left: calc(0% - var(--shadow-cuttoff-fix) / 2);
-            filter: blur(clamp(2px, 0.125em, 12px));
-            overflow: visible;
-            pointer-events: none;
-        }
-        
-        .button-shadow::after {
-            content: "";
-            position: absolute;
-            z-index: 0;
-            inset: 0;
-            border-radius: 999vw;
-            background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.1));
-            width: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
-            height: calc(100% - var(--shadow-cuttoff-fix) - 0.25em);
-            top: calc(var(--shadow-cuttoff-fix) - 0.5em);
-            left: calc(var(--shadow-cuttoff-fix) - 0.875em);
-            padding: 0.125em;
-            box-sizing: border-box;
-            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-            mask-composite: exclude;
-            transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
-            overflow: visible;
-            opacity: 1;
         }
         
         .showcase-btn {
-            --border-width: clamp(1px, 0.0625em, 4px);
             all: unset;
             cursor: pointer;
-            position: relative;
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            pointer-events: auto;
-            z-index: 3;
-            background: linear-gradient(-75deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+            position: relative;
             border-radius: 999vw;
-            box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05),
-                inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5),
-                0 0.25em 0.125em -0.125em rgba(0, 0, 0, 0.2),
-                0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(clamp(1px, 0.125em, 4px));
-            transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1);
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: -0.05em;
-            font-weight: 500;
+            background-color: rgba(0, 0, 0, 0.75);
+            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
+                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
             font-size: 1.8rem;
-            color: rgba(50, 50, 50, 1);
-            text-shadow: 0em 0.25em 0.05em rgba(0, 0, 0, 0.1);
-            padding-inline: 1.5em;
-            padding-block: 0.875em;
-            white-space: nowrap;
-            min-width: 200px;
-            display: block;
-            user-select: none;
         }
         
-        .showcase-btn:hover {
-            transform: scale(0.975);
-            backdrop-filter: blur(0.01em);
-            box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05),
-                inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5),
-                0 0.15em 0.05em -0.1em rgba(0, 0, 0, 0.25),
-                0 0 0.05em 0.1em inset rgba(255, 255, 255, 0.5);
-            text-shadow: 0.025em 0.025em 0.025em rgba(0, 0, 0, 0.12);
-        }
-        
-        /* Button Outline */
         .showcase-btn::after {
             content: "";
             position: absolute;
+            z-index: 0;
+            width: calc(100% + 0.3em);
+            height: calc(100% + 0.3em);
+            top: -0.15em;
+            left: -0.15em;
+            border-radius: inherit;
+            background: linear-gradient(-135deg,
+                    rgba(5, 5, 5, 0.5),
+                    transparent 20%,
+                    transparent 100%);
+            filter: blur(0.0125em);
+            opacity: 0.25;
+            mix-blend-mode: multiply;
+        }
+        
+        .showcase-btn .button-outer {
+            position: relative;
             z-index: 1;
-            inset: 0;
-            border-radius: 999vw;
-            width: calc(100% + var(--border-width));
-            height: calc(100% + var(--border-width));
-            top: calc(0% - var(--border-width) / 2);
-            left: calc(0% - var(--border-width) / 2);
-            padding: var(--border-width);
-            box-sizing: border-box;
-            background: conic-gradient(from var(--angle-1) at 50% 50%,
-                rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0) 5% 40%,
-                rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0) 60% 95%,
-                rgba(0, 0, 0, 0.5)),
-                linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5));
-            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-            mask-composite: exclude;
-            transition: all 400ms cubic-bezier(0.25, 1, 0.5, 1), --angle-1 500ms ease;
-            box-shadow: inset 0 0 0 calc(var(--border-width) / 2) rgba(255, 255, 255, 0.5);
+            border-radius: inherit;
+            transition: box-shadow 300ms ease;
+            will-change: box-shadow;
+            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
+                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
+                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
         }
         
-        .showcase-btn:hover::after {
-            --angle-1: -125deg;
+        .showcase-btn:hover .button-outer {
+            box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
+                0 0 0 0 rgba(5, 5, 5, 0.25);
         }
         
-        .showcase-btn:active::after {
-            --angle-1: -75deg;
-        }
-        
-        /* Button Shine Effect */
-        .showcase-btn::before {
-            content: "";
-            display: block;
-            position: absolute;
-            z-index: 3;
-            width: calc(100% - var(--border-width));
-            height: calc(100% - var(--border-width));
-            top: calc(0% + var(--border-width) / 2);
-            left: calc(0% + var(--border-width) / 2);
-            box-sizing: border-box;
-            border-radius: 999vw;
+        .button-inner {
+            --inset: 0.035em;
+            position: relative;
+            z-index: 1;
+            border-radius: inherit;
+            padding: 1em 1.5em;
+            background-image: linear-gradient(135deg,
+                    rgba(255, 255, 0, 1),
+                    rgba(255, 220, 0, 1));
+            transition: box-shadow 300ms ease, clip-path 250ms ease,
+                background-image 250ms ease, transform 250ms ease;
+            will-change: box-shadow, clip-path, background-image, transform;
             overflow: clip;
-            background: linear-gradient(var(--angle-2), rgba(255, 255, 255, 0) 0%,
-                rgba(255, 255, 255, 0.5) 40% 50%, rgba(255, 255, 255, 0) 55%);
-            mix-blend-mode: screen;
-            pointer-events: none;
-            background-size: 200% 200%;
-            background-position: 0% 50%;
-            background-repeat: no-repeat;
-            transition: background-position 500ms cubic-bezier(0.25, 1, 0.5, 1),
-                --angle-2 500ms cubic-bezier(0.25, 1, 0.5, 1);
+            clip-path: inset(0 0 0 0 round 999vw);
+            box-shadow:
+                /* 1 */
+                0 0 0 0 inset rgba(5, 5, 5, 0.1),
+                /* 2 */
+                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
+                /* 3 */
+                0 0 0 0 inset rgba(5, 5, 5, 0.1),
+                /* 4 */
+                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
+                /* 5 */
+                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
+                /* 6 */
+                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
+                /* 7 */
+                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
         }
         
-        .showcase-btn:hover::before {
-            background-position: 25% 50%;
+        .showcase-btn:hover .button-inner {
+            clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 999vw);
+            box-shadow:
+                /* 1 */
+                0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
+                /* 2 */
+                -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
+                /* 3 */
+                0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
+                /* 4 */
+                0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
+                /* 5 */
+                0 0 0 0 inset rgba(255, 255, 255, 1),
+                /* 6 */
+                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
+                /* 7 */
+                -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
         }
         
-        .showcase-btn:active::before {
-            background-position: 50% 15%;
-            --angle-2: -15deg;
+        .showcase-btn .button-inner span {
+            position: relative;
+            z-index: 4;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: -0.05em;
+            font-weight: 500;
+            color: rgba(0, 0, 0, 0);
+            background-image: linear-gradient(135deg,
+                    rgba(50, 50, 50, 1),
+                    rgba(20, 20, 20, 1));
+            -webkit-background-clip: text;
+            background-clip: text;
+            transition: transform 250ms ease;
+            display: block;
+            will-change: transform;
+            text-shadow: rgba(0, 0, 0, 0.1) 0 0 0.1em;
+            -webkit-user-select: none; 
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         
-        /* Shadow Hover Effects */
-        .button-wrap:has(.showcase-btn:hover) .button-shadow {
-            filter: blur(clamp(2px, 0.0625em, 6px));
+        .showcase-btn:hover .button-inner span {
+            transform: scale(0.975);
         }
         
-        .button-wrap:has(.showcase-btn:hover) .button-shadow::after {
-            top: calc(var(--shadow-cuttoff-fix) - 0.875em);
-            opacity: 1;
-        }
-        
-        /* Active/Press Effects */
-        .button-wrap:has(.showcase-btn:active) {
-            transform: rotate3d(1, 0, 0, 25deg);
-        }
-        
-        .button-wrap:has(.showcase-btn:active) .showcase-btn {
-            box-shadow: inset 0 0.125em 0.125em rgba(0, 0, 0, 0.05),
-                inset 0 -0.125em 0.125em rgba(255, 255, 255, 0.5),
-                0 0.125em 0.125em -0.125em rgba(0, 0, 0, 0.2),
-                0 0 0.1em 0.25em inset rgba(255, 255, 255, 0.2),
-                0 0.225em 0.05em 0 rgba(0, 0, 0, 0.05),
-                0 0.25em 0 0 rgba(255, 255, 255, 0.75),
-                inset 0 0.25em 0.05em 0 rgba(0, 0, 0, 0.15);
-            text-shadow: 0.025em 0.25em 0.05em rgba(0, 0, 0, 0.12);
-        }
-        
-        .button-wrap:has(.showcase-btn:active) .button-shadow {
-            filter: blur(clamp(2px, 0.125em, 12px));
-        }
-        
-        .button-wrap:has(.showcase-btn:active) .button-shadow::after {
-            top: calc(var(--shadow-cuttoff-fix) - 0.5em);
-            opacity: 0.75;
+        .showcase-btn:active .button-inner {
+            transform: scale(0.975);
         }
         
         /* Logo del showcase */
@@ -868,29 +804,48 @@
                 bottom: 40px;
                 width: 100%;
                 padding: 0 1rem;
+                left: 50%;
+                transform: translateX(-50%);
             }
             
             .showcase-buttons {
-                flex-direction: row;
+                flex-direction: column;
                 justify-content: center;
-                gap: 1rem;
+                align-items: center;
+                gap: 1.5rem;
+                width: 100%;
             }
             
             .button-wrap {
-                width: 45%;
+                width: 80%;
+                max-width: 300px;
+                display: flex;
+                justify-content: center;
             }
             
             .showcase-btn {
-                font-size: 1.4rem;
-                padding-inline: 1.2em;
-                padding-block: 0.75em;
-                min-width: 0;
+                font-size: 1.6rem;
                 width: 100%;
+            }
+            
+            .showcase-btn .button-inner {
+                padding: 0.85em 1.5em;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body class="text-white">
+
+    <!-- Background -->
+    <svg style="position: absolute; width: 100%; height: 100%; z-index: 0;" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <pattern id="dottedGrid" width="30" height="30" patternUnits="userSpaceOnUse">
+                <circle cx="2" cy="2" r="1" fill="rgba(0,0,0,0.15)" />
+            </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#dottedGrid)" />
+    </svg>
 
     <div id="canvas-container"></div>
     <div id="loading-indicator">
@@ -907,12 +862,22 @@
     <div id="showcase-buttons-container" class="hidden">
         <div class="showcase-buttons">
             <div class="button-wrap">
-                <div class="button-shadow"></div>
-                <button type="button" id="customize-btn" class="showcase-btn">CUSTOM</button>
+                <button type="button" id="customize-btn" class="showcase-btn">
+                    <div class="button-outer">
+                        <div class="button-inner">
+                            <span>CUSTOM</span>
+                        </div>
+                    </div>
+                </button>
             </div>
             <div class="button-wrap">
-                <div class="button-shadow"></div>
-                <button type="button" id="presets-btn" class="showcase-btn">PRESETS</button>
+                <button type="button" id="presets-btn" class="showcase-btn">
+                    <div class="button-outer">
+                        <div class="button-inner">
+                            <span>PRESETS</span>
+                        </div>
+                    </div>
+                </button>
             </div>
         </div>
     </div>
@@ -1231,7 +1196,7 @@
         
         // Sombra suave bajo los pies (plano con degradado radial)
         let footShadow = null;
-        function createFootShadow(size = 2.6) {
+        function createFootShadow(size = 1.8) {
             const c = document.createElement('canvas');
             c.width = c.height = 512;
             const ctx = c.getContext('2d');
