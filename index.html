@@ -646,35 +646,23 @@
             pointer-events: none;
         }
         
-        .showcase-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.5rem;
-            color: #fff;
-            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-        
-        .showcase-subtitle {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 3rem;
-            text-align: center;
-        }
-        
         .showcase-buttons {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: 1.5rem;
             width: 90%;
-            max-width: 400px;
+            max-width: 700px;
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
         }
         
         .showcase-btn {
-            padding: 1.5rem 2rem;
+            flex: 1;
+            padding: 1.2rem 2rem;
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
             color: #fff;
             background: linear-gradient(135deg, rgba(0, 255, 255, 0.2) 0%, rgba(138, 43, 226, 0.2) 100%);
@@ -684,6 +672,7 @@
             transition: all 0.3s ease;
             text-shadow: 0 2px 8px rgba(0, 255, 255, 0.5);
             box-shadow: 0 8px 24px rgba(0, 255, 255, 0.2);
+            white-space: nowrap;
         }
         
         .showcase-btn:hover {
@@ -698,17 +687,15 @@
         }
         
         @media (max-width: 768px) {
-            .showcase-title {
-                font-size: 1.8rem;
-            }
-            
-            .showcase-subtitle {
-                font-size: 1rem;
+            .showcase-buttons {
+                flex-direction: column;
+                max-width: 90%;
+                bottom: 40px;
             }
             
             .showcase-btn {
-                font-size: 1rem;
-                padding: 1.2rem 1.5rem;
+                font-size: 0.9rem;
+                padding: 1rem 1.2rem;
             }
         }
     </style>
@@ -723,8 +710,6 @@
     
     <!-- Overlay de showcase inicial -->
     <div id="showcase-overlay" class="hidden">
-        <h1 class="showcase-title">BIENVENIDO A PAPELCOOL</h1>
-        <p class="showcase-subtitle">Crea y personaliza tu personaje 3D</p>
         <div class="showcase-buttons">
             <button type="button" id="customize-btn" class="showcase-btn">
                 ✨ CUSTOMIZA EL TUYO
@@ -1379,12 +1364,16 @@
                 controls.target.copy(modelCenter);
                 scene.add(loadedModel);
                 
-                // Ocultar loading y mostrar showcase
-                loadingIndicator.classList.add('fade-out');
+                // Iniciar showcase primero (sin texturas)
+                startShowcase();
+                
+                // Ocultar loading después de que showcase esté listo
                 setTimeout(() => {
-                    loadingIndicator.style.display = 'none';
-                    startShowcase();
-                }, 500);
+                    loadingIndicator.classList.add('fade-out');
+                    setTimeout(() => {
+                        loadingIndicator.style.display = 'none';
+                    }, 500);
+                }, 300);
 
                 if (modelParts.head) {
                     changeEyeTexture(currentEyeTextureURL, true); // Cargar textura inicial
@@ -3400,8 +3389,7 @@
             isShowcaseActive = true;
             showcaseOverlay.classList.remove('hidden');
             
-            // Aplicar el primer personaje
-            applyPresetCharacter(showcaseCharacters[0]);
+            // NO aplicar texturas, solo mostrar el modelo base girando
             showcaseCharacterTimer = Date.now();
         }
         
@@ -3414,13 +3402,6 @@
             if (isShowcaseActive && loadedModel) {
                 // Rotación automática suave
                 loadedModel.rotation.y += showcaseRotationSpeed * 0.01;
-                
-                // Cambio automático de personajes
-                if (Date.now() - showcaseCharacterTimer > showcaseCharacterInterval) {
-                    showcaseCharacterIndex = (showcaseCharacterIndex + 1) % showcaseCharacters.length;
-                    applyPresetCharacter(showcaseCharacters[showcaseCharacterIndex]);
-                    showcaseCharacterTimer = Date.now();
-                }
             }
         }
         
