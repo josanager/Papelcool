@@ -1727,25 +1727,26 @@
         const textureLoader = new THREE.TextureLoader();
         
         /* ============================================
-           SISTEMA OPTIMIZADO PARA TEXTURAS SVG
+           SISTEMA 100% SVG - SIN PNG
            ============================================
-           VENTAJAS DE SVG vs PNG:
-           - Sin píxeles: escalan infinitamente sin pérdida de calidad
+           VENTAJAS DE SVG:
+           - Vectoriales: escalan infinitamente sin pérdida de calidad
            - Menor peso: archivos más pequeños = menos RAM
-           - Sin compresión necesaria: no hay degradación de imagen
+           - Sin compresión necesaria: no hay degradación
            - Carga más rápida: menos datos a transferir
-           - Mejor rendimiento: menos procesamiento de píxeles
+           - Mejor rendimiento: procesamiento optimizado
            
            SOLUCIÓN ANTI-PIXELADO:
            - SVG se rasteriza a 2048x2048 antes de aplicar como textura
-           - Esto mantiene la calidad vectorial en el modelo 3D
+           - Mantiene calidad vectorial en el modelo 3D
            - Sin pixelado visible incluso en zoom cercano
            
-           SOLUCIÓN COLORES OSCUROS:
-           - Canvas 2D ya está en espacio sRGB
-           - Usar THREE.SRGBColorSpace en lugar de encoding
-           - Evita doble corrección gamma que oscurece colores
-           - imageSmoothingQuality: 'high' para mejor calidad
+           SOLUCIÓN COLORES CORRECTOS:
+           - Canvas sin configuración de colorSpace
+           - Three.js maneja los colores automáticamente
+           - Sin corrección gamma que altere colores
+           - imageSmoothingQuality: 'high' para máxima calidad
+           - Colores fieles al SVG original
            ============================================ */
         
         textureLoader.setCrossOrigin('anonymous');
@@ -1774,7 +1775,7 @@
         }
         
         // Registro de texturas activas para limitar memoria
-        // SVG pesan menos: podemos mantener más texturas en memoria (10 vs 6 PNG)
+        // SVG son ligeros: podemos mantener más texturas en memoria (10 simultáneas)
         const activeTextures = new Set();
         const MAX_TEXTURES_MOBILE = 10;
         
@@ -1794,26 +1795,25 @@
             }
         }
         
-        // NOTA: SVG no requiere redimensionamiento como PNG
-        // Los archivos SVG son vectoriales y se escalan perfectamente sin pérdida de calidad
-        // Esto ahorra memoria RAM y elimina la necesidad de compresión
+        // NOTA: SVG son vectoriales y se escalan perfectamente sin pérdida de calidad
+        // No requieren redimensionamiento ni compresión
+        // Esto ahorra memoria RAM y mejora el rendimiento
         
-        // Función para cargar SVG a alta resolución
+        // Función para cargar SVG a alta resolución con colores correctos
         // Convierte SVG vectorial a imagen de alta calidad antes de usarlo como textura
         function loadSVGAsHighResTexture(url, onLoad, onError, resolution = 2048) {
             const img = new Image();
             img.crossOrigin = 'anonymous';
             
             img.onload = function() {
-                // Crear canvas de alta resolución con configuración de color correcta
+                // Crear canvas de alta resolución
                 const canvas = document.createElement('canvas');
                 canvas.width = resolution;
                 canvas.height = resolution;
                 
-                // Configurar contexto 2D con espacio de color correcto
+                // CRÍTICO: Usar display-p3 o srgb sin conversión adicional
                 const ctx = canvas.getContext('2d', {
                     alpha: true,
-                    colorSpace: 'srgb', // Espacio de color explícito
                     willReadFrequently: false
                 });
                 
@@ -1829,9 +1829,8 @@
                 texture.generateMipmaps = false;
                 texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
                 
-                // CRÍTICO: Canvas 2D ya está en sRGB, NO aplicar encoding adicional
-                // Esto evita la doble corrección gamma que oscurece los colores
-                texture.colorSpace = THREE.SRGBColorSpace; // Usar colorSpace moderno
+                // SOLUCIÓN: No aplicar ningún colorSpace, dejar que Three.js lo maneje
+                // El canvas ya tiene los colores correctos del SVG
                 texture.needsUpdate = true;
                 
                 // Registrar textura activa para gestión de memoria
@@ -1848,37 +1847,10 @@
             img.src = url;
         }
         
-        // Función optimizada para cargar texturas (detecta SVG automáticamente)
+        // Función para cargar texturas SVG únicamente
         function loadOptimizedTexture(url, onLoad, onError) {
-            // Detectar si es SVG por extensión
-            const isSVG = url.toLowerCase().endsWith('.svg');
-            
-            if (isSVG) {
-                // Cargar SVG a alta resolución (2048x2048)
-                return loadSVGAsHighResTexture(url, onLoad, onError, 2048);
-            } else {
-                // Cargar PNG/JPG normalmente
-                return textureLoader.load(
-                    url,
-                    (texture) => {
-                        texture.minFilter = THREE.LinearFilter;
-                        texture.magFilter = THREE.LinearFilter;
-                        texture.generateMipmaps = false;
-                        texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-                        texture.colorSpace = THREE.SRGBColorSpace; // Usar colorSpace moderno
-                        texture.needsUpdate = true;
-                        
-                        registerTexture(texture);
-                        
-                        if (onLoad) onLoad(texture);
-                    },
-                    undefined,
-                    (error) => {
-                        console.error('Error cargando textura:', url, error);
-                        if (onError) onError(error);
-                    }
-                );
-            }
+            // Solo soportamos SVG ahora
+            return loadSVGAsHighResTexture(url, onLoad, onError, 2048);
         }
         
         // Función para forzar limpieza de memoria más agresiva
@@ -1893,7 +1865,7 @@
         }
         
         // Función helper para crear imágenes SVG con lazy loading
-        // SVG pesan menos que PNG, pero aún optimizamos la carga
+        // SVG son ligeros pero aún optimizamos la carga
         function createLazyImage(url, index, maxPreload = 3) {
             const img = document.createElement('img');
             img.dataset.url = url;
