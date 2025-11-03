@@ -198,6 +198,47 @@
             to { transform: rotate(360deg); }
         }
         
+        .preset-character-btn {
+            flex: 1;
+            min-width: 80px;
+            height: 100px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .preset-character-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2) 0%, rgba(138, 43, 226, 0.2) 100%);
+            border-color: rgba(0, 255, 255, 0.4);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 8px 24px rgba(0, 255, 255, 0.3);
+        }
+        
+        .preset-character-btn:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+        
+        .preset-character-btn .character-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 8px rgba(0, 255, 255, 0.5);
+        }
+        
+        .preset-character-btn .character-icon {
+            font-size: 2rem;
+        }
+        
         .icon-btn {
             width: 48px;
             height: 48px;
@@ -617,6 +658,25 @@
             </div>
 
             <div id="editor-container">
+                <!-- Botones de personajes preestablecidos -->
+                <div class="pt-2 border-t border-cyan-500/30 mb-4">
+                    <h2 class="text-md font-bold text-cyan-300 mb-3">PERSONAJES PREESTABLECIDOS</h2>
+                    <div class="flex gap-3 pointer-events-auto">
+                        <button type="button" id="preset-mira-btn" class="preset-character-btn">
+                            <span class="character-icon">👧</span>
+                            <span class="character-name">MIRA</span>
+                        </button>
+                        <button type="button" id="preset-rumi-btn" class="preset-character-btn">
+                            <span class="character-icon">👦</span>
+                            <span class="character-name">RUMI</span>
+                        </button>
+                        <button type="button" id="preset-zoey-btn" class="preset-character-btn">
+                            <span class="character-icon">👩</span>
+                            <span class="character-name">ZOEY</span>
+                        </button>
+                    </div>
+                </div>
+                
                 <div class="pt-2 border-t border-cyan-500/30">
                     <div id="main-parts-container" class="grid grid-cols-4 gap-2 pointer-events-auto">
                         <button type="button" id="head-btn" class="icon-btn p-2"></button>
@@ -3206,6 +3266,76 @@
             controls.update();
             renderer.render(scene, camera);
         }
+        
+        // Función para aplicar personaje preestablecido
+        function applyPresetCharacter(characterName) {
+            // Buscar todas las texturas del personaje
+            const eyeTexture = eyeTextures.find(t => t.name === characterName);
+            const eyebrowTexture = eyebrowTextures.find(t => t.name === characterName);
+            const earTexture = earTextures.find(t => t.name === characterName);
+            const hairTexture = hairTextures.find(t => t.name === characterName);
+            const torsoTexture = torsoClothingTextures.find(t => t.name === characterName);
+            const armTexture = armTextures.find(t => t.name === characterName);
+            const legTexture = legTextures.find(t => t.name === characterName);
+            
+            // Aplicar todas las texturas del personaje
+            if (eyeTexture) {
+                currentEyeTextureURL = eyeTexture.url;
+                changeEyeTexture(eyeTexture.url);
+            }
+            
+            if (eyebrowTexture) {
+                currentEyebrowTextureURL = eyebrowTexture.url;
+                changeEyebrowTexture(eyebrowTexture.url);
+            }
+            
+            if (earTexture) {
+                currentEarTextureURL = earTexture.url;
+                changeEarTexture('left', earTexture.url);
+                changeEarTexture('right', earTexture.url);
+            }
+            
+            if (hairTexture) {
+                currentHairFrontURL = hairTexture.frontUrl;
+                currentHairBackURL = hairTexture.backUrl;
+                changeHairTexture(hairTexture.frontUrl, hairTexture.backUrl);
+            }
+            
+            if (torsoTexture) {
+                currentTorsoFrontURL = torsoTexture.frontUrl;
+                currentTorsoBackURL = torsoTexture.backUrl;
+                changeTorsoClothing(torsoTexture.frontUrl, torsoTexture.backUrl);
+            }
+            
+            if (armTexture) {
+                currentArmLeftURL = armTexture.leftUrl;
+                currentArmRightURL = armTexture.rightUrl;
+                changeArmClothing('left', armTexture.leftUrl);
+                changeArmClothing('right', armTexture.rightUrl);
+            }
+            
+            if (legTexture) {
+                currentLegLeftURL = legTexture.leftUrl;
+                currentLegRightURL = legTexture.rightUrl;
+                changeLegClothing('left', legTexture.leftUrl);
+                changeLegClothing('right', legTexture.rightUrl);
+            }
+            
+            console.log(`Personaje ${characterName} aplicado completamente`);
+        }
+        
+        // Event listeners para botones de personajes preestablecidos
+        document.getElementById('preset-mira-btn').addEventListener('click', () => {
+            applyPresetCharacter('Mira');
+        });
+        
+        document.getElementById('preset-rumi-btn').addEventListener('click', () => {
+            applyPresetCharacter('Rumi');
+        });
+        
+        document.getElementById('preset-zoey-btn').addEventListener('click', () => {
+            applyPresetCharacter('Zoey');
+        });
         
         // Inicialización
         setIcons();
