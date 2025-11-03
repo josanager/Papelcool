@@ -1001,24 +1001,24 @@
             const offset = (Math.sin(gradientAnimationTime * 0.0008) + 1) * 0.5; // 0 a 1
             const offset2 = (Math.sin(gradientAnimationTime * 0.0006 + 1) + 1) * 0.5;
             
-            // Interpolar colores dinámicamente
+            // Colores más vibrantes con mayor contraste
             const colors = [
-                { r: 3, g: 23, b: 73 },   // #031749
-                { r: 7, g: 41, b: 110 },  // #07296e
-                { r: 10, g: 53, b: 133 }, // #0a3585
-                { r: 15, g: 72, b: 163 }, // #0f48a3
-                { r: 18, g: 92, b: 175 }  // #125caf
+                { r: 1, g: 10, b: 40 },    // Azul muy oscuro (casi negro)
+                { r: 7, g: 41, b: 110 },   // Azul oscuro
+                { r: 15, g: 70, b: 160 },  // Azul medio vibrante
+                { r: 25, g: 100, b: 200 }, // Azul brillante
+                { r: 40, g: 130, b: 230 }  // Azul muy brillante
             ];
             
-            // Aplicar variación sutil a los colores
-            const variation = offset * 20; // Variación de brillo
-            const variation2 = offset2 * 15;
+            // Aplicar variación más pronunciada para mayor contraste
+            const variation = offset * 35; // Mayor variación de brillo
+            const variation2 = offset2 * 30;
             
-            gradient.addColorStop(0, `rgb(${colors[0].r + variation2}, ${colors[0].g + variation2}, ${colors[0].b + variation2})`);
-            gradient.addColorStop(0.25, `rgb(${colors[1].r + variation}, ${colors[1].g + variation}, ${colors[1].b + variation})`);
-            gradient.addColorStop(0.5, `rgb(${colors[2].r + variation2}, ${colors[2].g + variation2}, ${colors[2].b + variation2})`);
-            gradient.addColorStop(0.75, `rgb(${colors[3].r + variation}, ${colors[3].g + variation}, ${colors[3].b + variation})`);
-            gradient.addColorStop(1, `rgb(${colors[4].r + variation2}, ${colors[4].g + variation2}, ${colors[4].b + variation2})`);
+            gradient.addColorStop(0, `rgb(${Math.min(255, colors[0].r + variation2)}, ${Math.min(255, colors[0].g + variation2)}, ${Math.min(255, colors[0].b + variation2)})`);
+            gradient.addColorStop(0.25, `rgb(${Math.min(255, colors[1].r + variation)}, ${Math.min(255, colors[1].g + variation)}, ${Math.min(255, colors[1].b + variation)})`);
+            gradient.addColorStop(0.5, `rgb(${Math.min(255, colors[2].r + variation2)}, ${Math.min(255, colors[2].g + variation2)}, ${Math.min(255, colors[2].b + variation2)})`);
+            gradient.addColorStop(0.75, `rgb(${Math.min(255, colors[3].r + variation)}, ${Math.min(255, colors[3].g + variation)}, ${Math.min(255, colors[3].b + variation)})`);
+            gradient.addColorStop(1, `rgb(${Math.min(255, colors[4].r + variation2)}, ${Math.min(255, colors[4].g + variation2)}, ${Math.min(255, colors[4].b + variation2)})`);
             
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, 4, 512);
