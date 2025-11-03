@@ -970,9 +970,9 @@
         const loadingIndicator = document.getElementById('loading-indicator');
         const scene = new THREE.Scene();
         // Color de fondo negro
-        scene.background = new THREE.Color(0x000000);
+        scene.background = new THREE.Color(0x1c1c1c);
         // Agregar fog para degradado oscuro con profundidad
-        scene.fog = new THREE.Fog(0x000000, 8, 20);
+        scene.fog = new THREE.Fog(0x1c1c1c, 8, 20);
         
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const originalCameraPos = new THREE.Vector3(0, 1.5, 5);
@@ -1002,10 +1002,34 @@
         dirLight.position.set(5, 10, 7.5);
         scene.add(dirLight);
 
+        // Referencia al grid para poder alternar visibilidad
         const gridHelper = new THREE.GridHelper(200, 200, 0x00ffff);
         gridHelper.material.opacity = 0.2;
         gridHelper.material.transparent = true;
         scene.add(gridHelper);
+        
+        // Sombra suave bajo los pies (plano con degradado radial)
+        let footShadow = null;
+        function createFootShadow(size = 2.6) {
+            const c = document.createElement('canvas');
+            c.width = c.height = 512;
+            const ctx = c.getContext('2d');
+            const g = ctx.createRadialGradient(256, 256, 40, 256, 256, 220);
+            g.addColorStop(0, 'rgba(0,0,0,0.7)');
+            g.addColorStop(0.6, 'rgba(0,0,0,0.4)');
+            g.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = g;
+            ctx.fillRect(0, 0, 512, 512);
+            const tex = new THREE.CanvasTexture(c);
+            tex.needsUpdate = true;
+            const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false });
+            const geo = new THREE.PlaneGeometry(size, size);
+            const mesh = new THREE.Mesh(geo, mat);
+            mesh.rotation.x = -Math.PI / 2;
+            mesh.position.set(0, 0.01, 0);
+            mesh.renderOrder = -1;
+            return mesh;
+        }
         
         const modelURL = './papelcool.glb';
         
@@ -1369,6 +1393,15 @@
                 modelCenter.set(0, groundY, 0);
                 controls.target.copy(modelCenter);
                 scene.add(loadedModel);
+
+                // Crear y añadir sombra bajo los pies (inicialmente oculta)
+                if (!footShadow) {
+                    footShadow = createFootShadow(2.8);
+                    footShadow.visible = false;
+                    // La altura del suelo está en y = 0, pies casi en 0
+                    footShadow.position.y = 0.01;
+                    scene.add(footShadow);
+                }
                 
                 // Iniciar showcase primero (sin texturas)
                 startShowcase();
@@ -3418,6 +3451,10 @@
             isShowcaseActive = true;
             showcaseButtonsContainer.classList.remove('hidden');
             
+            // Ocultar grid y mostrar sombra
+            if (typeof gridHelper !== 'undefined') gridHelper.visible = false;
+            if (footShadow) footShadow.visible = true;
+            
             // Inicializar timers de colores
             const now = Date.now();
             Object.keys(showcaseColorTimers).forEach(key => {
@@ -3435,6 +3472,10 @@
             if (loadedModel) {
                 loadedModel.rotation.y = 0;
             }
+            
+            // Restaurar grid y ocultar sombra
+            if (typeof gridHelper !== 'undefined') gridHelper.visible = true;
+            if (footShadow) footShadow.visible = false;
             
             // Mostrar botón de modo cuando se sale del showcase
             const playBtnMobile = document.getElementById('play-mode-btn-mobile');
