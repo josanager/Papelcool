@@ -807,22 +807,27 @@
             transform: scale(0.975);
         }
         
-        /* Logo del showcase */
-        #showcase-logo {
+        /* Contenedor del logo del showcase */
+        #showcase-logo-container {
             position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 0;
+            left: 0;
+            right: 0;
+            height: auto;
+            padding-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
             z-index: 10;
             transition: opacity 0.5s ease-out;
-        }
-        
-        #showcase-logo.hidden {
-            opacity: 0;
             pointer-events: none;
         }
         
-        #showcase-logo img {
+        #showcase-logo-container.hidden {
+            opacity: 0;
+        }
+        
+        #showcase-logo-container img {
             height: 20px;
             width: auto;
         }
@@ -862,11 +867,11 @@
                 height: 65vh !important; /* 65% en móvil para compensar */
             }
             
-            #showcase-logo {
-                top: 10px;
+            #showcase-logo-container {
+                padding-top: 8px;
             }
             
-            #showcase-logo img {
+            #showcase-logo-container img {
                 height: 18px;
             }
         }
@@ -893,8 +898,8 @@
         <div class="loading-spinner"></div>
     </div>
     
-    <!-- Logo del showcase -->
-    <div id="showcase-logo" class="hidden">
+    <!-- Contenedor del logo del showcase -->
+    <div id="showcase-logo-container" class="hidden">
         <img src="logo.svg" alt="Papelcool Logo">
     </div>
     
@@ -3714,8 +3719,8 @@
             if (canvasContainer) canvasContainer.classList.add('showcase-active');
             
             // Mostrar logo del showcase
-            const showcaseLogo = document.getElementById('showcase-logo');
-            if (showcaseLogo) showcaseLogo.classList.remove('hidden');
+            const showcaseLogoContainer = document.getElementById('showcase-logo-container');
+            if (showcaseLogoContainer) showcaseLogoContainer.classList.remove('hidden');
             
             // Ocultar grid y mostrar sombra
             if (typeof gridHelper !== 'undefined') gridHelper.visible = false;
@@ -3758,8 +3763,8 @@
             if (canvasContainer) canvasContainer.classList.remove('showcase-active');
             
             // Ocultar logo del showcase
-            const showcaseLogo = document.getElementById('showcase-logo');
-            if (showcaseLogo) showcaseLogo.classList.add('hidden');
+            const showcaseLogoContainer = document.getElementById('showcase-logo-container');
+            if (showcaseLogoContainer) showcaseLogoContainer.classList.add('hidden');
             
             // Detener rotación del modelo
             if (loadedModel) {
