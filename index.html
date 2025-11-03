@@ -1104,6 +1104,7 @@
         const showcaseCharacters = ['Mira', 'Rumi', 'Zoey'];
         let showcaseCharacterTimer = 0;
         const showcaseCharacterInterval = 4000; // Cambiar cada 4 segundos
+        let showcaseModelOffsetY = 0; // Offset vertical para el modelo en showcase (solo móvil)
         
         // Variables para cambio de colores aleatorios en showcase
         let showcaseColorTimers = {
@@ -3515,6 +3516,22 @@
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
                 renderer.setSize(window.innerWidth, window.innerHeight);
+                
+                // Reajustar posición del modelo en showcase si está activo (solo móvil)
+                if (isShowcaseActive && loadedModel) {
+                    if (window.innerWidth <= 768) {
+                        const logoBottom = 20 + 20;
+                        const buttonsTop = window.innerHeight - 40 - 200;
+                        const visualCenter = (logoBottom + buttonsTop) / 2;
+                        const screenCenter = window.innerHeight / 2;
+                        showcaseModelOffsetY = (screenCenter - visualCenter) / 100;
+                        loadedModel.position.y = groundY + showcaseModelOffsetY;
+                    } else {
+                        // En desktop, restaurar posición normal
+                        loadedModel.position.y = groundY;
+                        showcaseModelOffsetY = 0;
+                    }
+                }
             }, 150); // Debounce de 150ms
         });
         
@@ -3659,6 +3676,22 @@
             // Desactivar controles de cámara (zoom, pan, rotate)
             controls.enabled = false;
             
+            // Calcular offset vertical del modelo solo en móvil
+            if (window.innerWidth <= 768 && loadedModel) {
+                // Calcular el centro visual entre el logo (top: 20px) y los botones (bottom: 40px)
+                const logoBottom = 20 + 20; // top + altura aproximada del logo
+                const buttonsTop = window.innerHeight - 40 - 200; // bottom - altura aproximada de botones
+                const visualCenter = (logoBottom + buttonsTop) / 2;
+                const screenCenter = window.innerHeight / 2;
+                
+                // Calcular cuánto mover el modelo hacia arriba (en unidades 3D)
+                // Ajustamos la escala para que sea proporcional
+                showcaseModelOffsetY = (screenCenter - visualCenter) / 100;
+                
+                // Aplicar offset al modelo
+                loadedModel.position.y = groundY + showcaseModelOffsetY;
+            }
+            
             // Inicializar timers de colores
             const now = Date.now();
             Object.keys(showcaseColorTimers).forEach(key => {
@@ -3676,10 +3709,14 @@
             const showcaseLogo = document.getElementById('showcase-logo');
             if (showcaseLogo) showcaseLogo.classList.add('hidden');
             
-            // Detener rotación del modelo
+            // Detener rotación del modelo y restaurar posición
             if (loadedModel) {
                 loadedModel.rotation.y = 0;
+                loadedModel.position.y = groundY; // Restaurar posición Y original
             }
+            
+            // Resetear offset
+            showcaseModelOffsetY = 0;
             
             // Restaurar grid y ocultar sombra
             if (typeof gridHelper !== 'undefined') gridHelper.visible = true;
