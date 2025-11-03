@@ -291,13 +291,6 @@ Ajustes → Safari → Borrar historial y datos
 Chrome → Configuración → Privacidad → Borrar datos de navegación
 ```
 
-### 2. **Subir a Netlify**
-```bash
-git add .
-git commit -m "Optimizaciones móviles completas"
-git push
-```
-
 ### 3. **Verificar en dispositivo**
 - Abrir en Safari y Chrome
 - Probar todos los botones
@@ -384,4 +377,4 @@ El proyecto Papelcool ahora está **completamente optimizado** para dispositivos
 - **0% crashes en iOS**
 - **100% responsive**
 
-¡Listo para producción en Netlify! 🚀
+¡Listo para producción! 🚀

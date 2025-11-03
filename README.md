@@ -30,7 +30,6 @@ Editor 3D interactivo de personajes con optimización completa para dispositivos
 - Three.js (WebGL)
 - HTML5 + CSS3
 - JavaScript vanilla
-- Netlify (deployment)
 
 ## 📄 Documentación
 

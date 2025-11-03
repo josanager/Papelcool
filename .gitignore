@@ -10,7 +10,6 @@ Thumbs.db
 .idea/
 
 # Deployment
-.netlify/
 windsurf_deployment.yaml
 
 # Logs
