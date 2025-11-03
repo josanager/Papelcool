@@ -868,7 +868,7 @@
             }
             
             #showcase-logo-container {
-                padding-top: 8px;
+                padding-top: 20px;
             }
             
             #showcase-logo-container img {
@@ -1626,10 +1626,10 @@
 
                 // Crear y añadir sombra bajo los pies (inicialmente oculta)
                 if (!footShadow) {
-                    footShadow = createFootShadow(2.8);
+                    footShadow = createFootShadow(1.6);
                     footShadow.visible = false;
                     // La altura del suelo está en y = 0, pies casi en 0
-                    footShadow.position.y = 0.01;
+                    footShadow.position.y = 0.001;
                     scene.add(footShadow);
                 }
                 
