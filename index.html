@@ -675,15 +675,23 @@
         }
         
         @media (max-width: 768px) {
+            #showcase-buttons-container {
+                bottom: 40px;
+                width: 100%;
+                padding: 0 1rem;
+            }
+            
             .showcase-buttons {
                 flex-direction: column;
-                max-width: 90%;
-                bottom: 40px;
+                width: 100%;
+                max-width: 400px;
+                margin: 0 auto;
             }
             
             .showcase-btn {
                 font-size: 0.9rem;
                 padding: 1rem 1.2rem;
+                width: 100%;
             }
         }
     </style>
@@ -3455,6 +3463,9 @@
             if (typeof gridHelper !== 'undefined') gridHelper.visible = false;
             if (footShadow) footShadow.visible = true;
             
+            // Desactivar controles de cámara (zoom, pan, rotate)
+            controls.enabled = false;
+            
             // Inicializar timers de colores
             const now = Date.now();
             Object.keys(showcaseColorTimers).forEach(key => {
@@ -3476,6 +3487,9 @@
             // Restaurar grid y ocultar sombra
             if (typeof gridHelper !== 'undefined') gridHelper.visible = true;
             if (footShadow) footShadow.visible = false;
+            
+            // Reactivar controles de cámara
+            controls.enabled = true;
             
             // Mostrar botón de modo cuando se sale del showcase
             const playBtnMobile = document.getElementById('play-mode-btn-mobile');
