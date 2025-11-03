@@ -1849,6 +1849,7 @@
                 
                 // Crear textura desde canvas de alta resolución
                 const texture = new THREE.CanvasTexture(canvas);
+                texture.encoding = THREE.sRGBEncoding; // IMPORTANTE: Colores correctos y saturados
                 texture.minFilter = THREE.LinearFilter;
                 texture.magFilter = THREE.LinearFilter;
                 texture.generateMipmaps = false;
