@@ -1028,24 +1028,20 @@
             const offset = (Math.sin(gradientAnimationTime * 0.0008) + 1) * 0.5; // 0 a 1
             const offset2 = (Math.sin(gradientAnimationTime * 0.0006 + 1) + 1) * 0.5;
             
-            // Colores más vibrantes con mayor contraste
-            const colors = [
-                { r: 1, g: 10, b: 40 },    // Azul muy oscuro (casi negro)
-                { r: 7, g: 41, b: 110 },   // Azul oscuro
-                { r: 15, g: 70, b: 160 },  // Azul medio vibrante
-                { r: 25, g: 100, b: 200 }, // Azul brillante
-                { r: 40, g: 130, b: 230 }  // Azul muy brillante
-            ];
+            // Solo dos colores: azul puro (#0000FF) y cyan (#00FFFF)
+            const color1 = { r: 0, g: 0, b: 255 };     // #0000FF - Azul puro
+            const color2 = { r: 0, g: 255, b: 255 };   // #00FFFF - Cyan
             
-            // Aplicar variación más pronunciada para mayor contraste
-            const variation = offset * 35; // Mayor variación de brillo
-            const variation2 = offset2 * 30;
+            // Aplicar variación para animación
+            const variation = offset * 30;
+            const variation2 = offset2 * 25;
             
-            gradient.addColorStop(0, `rgb(${Math.min(255, colors[0].r + variation2)}, ${Math.min(255, colors[0].g + variation2)}, ${Math.min(255, colors[0].b + variation2)})`);
-            gradient.addColorStop(0.25, `rgb(${Math.min(255, colors[1].r + variation)}, ${Math.min(255, colors[1].g + variation)}, ${Math.min(255, colors[1].b + variation)})`);
-            gradient.addColorStop(0.5, `rgb(${Math.min(255, colors[2].r + variation2)}, ${Math.min(255, colors[2].g + variation2)}, ${Math.min(255, colors[2].b + variation2)})`);
-            gradient.addColorStop(0.75, `rgb(${Math.min(255, colors[3].r + variation)}, ${Math.min(255, colors[3].g + variation)}, ${Math.min(255, colors[3].b + variation)})`);
-            gradient.addColorStop(1, `rgb(${Math.min(255, colors[4].r + variation2)}, ${Math.min(255, colors[4].g + variation2)}, ${Math.min(255, colors[4].b + variation2)})`);
+            // Interpolar entre los dos colores
+            const topColor = `rgb(${Math.max(0, color1.r + variation2)}, ${Math.max(0, color1.g + variation2)}, ${Math.min(255, color1.b + variation2)})`;
+            const bottomColor = `rgb(${Math.max(0, color2.r + variation)}, ${Math.min(255, color2.g + variation)}, ${Math.min(255, color2.b + variation)})`;
+            
+            gradient.addColorStop(0, topColor);      // Azul arriba
+            gradient.addColorStop(1, bottomColor);   // Cyan abajo
             
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, 4, 512);
