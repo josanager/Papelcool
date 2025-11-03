@@ -1010,9 +1010,9 @@
         const loadingIndicator = document.getElementById('loading-indicator');
         const scene = new THREE.Scene();
         
-        // Crear degradado de fondo vertical con múltiples colores (animado)
+        // Crear degradado de fondo animado con efecto de background-position
         animatedGradientCanvas = document.createElement('canvas');
-        animatedGradientCanvas.width = 4;
+        animatedGradientCanvas.width = 2048; // 4x más ancho para background-size: 400%
         animatedGradientCanvas.height = 512;
         animatedGradientTexture = new THREE.CanvasTexture(animatedGradientCanvas);
         animatedGradientTexture.minFilter = THREE.LinearFilter;
@@ -1022,29 +1022,26 @@
         // Función para actualizar el degradado animado
         function updateAnimatedGradient() {
             const ctx = animatedGradientCanvas.getContext('2d');
-            const gradient = ctx.createLinearGradient(0, 0, 0, 512);
             
-            // Calcular offset de animación (ciclo lento)
-            const offset = (Math.sin(gradientAnimationTime * 0.0008) + 1) * 0.5; // 0 a 1
-            const offset2 = (Math.sin(gradientAnimationTime * 0.0006 + 1) + 1) * 0.5;
+            // Calcular posición del degradado (0% -> 100% -> 0%)
+            const progress = (Math.sin(gradientAnimationTime * 0.00042) + 1) * 0.5; // 0 a 1, ~15s ciclo
+            const bgPos = progress * 100; // 0 a 100
             
-            // Solo dos colores: azul puro (#0000FF) y cyan (#00FFFF)
-            const color1 = { r: 0, g: 0, b: 255 };     // #0000FF - Azul puro
-            const color2 = { r: 0, g: 255, b: 255 };   // #00FFFF - Cyan
+            // Crear degradado diagonal (62deg aproximado) con los dos colores repetidos
+            const angle = (62 * Math.PI) / 180;
+            const x1 = 1024 - Math.cos(angle) * 1024 - (bgPos * 20.48);
+            const y1 = 256 - Math.sin(angle) * 256;
+            const x2 = 1024 + Math.cos(angle) * 1024 - (bgPos * 20.48);
+            const y2 = 256 + Math.sin(angle) * 256;
             
-            // Aplicar variación para animación
-            const variation = offset * 30;
-            const variation2 = offset2 * 25;
-            
-            // Interpolar entre los dos colores
-            const topColor = `rgb(${Math.max(0, color1.r + variation2)}, ${Math.max(0, color1.g + variation2)}, ${Math.min(255, color1.b + variation2)})`;
-            const bottomColor = `rgb(${Math.max(0, color2.r + variation)}, ${Math.min(255, color2.g + variation)}, ${Math.min(255, color2.b + variation)})`;
-            
-            gradient.addColorStop(0, topColor);      // Azul arriba
-            gradient.addColorStop(1, bottomColor);   // Cyan abajo
+            const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
+            gradient.addColorStop(0, '#0000FF');    // Azul puro
+            gradient.addColorStop(0.33, '#00FFFF'); // Cyan
+            gradient.addColorStop(0.66, '#0000FF'); // Azul puro
+            gradient.addColorStop(1, '#00FFFF');    // Cyan
             
             ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 4, 512);
+            ctx.fillRect(0, 0, 2048, 512);
             animatedGradientTexture.needsUpdate = true;
         }
         
