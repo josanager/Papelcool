@@ -1486,6 +1486,30 @@
             leftLeg: 900,
             rightLeg: 1000
         };
+
+        // Variables para cambio de texturas aleatorias en showcase
+        let showcaseTextureTimers = {
+            eyes: 0,
+            eyebrows: 0,
+            ears: 0,
+            hair: 0,
+            torso: 0,
+            leftArm: 0,
+            rightArm: 0,
+            leftLeg: 0,
+            rightLeg: 0
+        };
+        const showcaseTextureIntervals = {
+            eyes: 2500,      // Cambiar cada 2.5 segundos
+            eyebrows: 3000,   // Cambiar cada 3 segundos
+            ears: 3500,       // Cambiar cada 3.5 segundos
+            hair: 4000,       // Cambiar cada 4 segundos
+            torso: 4500,      // Cambiar cada 4.5 segundos
+            leftArm: 2800,    // Cambiar cada 2.8 segundos
+            rightArm: 3200,   // Cambiar cada 3.2 segundos
+            leftLeg: 2700,    // Cambiar cada 2.7 segundos
+            rightLeg: 3100    // Cambiar cada 3.1 segundos
+        };
         let yVelocity = 0;
         let isJumping = false;
         let groundY = 0;
@@ -4006,6 +4030,79 @@
                 noseMesh.material.needsUpdate = true;
             }
         }
+
+        // Funciones para seleccionar texturas aleatorias para showcase
+        function getRandomTexture(texturesArray) {
+            if (!texturesArray || texturesArray.length === 0) return null;
+            return texturesArray[Math.floor(Math.random() * texturesArray.length)];
+        }
+
+        function applyRandomEyeTexture() {
+            const randomTexture = getRandomTexture(eyeTextures);
+            if (randomTexture) {
+                currentEyeTextureURL = randomTexture.url;
+                changeEyeTexture(randomTexture.url);
+            }
+        }
+
+        function applyRandomEyebrowTexture() {
+            const randomTexture = getRandomTexture(eyebrowTextures);
+            if (randomTexture) {
+                currentEyebrowTextureURL = randomTexture.url;
+                changeEyebrowTexture(randomTexture.url);
+            }
+        }
+
+        function applyRandomEarTexture() {
+            const randomTexture = getRandomTexture(earTextures);
+            if (randomTexture) {
+                currentEarTextureURL = randomTexture.url;
+                changeEarTexture('left', randomTexture.url);
+                changeEarTexture('right', randomTexture.url);
+            }
+        }
+
+        function applyRandomHairTexture() {
+            const randomTexture = getRandomTexture(hairTextures);
+            if (randomTexture) {
+                currentHairFrontURL = randomTexture.frontUrl;
+                currentHairBackURL = randomTexture.backUrl;
+                changeHairTexture(randomTexture.frontUrl, randomTexture.backUrl);
+            }
+        }
+
+        function applyRandomTorsoTexture() {
+            const randomTexture = getRandomTexture(torsoClothingTextures);
+            if (randomTexture) {
+                currentTorsoFrontURL = randomTexture.frontUrl;
+                currentTorsoBackURL = randomTexture.backUrl;
+                changeTorsoClothing(randomTexture.frontUrl, randomTexture.backUrl);
+            }
+        }
+
+        function applyRandomArmTexture(side) {
+            const randomTexture = getRandomTexture(armTextures);
+            if (randomTexture) {
+                if (side === 'left') {
+                    currentArmLeftURL = randomTexture.leftUrl;
+                } else {
+                    currentArmRightURL = randomTexture.rightUrl;
+                }
+                changeArmClothing(side, side === 'left' ? randomTexture.leftUrl : randomTexture.rightUrl);
+            }
+        }
+
+        function applyRandomLegTexture(side) {
+            const randomTexture = getRandomTexture(legTextures);
+            if (randomTexture) {
+                if (side === 'left') {
+                    currentLegLeftURL = randomTexture.leftUrl;
+                } else {
+                    currentLegRightURL = randomTexture.rightUrl;
+                }
+                changeLegClothing(side, side === 'left' ? randomTexture.leftUrl : randomTexture.rightUrl);
+            }
+        }
         
         function startShowcase() {
             isShowcaseActive = true;
@@ -4046,6 +4143,11 @@
             const now = Date.now();
             Object.keys(showcaseColorTimers).forEach(key => {
                 showcaseColorTimers[key] = now;
+            });
+            
+            // Inicializar timers de texturas
+            Object.keys(showcaseTextureTimers).forEach(key => {
+                showcaseTextureTimers[key] = now;
             });
             
             showcaseCharacterTimer = now;
@@ -4136,6 +4238,59 @@
                     const rightLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('r'));
                     if (rightLeg) applyRandomColorToPart(rightLeg);
                     showcaseColorTimers.rightLeg = now;
+                }
+
+                // Cambio de texturas aleatorias en diferentes partes
+                // Ojos
+                if (now - showcaseTextureTimers.eyes > showcaseTextureIntervals.eyes) {
+                    applyRandomEyeTexture();
+                    showcaseTextureTimers.eyes = now;
+                }
+                
+                // Cejas
+                if (now - showcaseTextureTimers.eyebrows > showcaseTextureIntervals.eyebrows) {
+                    applyRandomEyebrowTexture();
+                    showcaseTextureTimers.eyebrows = now;
+                }
+                
+                // Orejas
+                if (now - showcaseTextureTimers.ears > showcaseTextureIntervals.ears) {
+                    applyRandomEarTexture();
+                    showcaseTextureTimers.ears = now;
+                }
+                
+                // Cabello
+                if (now - showcaseTextureTimers.hair > showcaseTextureIntervals.hair) {
+                    applyRandomHairTexture();
+                    showcaseTextureTimers.hair = now;
+                }
+                
+                // Torso (texturas)
+                if (now - showcaseTextureTimers.torso > showcaseTextureIntervals.torso) {
+                    applyRandomTorsoTexture();
+                    showcaseTextureTimers.torso = now;
+                }
+                
+                // Brazos izquierdo y derecho
+                if (now - showcaseTextureTimers.leftArm > showcaseTextureIntervals.leftArm) {
+                    applyRandomArmTexture('left');
+                    showcaseTextureTimers.leftArm = now;
+                }
+                
+                if (now - showcaseTextureTimers.rightArm > showcaseTextureIntervals.rightArm) {
+                    applyRandomArmTexture('right');
+                    showcaseTextureTimers.rightArm = now;
+                }
+                
+                // Piernas izquierda y derecha
+                if (now - showcaseTextureTimers.leftLeg > showcaseTextureIntervals.leftLeg) {
+                    applyRandomLegTexture('left');
+                    showcaseTextureTimers.leftLeg = now;
+                }
+                
+                if (now - showcaseTextureTimers.rightLeg > showcaseTextureIntervals.rightLeg) {
+                    applyRandomLegTexture('right');
+                    showcaseTextureTimers.rightLeg = now;
                 }
             }
         }
