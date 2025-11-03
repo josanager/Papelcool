@@ -626,16 +626,26 @@
         /* Botones de showcase inicial - Push Button Style */
         #showcase-buttons-container {
             position: fixed;
-            bottom: 60px;
-            left: 50%;
-            transform: translateX(-50%);
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 33.33vh; /* 1/3 de la pantalla */
+            display: flex;
+            align-items: center;
+            justify-content: center;
             z-index: 10;
             transition: opacity 0.5s ease-out;
+            background: #0000ff;
         }
         
         #showcase-buttons-container.hidden {
             opacity: 0;
             pointer-events: none;
+        }
+        
+        /* Contenedor del espacio 3D en showcase */
+        #canvas-container.showcase-active {
+            height: 66.67vh !important; /* 2/3 de la pantalla */
         }
         
         .showcase-buttons {
@@ -801,11 +811,8 @@
         
         @media (max-width: 768px) {
             #showcase-buttons-container {
-                bottom: 40px;
-                width: 100%;
-                padding: 0 1rem;
-                left: 50%;
-                transform: translateX(-50%);
+                height: 35vh; /* Un poco más de espacio en móvil */
+                padding: 1rem;
             }
             
             .showcase-buttons {
@@ -831,6 +838,18 @@
             .showcase-btn .button-inner {
                 padding: 0.85em 1.5em;
                 text-align: center;
+            }
+            
+            #canvas-container.showcase-active {
+                height: 65vh !important; /* 65% en móvil para compensar */
+            }
+            
+            #showcase-logo {
+                top: 10px;
+            }
+            
+            #showcase-logo img {
+                height: 18px;
             }
         }
     </style>
@@ -1104,7 +1123,6 @@
         const showcaseCharacters = ['Mira', 'Rumi', 'Zoey'];
         let showcaseCharacterTimer = 0;
         const showcaseCharacterInterval = 4000; // Cambiar cada 4 segundos
-        let showcaseModelOffsetY = 0; // Offset vertical para el modelo en showcase (solo móvil)
         
         // Variables para cambio de colores aleatorios en showcase
         let showcaseColorTimers = {
@@ -3513,24 +3531,26 @@
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                
-                // Reajustar posición del modelo en showcase si está activo (solo móvil)
-                if (isShowcaseActive && loadedModel) {
+                if (isShowcaseActive) {
+                    // En showcase, ajustar al 66.67% de la altura
+                    const showcaseHeight = window.innerHeight * 0.6667;
+                    
+                    // Ajustar FOV según el tamaño de pantalla
                     if (window.innerWidth <= 768) {
-                        const logoBottom = 20 + 20;
-                        const buttonsTop = window.innerHeight - 40 - 200;
-                        const visualCenter = (logoBottom + buttonsTop) / 2;
-                        const screenCenter = window.innerHeight / 2;
-                        showcaseModelOffsetY = (screenCenter - visualCenter) / 100;
-                        loadedModel.position.y = groundY + showcaseModelOffsetY;
+                        camera.fov = 50; // FOV reducido para móvil
                     } else {
-                        // En desktop, restaurar posición normal
-                        loadedModel.position.y = groundY;
-                        showcaseModelOffsetY = 0;
+                        camera.fov = 75; // FOV normal para desktop
                     }
+                    
+                    camera.aspect = window.innerWidth / showcaseHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, showcaseHeight);
+                } else {
+                    // Fuera del showcase, usar altura completa y FOV normal
+                    camera.fov = 75;
+                    camera.aspect = window.innerWidth / window.innerHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(window.innerWidth, window.innerHeight);
                 }
             }, 150); // Debounce de 150ms
         });
@@ -3665,6 +3685,10 @@
             isShowcaseActive = true;
             showcaseButtonsContainer.classList.remove('hidden');
             
+            // Agregar clase al canvas para ajustar su altura
+            const canvasContainer = document.getElementById('canvas-container');
+            if (canvasContainer) canvasContainer.classList.add('showcase-active');
+            
             // Mostrar logo del showcase
             const showcaseLogo = document.getElementById('showcase-logo');
             if (showcaseLogo) showcaseLogo.classList.remove('hidden');
@@ -3676,21 +3700,17 @@
             // Desactivar controles de cámara (zoom, pan, rotate)
             controls.enabled = false;
             
-            // Calcular offset vertical del modelo solo en móvil
-            if (window.innerWidth <= 768 && loadedModel) {
-                // Calcular el centro visual entre el logo (top: 20px) y los botones (bottom: 40px)
-                const logoBottom = 20 + 20; // top + altura aproximada del logo
-                const buttonsTop = window.innerHeight - 40 - 200; // bottom - altura aproximada de botones
-                const visualCenter = (logoBottom + buttonsTop) / 2;
-                const screenCenter = window.innerHeight / 2;
-                
-                // Calcular cuánto mover el modelo hacia arriba (en unidades 3D)
-                // Ajustamos la escala para que sea proporcional
-                showcaseModelOffsetY = (screenCenter - visualCenter) / 100;
-                
-                // Aplicar offset al modelo
-                loadedModel.position.y = groundY + showcaseModelOffsetY;
+            // Ajustar FOV para hacer el modelo más grande en móvil
+            if (window.innerWidth <= 768) {
+                camera.fov = 50; // Reducir FOV para hacer el modelo más grande (era 75)
             }
+            
+            // Ajustar el renderer al nuevo tamaño del canvas
+            setTimeout(() => {
+                camera.aspect = window.innerWidth / (window.innerHeight * 0.6667);
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight * 0.6667);
+            }, 100);
             
             // Inicializar timers de colores
             const now = Date.now();
@@ -3705,18 +3725,18 @@
             isShowcaseActive = false;
             showcaseButtonsContainer.classList.add('hidden');
             
+            // Remover clase del canvas para restaurar altura completa
+            const canvasContainer = document.getElementById('canvas-container');
+            if (canvasContainer) canvasContainer.classList.remove('showcase-active');
+            
             // Ocultar logo del showcase
             const showcaseLogo = document.getElementById('showcase-logo');
             if (showcaseLogo) showcaseLogo.classList.add('hidden');
             
-            // Detener rotación del modelo y restaurar posición
+            // Detener rotación del modelo
             if (loadedModel) {
                 loadedModel.rotation.y = 0;
-                loadedModel.position.y = groundY; // Restaurar posición Y original
             }
-            
-            // Resetear offset
-            showcaseModelOffsetY = 0;
             
             // Restaurar grid y ocultar sombra
             if (typeof gridHelper !== 'undefined') gridHelper.visible = true;
@@ -3724,6 +3744,14 @@
             
             // Reactivar controles de cámara
             controls.enabled = true;
+            
+            // Restaurar FOV original
+            camera.fov = 75;
+            
+            // Restaurar el renderer al tamaño completo
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
             
             // Mostrar botón de modo cuando se sale del showcase
             const playBtnMobile = document.getElementById('play-mode-btn-mobile');
