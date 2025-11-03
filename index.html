@@ -1596,11 +1596,11 @@
         
         // --- DATA PARA OJOS ---
         const eyeTextures = [
-            { name: 'Male', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Male-eyes.png' },
-            { name: 'Female', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Female-eyes.png' },
-            { name: 'Mira', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Mira-eyes.png' },
-            { name: 'Rumi', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Rumi-eyes.png' },
-            { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Zoey-eyes.png' }
+            { name: 'Male', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Male-eyes.svg' },
+            { name: 'Female', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Female-eyes.svg' },
+            { name: 'Mira', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Mira-eyes.svg' },
+            { name: 'Rumi', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Rumi-eyes.svg' },
+            { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Zoey-eyes.svg' }
         ];
         let currentEyeTextureURL = eyeTextures[0].url;
 
@@ -1616,7 +1616,7 @@
 
         // --- DATA PARA NARIZ ---
         const noseTextures = [
-            { name: 'Default', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/nose/Nose-default.png' }
+            { name: 'Default', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/nose/Nose-default.svg' }
         ];
         let currentNoseTextureURL = noseTextures[0].url;
 
@@ -3981,25 +3981,6 @@
                          });
                      }
                 }
-            }
-            
-            // Control de visibilidad del cabello trasero según ángulo de cámara
-            if (hairBackMesh && loadedModel) {
-                // Obtener la dirección de la cámara hacia el modelo
-                const cameraDirection = new THREE.Vector3();
-                camera.getWorldDirection(cameraDirection);
-                
-                // Obtener la dirección "adelante" del modelo (eje Z negativo en world space)
-                const modelForward = new THREE.Vector3(0, 0, -1);
-                modelForward.applyQuaternion(loadedModel.quaternion);
-                
-                // Calcular el ángulo entre la cámara y el frente del modelo
-                const angle = Math.acos(cameraDirection.dot(modelForward));
-                const angleDegrees = THREE.MathUtils.radToDeg(angle);
-                
-                // Ocultar solo si el ángulo está entre 91 y 95 grados
-                const isLateralView = angleDegrees >= 95 && angleDegrees <= 100;
-                hairBackMesh.visible = !isLateralView;
             }
 
              if(isAnimatingCamera){
