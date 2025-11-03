@@ -4217,58 +4217,54 @@
         ];
         
         let currentPartIndex = 0;
-        let loadedImages = [];
         
-        // Función para limpiar imágenes de memoria
-        function clearLoadedImages() {
-            loadedImages.forEach(img => {
-                if (img && img.src) {
-                    img.src = '';
-                    img.remove();
-                }
-            });
-            loadedImages = [];
+        // Función simplificada para limpiar grid (SVG son ligeros)
+        function clearMobileGrid() {
             mobileOptionsGrid.innerHTML = '';
         }
         
-        // Función para cargar parte actual
+        // Función optimizada para cargar parte actual
         function loadCurrentPart() {
-            clearLoadedImages();
+            clearMobileGrid();
             
             const part = mobileParts[currentPartIndex];
             mobilePartTitle.textContent = part.title;
             mobilePartIcon.innerHTML = part.icon;
             
-            // Actualizar botones
-            // BACK siempre habilitado: en EYES va al showcase, en otras partes retrocede
+            // Actualizar botones de navegación
             mobileBackBtn.disabled = false;
             mobileNextBtn.disabled = currentPartIndex === mobileParts.length - 1;
             
-            // Cargar opciones
-            part.data.forEach((option, index) => {
+            // Crear fragment para batch insert (más rápido)
+            const fragment = document.createDocumentFragment();
+            
+            // Cargar opciones de forma optimizada
+            part.data.forEach((option) => {
                 const card = document.createElement('div');
                 card.className = 'mobile-option-card';
                 
                 const img = new Image();
                 img.src = option.url;
                 img.alt = option.name;
+                img.loading = 'lazy'; // Lazy loading nativo del browser
                 
-                img.onload = () => {
-                    card.appendChild(img);
-                    loadedImages.push(img);
-                };
+                card.appendChild(img);
                 
+                // Event listener optimizado con delegación
                 card.addEventListener('click', () => {
                     // Remover selección anterior
-                    document.querySelectorAll('.mobile-option-card').forEach(c => c.classList.remove('selected'));
+                    mobileOptionsGrid.querySelectorAll('.mobile-option-card').forEach(c => c.classList.remove('selected'));
                     card.classList.add('selected');
                     
                     // Aplicar cambio
                     part.applyFn(option.url, true);
-                });
+                }, { passive: true });
                 
-                mobileOptionsGrid.appendChild(card);
+                fragment.appendChild(card);
             });
+            
+            // Insertar todo de una vez (batch insert)
+            mobileOptionsGrid.appendChild(fragment);
         }
         
         // Event listeners de navegación
@@ -4277,7 +4273,7 @@
                 // Si estamos en la primera parte (EYES), volver al showcase
                 document.body.classList.remove('mobile-edit-mode');
                 mobileEditorPanel.classList.remove('active');
-                clearLoadedImages();
+                clearMobileGrid();
                 
                 // Reiniciar showcase
                 startShowcase();
