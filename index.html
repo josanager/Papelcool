@@ -2469,38 +2469,33 @@
         function changeEyeTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
             
-            // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
-            if (isMobileDevice && eyesMesh && !isInitialLoad) {
-                modelParts.head.remove(eyesMesh);
-                if (eyesMesh.material.map) eyesMesh.material.map.dispose();
-                eyesMesh.material.dispose();
-                eyesMesh.geometry.dispose();
-                eyesMesh = null;
-                forceMemoryCleanup();
-            }
-            
             loadOptimizedTexture(url,
                 (texture) => {
+                    // SOLUCIÓN 3: Reutilizar mesh existente para evitar superposición
                     if (isInitialLoad || !eyesMesh) {
                         // Creación inicial de los ojos
                         const eyeMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide, alphaTest: 0.5 });
-                        // Estas dimensiones están ajustadas para el modelo 'papelcool.glb'
                         const planeHeight = 2.256; 
                         const aspect = texture.image.width / texture.image.height;
                         const planeWidth = planeHeight * aspect;
                         const eyeGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         eyesMesh = new THREE.Mesh(eyeGeometry, eyeMaterial);
-                        // Esta posición está ajustada para el modelo 'papelcool.glb'
                         eyesMesh.position.set(0, 1.029, 1.129); 
                         modelParts.head.add(eyesMesh);
                     } else {
-                        // Solo actualiza la textura si el mesh ya existe (desktop)
+                        // Actualizar textura del mesh existente (móvil y desktop)
                         const oldMap = eyesMesh.material.map;
                         eyesMesh.material.map = texture;
                         eyesMesh.material.needsUpdate = true;
-                        // Liberar textura antigua para evitar fuga de memoria
+                        
+                        // Liberar textura antigua
                         if (oldMap && oldMap !== texture) {
                             oldMap.dispose();
+                        }
+                        
+                        // Limpiar memoria en móvil
+                        if (isMobileDevice) {
+                            forceMemoryCleanup();
                         }
                     }
                 },
@@ -2555,38 +2550,32 @@
         function changeEyebrowTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
             
-            // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
-            if (isMobileDevice && eyebrowsMesh && !isInitialLoad) {
-                modelParts.head.remove(eyebrowsMesh);
-                if (eyebrowsMesh.material.map) eyebrowsMesh.material.map.dispose();
-                eyebrowsMesh.material.dispose();
-                eyebrowsMesh.geometry.dispose();
-                eyebrowsMesh = null;
-                forceMemoryCleanup();
-            }
-            
             loadOptimizedTexture(url,
                 (texture) => {
                     if (isInitialLoad || !eyebrowsMesh) {
                         // Creación inicial de las cejas
                         const eyebrowMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide, alphaTest: 0.5 });
-                        // Mismas dimensiones que los ojos
                         const planeHeight = 2.256; 
                         const aspect = texture.image.width / texture.image.height;
                         const planeWidth = planeHeight * aspect;
                         const eyebrowGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         eyebrowsMesh = new THREE.Mesh(eyebrowGeometry, eyebrowMaterial);
-                        // Misma posición que los ojos
                         eyebrowsMesh.position.set(0, 1.029, 1.129); 
                         modelParts.head.add(eyebrowsMesh);
                     } else {
-                        // Solo actualiza la textura si el mesh ya existe
+                        // Actualizar textura del mesh existente
                         const oldMap = eyebrowsMesh.material.map;
                         eyebrowsMesh.material.map = texture;
                         eyebrowsMesh.material.needsUpdate = true;
+                        
                         // Liberar textura antigua
                         if (oldMap && oldMap !== texture) {
                             oldMap.dispose();
+                        }
+                        
+                        // Limpiar memoria en móvil
+                        if (isMobileDevice) {
+                            forceMemoryCleanup();
                         }
                     }
                 },
@@ -2641,16 +2630,6 @@
         function changeNoseTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
             
-            // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
-            if (isMobileDevice && noseMesh && !isInitialLoad) {
-                modelParts.head.remove(noseMesh);
-                if (noseMesh.material.map) noseMesh.material.map.dispose();
-                noseMesh.material.dispose();
-                noseMesh.geometry.dispose();
-                noseMesh = null;
-                forceMemoryCleanup();
-            }
-            
             loadOptimizedTexture(url,
                 (texture) => {
                     if (isInitialLoad || !noseMesh) {
@@ -2677,13 +2656,19 @@
                             applyNoseColor(modelParts.head.material.color.getHex());
                         }
                     } else {
-                        // Solo actualiza la textura si el mesh ya existe
+                        // Actualizar textura del mesh existente
                         const oldMap = noseMesh.material.map;
                         noseMesh.material.map = texture;
                         noseMesh.material.needsUpdate = true;
+                        
                         // Liberar textura antigua
                         if (oldMap && oldMap !== texture) {
                             oldMap.dispose();
+                        }
+                        
+                        // Limpiar memoria en móvil
+                        if (isMobileDevice) {
+                            forceMemoryCleanup();
                         }
                     }
                 },
@@ -2756,23 +2741,6 @@
         function changeEarTexture(side, url, isInitialLoad = false) {
             if (!modelParts.head) return;
             
-            // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
-            if (isMobileDevice && !isInitialLoad) {
-                const oldEarMesh = side === 'left' ? earLeftMesh : earRightMesh;
-                if (oldEarMesh) {
-                    modelParts.head.remove(oldEarMesh);
-                    if (oldEarMesh.material.map) oldEarMesh.material.map.dispose();
-                    oldEarMesh.material.dispose();
-                    oldEarMesh.geometry.dispose();
-                    if (side === 'left') {
-                        earLeftMesh = null;
-                    } else {
-                        earRightMesh = null;
-                    }
-                    forceMemoryCleanup();
-                }
-            }
-            
             loadOptimizedTexture(url,
                 (texture) => {
                     const earMesh = side === 'left' ? earLeftMesh : earRightMesh;
@@ -2805,7 +2773,7 @@
                         
                         modelParts.head.add(newEarMesh);
                     } else {
-                        // Solo actualiza la textura si el mesh ya existe
+                        // Actualizar textura del mesh existente
                         if (side === 'left' && earLeftMesh) {
                             const oldMap = earLeftMesh.material.map;
                             earLeftMesh.material.map = texture;
@@ -2816,6 +2784,11 @@
                             earRightMesh.material.map = texture;
                             earRightMesh.material.needsUpdate = true;
                             if (oldMap && oldMap !== texture) oldMap.dispose();
+                        }
+                        
+                        // Limpiar memoria en móvil
+                        if (isMobileDevice) {
+                            forceMemoryCleanup();
                         }
                     }
                 },
@@ -4246,7 +4219,8 @@
                 const img = new Image();
                 img.src = option.url;
                 img.alt = option.name;
-                img.loading = 'lazy'; // Lazy loading nativo del browser
+                // SOLUCIÓN 2: Carga INMEDIATA sin lazy loading
+                img.loading = 'eager';
                 
                 card.appendChild(img);
                 
@@ -4256,8 +4230,8 @@
                     mobileOptionsGrid.querySelectorAll('.mobile-option-card').forEach(c => c.classList.remove('selected'));
                     card.classList.add('selected');
                     
-                    // Aplicar cambio
-                    part.applyFn(option.url, true);
+                    // Aplicar cambio con limpieza previa
+                    part.applyFn(option.url, false);
                 }, { passive: true });
                 
                 fragment.appendChild(card);
@@ -4300,12 +4274,16 @@
                 mobileEditorPanel.classList.add('active');
                 showcaseLogoContainer.classList.remove('hidden');
                 
-                // Ajustar cámara y renderer para el espacio 50vh (mitad superior) según el contenedor real
-                setTimeout(() => { resizeToCanvasContainer(45); }, 120);
-                
-                // Cargar primera parte (ojos)
-                currentPartIndex = 0;
-                loadCurrentPart();
+                // SOLUCIÓN 1: Esperar a que el DOM se actualice antes de resize
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        resizeToCanvasContainer(45);
+                        
+                        // Cargar primera parte después del resize
+                        currentPartIndex = 0;
+                        loadCurrentPart();
+                    });
+                });
             } else {
                 // Modo desktop original
                 stopShowcase();
