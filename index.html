@@ -1635,8 +1635,8 @@
             { name: 'None', frontUrl: null, backUrl: null }, // Opción sin cabello
             { 
                 name: 'Mira', 
-                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Mira-front-hair.png',
-                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Mira-back-hair.png'
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Mira-front-hair.svg',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Mira-back-hair.svg'
             },
             { 
                 name: 'Rumi', 
@@ -1726,7 +1726,17 @@
         const loader = new GLTFLoader();
         const textureLoader = new THREE.TextureLoader();
         
-        // Configuración optimizada de texturas para móviles
+        /* ============================================
+           SISTEMA OPTIMIZADO PARA TEXTURAS SVG
+           ============================================
+           VENTAJAS DE SVG vs PNG:
+           - Sin píxeles: escalan infinitamente sin pérdida de calidad
+           - Menor peso: archivos más pequeños = menos RAM
+           - Sin compresión necesaria: no hay degradación de imagen
+           - Carga más rápida: menos datos a transferir
+           - Mejor rendimiento: menos procesamiento de píxeles
+           ============================================ */
+        
         textureLoader.setCrossOrigin('anonymous');
         
         // Sistema de throttle para evitar cambios muy rápidos en móviles
@@ -1753,8 +1763,9 @@
         }
         
         // Registro de texturas activas para limitar memoria
+        // SVG pesan menos: podemos mantener más texturas en memoria (10 vs 6 PNG)
         const activeTextures = new Set();
-        const MAX_TEXTURES_MOBILE = 6;
+        const MAX_TEXTURES_MOBILE = 10;
         
         function registerTexture(texture) {
             if (!isMobileDevice) return;
@@ -1772,67 +1783,32 @@
             }
         }
         
-        // Función para redimensionar imagen a resolución máxima en móviles con compresión
-        function resizeImageToMaxResolution(image, maxSize = 512) {
-            if (!isMobileDevice) return image;
-            
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d', { 
-                alpha: true,
-                desynchronized: true,
-                willReadFrequently: false
-            });
-            
-            let width = image.width;
-            let height = image.height;
-            
-            // Reducir aún más en móviles: 512x512 máximo
-            if (width > maxSize || height > maxSize) {
-                const scale = Math.min(maxSize / width, maxSize / height);
-                width = Math.floor(width * scale);
-                height = Math.floor(height * scale);
-            }
-            
-            canvas.width = width;
-            canvas.height = height;
-            
-            // Usar interpolación de menor calidad para mayor velocidad
-            ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = 'low';
-            ctx.drawImage(image, 0, 0, width, height);
-            
-            return canvas;
-        }
+        // NOTA: SVG no requiere redimensionamiento como PNG
+        // Los archivos SVG son vectoriales y se escalan perfectamente sin pérdida de calidad
+        // Esto ahorra memoria RAM y elimina la necesidad de compresión
         
-        // Función auxiliar para cargar texturas con optimización automática
+        // Función optimizada para cargar texturas SVG
+        // SVG son vectoriales: sin píxeles, escalables infinitamente, menor peso
         function loadOptimizedTexture(url, onLoad, onError) {
             return textureLoader.load(
                 url,
                 (texture) => {
-                    // Redimensionar imagen en móviles para reducir VRAM (512x512 máximo)
-                    if (isMobileDevice && texture.image) {
-                        const resizedImage = resizeImageToMaxResolution(texture.image, 512);
-                        texture.image = resizedImage;
-                    }
-                    
-                    // Optimizar configuración de textura para móviles
-                    if (isMobileDevice) {
-                        texture.minFilter = THREE.LinearFilter;
-                        texture.magFilter = THREE.LinearFilter;
-                        texture.generateMipmaps = false;
-                        texture.anisotropy = 1;
-                    }
+                    // Configuración óptima para SVG (sin redimensionamiento necesario)
+                    texture.minFilter = THREE.LinearFilter;
+                    texture.magFilter = THREE.LinearFilter;
+                    texture.generateMipmaps = false; // SVG no necesita mipmaps
+                    texture.anisotropy = renderer.capabilities.getMaxAnisotropy(); // Máxima calidad en SVG
                     texture.encoding = THREE.sRGBEncoding;
                     texture.needsUpdate = true;
                     
-                    // Registrar textura activa
+                    // Registrar textura activa para gestión de memoria
                     registerTexture(texture);
                     
                     if (onLoad) onLoad(texture);
                 },
                 undefined,
                 (error) => {
-                    console.error('Error cargando textura:', url, error);
+                    console.error('Error cargando textura SVG:', url, error);
                     if (onError) onError(error);
                 }
             );
@@ -1849,18 +1825,19 @@
             }
         }
         
-        // Función helper para crear imágenes con lazy loading optimizado
-        function createLazyImage(url, index, maxPreload = 2) {
+        // Función helper para crear imágenes SVG con lazy loading
+        // SVG pesan menos que PNG, pero aún optimizamos la carga
+        function createLazyImage(url, index, maxPreload = 3) {
             const img = document.createElement('img');
             img.dataset.url = url;
             
             if (isMobileDevice) {
-                // Solo precargar las primeras imágenes
+                // SVG son más ligeros: precargar más imágenes (3 en lugar de 2)
                 if (index < maxPreload) {
                     img.src = url;
                 } else {
-                    // Placeholder transparente de 1px
-                    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                    // Placeholder transparente SVG mínimo
+                    img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg"%3E%3C/svg%3E';
                     img.dataset.src = url;
                 }
             } else {
