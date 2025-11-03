@@ -939,6 +939,11 @@
         let showcaseCharacterTimer = 0;
         const showcaseCharacterInterval = 4000; // Cambiar cada 4 segundos
         
+        // Variables para animación de degradado
+        let gradientAnimationTime = 0;
+        let animatedGradientCanvas = null;
+        let animatedGradientTexture = null;
+        
         // Variables para cambio de colores aleatorios en showcase
         let showcaseColorTimers = {
             head: 0,
@@ -978,24 +983,50 @@
         const loadingIndicator = document.getElementById('loading-indicator');
         const scene = new THREE.Scene();
         
-        // Crear degradado de fondo vertical con múltiples colores
-        const gradientCanvas = document.createElement('canvas');
-        gradientCanvas.width = 4;
-        gradientCanvas.height = 512;
-        const gradientCtx = gradientCanvas.getContext('2d');
-        const gradient = gradientCtx.createLinearGradient(0, 0, 0, 512);
-        gradient.addColorStop(0, '#031749');    // Azul oscuro arriba
-        gradient.addColorStop(0.25, '#07296e'); // Azul medio-oscuro
-        gradient.addColorStop(0.5, '#0a3585');  // Azul medio
-        gradient.addColorStop(0.75, '#0f48a3'); // Azul medio-claro
-        gradient.addColorStop(1, '#125caf');    // Azul claro abajo
-        gradientCtx.fillStyle = gradient;
-        gradientCtx.fillRect(0, 0, 4, 512);
+        // Crear degradado de fondo vertical con múltiples colores (animado)
+        animatedGradientCanvas = document.createElement('canvas');
+        animatedGradientCanvas.width = 4;
+        animatedGradientCanvas.height = 512;
+        animatedGradientTexture = new THREE.CanvasTexture(animatedGradientCanvas);
+        animatedGradientTexture.minFilter = THREE.LinearFilter;
+        animatedGradientTexture.magFilter = THREE.LinearFilter;
+        scene.background = animatedGradientTexture;
         
-        const gradientTexture = new THREE.CanvasTexture(gradientCanvas);
-        gradientTexture.minFilter = THREE.LinearFilter;
-        gradientTexture.magFilter = THREE.LinearFilter;
-        scene.background = gradientTexture;
+        // Función para actualizar el degradado animado
+        function updateAnimatedGradient() {
+            const ctx = animatedGradientCanvas.getContext('2d');
+            const gradient = ctx.createLinearGradient(0, 0, 0, 512);
+            
+            // Calcular offset de animación (ciclo lento)
+            const offset = (Math.sin(gradientAnimationTime * 0.0008) + 1) * 0.5; // 0 a 1
+            const offset2 = (Math.sin(gradientAnimationTime * 0.0006 + 1) + 1) * 0.5;
+            
+            // Interpolar colores dinámicamente
+            const colors = [
+                { r: 3, g: 23, b: 73 },   // #031749
+                { r: 7, g: 41, b: 110 },  // #07296e
+                { r: 10, g: 53, b: 133 }, // #0a3585
+                { r: 15, g: 72, b: 163 }, // #0f48a3
+                { r: 18, g: 92, b: 175 }  // #125caf
+            ];
+            
+            // Aplicar variación sutil a los colores
+            const variation = offset * 20; // Variación de brillo
+            const variation2 = offset2 * 15;
+            
+            gradient.addColorStop(0, `rgb(${colors[0].r + variation2}, ${colors[0].g + variation2}, ${colors[0].b + variation2})`);
+            gradient.addColorStop(0.25, `rgb(${colors[1].r + variation}, ${colors[1].g + variation}, ${colors[1].b + variation})`);
+            gradient.addColorStop(0.5, `rgb(${colors[2].r + variation2}, ${colors[2].g + variation2}, ${colors[2].b + variation2})`);
+            gradient.addColorStop(0.75, `rgb(${colors[3].r + variation}, ${colors[3].g + variation}, ${colors[3].b + variation})`);
+            gradient.addColorStop(1, `rgb(${colors[4].r + variation2}, ${colors[4].g + variation2}, ${colors[4].b + variation2})`);
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 4, 512);
+            animatedGradientTexture.needsUpdate = true;
+        }
+        
+        // Inicializar el degradado
+        updateAnimatedGradient();
         
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const originalCameraPos = new THREE.Vector3(0, 1.5, 5);
@@ -3526,6 +3557,10 @@
             if (isShowcaseActive && loadedModel) {
                 // Rotación automática suave
                 loadedModel.rotation.y += showcaseRotationSpeed * 0.01;
+                
+                // Actualizar animación del degradado de fondo
+                gradientAnimationTime += 16; // ~60fps
+                updateAnimatedGradient();
                 
                 // Cambio de colores aleatorios en diferentes partes
                 const now = Date.now();
