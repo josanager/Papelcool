@@ -3439,7 +3439,7 @@
             return new THREE.Color(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
         }
         
-        function applyRandomColorToPart(part) {
+        function applyRandomColorToPart(part, isHead = false) {
             if (!part) return;
             const randomColor = getRandomColor();
             part.traverse((child) => {
@@ -3453,6 +3453,17 @@
                     }
                 }
             });
+            
+            // Si es la cabeza, aplicar el mismo oscurecimiento a la nariz (50%)
+            if (isHead && noseMesh) {
+                const darkenedColor = new THREE.Color(
+                    randomColor.r * 0.5,
+                    randomColor.g * 0.5,
+                    randomColor.b * 0.5
+                );
+                noseMesh.material.color.copy(darkenedColor);
+                noseMesh.material.needsUpdate = true;
+            }
         }
         
         function startShowcase() {
@@ -3506,7 +3517,7 @@
                 
                 // Cabeza
                 if (now - showcaseColorTimers.head > showcaseColorIntervals.head) {
-                    if (modelParts.head) applyRandomColorToPart(modelParts.head);
+                    if (modelParts.head) applyRandomColorToPart(modelParts.head, true);
                     showcaseColorTimers.head = now;
                 }
                 
