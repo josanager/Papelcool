@@ -977,10 +977,22 @@
         const canvasContainer = document.getElementById('canvas-container');
         const loadingIndicator = document.getElementById('loading-indicator');
         const scene = new THREE.Scene();
-        // Color de fondo negro
-        scene.background = new THREE.Color(0x1c1c1c);
-        // Agregar fog para degradado oscuro con profundidad
-        scene.fog = new THREE.Fog(0x1c1c1c, 8, 20);
+        
+        // Crear degradado de fondo con dos colores
+        const gradientCanvas = document.createElement('canvas');
+        gradientCanvas.width = 2;
+        gradientCanvas.height = 256;
+        const gradientCtx = gradientCanvas.getContext('2d');
+        const gradient = gradientCtx.createLinearGradient(0, 0, 0, 256);
+        gradient.addColorStop(0, '#07296e'); // Azul más claro arriba
+        gradient.addColorStop(1, '#031749'); // Azul más oscuro abajo
+        gradientCtx.fillStyle = gradient;
+        gradientCtx.fillRect(0, 0, 2, 256);
+        
+        const gradientTexture = new THREE.CanvasTexture(gradientCanvas);
+        gradientTexture.minFilter = THREE.LinearFilter;
+        gradientTexture.magFilter = THREE.LinearFilter;
+        scene.background = gradientTexture;
         
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const originalCameraPos = new THREE.Vector3(0, 1.5, 5);
