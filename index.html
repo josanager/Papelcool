@@ -650,13 +650,18 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 25vh; /* Reducido para mejor centrado con un solo botón */
+            height: 25vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 10;
+            z-index: 20; /* Encima del espacio 3D */
             transition: opacity 0.5s ease-out;
             background: transparent;
+            pointer-events: none; /* Permitir interacción con el 3D */
+        }
+        
+        #showcase-buttons-container .showcase-btn {
+            pointer-events: auto; /* Solo el botón es clickeable */
         }
         
         #showcase-buttons-container.hidden {
@@ -664,9 +669,17 @@
             pointer-events: none;
         }
         
-        /* Contenedor del espacio 3D en showcase */
+        /* Contenedor del espacio 3D en showcase - Pantalla completa centrado */
         #canvas-container.showcase-active {
-            height: 75vh !important; /* Más espacio para el 3D con un solo botón */
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 2 !important; /* Debajo del logo y botón */
         }
         
         .showcase-buttons {
@@ -1111,7 +1124,7 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            z-index: 10;
+            z-index: 20; /* Encima del espacio 3D */
             transition: opacity 0.5s ease-out;
             pointer-events: none;
         }
@@ -1157,7 +1170,12 @@
             }
             
             #canvas-container.showcase-active {
-                height: 75vh !important; /* Más espacio en móvil con un solo botón */
+                /* Mantener pantalla completa en móvil también */
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100vw !important;
+                height: 100vh !important;
             }
             
             #showcase-logo-container {
@@ -4170,16 +4188,18 @@
             // Desactivar controles de cámara (zoom, pan, rotate)
             controls.enabled = false;
             
-            // Ajustar FOV para hacer el modelo más grande en móvil
+            // Ajustar FOV para hacer el modelo más grande en todas las pantallas
             if (window.innerWidth <= 768) {
-                camera.fov = 50; // Reducir FOV para hacer el modelo más grande (era 75)
+                camera.fov = 40; // Móvil: FOV más pequeño = modelo más grande
+            } else {
+                camera.fov = 50; // Desktop: FOV reducido para modelo más grande
             }
             
-            // Ajustar el renderer al nuevo tamaño del canvas
+            // Ajustar el renderer al tamaño completo de la pantalla
             setTimeout(() => {
-                camera.aspect = window.innerWidth / (window.innerHeight * 0.6667);
+                camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight * 0.6667);
+                renderer.setSize(window.innerWidth, window.innerHeight);
             }, 100);
             
             // Inicializar timers de colores
