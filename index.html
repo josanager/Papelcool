@@ -641,26 +641,28 @@
         .showcase-buttons {
             display: flex;
             flex-direction: row;
+            justify-content: center;
+            align-items: center;
             gap: 1.5rem;
-            width: 90vw;
-            max-width: 700px;
+            width: auto;
+            max-width: 100%;
         }
         
         .showcase-btn {
-            flex: 1;
-            padding: 1.2rem 2rem;
+            padding: 1.2rem 2.5rem;
             font-family: 'Orbitron', sans-serif;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: #fff;
             background: linear-gradient(135deg, rgba(0, 255, 255, 0.2) 0%, rgba(138, 43, 226, 0.2) 100%);
             border: 2px solid rgba(0, 255, 255, 0.4);
-            border-radius: 16px;
+            border-radius: 30px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-shadow: 0 2px 8px rgba(0, 255, 255, 0.5);
             box-shadow: 0 8px 24px rgba(0, 255, 255, 0.2);
             white-space: nowrap;
+            min-width: 180px;
         }
         
         .showcase-btn:hover {
@@ -682,16 +684,15 @@
             }
             
             .showcase-buttons {
-                flex-direction: column;
-                width: 100%;
-                max-width: 400px;
-                margin: 0 auto;
+                flex-direction: row;
+                justify-content: center;
+                gap: 1rem;
             }
             
             .showcase-btn {
-                font-size: 0.9rem;
-                padding: 1rem 1.2rem;
-                width: 100%;
+                font-size: 0.85rem;
+                padding: 1rem 1.5rem;
+                min-width: 140px;
             }
         }
     </style>
@@ -708,10 +709,10 @@
     <div id="showcase-buttons-container" class="hidden">
         <div class="showcase-buttons">
             <button type="button" id="customize-btn" class="showcase-btn">
-                ✨ CUSTOMIZA EL TUYO
+                CUSTOM
             </button>
             <button type="button" id="presets-btn" class="showcase-btn">
-                👥 PERSONAJES PREESTABLECIDOS
+                PRESETS
             </button>
         </div>
     </div>
