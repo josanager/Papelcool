@@ -676,7 +676,36 @@
             transform: translateY(-2px) scale(1.02);
         }
         
+        /* Logo del showcase */
+        #showcase-logo {
+            position: fixed;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        #showcase-logo.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        #showcase-logo img {
+            height: 80px;
+            width: auto;
+            filter: drop-shadow(0 4px 12px rgba(0, 255, 255, 0.3));
+        }
+        
         @media (max-width: 768px) {
+            #showcase-logo {
+                top: 30px;
+            }
+            
+            #showcase-logo img {
+                height: 60px;
+            }
+            
             #showcase-buttons-container {
                 bottom: 40px;
                 width: 100%;
@@ -703,6 +732,11 @@
     <div id="loading-indicator">
         <img src="logo.svg" alt="Papelcool Logo" class="loading-logo">
         <div class="loading-spinner"></div>
+    </div>
+    
+    <!-- Logo del showcase -->
+    <div id="showcase-logo" class="hidden">
+        <img src="logo.svg" alt="Papelcool Logo">
     </div>
     
     <!-- Botones de showcase inicial (sin overlay) -->
@@ -3517,6 +3551,10 @@
             isShowcaseActive = true;
             showcaseButtonsContainer.classList.remove('hidden');
             
+            // Mostrar logo del showcase
+            const showcaseLogo = document.getElementById('showcase-logo');
+            if (showcaseLogo) showcaseLogo.classList.remove('hidden');
+            
             // Ocultar grid y mostrar sombra
             if (typeof gridHelper !== 'undefined') gridHelper.visible = false;
             if (footShadow) footShadow.visible = true;
@@ -3536,6 +3574,10 @@
         function stopShowcase() {
             isShowcaseActive = false;
             showcaseButtonsContainer.classList.add('hidden');
+            
+            // Ocultar logo del showcase
+            const showcaseLogo = document.getElementById('showcase-logo');
+            if (showcaseLogo) showcaseLogo.classList.add('hidden');
             
             // Detener rotación del modelo
             if (loadedModel) {
