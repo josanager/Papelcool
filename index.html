@@ -4007,7 +4007,34 @@
         function applyRandomColorToPart(part, isHead = false) {
             if (!part) return;
             const randomColor = getRandomColor();
+            
+            // Lista de meshes de texturas SVG que NO deben cambiar de color
+            const svgTextureMeshes = [
+                eyesMesh, 
+                eyebrowsMesh, 
+                noseMesh, 
+                earLeftMesh, 
+                earRightMesh, 
+                hairFrontMesh, 
+                hairBackMesh,
+                torsoFrontMesh,
+                torsoBackMesh,
+                armLeftFrontMesh,
+                armLeftBackMesh,
+                armRightFrontMesh,
+                armRightBackMesh,
+                legLeftFrontMesh,
+                legLeftBackMesh,
+                legRightFrontMesh,
+                legRightBackMesh
+            ];
+            
             part.traverse((child) => {
+                // Excluir meshes de texturas SVG del cambio de color
+                if (svgTextureMeshes.includes(child)) {
+                    return; // Saltar este mesh
+                }
+                
                 if (child.isMesh && child.material) {
                     if (Array.isArray(child.material)) {
                         child.material.forEach(mat => {
@@ -4019,16 +4046,13 @@
                 }
             });
             
-            // Si es la cabeza, aplicar el mismo oscurecimiento a la nariz (50%)
-            if (isHead && noseMesh) {
-                const darkenedColor = new THREE.Color(
-                    randomColor.r * 0.5,
-                    randomColor.g * 0.5,
-                    randomColor.b * 0.5
-                );
-                noseMesh.material.color.copy(darkenedColor);
-                noseMesh.material.needsUpdate = true;
-            }
+            // IMPORTANTE: Restaurar color blanco en texturas SVG para mantener colores originales
+            svgTextureMeshes.forEach(mesh => {
+                if (mesh && mesh.material && mesh.material.color) {
+                    mesh.material.color.setHex(0xffffff); // Blanco = colores originales del SVG
+                    mesh.material.needsUpdate = true;
+                }
+            });
         }
 
         // Funciones para seleccionar texturas aleatorias para showcase
