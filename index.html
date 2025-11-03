@@ -930,6 +930,24 @@
         const showcaseCharacters = ['Mira', 'Rumi', 'Zoey'];
         let showcaseCharacterTimer = 0;
         const showcaseCharacterInterval = 4000; // Cambiar cada 4 segundos
+        
+        // Variables para cambio de colores aleatorios en showcase
+        let showcaseColorTimers = {
+            head: 0,
+            torso: 0,
+            leftArm: 0,
+            rightArm: 0,
+            leftLeg: 0,
+            rightLeg: 0
+        };
+        const showcaseColorIntervals = {
+            head: 800,
+            torso: 1200,
+            leftArm: 600,
+            rightArm: 700,
+            leftLeg: 900,
+            rightLeg: 1000
+        };
         let yVelocity = 0;
         let isJumping = false;
         let groundY = 0;
@@ -3373,17 +3391,50 @@
         const presetsSection = document.getElementById('presets-section');
         const customizeSection = document.getElementById('customize-section');
         
+        function getRandomColor() {
+            const hue = Math.floor(Math.random() * 360);
+            const saturation = 50 + Math.floor(Math.random() * 50); // 50-100%
+            const lightness = 40 + Math.floor(Math.random() * 30); // 40-70%
+            return new THREE.Color(`hsl(${hue}, ${saturation}%, ${lightness}%)`);
+        }
+        
+        function applyRandomColorToPart(part) {
+            if (!part) return;
+            const randomColor = getRandomColor();
+            part.traverse((child) => {
+                if (child.isMesh && child.material) {
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach(mat => {
+                            if (mat.color) mat.color.copy(randomColor);
+                        });
+                    } else if (child.material.color) {
+                        child.material.color.copy(randomColor);
+                    }
+                }
+            });
+        }
+        
         function startShowcase() {
             isShowcaseActive = true;
             showcaseButtonsContainer.classList.remove('hidden');
             
-            // NO aplicar texturas, solo mostrar el modelo base girando
-            showcaseCharacterTimer = Date.now();
+            // Inicializar timers de colores
+            const now = Date.now();
+            Object.keys(showcaseColorTimers).forEach(key => {
+                showcaseColorTimers[key] = now;
+            });
+            
+            showcaseCharacterTimer = now;
         }
         
         function stopShowcase() {
             isShowcaseActive = false;
             showcaseButtonsContainer.classList.add('hidden');
+            
+            // Detener rotación del modelo
+            if (loadedModel) {
+                loadedModel.rotation.y = 0;
+            }
             
             // Mostrar botón de modo cuando se sale del showcase
             const playBtnMobile = document.getElementById('play-mode-btn-mobile');
@@ -3394,6 +3445,47 @@
             if (isShowcaseActive && loadedModel) {
                 // Rotación automática suave
                 loadedModel.rotation.y += showcaseRotationSpeed * 0.01;
+                
+                // Cambio de colores aleatorios en diferentes partes
+                const now = Date.now();
+                
+                // Cabeza
+                if (now - showcaseColorTimers.head > showcaseColorIntervals.head) {
+                    if (modelParts.head) applyRandomColorToPart(modelParts.head);
+                    showcaseColorTimers.head = now;
+                }
+                
+                // Torso
+                if (now - showcaseColorTimers.torso > showcaseColorIntervals.torso) {
+                    if (modelParts.torso) applyRandomColorToPart(modelParts.torso);
+                    showcaseColorTimers.torso = now;
+                }
+                
+                // Brazos
+                if (now - showcaseColorTimers.leftArm > showcaseColorIntervals.leftArm) {
+                    const leftArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('l'));
+                    if (leftArm) applyRandomColorToPart(leftArm);
+                    showcaseColorTimers.leftArm = now;
+                }
+                
+                if (now - showcaseColorTimers.rightArm > showcaseColorIntervals.rightArm) {
+                    const rightArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('r'));
+                    if (rightArm) applyRandomColorToPart(rightArm);
+                    showcaseColorTimers.rightArm = now;
+                }
+                
+                // Piernas
+                if (now - showcaseColorTimers.leftLeg > showcaseColorIntervals.leftLeg) {
+                    const leftLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('l'));
+                    if (leftLeg) applyRandomColorToPart(leftLeg);
+                    showcaseColorTimers.leftLeg = now;
+                }
+                
+                if (now - showcaseColorTimers.rightLeg > showcaseColorIntervals.rightLeg) {
+                    const rightLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('r'));
+                    if (rightLeg) applyRandomColorToPart(rightLeg);
+                    showcaseColorTimers.rightLeg = now;
+                }
             }
         }
         
