@@ -1751,67 +1751,68 @@
         
         textureLoader.setCrossOrigin('anonymous');
         
-        // Sistema de throttle para evitar cambios muy rápidos en móviles
-        const changeThrottles = {
-            eyes: { lastChange: 0, delay: 300 },
-            eyebrows: { lastChange: 0, delay: 300 },
-            nose: { lastChange: 0, delay: 300 },
-            ears: { lastChange: 0, delay: 300 },
-            hair: { lastChange: 0, delay: 400 },
-            torso: { lastChange: 0, delay: 400 },
-            legs: { lastChange: 0, delay: 400 },
-            arms: { lastChange: 0, delay: 400 }
-        };
+        /* ============================================
+           GESTIÓN DE MEMORIA OPTIMIZADA PARA SVG
+           ============================================
+           SVG son mucho más ligeros que PNG, por lo tanto:
+           - NO necesitamos throttle de cambios
+           - Podemos mantener más texturas en caché
+           - Disposición automática más inteligente
+           ============================================ */
         
-        function canChangeTexture(type) {
-            if (!isMobileDevice) return true;
-            const now = Date.now();
-            const throttle = changeThrottles[type];
-            if (now - throttle.lastChange < throttle.delay) {
-                return false;
+        // Cache de texturas con Map para acceso O(1)
+        const textureCache = new Map();
+        const MAX_CACHED_TEXTURES = isMobileDevice ? 15 : 30;
+        
+        function registerTexture(texture, url) {
+            if (!url) return;
+            
+            // Agregar al cache
+            textureCache.set(url, texture);
+            
+            // Limpiar cache si excede el límite
+            if (textureCache.size > MAX_CACHED_TEXTURES) {
+                const firstKey = textureCache.keys().next().value;
+                const oldTexture = textureCache.get(firstKey);
+                if (oldTexture && oldTexture.dispose) {
+                    oldTexture.dispose();
+                }
+                textureCache.delete(firstKey);
             }
-            throttle.lastChange = now;
-            return true;
         }
         
-        // Registro de texturas activas para limitar memoria
-        // SVG son ligeros: podemos mantener más texturas en memoria (10 simultáneas)
-        const activeTextures = new Set();
-        const MAX_TEXTURES_MOBILE = 10;
-        
-        function registerTexture(texture) {
-            if (!isMobileDevice) return;
-            activeTextures.add(texture);
-            
-            // Si excedemos el límite, eliminar las más antiguas
-            if (activeTextures.size > MAX_TEXTURES_MOBILE) {
-                const texturesToRemove = Array.from(activeTextures).slice(0, activeTextures.size - MAX_TEXTURES_MOBILE);
-                texturesToRemove.forEach(tex => {
-                    if (tex && tex.dispose) {
-                        tex.dispose();
-                        activeTextures.delete(tex);
-                    }
-                });
-            }
+        // Obtener textura del cache
+        function getCachedTexture(url) {
+            return textureCache.get(url);
         }
         
         // NOTA: SVG son vectoriales y se escalan perfectamente sin pérdida de calidad
         // No requieren redimensionamiento ni compresión
         // Esto ahorra memoria RAM y mejora el rendimiento
         
-        // Función para cargar SVG a alta resolución con colores correctos
+        // Función para cargar SVG a alta resolución con colores correctos y cache
         // Convierte SVG vectorial a imagen de alta calidad antes de usarlo como textura
-        function loadSVGAsHighResTexture(url, onLoad, onError, resolution = 2048) {
+        function loadSVGAsHighResTexture(url, onLoad, onError) {
+            // Verificar cache primero
+            const cachedTexture = getCachedTexture(url);
+            if (cachedTexture) {
+                if (onLoad) onLoad(cachedTexture);
+                return;
+            }
+            
             const img = new Image();
             img.crossOrigin = 'anonymous';
             
             img.onload = function() {
+                // Resolución dinámica según dispositivo
+                const resolution = isMobileDevice ? 1024 : 2048;
+                
                 // Crear canvas de alta resolución
                 const canvas = document.createElement('canvas');
                 canvas.width = resolution;
                 canvas.height = resolution;
                 
-                // CRÍTICO: Usar display-p3 o srgb sin conversión adicional
+                // Contexto optimizado
                 const ctx = canvas.getContext('2d', {
                     alpha: true,
                     willReadFrequently: false
@@ -1828,13 +1829,10 @@
                 texture.magFilter = THREE.LinearFilter;
                 texture.generateMipmaps = false;
                 texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-                
-                // SOLUCIÓN: No aplicar ningún colorSpace, dejar que Three.js lo maneje
-                // El canvas ya tiene los colores correctos del SVG
                 texture.needsUpdate = true;
                 
-                // Registrar textura activa para gestión de memoria
-                registerTexture(texture);
+                // Registrar en cache
+                registerTexture(texture, url);
                 
                 if (onLoad) onLoad(texture);
             };
@@ -1849,8 +1847,8 @@
         
         // Función para cargar texturas SVG únicamente
         function loadOptimizedTexture(url, onLoad, onError) {
-            // Solo soportamos SVG ahora
-            return loadSVGAsHighResTexture(url, onLoad, onError, 2048);
+            // Solo soportamos SVG con cache y resolución dinámica
+            return loadSVGAsHighResTexture(url, onLoad, onError);
         }
         
         // Función para forzar limpieza de memoria más agresiva
@@ -2006,6 +2004,9 @@
                     changeLegClothing('left', currentLegLeftURL, true); // Cargar estilo de pierna izquierda inicial (none)
                     changeLegClothing('right', currentLegRightURL, true); // Cargar estilo de pierna derecha inicial (none)
                 }
+                
+                // Cachear referencias a extremidades para optimizar animación
+                cacheLimbReferences();
             },
             (xhr) => {
                 // Progreso de carga - solo mantener logo y spinner
@@ -2481,7 +2482,6 @@
         
         function changeEyeTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
-            if (!isInitialLoad && !canChangeTexture('eyes')) return;
             
             // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
             if (isMobileDevice && eyesMesh && !isInitialLoad) {
@@ -2568,7 +2568,6 @@
 
         function changeEyebrowTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
-            if (!isInitialLoad && !canChangeTexture('eyebrows')) return;
             
             // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
             if (isMobileDevice && eyebrowsMesh && !isInitialLoad) {
@@ -2655,7 +2654,6 @@
 
         function changeNoseTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
-            if (!isInitialLoad && !canChangeTexture('nose')) return;
             
             // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
             if (isMobileDevice && noseMesh && !isInitialLoad) {
@@ -2771,7 +2769,6 @@
 
         function changeEarTexture(side, url, isInitialLoad = false) {
             if (!modelParts.head) return;
-            if (!isInitialLoad && !canChangeTexture('ears')) return;
             
             // En móviles, eliminar mesh antiguo completamente antes de crear nuevo
             if (isMobileDevice && !isInitialLoad) {
@@ -2913,7 +2910,6 @@
 
         function changeHairTexture(frontUrl, backUrl, isInitialLoad = false) {
             if (!modelParts.head) return;
-            if (!isInitialLoad && !canChangeTexture('hair')) return;
             
             // Si frontUrl es null, significa "None" - remover el cabello
             if (frontUrl === null) {
@@ -3067,7 +3063,6 @@
 
         function changeTorsoClothing(frontUrl, backUrl, isInitialLoad = false) {
             if (!modelParts.torso) return;
-            if (!isInitialLoad && !canChangeTexture('torso')) return;
             
             // Si frontUrl es null, significa "None" - remover la ropa
             if (frontUrl === null) {
@@ -3171,7 +3166,6 @@
 
         function changeLegClothing(side, url, isInitialLoad = false) {
             if (modelParts.legs.length < 2) return;
-            if (!isInitialLoad && !canChangeTexture('legs')) return;
             
             const leftLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('l'));
             const rightLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('r'));
@@ -3417,7 +3411,6 @@
 
         function changeArmClothing(side, url, isInitialLoad = false) {
             if (modelParts.arms.length < 2) return;
-            if (!isInitialLoad && !canChangeTexture('arms')) return;
             
             const leftArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('l'));
             const rightArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('r'));
@@ -3935,10 +3928,23 @@
         const clock = new THREE.Clock();
         const animationSpeed = 10, animationAmplitude = 0.6;
 
+        // Cache de referencias a extremidades para evitar find() en cada frame
+        let cachedLimbs = null;
+        
+        function cacheLimbReferences() {
+            if (modelParts.arms.length >= 2 && modelParts.legs.length >= 2) {
+                cachedLimbs = {
+                    leftArm: modelParts.arms.find(arm => arm.name.toLowerCase().includes('l')),
+                    rightArm: modelParts.arms.find(arm => arm.name.toLowerCase().includes('r')),
+                    leftLeg: modelParts.legs.find(leg => leg.name.toLowerCase().includes('l')),
+                    rightLeg: modelParts.legs.find(leg => leg.name.toLowerCase().includes('r'))
+                };
+            }
+        }
+
         function animate() {
             requestAnimationFrame(animate);
             const dt = Math.min(clock.getDelta(), 0.1); // Limitar dt para evitar grandes saltos
-            const elapsedTime = clock.getElapsedTime();
             
             // Actualizar showcase si está activo
             updateShowcaseRotation();
@@ -3948,16 +3954,14 @@
                  updatePlayCamera();
             }
             
-            // Lógica de animación de caminar
-            if (loadedModel && modelParts.arms.length >= 2 && modelParts.legs.length >= 2) {
+            // Lógica de animación de caminar optimizada
+            if (loadedModel && cachedLimbs) {
                 const isMoving = appMode === 'play' && (keys.ArrowUp || keys.ArrowDown || (joystickActive && Math.abs(joystickVector.y) > 0.1));
-                const leftArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('l'));
-                const rightArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('r'));
-                const leftLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('l'));
-                const rightLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('r'));
+                const {leftArm, rightArm, leftLeg, rightLeg} = cachedLimbs;
                 
                 if(leftArm && rightArm && leftLeg && rightLeg) {
                      if (isMoving) {
+                         const elapsedTime = clock.getElapsedTime();
                          const angle = Math.sin(elapsedTime * animationSpeed) * animationAmplitude;
                          const initialLeftArmRot = initialTransforms.get(leftArm).rotation;
                          const initialRightArmRot = initialTransforms.get(rightArm).rotation;
@@ -3965,20 +3969,22 @@
                          const initialRightLegRot = initialTransforms.get(rightLeg).rotation;
                          // Pierna derecha adelante, brazo izquierdo adelante
                          rightLeg.rotation.x = initialRightLegRot.x + angle;
-                         leftArm.rotation.x = initialLeftArmRot.x - angle;  // INVERTIDO
+                         leftArm.rotation.x = initialLeftArmRot.x - angle;
                          // Pierna izquierda adelante, brazo derecho adelante
                          leftLeg.rotation.x = initialLeftLegRot.x - angle;
-                         rightArm.rotation.x = initialRightArmRot.x + angle;  // INVERTIDO
+                         rightArm.rotation.x = initialRightArmRot.x + angle;
                      } else {
                          // Volver a la pose original
-                         [leftArm, rightArm, leftLeg, rightLeg].forEach(limb => {
+                         const limbsArray = [leftArm, rightArm, leftLeg, rightLeg];
+                         for (let i = 0; i < 4; i++) {
+                             const limb = limbsArray[i];
                              const initial = initialTransforms.get(limb);
                              if(initial) {
                                  limb.rotation.x = THREE.MathUtils.lerp(limb.rotation.x, initial.rotation.x, 0.1);
                                  limb.rotation.y = THREE.MathUtils.lerp(limb.rotation.y, initial.rotation.y, 0.1);
                                  limb.rotation.z = THREE.MathUtils.lerp(limb.rotation.z, initial.rotation.z, 0.1);
                              }
-                         });
+                         }
                      }
                 }
             }
