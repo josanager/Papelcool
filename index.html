@@ -1225,14 +1225,12 @@
                 }
             },
             (xhr) => {
-                if (xhr.lengthComputable) {
-                    loadingIndicator.textContent = `Cargando... ${((xhr.loaded / xhr.total) * 100).toFixed(2)}%`;
-                }
+                // Progreso de carga - solo mantener logo y spinner
             },
             (error) => { 
                 console.error('Error al cargar modelo:', error); 
                 console.error('Detalles del error:', error.message, error.stack);
-                loadingIndicator.textContent = 'Error al cargar modelo'; 
+                // Mantener pantalla de carga visible en caso de error
             }
         );
 
