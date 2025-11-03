@@ -1622,10 +1622,10 @@
 
         // --- DATA PARA OREJAS ---
         const earTextures = [
-            { name: 'Basic', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Basic-ears.png' },
-            { name: 'Mira', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Mira-ears.png' },
-            { name: 'Rumi', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Rumi-ears.png' },
-            { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Zoey-ears.png' }
+            { name: 'Basic', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Basic-ears.svg' },
+            { name: 'Mira', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Mira-ears.svg' },
+            { name: 'Rumi', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Rumi-ears.svg' },
+            { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Zoey-ears.svg' }
         ];
         let currentEarTextureURL = earTextures[0].url;
         let currentEarSide = null; // 'left' o 'right'
@@ -1851,29 +1851,27 @@
             return loadSVGAsHighResTexture(url, onLoad, onError);
         }
         
-        // Función para forzar limpieza de memoria más agresiva
+        // Limpieza de memoria simplificada (con SVG es menos crítico)
         function forceMemoryCleanup() {
+            // Con SVG ligeros, solo limpiamos renderLists
+            // No necesitamos forzar GC agresivamente
             if (isMobileDevice && renderer) {
                 renderer.renderLists.dispose();
-                // Forzar recolección de basura si está disponible
-                if (window.gc) {
-                    window.gc();
-                }
             }
         }
         
-        // Función helper para crear imágenes SVG con lazy loading
-        // SVG son ligeros pero aún optimizamos la carga
-        function createLazyImage(url, index, maxPreload = 3) {
+        // Función helper para crear imágenes SVG con lazy loading optimizado
+        // SVG son ligeros: podemos precargar más sin impacto
+        function createLazyImage(url, index, maxPreload = 5) {
             const img = document.createElement('img');
             img.dataset.url = url;
             
             if (isMobileDevice) {
-                // SVG son más ligeros: precargar más imágenes (3 en lugar de 2)
+                // SVG ligeros: precargar 5 imágenes (antes 3)
                 if (index < maxPreload) {
                     img.src = url;
                 } else {
-                    // Placeholder transparente SVG mínimo
+                    // Placeholder SVG transparente mínimo
                     img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg"%3E%3C/svg%3E';
                     img.dataset.src = url;
                 }
@@ -1885,7 +1883,7 @@
             return img;
         }
         
-        // IntersectionObserver global para lazy loading en móviles
+        // IntersectionObserver global optimizado para SVG
         let globalImageObserver = null;
         if (isMobileDevice) {
             globalImageObserver = new IntersectionObserver((entries) => {
@@ -1898,7 +1896,10 @@
                         }
                     }
                 });
-            }, { rootMargin: '50px' });
+            }, { 
+                rootMargin: '100px', // Cargar antes (antes 50px)
+                threshold: 0.01 // Más sensible
+            });
         }
         
         let loadedModel;
@@ -2463,21 +2464,6 @@
         cameraToggleBtn.addEventListener('click', (e) => {
             e.preventDefault();
             toggleCameraView();
-        });
-        
-        // Manejar cambios de tamaño de ventana
-        window.addEventListener('resize', () => {
-            const isMobile = window.innerWidth <= 1024;
-            // Ajustar visibilidad del panel según el modo y tamaño de pantalla
-            if (appMode === 'play' && isMobile) {
-                ui.editorPanelWrapper.classList.add('hidden-mobile');
-                mobileGameControls.classList.add('active');
-            } else if (appMode === 'edit' && isMobile) {
-                ui.editorPanelWrapper.classList.remove('hidden-mobile');
-                mobileGameControls.classList.remove('active');
-            } else if (!isMobile) {
-                mobileGameControls.classList.remove('active');
-            }
         });
         
         function changeEyeTexture(url, isInitialLoad = false) {
@@ -3891,32 +3877,35 @@
             isCameraTransitioning = true;
         }
         
-        // Handler de resize optimizado con debounce
+        // Handler de resize optimizado y unificado con debounce
         let resizeTimeout;
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
+                const isMobile = window.innerWidth <= 1024;
                 const isMobileEditActive = document.body.classList.contains('mobile-edit-mode');
                 
+                // Ajustar visibilidad de paneles según modo y tamaño
+                if (appMode === 'play' && isMobile) {
+                    ui.editorPanelWrapper.classList.add('hidden-mobile');
+                    mobileGameControls.classList.add('active');
+                } else if (appMode === 'edit' && isMobile) {
+                    ui.editorPanelWrapper.classList.remove('hidden-mobile');
+                    mobileGameControls.classList.remove('active');
+                } else if (!isMobile) {
+                    mobileGameControls.classList.remove('active');
+                }
+                
+                // Ajustar cámara y renderer según contexto
                 if (isMobileEditActive) {
-                    // En modo edición móvil, usar tamaño real del contenedor (50vh por CSS)
                     resizeToCanvasContainer(45);
                 } else if (isShowcaseActive) {
-                    // En showcase, ajustar al 66.67% de la altura
                     const showcaseHeight = window.innerHeight * 0.6667;
-                    
-                    // Ajustar FOV según el tamaño de pantalla
-                    if (window.innerWidth <= 768) {
-                        camera.fov = 50; // FOV reducido para móvil
-                    } else {
-                        camera.fov = 75; // FOV normal para desktop
-                    }
-                    
+                    camera.fov = window.innerWidth <= 768 ? 50 : 75;
                     camera.aspect = window.innerWidth / showcaseHeight;
                     camera.updateProjectionMatrix();
                     renderer.setSize(window.innerWidth, showcaseHeight);
                 } else {
-                    // Fuera del showcase, usar altura completa y FOV normal
                     camera.fov = 75;
                     camera.aspect = window.innerWidth / window.innerHeight;
                     camera.updateProjectionMatrix();
