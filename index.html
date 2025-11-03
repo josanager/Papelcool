@@ -1640,13 +1640,13 @@
             },
             { 
                 name: 'Rumi', 
-                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Rumi-front-hair.png',
-                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Rumi-back-hair.png'
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Rumi-front-hair.svg',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Rumi-back-hair.svg'
             },
             { 
                 name: 'Zoey', 
-                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Zoey-front-hair.png',
-                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Zoey-back-hair.png'
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Zoey-front-hair.svg',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Zoey-back-hair.svg'
             }
         ];
         let currentHairFrontURL = hairTextures[0].frontUrl; // Por defecto 'None'
@@ -1735,6 +1735,11 @@
            - Sin compresión necesaria: no hay degradación de imagen
            - Carga más rápida: menos datos a transferir
            - Mejor rendimiento: menos procesamiento de píxeles
+           
+           SOLUCIÓN ANTI-PIXELADO:
+           - SVG se rasteriza a 2048x2048 antes de aplicar como textura
+           - Esto mantiene la calidad vectorial en el modelo 3D
+           - Sin pixelado visible incluso en zoom cercano
            ============================================ */
         
         textureLoader.setCrossOrigin('anonymous');
@@ -1787,31 +1792,76 @@
         // Los archivos SVG son vectoriales y se escalan perfectamente sin pérdida de calidad
         // Esto ahorra memoria RAM y elimina la necesidad de compresión
         
-        // Función optimizada para cargar texturas SVG
-        // SVG son vectoriales: sin píxeles, escalables infinitamente, menor peso
+        // Función para cargar SVG a alta resolución
+        // Convierte SVG vectorial a imagen de alta calidad antes de usarlo como textura
+        function loadSVGAsHighResTexture(url, onLoad, onError, resolution = 2048) {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            
+            img.onload = function() {
+                // Crear canvas de alta resolución
+                const canvas = document.createElement('canvas');
+                canvas.width = resolution;
+                canvas.height = resolution;
+                const ctx = canvas.getContext('2d');
+                
+                // Dibujar SVG a alta resolución
+                ctx.drawImage(img, 0, 0, resolution, resolution);
+                
+                // Crear textura desde canvas de alta resolución
+                const texture = new THREE.CanvasTexture(canvas);
+                texture.minFilter = THREE.LinearFilter;
+                texture.magFilter = THREE.LinearFilter;
+                texture.generateMipmaps = false;
+                texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                texture.encoding = THREE.sRGBEncoding;
+                texture.needsUpdate = true;
+                
+                // Registrar textura activa para gestión de memoria
+                registerTexture(texture);
+                
+                if (onLoad) onLoad(texture);
+            };
+            
+            img.onerror = function(error) {
+                console.error('Error cargando SVG:', url, error);
+                if (onError) onError(error);
+            };
+            
+            img.src = url;
+        }
+        
+        // Función optimizada para cargar texturas (detecta SVG automáticamente)
         function loadOptimizedTexture(url, onLoad, onError) {
-            return textureLoader.load(
-                url,
-                (texture) => {
-                    // Configuración óptima para SVG (sin redimensionamiento necesario)
-                    texture.minFilter = THREE.LinearFilter;
-                    texture.magFilter = THREE.LinearFilter;
-                    texture.generateMipmaps = false; // SVG no necesita mipmaps
-                    texture.anisotropy = renderer.capabilities.getMaxAnisotropy(); // Máxima calidad en SVG
-                    texture.encoding = THREE.sRGBEncoding;
-                    texture.needsUpdate = true;
-                    
-                    // Registrar textura activa para gestión de memoria
-                    registerTexture(texture);
-                    
-                    if (onLoad) onLoad(texture);
-                },
-                undefined,
-                (error) => {
-                    console.error('Error cargando textura SVG:', url, error);
-                    if (onError) onError(error);
-                }
-            );
+            // Detectar si es SVG por extensión
+            const isSVG = url.toLowerCase().endsWith('.svg');
+            
+            if (isSVG) {
+                // Cargar SVG a alta resolución (2048x2048)
+                return loadSVGAsHighResTexture(url, onLoad, onError, 2048);
+            } else {
+                // Cargar PNG/JPG normalmente
+                return textureLoader.load(
+                    url,
+                    (texture) => {
+                        texture.minFilter = THREE.LinearFilter;
+                        texture.magFilter = THREE.LinearFilter;
+                        texture.generateMipmaps = false;
+                        texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                        texture.encoding = THREE.sRGBEncoding;
+                        texture.needsUpdate = true;
+                        
+                        registerTexture(texture);
+                        
+                        if (onLoad) onLoad(texture);
+                    },
+                    undefined,
+                    (error) => {
+                        console.error('Error cargando textura:', url, error);
+                        if (onError) onError(error);
+                    }
+                );
+            }
         }
         
         // Función para forzar limpieza de memoria más agresiva
