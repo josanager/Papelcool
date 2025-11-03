@@ -88,6 +88,7 @@
             left: 0;
             cursor: grab;
             z-index: 2;
+            overflow: hidden;
         }
         
         #canvas-container:active { 
@@ -434,11 +435,13 @@
             display: none; /* Oculto inicialmente, se muestra tras selección en showcase */
         }
         
-        /* Asegurar que el canvas ocupe todo el espacio */
+        /* El canvas mantiene su aspect ratio correcto */
         #canvas-container canvas {
             display: block;
-            width: 100% !important;
-            height: 100% !important;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
         }
         
         /* Mobile y Tablet (hasta 1024px) */
