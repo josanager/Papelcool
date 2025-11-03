@@ -978,15 +978,17 @@
         const loadingIndicator = document.getElementById('loading-indicator');
         const scene = new THREE.Scene();
         
-        // Crear degradado de fondo con dos colores (más pronunciado y visible)
+        // Crear degradado de fondo vertical con múltiples colores
         const gradientCanvas = document.createElement('canvas');
         gradientCanvas.width = 4;
         gradientCanvas.height = 512;
         const gradientCtx = gradientCanvas.getContext('2d');
         const gradient = gradientCtx.createLinearGradient(0, 0, 0, 512);
-        gradient.addColorStop(0, '#2d1b69'); // Morado/azul oscuro arriba
-        gradient.addColorStop(0.5, '#07296e'); // Azul medio
-        gradient.addColorStop(1, '#0a4d5c'); // Azul verdoso/cyan abajo
+        gradient.addColorStop(0, '#031749');    // Azul oscuro arriba
+        gradient.addColorStop(0.25, '#07296e'); // Azul medio-oscuro
+        gradient.addColorStop(0.5, '#0a3585');  // Azul medio
+        gradient.addColorStop(0.75, '#0f48a3'); // Azul medio-claro
+        gradient.addColorStop(1, '#125caf');    // Azul claro abajo
         gradientCtx.fillStyle = gradient;
         gradientCtx.fillRect(0, 0, 4, 512);
         
