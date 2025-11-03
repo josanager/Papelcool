@@ -623,25 +623,17 @@
             box-shadow: 0 2px 10px rgba(0, 255, 255, 0.6);
         }
         
-        /* Overlay de showcase inicial */
-        #showcase-overlay {
+        /* Botones de showcase inicial */
+        #showcase-buttons-container {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(10, 14, 39, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
             transition: opacity 0.5s ease-out;
         }
         
-        #showcase-overlay.hidden {
+        #showcase-buttons-container.hidden {
             opacity: 0;
             pointer-events: none;
         }
@@ -650,12 +642,8 @@
             display: flex;
             flex-direction: row;
             gap: 1.5rem;
-            width: 90%;
+            width: 90vw;
             max-width: 700px;
-            position: absolute;
-            bottom: 60px;
-            left: 50%;
-            transform: translateX(-50%);
         }
         
         .showcase-btn {
@@ -708,8 +696,8 @@
         <div class="loading-spinner"></div>
     </div>
     
-    <!-- Overlay de showcase inicial -->
-    <div id="showcase-overlay" class="hidden">
+    <!-- Botones de showcase inicial (sin overlay) -->
+    <div id="showcase-buttons-container" class="hidden">
         <div class="showcase-buttons">
             <button type="button" id="customize-btn" class="showcase-btn">
                 ✨ CUSTOMIZA EL TUYO
@@ -3378,7 +3366,7 @@
         }
         
         // Funciones para el showcase inicial
-        const showcaseOverlay = document.getElementById('showcase-overlay');
+        const showcaseButtonsContainer = document.getElementById('showcase-buttons-container');
         const customizeBtn = document.getElementById('customize-btn');
         const presetsBtn = document.getElementById('presets-btn');
         const editorPanelWrapper = document.getElementById('editor-panel-wrapper');
@@ -3387,7 +3375,7 @@
         
         function startShowcase() {
             isShowcaseActive = true;
-            showcaseOverlay.classList.remove('hidden');
+            showcaseButtonsContainer.classList.remove('hidden');
             
             // NO aplicar texturas, solo mostrar el modelo base girando
             showcaseCharacterTimer = Date.now();
@@ -3395,7 +3383,7 @@
         
         function stopShowcase() {
             isShowcaseActive = false;
-            showcaseOverlay.classList.add('hidden');
+            showcaseButtonsContainer.classList.add('hidden');
         }
         
         function updateShowcaseRotation() {
