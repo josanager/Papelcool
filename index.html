@@ -42,6 +42,24 @@
             user-select: none;
         }
         
+        /* Fondo con degradado azul para el showcase */
+        #showcase-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, #007EFF 0%, #0000FF 100%);
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+            pointer-events: none;
+        }
+        
+        #showcase-background.active {
+            opacity: 1;
+        }
+        
         body::before {
             content: '';
             position: fixed;
@@ -69,7 +87,7 @@
             top: 0;
             left: 0;
             cursor: grab;
-            z-index: 0;
+            z-index: 2;
         }
         
         #canvas-container:active { 
@@ -635,7 +653,7 @@
             justify-content: center;
             z-index: 10;
             transition: opacity 0.5s ease-out;
-            background: #0000ff;
+            background: transparent;
         }
         
         #showcase-buttons-container.hidden {
@@ -865,6 +883,9 @@
         </defs>
         <rect width="100%" height="100%" fill="url(#dottedGrid)" />
     </svg>
+
+    <!-- Fondo degradado azul para showcase -->
+    <div id="showcase-background"></div>
 
     <div id="canvas-container"></div>
     <div id="loading-indicator">
@@ -1174,10 +1195,8 @@
         staticGradientCtx.fillStyle = staticGradient;
         staticGradientCtx.fillRect(0, 0, 4, 512);
         
-        const staticGradientTexture = new THREE.CanvasTexture(staticGradientCanvas);
-        staticGradientTexture.minFilter = THREE.LinearFilter;
-        staticGradientTexture.magFilter = THREE.LinearFilter;
-        scene.background = staticGradientTexture;
+        // No establecer background en la escena para que sea transparente
+        scene.background = null;
         
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const originalCameraPos = new THREE.Vector3(0, 1.5, 5);
@@ -1189,11 +1208,12 @@
         
         const renderer = new THREE.WebGLRenderer({ 
             antialias: !isMobileDevice, // Desactivar antialiasing en móvil para ahorrar memoria
-            alpha: false,
+            alpha: true, // Habilitar transparencia
             powerPreference: 'high-performance'
         });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(pixelRatio); // Limitar pixel ratio en móvil
+        renderer.setClearColor(0x000000, 0); // Color transparente
         renderer.outputEncoding = THREE.sRGBEncoding;
         canvasContainer.appendChild(renderer.domElement);
 
@@ -3685,6 +3705,10 @@
             isShowcaseActive = true;
             showcaseButtonsContainer.classList.remove('hidden');
             
+            // Activar fondo degradado azul
+            const showcaseBackground = document.getElementById('showcase-background');
+            if (showcaseBackground) showcaseBackground.classList.add('active');
+            
             // Agregar clase al canvas para ajustar su altura
             const canvasContainer = document.getElementById('canvas-container');
             if (canvasContainer) canvasContainer.classList.add('showcase-active');
@@ -3724,6 +3748,10 @@
         function stopShowcase() {
             isShowcaseActive = false;
             showcaseButtonsContainer.classList.add('hidden');
+            
+            // Desactivar fondo degradado azul
+            const showcaseBackground = document.getElementById('showcase-background');
+            if (showcaseBackground) showcaseBackground.classList.remove('active');
             
             // Remover clase del canvas para restaurar altura completa
             const canvasContainer = document.getElementById('canvas-container');
