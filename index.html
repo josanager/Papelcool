@@ -929,6 +929,8 @@
         .mobile-nav-buttons {
             display: flex;
             gap: 1rem;
+            justify-content: center;
+            align-items: center;
         }
         
         /* Botones BACK/NEXT con estilo push button del showcase */
@@ -943,6 +945,9 @@
             box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
                 0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
             font-size: 1.1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         .mobile-nav-btn::after {
@@ -1018,6 +1023,39 @@
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+        }
+        
+        /* Efectos hover para desktop */
+        .mobile-nav-btn:hover .button-outer {
+            box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
+                0 0 0 0 rgba(5, 5, 5, 0.25);
+        }
+        
+        .mobile-nav-btn:hover .button-inner {
+            clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 999vw);
+            box-shadow:
+                /* 1 */
+                0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
+                /* 2 */
+                -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
+                /* 3 */
+                0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
+                /* 4 */
+                0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
+                /* 5 */
+                0 0 0 0 inset rgba(255, 255, 255, 1),
+                /* 6 */
+                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
+                /* 7 */
+                -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
+        }
+        
+        .mobile-nav-btn:hover .button-inner span {
+            transform: scale(0.975);
+        }
+        
+        .mobile-nav-btn:active .button-inner {
+            transform: scale(0.975);
         }
         
         /* Efectos táctiles para móvil */
