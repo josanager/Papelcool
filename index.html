@@ -708,8 +708,8 @@
         </div>
     </div>
 
-    <!-- Botón de modo para móvil (siempre visible arriba a la izquierda) -->
-    <button type="button" id="play-mode-btn-mobile" class="icon-btn p-3 pointer-events-auto"></button>
+    <!-- Botón de modo para móvil (oculto durante showcase) -->
+    <button type="button" id="play-mode-btn-mobile" class="icon-btn p-3 pointer-events-auto" style="display: none;"></button>
     
     <!-- Botón de cambio de cámara (responsive - móvil y desktop) -->
     <button type="button" id="camera-toggle-btn" class="icon-btn pointer-events-auto" style="display: none;">
@@ -3384,6 +3384,10 @@
         function stopShowcase() {
             isShowcaseActive = false;
             showcaseButtonsContainer.classList.add('hidden');
+            
+            // Mostrar botón de modo cuando se sale del showcase
+            const playBtnMobile = document.getElementById('play-mode-btn-mobile');
+            playBtnMobile.style.display = 'flex';
         }
         
         function updateShowcaseRotation() {
