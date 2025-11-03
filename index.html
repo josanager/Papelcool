@@ -153,20 +153,49 @@
         }
         
         #loading-indicator {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.3rem;
-            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 20px 40px;
-            border-radius: 16px;
-            border: 1px solid rgba(0, 255, 255, 0.3);
-            z-index: 100;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #000000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+        }
+        
+        #loading-indicator.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-logo {
+            width: 300px;
+            max-width: 80vw;
+            height: auto;
+            margin-bottom: 40px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         .icon-btn {
@@ -556,7 +585,10 @@
 <body class="text-white">
 
     <div id="canvas-container"></div>
-    <div id="loading-indicator">Cargando modelo...</div>
+    <div id="loading-indicator">
+        <img src="logo.svg" alt="Papelcool Logo" class="loading-logo">
+        <div class="loading-spinner"></div>
+    </div>
 
     <!-- Botón de modo para móvil (siempre visible arriba a la izquierda) -->
     <button type="button" id="play-mode-btn-mobile" class="icon-btn p-3 pointer-events-auto"></button>
@@ -902,7 +934,7 @@
             {
                 name: 'Rumi',
                 leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/left/Rumi-arm-left.png',
-                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/right/Rumi-arm-right.png'
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/right/Rumi-arm-right.svg'
             },
             {
                 name: 'Zoey',
@@ -1171,7 +1203,10 @@
                 modelCenter.set(0, groundY, 0);
                 controls.target.copy(modelCenter);
                 scene.add(loadedModel);
-                loadingIndicator.style.display = 'none';
+                loadingIndicator.classList.add('fade-out');
+                setTimeout(() => {
+                    loadingIndicator.style.display = 'none';
+                }, 500);
 
                 if (modelParts.head) {
                     changeEyeTexture(currentEyeTextureURL, true); // Cargar textura inicial
