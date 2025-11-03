@@ -4206,10 +4206,117 @@
             const showcaseLogoContainer = document.getElementById('showcase-logo-container');
             if (showcaseLogoContainer) showcaseLogoContainer.classList.add('hidden');
             
-            // Detener rotación del modelo
+            // Detener rotación del modelo y resetear a 0
             if (loadedModel) {
                 loadedModel.rotation.y = 0;
             }
+            
+            // NUEVO: Resetear colores del modelo 3D a blanco
+            const whiteColor = new THREE.Color(0xffffff);
+            if (modelParts.head) {
+                modelParts.head.traverse((child) => {
+                    if (child.isMesh && child.material && child.material.color) {
+                        if (Array.isArray(child.material)) {
+                            child.material.forEach(mat => {
+                                if (mat.color) mat.color.copy(whiteColor);
+                            });
+                        } else {
+                            child.material.color.copy(whiteColor);
+                        }
+                    }
+                });
+            }
+            if (modelParts.torso) {
+                modelParts.torso.traverse((child) => {
+                    if (child.isMesh && child.material && child.material.color) {
+                        if (Array.isArray(child.material)) {
+                            child.material.forEach(mat => {
+                                if (mat.color) mat.color.copy(whiteColor);
+                            });
+                        } else {
+                            child.material.color.copy(whiteColor);
+                        }
+                    }
+                });
+            }
+            modelParts.arms.forEach(arm => {
+                if (arm) {
+                    arm.traverse((child) => {
+                        if (child.isMesh && child.material && child.material.color) {
+                            if (Array.isArray(child.material)) {
+                                child.material.forEach(mat => {
+                                    if (mat.color) mat.color.copy(whiteColor);
+                                });
+                            } else {
+                                child.material.color.copy(whiteColor);
+                            }
+                        }
+                    });
+                }
+            });
+            modelParts.legs.forEach(leg => {
+                if (leg) {
+                    leg.traverse((child) => {
+                        if (child.isMesh && child.material && child.material.color) {
+                            if (Array.isArray(child.material)) {
+                                child.material.forEach(mat => {
+                                    if (mat.color) mat.color.copy(whiteColor);
+                                });
+                            } else {
+                                child.material.color.copy(whiteColor);
+                            }
+                        }
+                    });
+                }
+            });
+            
+            // NUEVO: Resetear todas las texturas SVG a "None" (estado inicial)
+            // Resetear ojos al primer estilo (default)
+            if (eyeTextures.length > 0) {
+                currentEyeTextureURL = eyeTextures[0].url;
+                changeEyeTexture(currentEyeTextureURL);
+            }
+            
+            // Resetear cejas al primer estilo (default)
+            if (eyebrowTextures.length > 0) {
+                currentEyebrowTextureURL = eyebrowTextures[0].url;
+                changeEyebrowTexture(currentEyebrowTextureURL);
+            }
+            
+            // Resetear nariz al primer estilo (default)
+            if (noseTextures.length > 0) {
+                currentNoseTextureURL = noseTextures[0].url;
+                changeNoseTexture(currentNoseTextureURL);
+            }
+            
+            // Resetear orejas al primer estilo (default)
+            if (earTextures.length > 0) {
+                currentEarTextureURL = earTextures[0].url;
+                changeEarTexture('left', currentEarTextureURL);
+                changeEarTexture('right', currentEarTextureURL);
+            }
+            
+            // Resetear cabello a "None"
+            currentHairFrontURL = null;
+            currentHairBackURL = null;
+            changeHairTexture(null, null);
+            
+            // Resetear ropa del torso a "None"
+            currentTorsoFrontURL = null;
+            currentTorsoBackURL = null;
+            changeTorsoClothing(null, null);
+            
+            // Resetear brazos a "None"
+            currentArmLeftURL = null;
+            currentArmRightURL = null;
+            changeArmClothing('left', null);
+            changeArmClothing('right', null);
+            
+            // Resetear piernas a "None"
+            currentLegLeftURL = null;
+            currentLegRightURL = null;
+            changeLegClothing('left', null);
+            changeLegClothing('right', null);
             
             // Restaurar grid y ocultar sombra
             if (typeof gridHelper !== 'undefined') gridHelper.visible = true;
