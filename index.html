@@ -1502,6 +1502,18 @@
         let isCameraTransitioning = false;
 
         const canvasContainer = document.getElementById('canvas-container');
+
+        // Ajusta cámara y renderer al tamaño REAL del contenedor del canvas
+        function resizeToCanvasContainer(fovOverride){
+            if (!canvasContainer) return;
+            const rect = canvasContainer.getBoundingClientRect();
+            const w = Math.max(1, Math.floor(rect.width));
+            const h = Math.max(1, Math.floor(rect.height));
+            if (typeof fovOverride === 'number') camera.fov = fovOverride;
+            camera.aspect = w / h;
+            camera.updateProjectionMatrix();
+            renderer.setSize(w, h);
+        }
         const loadingIndicator = document.getElementById('loading-indicator');
         const scene = new THREE.Scene();
         
@@ -3783,7 +3795,7 @@
         
         window.addEventListener('keydown', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = true; });
         window.addEventListener('keyup', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = false; });
-        window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});
+        // Resize unificado: la lógica de redimensionado se maneja en el handler con debounce más abajo
         
         const moveSpeed = 5, turnSpeed = 3, jumpHeight = 10, gravity = -30;
         function handlePlayerControls(dt) {
@@ -3875,12 +3887,8 @@
                 const isMobileEditActive = document.body.classList.contains('mobile-edit-mode');
                 
                 if (isMobileEditActive) {
-                    // En modo edición móvil, ajustar al 50% de la altura
-                    const mobileHeight = window.innerHeight * 0.5;
-                    camera.fov = 45;
-                    camera.aspect = window.innerWidth / mobileHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(window.innerWidth, mobileHeight);
+                    // En modo edición móvil, usar tamaño real del contenedor (50vh por CSS)
+                    resizeToCanvasContainer(45);
                 } else if (isShowcaseActive) {
                     // En showcase, ajustar al 66.67% de la altura
                     const showcaseHeight = window.innerHeight * 0.6667;
@@ -4236,8 +4244,8 @@
             mobilePartTitle.textContent = part.title;
             mobilePartIcon.innerHTML = part.icon;
             
-            // Actualizar botones
-            mobileBackBtn.disabled = currentPartIndex === 0;
+            // Actualizar botones (BACK siempre habilitado para volver al showcase)
+            mobileBackBtn.disabled = false;
             mobileNextBtn.disabled = currentPartIndex === mobileParts.length - 1;
             
             // Cargar opciones
@@ -4269,10 +4277,13 @@
         
         // Event listeners de navegación
         mobileBackBtn.addEventListener('click', () => {
-            if (currentPartIndex > 0) {
-                currentPartIndex--;
-                loadCurrentPart();
-            }
+            // Salir del modo edición móvil y volver al showcase
+            document.body.classList.remove('mobile-edit-mode');
+            mobileEditorPanel.classList.remove('active');
+            clearLoadedImages();
+            
+            // Reiniciar showcase
+            startShowcase();
         });
         
         mobileNextBtn.addEventListener('click', () => {
@@ -4291,14 +4302,8 @@
                 mobileEditorPanel.classList.add('active');
                 showcaseLogoContainer.classList.remove('hidden');
                 
-                // Ajustar cámara y renderer para el espacio 50vh
-                setTimeout(() => {
-                    const mobileHeight = window.innerHeight * 0.5;
-                    camera.fov = 45;
-                    camera.aspect = window.innerWidth / mobileHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(window.innerWidth, mobileHeight);
-                }, 100);
+                // Ajustar cámara y renderer para el espacio 50vh (mitad superior) según el contenedor real
+                setTimeout(() => { resizeToCanvasContainer(45); }, 120);
                 
                 // Cargar primera parte (ojos)
                 currentPartIndex = 0;
