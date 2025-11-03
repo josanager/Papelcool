@@ -1606,11 +1606,11 @@
 
         // --- DATA PARA CEJAS ---
         const eyebrowTextures = [
-            { name: 'Male', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Male-eyesbrown.png' },
-            { name: 'Female', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Female-eyesbrown.png' },
-            { name: 'Mira', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Mira-eyesbrown.png' },
-            { name: 'Rumi', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Rumi-eyesbrown.png' },
-            { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Zoey-eyesbrown.png' }
+            { name: 'Male', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Male-eyebrown.svg' },
+            { name: 'Female', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Female-eyebrown.svg' },
+            { name: 'Mira', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Mira-eyebrown.svg' },
+            { name: 'Rumi', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Rumi-eyebrown.svg' },
+            { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Zoey-eyebrown.svg' }
         ];
         let currentEyebrowTextureURL = eyebrowTextures[0].url;
 
@@ -1740,6 +1740,12 @@
            - SVG se rasteriza a 2048x2048 antes de aplicar como textura
            - Esto mantiene la calidad vectorial en el modelo 3D
            - Sin pixelado visible incluso en zoom cercano
+           
+           SOLUCIÓN COLORES OSCUROS:
+           - Canvas 2D ya está en espacio sRGB
+           - Usar THREE.SRGBColorSpace en lugar de encoding
+           - Evita doble corrección gamma que oscurece colores
+           - imageSmoothingQuality: 'high' para mejor calidad
            ============================================ */
         
         textureLoader.setCrossOrigin('anonymous');
@@ -1799,13 +1805,21 @@
             img.crossOrigin = 'anonymous';
             
             img.onload = function() {
-                // Crear canvas de alta resolución
+                // Crear canvas de alta resolución con configuración de color correcta
                 const canvas = document.createElement('canvas');
                 canvas.width = resolution;
                 canvas.height = resolution;
-                const ctx = canvas.getContext('2d');
                 
-                // Dibujar SVG a alta resolución
+                // Configurar contexto 2D con espacio de color correcto
+                const ctx = canvas.getContext('2d', {
+                    alpha: true,
+                    colorSpace: 'srgb', // Espacio de color explícito
+                    willReadFrequently: false
+                });
+                
+                // Dibujar SVG a alta resolución con calidad máxima
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
                 ctx.drawImage(img, 0, 0, resolution, resolution);
                 
                 // Crear textura desde canvas de alta resolución
@@ -1814,7 +1828,10 @@
                 texture.magFilter = THREE.LinearFilter;
                 texture.generateMipmaps = false;
                 texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-                texture.encoding = THREE.sRGBEncoding;
+                
+                // CRÍTICO: Canvas 2D ya está en sRGB, NO aplicar encoding adicional
+                // Esto evita la doble corrección gamma que oscurece los colores
+                texture.colorSpace = THREE.SRGBColorSpace; // Usar colorSpace moderno
                 texture.needsUpdate = true;
                 
                 // Registrar textura activa para gestión de memoria
@@ -1848,7 +1865,7 @@
                         texture.magFilter = THREE.LinearFilter;
                         texture.generateMipmaps = false;
                         texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-                        texture.encoding = THREE.sRGBEncoding;
+                        texture.colorSpace = THREE.SRGBColorSpace; // Usar colorSpace moderno
                         texture.needsUpdate = true;
                         
                         registerTexture(texture);
