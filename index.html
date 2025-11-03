@@ -966,11 +966,6 @@
         let showcaseCharacterTimer = 0;
         const showcaseCharacterInterval = 4000; // Cambiar cada 4 segundos
         
-        // Variables para animación de degradado
-        let gradientAnimationTime = 0;
-        let animatedGradientCanvas = null;
-        let animatedGradientTexture = null;
-        
         // Variables para cambio de colores aleatorios en showcase
         let showcaseColorTimers = {
             head: 0,
@@ -1010,43 +1005,21 @@
         const loadingIndicator = document.getElementById('loading-indicator');
         const scene = new THREE.Scene();
         
-        // Crear degradado de fondo animado con efecto de background-position
-        animatedGradientCanvas = document.createElement('canvas');
-        animatedGradientCanvas.width = 2048; // 4x más ancho para background-size: 400%
-        animatedGradientCanvas.height = 512;
-        animatedGradientTexture = new THREE.CanvasTexture(animatedGradientCanvas);
-        animatedGradientTexture.minFilter = THREE.LinearFilter;
-        animatedGradientTexture.magFilter = THREE.LinearFilter;
-        scene.background = animatedGradientTexture;
+        // Crear degradado de fondo estático
+        const staticGradientCanvas = document.createElement('canvas');
+        staticGradientCanvas.width = 4;
+        staticGradientCanvas.height = 512;
+        const staticGradientCtx = staticGradientCanvas.getContext('2d');
+        const staticGradient = staticGradientCtx.createLinearGradient(0, 0, 0, 512);
+        staticGradient.addColorStop(0, '#007EFF');  // Azul claro arriba
+        staticGradient.addColorStop(1, '#0000FF');  // Azul puro abajo
+        staticGradientCtx.fillStyle = staticGradient;
+        staticGradientCtx.fillRect(0, 0, 4, 512);
         
-        // Función para actualizar el degradado animado
-        function updateAnimatedGradient() {
-            const ctx = animatedGradientCanvas.getContext('2d');
-            
-            // Calcular posición del degradado (0% -> 100% -> 0%)
-            const progress = (Math.sin(gradientAnimationTime * 0.00042) + 1) * 0.5; // 0 a 1, ~15s ciclo
-            const bgPos = progress * 100; // 0 a 100
-            
-            // Crear degradado diagonal (62deg aproximado) con los dos colores repetidos
-            const angle = (62 * Math.PI) / 180;
-            const x1 = 1024 - Math.cos(angle) * 1024 - (bgPos * 20.48);
-            const y1 = 256 - Math.sin(angle) * 256;
-            const x2 = 1024 + Math.cos(angle) * 1024 - (bgPos * 20.48);
-            const y2 = 256 + Math.sin(angle) * 256;
-            
-            const gradient = ctx.createLinearGradient(x1, y1, x2, y2);
-            gradient.addColorStop(0, '#0000FF');    // Azul puro
-            gradient.addColorStop(0.33, '#00FFFF'); // Cyan
-            gradient.addColorStop(0.66, '#0000FF'); // Azul puro
-            gradient.addColorStop(1, '#00FFFF');    // Cyan
-            
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 2048, 512);
-            animatedGradientTexture.needsUpdate = true;
-        }
-        
-        // Inicializar el degradado
-        updateAnimatedGradient();
+        const staticGradientTexture = new THREE.CanvasTexture(staticGradientCanvas);
+        staticGradientTexture.minFilter = THREE.LinearFilter;
+        staticGradientTexture.magFilter = THREE.LinearFilter;
+        scene.background = staticGradientTexture;
         
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const originalCameraPos = new THREE.Vector3(0, 1.5, 5);
@@ -3585,10 +3558,6 @@
             if (isShowcaseActive && loadedModel) {
                 // Rotación automática suave
                 loadedModel.rotation.y += showcaseRotationSpeed * 0.01;
-                
-                // Actualizar animación del degradado de fondo
-                gradientAnimationTime += 16; // ~60fps
-                updateAnimatedGradient();
                 
                 // Cambio de colores aleatorios en diferentes partes
                 const now = Date.now();
