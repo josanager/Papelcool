@@ -676,10 +676,12 @@
             left: 0 !important;
             width: 100vw !important;
             height: 100vh !important;
+            height: 100dvh !important; /* Dynamic viewport height para móviles */
             display: flex !important;
             align-items: center !important;
             justify-content: center !important;
             z-index: 2 !important; /* Debajo del logo y botón */
+            overflow: hidden !important;
         }
         
         .showcase-buttons {
@@ -1120,7 +1122,7 @@
             left: 0;
             right: 0;
             height: auto;
-            padding-top: 10px;
+            padding: 15px 0;
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -1134,14 +1136,16 @@
         }
         
         #showcase-logo-container img {
-            height: 20px;
+            height: 22px;
             width: auto;
+            max-width: 200px;
         }
         
         @media (max-width: 768px) {
             #showcase-buttons-container {
-                height: 25vh; /* Reducido para mejor centrado en móvil */
-                padding: 1rem;
+                height: auto;
+                padding: 1.5rem 1rem 2rem 1rem;
+                bottom: env(safe-area-inset-bottom, 0); /* Respeta área segura en iOS */
             }
             
             .showcase-buttons {
@@ -1170,20 +1174,24 @@
             }
             
             #canvas-container.showcase-active {
-                /* Mantener pantalla completa en móvil también */
+                /* Pantalla completa optimizada para móvil */
                 position: fixed !important;
                 top: 0 !important;
                 left: 0 !important;
                 width: 100vw !important;
                 height: 100vh !important;
+                height: 100dvh !important; /* Dynamic viewport para Chrome móvil */
+                min-height: -webkit-fill-available !important; /* Safari iOS */
             }
             
             #showcase-logo-container {
-                padding-top: 20px;
+                padding: 20px 0 10px 0;
+                top: env(safe-area-inset-top, 0); /* Respeta notch en iOS */
             }
             
             #showcase-logo-container img {
-                height: 18px;
+                height: 20px;
+                max-width: 180px;
             }
         }
     </style>
@@ -4188,11 +4196,11 @@
             // Desactivar controles de cámara (zoom, pan, rotate)
             controls.enabled = false;
             
-            // Ajustar FOV para hacer el modelo más grande en todas las pantallas
+            // Ajustar FOV para tamaño óptimo del modelo en showcase
             if (window.innerWidth <= 768) {
-                camera.fov = 40; // Móvil: FOV más pequeño = modelo más grande
+                camera.fov = 55; // Móvil: Tamaño moderado del modelo
             } else {
-                camera.fov = 50; // Desktop: FOV reducido para modelo más grande
+                camera.fov = 60; // Desktop: Tamaño moderado del modelo
             }
             
             // Ajustar el renderer al tamaño completo de la pantalla
