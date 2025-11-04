@@ -27,7 +27,7 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
     <!-- jsPDF para generación de PDFs -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
     <style>
         * {
             margin: 0;
@@ -5139,6 +5139,13 @@
                 return;
             }
             
+            // Verificar que jsPDF esté cargado
+            if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
+                alert('La librería PDF no está cargada correctamente. Por favor, recarga la página.');
+                console.error('jsPDF no está disponible');
+                return;
+            }
+            
             console.log('Generando PDF para:', currentPresetCharacter);
             
             // Mostrar indicador de carga
@@ -5248,7 +5255,9 @@
         // Event listener para el botón de descargar PDF
         if (downloadPdfBtn) {
             downloadPdfBtn.addEventListener('click', () => {
-                generatePDF();
+                alert('Funcionalidad de PDF temporalmente deshabilitada para diagnóstico');
+                console.log('PDF click - diagnóstico');
+                // generatePDF();
             });
         }
         
