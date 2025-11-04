@@ -5180,17 +5180,18 @@
                         canvas.width = img.width || 1122; // A4 horizontal aprox
                         canvas.height = img.height || 794;
                         
-                        const ctx = canvas.getContext('2d');
+                        const ctx = canvas.getContext('2d', { alpha: true });
                         if (!ctx) {
                             reject(new Error('No se pudo obtener contexto 2D del canvas'));
                             return;
                         }
                         
-                        // Fondo blanco
-                        ctx.fillStyle = '#FFFFFF';
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        // NO agregar fondo blanco - mantener transparencia
+                        // Los templates SVG tienen fondo transparente para verse superpuestos
+                        // ctx.fillStyle = '#FFFFFF';  ← ELIMINADO
+                        // ctx.fillRect(0, 0, canvas.width, canvas.height);  ← ELIMINADO
                         
-                        // Dibujar la imagen SVG
+                        // Dibujar la imagen SVG con transparencia
                         ctx.drawImage(img, 0, 0);
                         
                         // Convertir a data URL
