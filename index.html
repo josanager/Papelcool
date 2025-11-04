@@ -4980,6 +4980,7 @@
         
         // Variables globales para almacenar el personaje actual seleccionado
         let currentPresetCharacter = null;
+        let isGeneratingPDF = false; // Flag para evitar múltiples generaciones simultáneas
         
         // Event listeners para botones de personajes preestablecidos
         const downloadPdfBtn = document.getElementById('download-pdf-btn');
@@ -5216,6 +5217,13 @@
         
         // Función principal para generar el PDF
         async function generatePDF() {
+            // Verificar que no se esté generando ya un PDF
+            if (isGeneratingPDF) {
+                console.warn('⚠️ Ya se está generando un PDF. Por favor espera...');
+                alert('Ya se está generando un PDF. Por favor espera a que termine.');
+                return;
+            }
+            
             if (!currentPresetCharacter) {
                 alert('Por favor, selecciona un personaje preestablecido primero.');
                 return;
@@ -5228,7 +5236,9 @@
                 return;
             }
             
-            console.log('Generando PDF para:', currentPresetCharacter);
+            // Establecer flag para evitar múltiples ejecuciones
+            isGeneratingPDF = true;
+            console.log('🔄 Iniciando generación de PDF para:', currentPresetCharacter);
             
             // Mostrar indicador de carga
             const loadingMsg = document.createElement('div');
@@ -5345,9 +5355,14 @@
                 });
                 console.log('==============================');
                 
+                console.log('💾 Llamando a pdf.save() - DESCARGANDO UN SOLO PDF...');
+                console.log(`📄 Nombre del archivo: ${filename}`);
+                console.log(`📊 Número de páginas en el PDF: ${pdf.internal.getNumberOfPages()}`);
+                
                 pdf.save(filename);
                 
-                console.log('✅ PDF descargado exitosamente');
+                console.log('✅ ¡PDF ÚNICO descargado exitosamente!');
+                console.log('⚠️ SI VES MÚLTIPLES DESCARGAS, verifica que no estés haciendo click múltiples veces');
                 
             } catch (error) {
                 console.error('Error generando PDF:', error);
@@ -5355,6 +5370,10 @@
                 console.error('Error stack:', error.stack);
                 alert('Error al generar el PDF: ' + (error.message || 'Error desconocido'));
             } finally {
+                // Resetear flag para permitir nuevas generaciones
+                isGeneratingPDF = false;
+                console.log('🏁 Generación de PDF finalizada. Flag reseteado.');
+                
                 // Remover indicador de carga
                 if (document.body.contains(loadingMsg)) {
                     document.body.removeChild(loadingMsg);
@@ -5364,9 +5383,17 @@
         
         // Event listener para el botón de descargar PDF
         if (downloadPdfBtn) {
-            downloadPdfBtn.addEventListener('click', () => {
+            // Remover listeners anteriores si existen (evita acumulación)
+            const newBtn = downloadPdfBtn.cloneNode(true);
+            downloadPdfBtn.parentNode.replaceChild(newBtn, downloadPdfBtn);
+            
+            // Agregar nuevo listener
+            newBtn.addEventListener('click', () => {
+                console.log('🖱️ Click en botón DOWNLOAD PDF detectado');
                 generatePDF();
-            });
+            }, { once: false }); // No usar once:true para permitir múltiples descargas
+            
+            console.log('✅ Event listener de PDF configurado correctamente');
         }
         
         // Inicialización
