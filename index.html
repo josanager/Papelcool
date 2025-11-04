@@ -1265,6 +1265,44 @@
             height: 24px;
         }
         
+        /* Botón de descargar plantilla PDF */
+        #download-pdf-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: none; /* Oculto por defecto */
+            padding: 0.6rem 1.2rem;
+            background: linear-gradient(135deg, #00ffff 0%, #8a2be2 100%);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 8px;
+            color: #0a0e27;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 255, 255, 0.3);
+            z-index: 10;
+            pointer-events: auto;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        #download-pdf-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.5);
+            background: linear-gradient(135deg, #00ffff 0%, #9d4edd 100%);
+        }
+        
+        #download-pdf-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 255, 255, 0.3);
+        }
+        
+        #download-pdf-btn.active {
+            display: block;
+        }
+        
         /* Colores específicos para cada red social */
         .social-btn.tiktok:hover {
             background: #000000;
@@ -1450,7 +1488,14 @@
 
             <div id="editor-container">
                 <!-- Botones de personajes preestablecidos -->
-                <div id="presets-section" class="pt-2 border-t border-cyan-500/30 mb-4 hidden">
+                <div id="presets-section" class="pt-2 border-t border-cyan-500/30 mb-4 hidden" style="position: relative;">
+                    <!-- Botón de descargar plantilla PDF -->
+                    <button type="button" id="download-pdf-btn" class="pointer-events-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
+                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                        </svg>
+                        Descargar Plantilla PDF
+                    </button>
                     <h2 class="text-md font-bold text-cyan-300 mb-3">PERSONAJES PREESTABLECIDOS</h2>
                     <div class="flex gap-3 pointer-events-auto">
                         <button type="button" id="preset-mira-btn" class="preset-character-btn">
@@ -4844,17 +4889,33 @@
         }
         
         // Event listeners para botones de personajes preestablecidos
+        const downloadPdfBtn = document.getElementById('download-pdf-btn');
+        
         document.getElementById('preset-mira-btn').addEventListener('click', () => {
             applyPresetCharacter('Mira');
+            // Mostrar botón de descargar PDF
+            if (downloadPdfBtn) downloadPdfBtn.classList.add('active');
         });
         
         document.getElementById('preset-rumi-btn').addEventListener('click', () => {
             applyPresetCharacter('Rumi');
+            // Mostrar botón de descargar PDF
+            if (downloadPdfBtn) downloadPdfBtn.classList.add('active');
         });
         
         document.getElementById('preset-zoey-btn').addEventListener('click', () => {
             applyPresetCharacter('Zoey');
+            // Mostrar botón de descargar PDF
+            if (downloadPdfBtn) downloadPdfBtn.classList.add('active');
         });
+        
+        // Event listener para el botón de descargar PDF (funcionalidad aún no implementada)
+        if (downloadPdfBtn) {
+            downloadPdfBtn.addEventListener('click', () => {
+                console.log('Descargar plantilla PDF - Funcionalidad pendiente');
+                // Aquí se implementará la descarga del PDF
+            });
+        }
         
         // Inicialización
         setIcons();
