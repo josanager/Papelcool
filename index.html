@@ -5383,15 +5383,11 @@
         
         // Event listener para el botón de descargar PDF
         if (downloadPdfBtn) {
-            // Remover listeners anteriores si existen (evita acumulación)
-            const newBtn = downloadPdfBtn.cloneNode(true);
-            downloadPdfBtn.parentNode.replaceChild(newBtn, downloadPdfBtn);
-            
-            // Agregar nuevo listener
-            newBtn.addEventListener('click', () => {
+            // Agregar listener directamente (el flag isGeneratingPDF previene ejecuciones múltiples)
+            downloadPdfBtn.addEventListener('click', () => {
                 console.log('🖱️ Click en botón DOWNLOAD PDF detectado');
                 generatePDF();
-            }, { once: false }); // No usar once:true para permitir múltiples descargas
+            });
             
             console.log('✅ Event listener de PDF configurado correctamente');
         }
