@@ -5033,22 +5033,51 @@
             return color ? '#' + color.getHexString() : '#FFFFFF';
         }
         
-        // Función para colorear un SVG
+        // Función para colorear un SVG (mejorada para colorear TODOS los elementos)
         function colorSVG(svgText, color) {
+            console.log(`[colorSVG] Coloreando con: ${color}`);
+            
             // Crear un parser DOM
             const parser = new DOMParser();
             const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
             const svgElement = svgDoc.documentElement;
             
-            // Buscar todos los elementos que tienen fill
-            const elementsWithFill = svgElement.querySelectorAll('[fill]:not([fill="none"])');
+            // Contador para debug
+            let elementsColored = 0;
+            
+            // Buscar TODOS los elementos con atributo fill (incluyendo blancos, grises, etc.)
+            const elementsWithFill = svgElement.querySelectorAll('[fill]');
             elementsWithFill.forEach(el => {
                 const currentFill = el.getAttribute('fill');
-                // Solo colorear si no es transparente o none
+                
+                // Colorear TODO excepto 'none' y 'transparent'
                 if (currentFill && currentFill !== 'none' && currentFill !== 'transparent') {
                     el.setAttribute('fill', color);
+                    elementsColored++;
                 }
             });
+            
+            // También buscar elementos con style que contenga fill
+            const elementsWithStyle = svgElement.querySelectorAll('[style*="fill"]');
+            elementsWithStyle.forEach(el => {
+                const style = el.getAttribute('style');
+                if (style) {
+                    // Reemplazar cualquier fill:#xxx con el nuevo color
+                    const newStyle = style.replace(/fill:\s*#[0-9a-fA-F]{3,6}/g, `fill:${color}`)
+                                          .replace(/fill:\s*rgb\([^)]+\)/g, `fill:${color}`)
+                                          .replace(/fill:\s*[a-zA-Z]+/g, (match) => {
+                                              // No reemplazar 'none' o 'transparent'
+                                              if (match.includes('none') || match.includes('transparent')) {
+                                                  return match;
+                                              }
+                                              return `fill:${color}`;
+                                          });
+                    el.setAttribute('style', newStyle);
+                    elementsColored++;
+                }
+            });
+            
+            console.log(`[colorSVG] Elementos coloreados: ${elementsColored}`);
             
             // Serializar de vuelta a string
             const serializer = new XMLSerializer();
@@ -5221,12 +5250,23 @@
                 const pageHeight = 210;
                 
                 // Obtener colores de las partes del modelo 3D
+                console.log('=== OBTENIENDO COLORES DEL MODELO 3D ===');
+                console.log('modelParts.head:', modelParts.head);
+                console.log('modelParts.torso:', modelParts.torso);
+                console.log('modelParts.arms:', modelParts.arms);
+                console.log('modelParts.legs:', modelParts.legs);
+                
                 const headColor = getPartColor(modelParts.head);
                 const torsoColor = getPartColor(modelParts.torso);
                 const armColor = modelParts.arms.length > 0 ? getPartColor(modelParts.arms[0]) : '#FFFFFF';
                 const legColor = modelParts.legs.length > 0 ? getPartColor(modelParts.legs[0]) : '#FFFFFF';
                 
-                console.log('Colores obtenidos:', { headColor, torsoColor, armColor, legColor });
+                console.log('=== COLORES OBTENIDOS ===');
+                console.log('Head Color:', headColor);
+                console.log('Torso Color:', torsoColor);
+                console.log('Arm Color:', armColor);
+                console.log('Leg Color:', legColor);
+                console.log('========================');
                 
                 // Lista de templates a procesar (orden específico)
                 const templates = [
