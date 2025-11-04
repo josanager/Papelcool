@@ -1267,35 +1267,36 @@
         
         /* Botón de descargar plantilla PDF */
         #download-pdf-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             display: none; /* Oculto por defecto */
-            padding: 0.6rem 1.2rem;
+            padding: 0.7rem 1.5rem;
             background: linear-gradient(135deg, #00ffff 0%, #8a2be2 100%);
             border: 2px solid rgba(0, 255, 255, 0.3);
-            border-radius: 8px;
+            border-radius: 10px;
             color: #0a0e27;
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 255, 255, 0.3);
-            z-index: 10;
+            box-shadow: 0 4px 16px rgba(0, 255, 255, 0.4);
+            z-index: 25;
             pointer-events: auto;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
         
         #download-pdf-btn:hover {
-            transform: translateY(-2px);
+            transform: translateX(-50%) translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 255, 255, 0.5);
             background: linear-gradient(135deg, #00ffff 0%, #9d4edd 100%);
         }
         
         #download-pdf-btn:active {
-            transform: translateY(0);
+            transform: translateX(-50%) translateY(0);
             box-shadow: 0 2px 8px rgba(0, 255, 255, 0.3);
         }
         
@@ -1373,6 +1374,11 @@
     <div id="showcase-logo-container" class="hidden">
         <img src="logo.svg" alt="Papelcool Logo">
     </div>
+    
+    <!-- Botón de descargar plantilla PDF (fuera de la ventana, centrado arriba) -->
+    <button type="button" id="download-pdf-btn" class="pointer-events-auto">
+        DOWNLOAD PDF
+    </button>
     
     <!-- Botones de redes sociales (solo visible en showcase) -->
     <div id="social-media-buttons">
@@ -1488,14 +1494,7 @@
 
             <div id="editor-container">
                 <!-- Botones de personajes preestablecidos -->
-                <div id="presets-section" class="pt-2 border-t border-cyan-500/30 mb-4 hidden" style="position: relative;">
-                    <!-- Botón de descargar plantilla PDF -->
-                    <button type="button" id="download-pdf-btn" class="pointer-events-auto">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
-                            <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
-                        </svg>
-                        Descargar Plantilla PDF
-                    </button>
+                <div id="presets-section" class="pt-2 border-t border-cyan-500/30 mb-4 hidden">
                     <h2 class="text-md font-bold text-cyan-300 mb-3">PERSONAJES PREESTABLECIDOS</h2>
                     <div class="flex gap-3 pointer-events-auto">
                         <button type="button" id="preset-mira-btn" class="preset-character-btn">
@@ -4829,10 +4828,97 @@
             editorPanelWrapper.style.display = 'block';
             presetsSection.classList.remove('hidden');
             customizeSection.classList.add('hidden');
+            
+            // Activar fondo degradado azul para presets
+            const showcaseBackground = document.getElementById('showcase-background');
+            if (showcaseBackground) showcaseBackground.classList.add('active');
         });
         
         // Función para aplicar personaje preestablecido
         function applyPresetCharacter(characterName) {
+            // Aplicar color de piel más claro (#F7D5CF) a todos los personajes preestablecidos
+            const lightestSkinColor = new THREE.Color('#F7D5CF');
+            
+            // Aplicar color a la cabeza
+            if (modelParts.head) {
+                modelParts.head.traverse((child) => {
+                    if (child.isMesh && child.material && child.material.color) {
+                        // Excluir meshes de texturas SVG
+                        if (child !== eyesMesh && child !== eyebrowsMesh && child !== noseMesh && 
+                            child !== earLeftMesh && child !== earRightMesh && 
+                            child !== hairFrontMesh && child !== hairBackMesh) {
+                            if (Array.isArray(child.material)) {
+                                child.material.forEach(mat => {
+                                    if (mat.color) mat.color.copy(lightestSkinColor);
+                                });
+                            } else {
+                                child.material.color.copy(lightestSkinColor);
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Aplicar color al torso
+            if (modelParts.torso) {
+                modelParts.torso.traverse((child) => {
+                    if (child.isMesh && child.material && child.material.color) {
+                        // Excluir meshes de ropa
+                        if (child !== torsoFrontMesh && child !== torsoBackMesh) {
+                            if (Array.isArray(child.material)) {
+                                child.material.forEach(mat => {
+                                    if (mat.color) mat.color.copy(lightestSkinColor);
+                                });
+                            } else {
+                                child.material.color.copy(lightestSkinColor);
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Aplicar color a los brazos
+            modelParts.arms.forEach(arm => {
+                if (arm) {
+                    arm.traverse((child) => {
+                        if (child.isMesh && child.material && child.material.color) {
+                            // Excluir meshes de ropa
+                            if (child !== armLeftFrontMesh && child !== armLeftBackMesh && 
+                                child !== armRightFrontMesh && child !== armRightBackMesh) {
+                                if (Array.isArray(child.material)) {
+                                    child.material.forEach(mat => {
+                                        if (mat.color) mat.color.copy(lightestSkinColor);
+                                    });
+                                } else {
+                                    child.material.color.copy(lightestSkinColor);
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+            
+            // Aplicar color a las piernas
+            modelParts.legs.forEach(leg => {
+                if (leg) {
+                    leg.traverse((child) => {
+                        if (child.isMesh && child.material && child.material.color) {
+                            // Excluir meshes de ropa
+                            if (child !== legLeftFrontMesh && child !== legLeftBackMesh && 
+                                child !== legRightFrontMesh && child !== legRightBackMesh) {
+                                if (Array.isArray(child.material)) {
+                                    child.material.forEach(mat => {
+                                        if (mat.color) mat.color.copy(lightestSkinColor);
+                                    });
+                                } else {
+                                    child.material.color.copy(lightestSkinColor);
+                                }
+                            }
+                        }
+                    });
+                }
+            });
+            
             // Buscar todas las texturas del personaje
             const eyeTexture = eyeTextures.find(t => t.name === characterName);
             const eyebrowTexture = eyebrowTextures.find(t => t.name === characterName);
