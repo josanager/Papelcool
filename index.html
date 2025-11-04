@@ -5132,6 +5132,59 @@
             }
         }
         
+        // Función mejorada para convertir SVG a imagen usando Canvas (más confiable)
+        async function svgToImageDataURL(svgContent) {
+            return new Promise((resolve, reject) => {
+                // Crear un blob del SVG
+                const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+                const svgUrl = URL.createObjectURL(svgBlob);
+                
+                // Crear imagen temporal
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                
+                img.onload = () => {
+                    try {
+                        // Crear canvas con las dimensiones de la imagen
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.width || 1122; // A4 horizontal aprox
+                        canvas.height = img.height || 794;
+                        
+                        const ctx = canvas.getContext('2d');
+                        if (!ctx) {
+                            reject(new Error('No se pudo obtener contexto 2D del canvas'));
+                            return;
+                        }
+                        
+                        // Fondo blanco
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+                        
+                        // Dibujar la imagen SVG
+                        ctx.drawImage(img, 0, 0);
+                        
+                        // Convertir a data URL
+                        const dataURL = canvas.toDataURL('image/png', 1.0);
+                        
+                        // Limpiar
+                        URL.revokeObjectURL(svgUrl);
+                        
+                        resolve(dataURL);
+                    } catch (error) {
+                        URL.revokeObjectURL(svgUrl);
+                        reject(error);
+                    }
+                };
+                
+                img.onerror = (error) => {
+                    URL.revokeObjectURL(svgUrl);
+                    reject(new Error('Error cargando imagen SVG: ' + error));
+                };
+                
+                img.src = svgUrl;
+            });
+        }
+        
         // Función principal para generar el PDF
         async function generatePDF() {
             if (!currentPresetCharacter) {
@@ -5216,24 +5269,10 @@
                             }
                         }
                         
-                        // Convertir SVG a imagen y agregar al PDF
+                        // Convertir SVG a imagen usando canvas (más confiable)
                         console.log(`Convirtiendo ${template.file} a imagen...`);
-                        const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
-                        const svgUrl = URL.createObjectURL(svgBlob);
-                        
-                        // Crear imagen temporal
-                        const img = new Image();
-                        await new Promise((resolve, reject) => {
-                            img.onload = () => {
-                                console.log(`Imagen ${template.file} cargada: ${img.width}x${img.height}`);
-                                resolve();
-                            };
-                            img.onerror = (e) => {
-                                console.error(`Error cargando imagen ${template.file}:`, e);
-                                reject(e);
-                            };
-                            img.src = svgUrl;
-                        });
+                        const imageDataURL = await svgToImageDataURL(svgContent);
+                        console.log(`Imagen ${template.file} convertida exitosamente`);
                         
                         // Agregar nueva página si no es la primera
                         if (i > 0) {
@@ -5242,11 +5281,8 @@
                         }
                         
                         // Agregar imagen al PDF (ocupando toda la página)
-                        pdf.addImage(img, 'PNG', 0, 0, pageWidth, pageHeight);
+                        pdf.addImage(imageDataURL, 'PNG', 0, 0, pageWidth, pageHeight, undefined, 'FAST');
                         console.log(`Imagen ${template.file} agregada al PDF`);
-                        
-                        // Limpiar URL temporal
-                        URL.revokeObjectURL(svgUrl);
                         
                     } catch (templateError) {
                         console.error(`Error procesando template ${template.file}:`, templateError);
