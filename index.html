@@ -5269,14 +5269,15 @@
                 console.log('========================');
                 
                 // Lista de templates a procesar (orden específico)
+                // IMPORTANTE: border-logo va PRIMERO (página 1 del PDF)
                 const templates = [
+                    { file: 'template-border-logo.svg', color: null, texture: null }, // PRIMERA PÁGINA (sin colorear)
                     { file: 'template-head-1.svg', color: headColor, texture: null },
                     { file: 'template-torso.svg', color: torsoColor, texture: 'torso' },
                     { file: 'template-arm-left.svg', color: armColor, texture: 'arm-left' },
                     { file: 'template-arm-right.svg', color: armColor, texture: 'arm-right' },
                     { file: 'template-leg-left.svg', color: legColor, texture: 'leg-left' },
-                    { file: 'template-leg-right.svg', color: legColor, texture: 'leg-right' },
-                    { file: 'template-border-logo.svg', color: null, texture: null } // Sin colorear
+                    { file: 'template-leg-right.svg', color: legColor, texture: 'leg-right' }
                 ];
                 
                 // Procesar cada template
@@ -5332,11 +5333,21 @@
                     }
                 }
                 
-                // Descargar el PDF
+                // Descargar el PDF (UN SOLO ARCHIVO con todas las páginas)
                 const filename = `Papelcool-${currentPresetCharacter}-${Date.now()}.pdf`;
+                
+                console.log('=== PDF UNIFICADO GENERADO ===');
+                console.log('Archivo:', filename);
+                console.log('Total de páginas:', templates.length);
+                console.log('Orden de páginas:');
+                templates.forEach((t, idx) => {
+                    console.log(`  Página ${idx + 1}: ${t.file}`);
+                });
+                console.log('==============================');
+                
                 pdf.save(filename);
                 
-                console.log('PDF generado exitosamente:', filename);
+                console.log('✅ PDF descargado exitosamente');
                 
             } catch (error) {
                 console.error('Error generando PDF:', error);
