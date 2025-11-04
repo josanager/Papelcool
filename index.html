@@ -5281,61 +5281,40 @@
                 console.log('Leg Color:', legColor);
                 console.log('========================');
                 
-                // Lista de templates a procesar (orden específico)
-                // IMPORTANTE: border-logo va PRIMERO (página 1 del PDF)
+                // Lista de templates en ORDEN DE SUPERPOSICIÓN (de atrás hacia adelante)
+                // El primero se dibuja primero (atrás), el último se dibuja último (al frente)
                 const templates = [
-                    { file: 'template-border-logo.svg', color: null, texture: null }, // PRIMERA PÁGINA (sin colorear)
-                    { file: 'template-head-1.svg', color: headColor, texture: null },
-                    { file: 'template-torso.svg', color: torsoColor, texture: 'torso' },
-                    { file: 'template-arm-left.svg', color: armColor, texture: 'arm-left' },
-                    { file: 'template-arm-right.svg', color: armColor, texture: 'arm-right' },
-                    { file: 'template-leg-left.svg', color: legColor, texture: 'leg-left' },
-                    { file: 'template-leg-right.svg', color: legColor, texture: 'leg-right' }
+                    { file: 'template-head-1.svg', color: headColor, texture: null, layer: 1 },        // CAPA 1 (atrás)
+                    { file: 'template-arm-left.svg', color: armColor, texture: 'arm-left', layer: 2 }, // CAPA 2
+                    { file: 'template-arm-right.svg', color: armColor, texture: 'arm-right', layer: 2 }, // CAPA 2
+                    { file: 'template-leg-left.svg', color: legColor, texture: 'leg-left', layer: 3 }, // CAPA 3
+                    { file: 'template-leg-right.svg', color: legColor, texture: 'leg-right', layer: 3 }, // CAPA 3
+                    { file: 'template-torso.svg', color: torsoColor, texture: 'torso', layer: 4 },      // CAPA 4
+                    { file: 'template-border-logo.svg', color: null, texture: null, layer: 5 }          // CAPA 5 (al frente)
                 ];
                 
-                // Configurar cuadrícula: 7 templates en UNA SOLA PÁGINA
-                // Distribución: 3 columnas x 3 filas (border-logo más grande al centro)
-                console.log('🎨 Configurando cuadrícula de templates en UNA SOLA PÁGINA');
+                // SUPERPOSICIÓN: Todos los templates en la MISMA posición (0,0)
+                // Ocupando TODA la página A4 horizontal
+                console.log('🎨 Configurando SUPERPOSICIÓN de templates en UNA SOLA PÁGINA');
+                console.log('📐 Todos los templates en la misma posición: X=0, Y=0');
+                console.log('📏 Tamaño de cada template: 297mm x 210mm (página completa)');
+                console.log('\n📚 Orden de capas (de atrás hacia adelante):');
+                templates.forEach((t, idx) => {
+                    console.log(`   Capa ${idx + 1}: ${t.file}`);
+                });
                 
-                // Calcular tamaños para la cuadrícula
-                const cols = 3;
-                const rows = 3;
-                const templateWidth = pageWidth / cols;   // ~99mm por template
-                const templateHeight = pageHeight / rows; // ~70mm por template
-                
-                console.log(`📊 Cuadrícula: ${cols} columnas x ${rows} filas`);
-                console.log(`📏 Tamaño por template: ${templateWidth.toFixed(1)}mm x ${templateHeight.toFixed(1)}mm`);
-                
-                // Posiciones en la cuadrícula (fila, columna)
-                const positions = [
-                    { row: 1, col: 1, template: 0 }, // border-logo (centro)
-                    { row: 0, col: 0, template: 1 }, // head (arriba izquierda)
-                    { row: 0, col: 1, template: 2 }, // torso (arriba centro)
-                    { row: 0, col: 2, template: 3 }, // arm-left (arriba derecha)
-                    { row: 1, col: 0, template: 4 }, // arm-right (centro izquierda)
-                    { row: 1, col: 2, template: 5 }, // leg-left (centro derecha)
-                    { row: 2, col: 1, template: 6 }  // leg-right (abajo centro)
-                ];
-                
-                // Procesar cada template y agregarlo a su posición
+                // Procesar cada template y agregarlo SUPERPUESTO
                 for (let i = 0; i < templates.length; i++) {
                     const template = templates[i];
-                    const position = positions.find(p => p.template === i);
                     
-                    if (!position) {
-                        console.warn(`No hay posición definida para template ${i}`);
-                        continue;
-                    }
-                    
-                    console.log(`\n📍 Procesando template ${i + 1}/${templates.length}: ${template.file}`);
-                    console.log(`   Posición: Fila ${position.row}, Columna ${position.col}`);
+                    console.log(`\n🔄 Procesando capa ${i + 1}/${templates.length}: ${template.file}`);
                     
                     try {
                         // Cargar el SVG del template
                         let svgContent = await loadSVGFile(template.file);
                         
                         if (!svgContent) {
-                            console.warn(`Template ${template.file} no encontrado, continuando...`);
+                            console.warn(`   ⚠️ Template ${template.file} no encontrado, continuando...`);
                             continue;
                         }
                         
@@ -5349,7 +5328,7 @@
                         if (template.texture) {
                             const textureURL = getCurrentTextureURL(template.texture);
                             if (textureURL) {
-                                console.log(`   🖼️ Superponiendo textura`);
+                                console.log(`   🖼️ Aplicando textura`);
                                 svgContent = await overlayTextureOnTemplate(svgContent, textureURL);
                             }
                         }
@@ -5357,46 +5336,48 @@
                         // Convertir SVG a imagen
                         const imageDataURL = await svgToImageDataURL(svgContent);
                         
-                        // Calcular posición X, Y en la página
-                        const x = position.col * templateWidth;
-                        const y = position.row * templateHeight;
+                        // TODOS en la misma posición (0, 0) ocupando toda la página
+                        const x = 0;
+                        const y = 0;
                         
-                        console.log(`   📐 Posición en PDF: X=${x.toFixed(1)}mm, Y=${y.toFixed(1)}mm`);
-                        console.log(`   📏 Tamaño: ${templateWidth.toFixed(1)}mm x ${templateHeight.toFixed(1)}mm`);
+                        console.log(`   📐 Posición: X=${x}mm, Y=${y}mm (página completa)`);
+                        console.log(`   📏 Tamaño: ${pageWidth}mm x ${pageHeight}mm`);
                         
-                        // Agregar imagen a la MISMA página en su posición
-                        pdf.addImage(imageDataURL, 'PNG', x, y, templateWidth, templateHeight, undefined, 'FAST');
-                        console.log(`   ✅ Template agregado a la página única`);
+                        // Agregar imagen SUPERPUESTA en la MISMA posición
+                        pdf.addImage(imageDataURL, 'PNG', x, y, pageWidth, pageHeight, undefined, 'FAST');
+                        console.log(`   ✅ Capa ${i + 1} agregada (superpuesta)`);
                         
                     } catch (templateError) {
-                        console.error(`❌ Error procesando template ${template.file}:`, templateError);
-                        console.error('   Error message:', templateError.message);
+                        console.error(`   ❌ Error procesando ${template.file}:`, templateError);
+                        console.error(`   Error: ${templateError.message}`);
                         // Continuar con el siguiente template
                     }
                 }
                 
-                console.log('\n✨ Todos los templates agregados a UNA SOLA PÁGINA');
+                console.log('\n✨ Todos los templates SUPERPUESTOS en UNA SOLA PÁGINA');
                 
                 // Descargar el PDF (UN SOLO ARCHIVO con todas las páginas)
                 const filename = `Papelcool-${currentPresetCharacter}-${Date.now()}.pdf`;
                 
-                console.log('\n=== PDF CON UNA SOLA PÁGINA GENERADO ===');
+                console.log('\n=== PDF CON TEMPLATES SUPERPUESTOS GENERADO ===');
                 console.log('📄 Archivo:', filename);
                 console.log('📊 Número de páginas:', pdf.internal.getNumberOfPages());
                 console.log('📐 Formato: A4 Horizontal (297mm x 210mm)');
-                console.log('🎨 Distribución: Cuadrícula 3x3');
-                console.log('\n📍 Templates en la página:');
-                console.log('   Fila 1: Head | Torso | Arm-Left');
-                console.log('   Fila 2: Arm-Right | BORDER-LOGO | Leg-Left');
-                console.log('   Fila 3: (vacío) | Leg-Right | (vacío)');
-                console.log('==========================================');
+                console.log('🎨 Tipo: SUPERPOSICIÓN (todos en X=0, Y=0)');
+                console.log('\n📚 Orden de capas (de atrás hacia adelante):');
+                console.log('   Capa 1 (atrás): Head');
+                console.log('   Capa 2: Arm-Left + Arm-Right');
+                console.log('   Capa 3: Leg-Left + Leg-Right');
+                console.log('   Capa 4: Torso');
+                console.log('   Capa 5 (frente): Border-Logo');
+                console.log('================================================');
                 
-                console.log('\n💾 Descargando PDF con UNA SOLA PÁGINA...');
+                console.log('\n💾 Descargando PDF con templates SUPERPUESTOS...');
                 
                 pdf.save(filename);
                 
-                console.log('✅ ¡PDF con UNA SOLA PÁGINA descargado exitosamente!');
-                console.log('🎉 Todos los 7 templates están en la MISMA página');
+                console.log('✅ ¡PDF con templates SUPERPUESTOS descargado exitosamente!');
+                console.log('🎉 Los 7 templates están UNO ENCIMA DE OTRO en la misma página');
                 
             } catch (error) {
                 console.error('Error generando PDF:', error);
