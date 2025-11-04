@@ -24,6 +24,10 @@
             }
         }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+    <!-- jsPDF para generación de PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -4974,32 +4978,277 @@
             console.log(`Personaje ${characterName} aplicado completamente`);
         }
         
+        // Variables globales para almacenar el personaje actual seleccionado
+        let currentPresetCharacter = null;
+        
         // Event listeners para botones de personajes preestablecidos
         const downloadPdfBtn = document.getElementById('download-pdf-btn');
         
         document.getElementById('preset-mira-btn').addEventListener('click', () => {
+            currentPresetCharacter = 'Mira';
             applyPresetCharacter('Mira');
             // Mostrar botón de descargar PDF
             if (downloadPdfBtn) downloadPdfBtn.classList.add('active');
         });
         
         document.getElementById('preset-rumi-btn').addEventListener('click', () => {
+            currentPresetCharacter = 'Rumi';
             applyPresetCharacter('Rumi');
             // Mostrar botón de descargar PDF
             if (downloadPdfBtn) downloadPdfBtn.classList.add('active');
         });
         
         document.getElementById('preset-zoey-btn').addEventListener('click', () => {
+            currentPresetCharacter = 'Zoey';
             applyPresetCharacter('Zoey');
             // Mostrar botón de descargar PDF
             if (downloadPdfBtn) downloadPdfBtn.classList.add('active');
         });
         
-        // Event listener para el botón de descargar PDF (funcionalidad aún no implementada)
+        // Función para obtener color de una parte del modelo 3D
+        function getPartColor(part) {
+            if (!part) return '#FFFFFF';
+            
+            let color = null;
+            part.traverse((child) => {
+                if (child.isMesh && child.material && child.material.color && !color) {
+                    // Excluir meshes de texturas SVG
+                    const isTextureMesh = [
+                        eyesMesh, eyebrowsMesh, noseMesh, earLeftMesh, earRightMesh,
+                        hairFrontMesh, hairBackMesh, torsoFrontMesh, torsoBackMesh,
+                        armLeftFrontMesh, armLeftBackMesh, armRightFrontMesh, armRightBackMesh,
+                        legLeftFrontMesh, legLeftBackMesh, legRightFrontMesh, legRightBackMesh
+                    ].includes(child);
+                    
+                    if (!isTextureMesh) {
+                        if (Array.isArray(child.material)) {
+                            color = child.material[0].color;
+                        } else {
+                            color = child.material.color;
+                        }
+                    }
+                }
+            });
+            
+            return color ? '#' + color.getHexString() : '#FFFFFF';
+        }
+        
+        // Función para colorear un SVG
+        function colorSVG(svgText, color) {
+            // Crear un parser DOM
+            const parser = new DOMParser();
+            const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+            const svgElement = svgDoc.documentElement;
+            
+            // Buscar todos los elementos que tienen fill
+            const elementsWithFill = svgElement.querySelectorAll('[fill]:not([fill="none"])');
+            elementsWithFill.forEach(el => {
+                const currentFill = el.getAttribute('fill');
+                // Solo colorear si no es transparente o none
+                if (currentFill && currentFill !== 'none' && currentFill !== 'transparent') {
+                    el.setAttribute('fill', color);
+                }
+            });
+            
+            // Serializar de vuelta a string
+            const serializer = new XMLSerializer();
+            return serializer.serializeToString(svgElement);
+        }
+        
+        // Función para cargar un archivo SVG
+        async function loadSVGFile(filename) {
+            try {
+                const response = await fetch(`templates/${filename}`);
+                if (!response.ok) {
+                    console.warn(`No se pudo cargar ${filename}`);
+                    return null;
+                }
+                return await response.text();
+            } catch (error) {
+                console.warn(`Error cargando ${filename}:`, error);
+                return null;
+            }
+        }
+        
+        // Función para obtener la URL de textura actual de una parte
+        function getCurrentTextureURL(partName) {
+            switch(partName) {
+                case 'torso':
+                    return currentTorsoFrontURL;
+                case 'arm-left':
+                    return currentArmLeftURL;
+                case 'arm-right':
+                    return currentArmRightURL;
+                case 'leg-left':
+                    return currentLegLeftURL;
+                case 'leg-right':
+                    return currentLegRightURL;
+                case 'ear-left':
+                    return currentEarTextureURL;
+                case 'ear-right':
+                    return currentEarTextureURL;
+                default:
+                    return null;
+            }
+        }
+        
+        // Función para superponer una textura SVG sobre un template
+        async function overlayTextureOnTemplate(templateSVG, textureURL) {
+            if (!textureURL) return templateSVG;
+            
+            try {
+                // Cargar la textura SVG
+                const response = await fetch(textureURL);
+                if (!response.ok) return templateSVG;
+                const textureSVG = await response.text();
+                
+                // Parsear ambos SVGs
+                const parser = new DOMParser();
+                const templateDoc = parser.parseFromString(templateSVG, 'image/svg+xml');
+                const textureDoc = parser.parseFromString(textureSVG, 'image/svg+xml');
+                
+                const templateElement = templateDoc.documentElement;
+                const textureElement = textureDoc.documentElement;
+                
+                // Crear un grupo para la textura
+                const textureGroup = templateDoc.createElementNS('http://www.w3.org/2000/svg', 'g');
+                textureGroup.setAttribute('id', 'texture-overlay');
+                
+                // Copiar todos los elementos de la textura al grupo
+                Array.from(textureElement.children).forEach(child => {
+                    const clonedChild = child.cloneNode(true);
+                    textureGroup.appendChild(clonedChild);
+                });
+                
+                // Agregar el grupo al template (antes del último elemento para que quede visible)
+                templateElement.appendChild(textureGroup);
+                
+                // Serializar de vuelta
+                const serializer = new XMLSerializer();
+                return serializer.serializeToString(templateElement);
+            } catch (error) {
+                console.warn('Error superponiendo textura:', error);
+                return templateSVG;
+            }
+        }
+        
+        // Función principal para generar el PDF
+        async function generatePDF() {
+            if (!currentPresetCharacter) {
+                alert('Por favor, selecciona un personaje preestablecido primero.');
+                return;
+            }
+            
+            console.log('Generando PDF para:', currentPresetCharacter);
+            
+            // Mostrar indicador de carga
+            const loadingMsg = document.createElement('div');
+            loadingMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.9);color:#00ffff;padding:2rem;border-radius:10px;z-index:9999;font-family:Orbitron,sans-serif;';
+            loadingMsg.textContent = 'Generando PDF...';
+            document.body.appendChild(loadingMsg);
+            
+            try {
+                // Inicializar jsPDF (A4 horizontal)
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'mm',
+                    format: 'a4'
+                });
+                
+                // Dimensiones A4 horizontal: 297mm x 210mm
+                const pageWidth = 297;
+                const pageHeight = 210;
+                
+                // Obtener colores de las partes del modelo 3D
+                const headColor = getPartColor(modelParts.head);
+                const torsoColor = getPartColor(modelParts.torso);
+                const armColor = modelParts.arms.length > 0 ? getPartColor(modelParts.arms[0]) : '#FFFFFF';
+                const legColor = modelParts.legs.length > 0 ? getPartColor(modelParts.legs[0]) : '#FFFFFF';
+                
+                console.log('Colores obtenidos:', { headColor, torsoColor, armColor, legColor });
+                
+                // Lista de templates a procesar (orden específico)
+                const templates = [
+                    { file: 'template-head-1.svg', color: headColor, texture: null },
+                    { file: 'template-torso.svg', color: torsoColor, texture: 'torso' },
+                    { file: 'template-arm-left.svg', color: armColor, texture: 'arm-left' },
+                    { file: 'template-arm-right.svg', color: armColor, texture: 'arm-right' },
+                    { file: 'template-leg-left.svg', color: legColor, texture: 'leg-left' },
+                    { file: 'template-leg-right.svg', color: legColor, texture: 'leg-right' },
+                    { file: 'template-border-logo.svg', color: null, texture: null } // Sin colorear
+                ];
+                
+                // Procesar cada template
+                for (let i = 0; i < templates.length; i++) {
+                    const template = templates[i];
+                    
+                    // Cargar el SVG del template
+                    let svgContent = await loadSVGFile(template.file);
+                    
+                    if (!svgContent) {
+                        console.warn(`Template ${template.file} no encontrado, continuando...`);
+                        continue;
+                    }
+                    
+                    // Colorear el template (excepto border-logo)
+                    if (template.color) {
+                        svgContent = colorSVG(svgContent, template.color);
+                    }
+                    
+                    // Superponer textura si aplica
+                    if (template.texture) {
+                        const textureURL = getCurrentTextureURL(template.texture);
+                        if (textureURL) {
+                            svgContent = await overlayTextureOnTemplate(svgContent, textureURL);
+                        }
+                    }
+                    
+                    // Convertir SVG a imagen y agregar al PDF
+                    const svgBlob = new Blob([svgContent], { type: 'image/svg+xml;charset=utf-8' });
+                    const svgUrl = URL.createObjectURL(svgBlob);
+                    
+                    // Crear imagen temporal
+                    const img = new Image();
+                    await new Promise((resolve, reject) => {
+                        img.onload = resolve;
+                        img.onerror = reject;
+                        img.src = svgUrl;
+                    });
+                    
+                    // Agregar nueva página si no es la primera
+                    if (i > 0) {
+                        pdf.addPage();
+                    }
+                    
+                    // Agregar imagen al PDF (ocupando toda la página)
+                    pdf.addImage(img, 'PNG', 0, 0, pageWidth, pageHeight);
+                    
+                    // Limpiar URL temporal
+                    URL.revokeObjectURL(svgUrl);
+                    
+                    console.log(`Template ${template.file} agregado al PDF`);
+                }
+                
+                // Descargar el PDF
+                const filename = `Papelcool-${currentPresetCharacter}-${Date.now()}.pdf`;
+                pdf.save(filename);
+                
+                console.log('PDF generado exitosamente:', filename);
+                
+            } catch (error) {
+                console.error('Error generando PDF:', error);
+                alert('Error al generar el PDF. Por favor, verifica que los templates existan en la carpeta "templates/".');
+            } finally {
+                // Remover indicador de carga
+                document.body.removeChild(loadingMsg);
+            }
+        }
+        
+        // Event listener para el botón de descargar PDF
         if (downloadPdfBtn) {
             downloadPdfBtn.addEventListener('click', () => {
-                console.log('Descargar plantilla PDF - Funcionalidad pendiente');
-                // Aquí se implementará la descarga del PDF
+                generatePDF();
             });
         }
         
