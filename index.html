@@ -28,6 +28,8 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
     <!-- jsPDF para generación de PDFs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <!-- Whop Payments - Pasarela de pago -->
+    <script async defer src="https://js.whop.com/static/checkout/loader.js"></script>
     <style>
         * {
             margin: 0;
@@ -619,15 +621,6 @@
             color: rgba(0, 0, 0, 0.8);
         }
         
-        /* Posicionamiento específico para móvil */
-        #play-mode-btn-mobile {
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 1000;
-            display: none;
-        }
-        
         #editor-panel-wrapper {
             transition: transform 0.3s ease-in-out;
             display: none; /* Oculto inicialmente, se muestra tras selección en showcase */
@@ -644,11 +637,6 @@
         
         /* Mobile y Tablet (hasta 1024px) */
         @media (max-width: 1024px) {
-            #play-mode-btn-mobile {
-                display: block;
-            }
-            
-            
             #editor-panel-wrapper {
                 position: fixed;
                 bottom: 0;
@@ -733,10 +721,6 @@
                 width: auto;
                 max-width: 28rem;
                 padding: 1rem 1.5rem;
-            }
-            
-            #play-mode-btn-desktop {
-                display: block;
             }
             
             /* Ocultar controles móviles en desktop */
@@ -1553,8 +1537,8 @@
         /* Botones de redes sociales en showcase */
         #social-media-buttons {
             position: fixed;
-            right: 20px;
-            top: 20px; /* Esquina superior derecha */
+            left: 20px;
+            top: 20px; /* Esquina superior izquierda */
             display: none; /* Oculto por defecto, visible en showcase */
             flex-direction: column;
             gap: 12px;
@@ -1763,11 +1747,413 @@
             fill: #ffffff;
         }
         
+        /* Página de descarga de PDF */
+        .download-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 100;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        .download-page.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        /* Botón de retroceder - mismo estilo que botones de presets */
+        .download-back-btn {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            padding: 0;
+            z-index: 101;
+        }
+        
+        .download-back-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .download-back-btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+        
+        .download-back-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        /* Overlay para checkout de Whop - Pantalla completa */
+        .whop-checkout-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            background: #0a0e27;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        .whop-checkout-overlay.hidden {
+            display: none;
+        }
+        
+        /* Contenedor del checkout - sin restricciones */
+        #whop-checkout-embed {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Estilizar el iframe generado por Whop - CLAVE PARA PANTALLA COMPLETA */
+        .whop-checkout-overlay iframe,
+        #whop-checkout-embed iframe {
+            width: 100% !important;
+            min-width: 100% !important;
+            max-width: 100% !important;
+            height: 100vh !important;
+            min-height: 100vh !important;
+            border: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        .pdf-progress-bar-container {
+            width: 100%;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            margin-bottom: 1.5rem;
+        }
+        
+        .pdf-progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #00ffff, #00ccff, #0099ff);
+            transition: width 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        }
+        
+        .pdf-progress-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            margin: 0 0 1rem;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        }
+        
+        .pdf-progress-message {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0 0 2.5rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        
+        .payment-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+            margin: 0 0 1rem;
+            text-shadow: 0 2px 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .payment-subtitle {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0 0 1.5rem;
+            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Mensaje de pago exitoso - overlay pantalla completa */
+        .payment-success-message {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            background: #0a0e27;
+            animation: fadeIn 0.5s ease;
+            z-index: 9999;
+        }
+        
+        .payment-success-message.hidden {
+            display: none !important;
+        }
+        
+        /* Contenedor de progreso PDF - overlay pantalla completa */
+        .pdf-progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #0a0e27;
+            z-index: 9999;
+        }
+        
+        .pdf-progress-overlay.hidden {
+            display: none !important;
+        }
+        
+        .pdf-progress-overlay .pdf-progress-bar-container {
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-icon-check {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            animation: scaleIn 0.5s ease;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.6);
+        }
+        
+        .success-icon-check svg {
+            width: 48px;
+            height: 48px;
+            color: white;
+        }
+        
+        .success-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4CAF50;
+            margin: 0 0 1rem;
+            text-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+        }
+        
+        .success-text {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+        }
+        
+        /* Botón de descarga - overlay pantalla completa */
+        .final-download-btn-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #0a0e27;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .final-download-btn-overlay.hidden {
+            display: none !important;
+        }
+        
+        .final-download-btn-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #00ffff 0%, #0099ff 100%);
+            border: none;
+            color: #000;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.4);
+            max-width: 350px;
+            justify-content: center;
+            z-index: 10000;
+        }
+        
+        .final-download-btn-overlay:hover {
+            transform: translate(-50%, calc(-50% - 3px)) scale(1.05);
+            box-shadow: 0 8px 30px rgba(0, 255, 255, 0.6);
+        }
+        
+        .final-download-btn-overlay:active {
+            transform: translate(-50%, calc(-50% - 1px)) scale(1.02);
+        }
+        
+        .final-download-btn-overlay svg {
+            width: 28px;
+            height: 28px;
+        }
+        
+        .final-download-btn svg {
+            width: 28px;
+            height: 28px;
+        }
+        
+        @media (max-width: 768px) {
+            .download-back-btn {
+                left: 15px;
+                top: 15px;
+                width: 44px;
+                height: 44px;
+            }
+            
+            .download-back-btn svg {
+                width: 22px;
+                height: 22px;
+            }
+            
+            .download-content-container {
+                width: 100%;
+                height: 100%;
+            }
+            
+            .whop-payment-container {
+                padding: 70px 10px 10px 10px;
+            }
+            
+            #whop-checkout-embed {
+                min-height: 500px !important;
+            }
+            
+            .pdf-progress-bar-container {
+                height: 35px;
+            }
+            
+            .pdf-progress-text {
+                font-size: 2.5rem;
+            }
+            
+            .pdf-progress-message {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+            
+            .final-download-btn {
+                font-size: 1.1rem;
+                padding: 1rem 2rem;
+                max-width: 100%;
+            }
+            
+            .final-download-btn svg {
+                width: 24px;
+                height: 24px;
+            }
+        }
+        
+        /* Botones de acciones en presets (esquina superior izquierda) */
+        #preset-action-buttons {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            display: none; /* Oculto por defecto, visible en modo presets */
+            flex-direction: column;
+            gap: 12px;
+            z-index: 20;
+            pointer-events: auto;
+        }
+        
+        #preset-action-buttons.active {
+            display: flex;
+        }
+        
+        .preset-action-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            padding: 0;
+        }
+        
+        .preset-action-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .preset-action-btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+        
+        .preset-action-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        /* Botón de PDF inicialmente oculto */
+        #download-pdf-btn-moved {
+            display: none;
+        }
+        
+        #download-pdf-btn-moved.active {
+            display: flex;
+        }
+        
         /* Responsive para móvil */
         @media (max-width: 768px) {
             #social-media-buttons {
-                right: 15px;
-                top: 15px; /* Esquina superior derecha en móvil */
+                left: 15px;
+                top: 15px; /* Esquina superior izquierda en móvil */
                 gap: 10px;
             }
             
@@ -1780,8 +2166,73 @@
                 width: 22px;
                 height: 22px;
             }
+            
+            #preset-action-buttons {
+                left: 15px;
+                top: 15px;
+                gap: 10px;
+            }
+            
+            .preset-action-btn {
+                width: 44px;
+                height: 44px;
+            }
+            
+            .preset-action-btn svg {
+                width: 22px;
+                height: 22px;
+            }
         }
     </style>
+    
+    <!-- Whop Payments - Callback de pago exitoso -->
+    <script>
+        // Variable global para controlar si el pago fue exitoso
+        let paymentCompleted = false;
+        let paymentReceiptId = null;
+        
+        // Callback que se ejecuta cuando el pago en Whop es exitoso
+        window.onWhopPaymentComplete = (planId, receiptId) => {
+            console.log('✅ Pago completado exitosamente!');
+            console.log('Plan ID:', planId);
+            console.log('Receipt ID:', receiptId);
+            
+            // Guardar información del pago
+            paymentCompleted = true;
+            paymentReceiptId = receiptId;
+            
+            // Ocultar overlay de checkout
+            const whopOverlay = document.getElementById('whop-checkout-overlay');
+            if (whopOverlay) {
+                whopOverlay.classList.add('hidden');
+            }
+            
+            // Mostrar mensaje de pago exitoso
+            const paymentSuccess = document.getElementById('payment-success-message');
+            if (paymentSuccess) {
+                paymentSuccess.classList.remove('hidden');
+            }
+            
+            // Esperar 2 segundos para que el usuario vea el mensaje de éxito
+            setTimeout(() => {
+                // Ocultar mensaje de éxito
+                if (paymentSuccess) {
+                    paymentSuccess.classList.add('hidden');
+                }
+                
+                // Mostrar barra de progreso
+                const pdfProgressContainer = document.getElementById('pdf-progress-container');
+                if (pdfProgressContainer) {
+                    pdfProgressContainer.classList.remove('hidden');
+                }
+                
+                // Iniciar generación del PDF automáticamente
+                if (typeof generatePDFForDownloadPage === 'function') {
+                    generatePDFForDownloadPage();
+                }
+            }, 2000);
+        };
+    </script>
 </head>
 <body class="text-white">
 
@@ -1797,6 +2248,47 @@
 
     <!-- Fondo degradado azul para showcase -->
     <div id="showcase-background"></div>
+    
+    <!-- Overlay para checkout de Whop -->
+    <div id="whop-checkout-overlay" class="whop-checkout-overlay hidden">
+        <!-- Checkout de Whop -->
+        <div 
+            id="whop-checkout-embed"
+            data-whop-checkout-plan-id="plan_EyvFAPscVswNH"
+            data-whop-checkout-theme="dark"
+            data-whop-checkout-theme-accent-color="cyan"
+            data-whop-checkout-skip-redirect="true"
+            data-whop-checkout-on-complete="onWhopPaymentComplete"
+        ></div>
+    </div>
+    
+    <!-- Mensaje de pago exitoso (oculto inicialmente) -->
+    <div id="payment-success-message" class="payment-success-message hidden">
+        <div class="success-icon-check">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+            </svg>
+        </div>
+        <h3 class="success-title">¡Pago exitoso!</h3>
+        <p class="success-text">Generando tu PDF personalizado...</p>
+    </div>
+    
+    <!-- Barra de progreso (oculta inicialmente) -->
+    <div id="pdf-progress-container" class="pdf-progress-overlay hidden">
+        <div id="pdf-progress-bar-container" class="pdf-progress-bar-container">
+            <div id="pdf-progress-bar" class="pdf-progress-bar"></div>
+        </div>
+        <div id="pdf-progress-text" class="pdf-progress-text">0%</div>
+        <p id="pdf-progress-message" class="pdf-progress-message">Generando tu PDF...</p>
+    </div>
+    
+    <!-- Botón de descarga (oculto inicialmente) -->
+    <button type="button" id="final-download-btn" class="final-download-btn-overlay hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z"/>
+        </svg>
+        <span>Descargar PDF</span>
+    </button>
 
     <div id="canvas-container"></div>
     <div id="loading-indicator">
@@ -1847,6 +2339,30 @@
                 <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
             </svg>
         </a>
+    </div>
+    
+    <!-- Botones de presets (esquina superior izquierda) -->
+    <div id="preset-action-buttons">
+        <!-- Botón 1: Volver al showcase -->
+        <button type="button" id="back-to-showcase-btn" class="preset-action-btn" aria-label="Volver al showcase">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+            </svg>
+        </button>
+        
+        <!-- Botón 2: Modo juego (ya existe, lo moveré aquí) -->
+        <button type="button" id="play-mode-btn-desktop-moved" class="preset-action-btn play-mode-btn" aria-label="Modo juego">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000">
+                <path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+            </svg>
+        </button>
+        
+        <!-- Botón 3: Descargar PDF (solo visible cuando se selecciona preset) -->
+        <button type="button" id="download-pdf-btn-moved" class="preset-action-btn" aria-label="Descargar PDF">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000">
+                <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z"/>
+            </svg>
+        </button>
     </div>
     
     <!-- Botones de showcase inicial (sin overlay) -->
@@ -1904,17 +2420,6 @@
         </div>
     </div>
 
-    <!-- Botón de modo para móvil (oculto durante showcase) -->
-    <button type="button" id="play-mode-btn-mobile" class="play-mode-btn pointer-events-auto" style="display: none;">
-        <div class="button-outer">
-            <div class="button-inner">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="play-icon">
-                    <path fill="currentColor" d="M8 5.14v14l11-7z"></path>
-                </svg>
-            </div>
-        </div>
-    </button>
-    
     <!-- Controles de juego para móvil -->
     <div id="mobile-game-controls">
         <div id="joystick-container">
@@ -1938,19 +2443,6 @@
     <!-- Panel del editor (responsivo) -->
     <div id="editor-panel-wrapper" class="pointer-events-none">
         <div class="ui-panel p-4 space-y-4">
-            <!-- Botón de modo para desktop (dentro del panel) -->
-            <div id="play-mode-btn-desktop" class="flex justify-end items-center" style="margin-bottom: -0.5rem;">
-                 <button type="button" id="play-mode-btn-desktop-btn" class="play-mode-btn pointer-events-auto">
-                    <div class="button-outer">
-                        <div class="button-inner">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="play-icon">
-                                <path fill="currentColor" d="M8 5.14v14l11-7z"></path>
-                            </svg>
-                        </div>
-                    </div>
-                </button>
-            </div>
-
             <div id="editor-container">
                 <!-- Botones de personajes preestablecidos -->
                 <div id="presets-section" class="pt-2 border-t border-cyan-500/30 mb-4 hidden">
@@ -2830,8 +3322,8 @@
             legRightCarouselPanel: document.getElementById('leg-right-carousel-panel'),
             legRightCarouselContainer: document.getElementById('leg-right-carousel-container'),
             palette: document.getElementById('color-palette'),
-            playBtnMobile: document.getElementById('play-mode-btn-mobile'),
-            playBtnDesktop: document.getElementById('play-mode-btn-desktop-btn'),
+            playBtnMobile: null, // Eliminado - ahora en preset-action-buttons
+            playBtnDesktop: null, // Eliminado - ahora en preset-action-buttons
             editorPanelWrapper: document.getElementById('editor-panel-wrapper'),
             editor: document.getElementById('editor-container'),
             title: document.getElementById('title'),
@@ -2848,9 +3340,7 @@
                     ui.headParts[key].innerHTML = icons[key];
                 }
             });
-            // Configurar ambos botones de modo
-            ui.playBtnMobile.innerHTML = icons.play;
-            ui.playBtnDesktop.innerHTML = icons.play;
+            // NOTA: Botones de modo ahora están en preset-action-buttons
         }
         
         // Función para crear el botón de cabello animado
@@ -3171,10 +3661,8 @@
             
             if (appMode === 'play') {
                 // Modo juego
-                ui.playBtnMobile.innerHTML = icons.edit;
-                ui.playBtnDesktop.innerHTML = icons.edit;
-                ui.playBtnMobile.classList.add('active-btn');
-                ui.playBtnDesktop.classList.add('active-btn');
+                // NOTA: Botones de modo ahora están en preset-action-buttons
+                // El icono se actualiza automáticamente en el nuevo botón
                 
                 // GUARDAR estado actual de la cámara en modo presets (ANTES de la animación)
                 savedPresetCameraPos = camera.position.clone();
@@ -3207,10 +3695,8 @@
                 
             } else {
                 // Modo edición (volver a presets)
-                ui.playBtnMobile.innerHTML = icons.play;
-                ui.playBtnDesktop.innerHTML = icons.play;
-                ui.playBtnMobile.classList.remove('active-btn');
-                ui.playBtnDesktop.classList.remove('active-btn');
+                // NOTA: Botones de modo ahora están en preset-action-buttons
+                // El icono se actualiza automáticamente en el nuevo botón
                 
                 // En móvil, mostrar el panel del editor y ocultar controles de juego
                 if (isMobile) {
@@ -3253,15 +3739,8 @@
             }
         }
         
-        // Event listeners para ambos botones de modo
-        ui.playBtnMobile.addEventListener('click', (e) => {
-            e.preventDefault();
-            togglePlayMode();
-        });
-        ui.playBtnDesktop.addEventListener('click', (e) => {
-            e.preventDefault();
-            togglePlayMode();
-        });
+        // NOTA: Event listeners de botones de modo ahora están en preset-action-buttons
+        // Ver líneas ~5934-5938 donde se configura playModeBtnMoved
         
         // Inicializar controles móviles
         setupJoystick();
@@ -5204,6 +5683,10 @@
             const socialMediaButtons = document.getElementById('social-media-buttons');
             if (socialMediaButtons) socialMediaButtons.classList.remove('active');
             
+            // Ocultar botones de acciones de presets
+            const presetActionButtons = document.getElementById('preset-action-buttons');
+            if (presetActionButtons) presetActionButtons.classList.remove('active');
+            
             // Detener rotación del modelo y resetear a 0
             if (loadedModel) {
                 loadedModel.rotation.y = 0;
@@ -5334,9 +5817,7 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
             
-            // Mostrar botón de modo cuando se sale del showcase
-            const playBtnMobile = document.getElementById('play-mode-btn-mobile');
-            playBtnMobile.style.display = 'flex';
+            // NOTA: Botón de modo ahora está en preset-action-buttons
         }
         
         function updateShowcaseRotation() {
@@ -5602,6 +6083,14 @@
             // Activar fondo degradado azul para presets
             const showcaseBackground = document.getElementById('showcase-background');
             if (showcaseBackground) showcaseBackground.classList.add('active');
+            
+            // Mostrar botones de acciones de presets
+            const presetActionButtons = document.getElementById('preset-action-buttons');
+            if (presetActionButtons) presetActionButtons.classList.add('active');
+            
+            // Ocultar botón grande de PDF del centro
+            const downloadPdfBtn = document.getElementById('download-pdf-btn');
+            if (downloadPdfBtn) downloadPdfBtn.classList.remove('active');
         });
         
         // Función para aplicar personaje preestablecido
@@ -5760,23 +6249,204 @@
         document.getElementById('preset-mira-btn').addEventListener('click', () => {
             currentPresetCharacter = 'Mira';
             applyPresetCharacter('Mira');
-            // Mostrar botón de descargar PDF
-            if (downloadPdfBtn) downloadPdfBtn.classList.add('active');
+            // Mostrar botón pequeño de PDF en la esquina superior izquierda
+            const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
+            if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
         });
         
         document.getElementById('preset-rumi-btn').addEventListener('click', () => {
             currentPresetCharacter = 'Rumi';
             applyPresetCharacter('Rumi');
-            // Mostrar botón de descargar PDF
-            if (downloadPdfBtn) downloadPdfBtn.classList.add('active');
+            // Mostrar botón pequeño de PDF en la esquina superior izquierda
+            const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
+            if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
         });
         
         document.getElementById('preset-zoey-btn').addEventListener('click', () => {
             currentPresetCharacter = 'Zoey';
             applyPresetCharacter('Zoey');
-            // Mostrar botón de descargar PDF
-            if (downloadPdfBtn) downloadPdfBtn.classList.add('active');
+            // Mostrar botón pequeño de PDF en la esquina superior izquierda
+            const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
+            if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
         });
+        
+        // Event listeners para botones de acciones de presets
+        const backToShowcaseBtn = document.getElementById('back-to-showcase-btn');
+        const playModeBtnMoved = document.getElementById('play-mode-btn-desktop-moved');
+        const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
+        
+        // Botón 1: Volver al showcase
+        if (backToShowcaseBtn) {
+            backToShowcaseBtn.addEventListener('click', () => {
+                // Ocultar panel de editor y secciones
+                editorPanelWrapper.style.display = 'none';
+                presetsSection.classList.add('hidden');
+                customizeSection.classList.add('hidden');
+                
+                // Ocultar botones de acciones de presets
+                const presetActionButtons = document.getElementById('preset-action-buttons');
+                if (presetActionButtons) presetActionButtons.classList.remove('active');
+                
+                // Mostrar showcase
+                showcaseButtonsContainer.classList.remove('hidden');
+                isShowcaseActive = true;
+                
+                // Mostrar logo del showcase
+                const showcaseLogoContainer = document.getElementById('showcase-logo-container');
+                if (showcaseLogoContainer) showcaseLogoContainer.classList.remove('hidden');
+                
+                // Mostrar botones de redes sociales
+                const socialMediaButtons = document.getElementById('social-media-buttons');
+                if (socialMediaButtons) socialMediaButtons.classList.add('active');
+                
+                // Activar clase del canvas para showcase
+                const canvasContainer = document.getElementById('canvas-container');
+                if (canvasContainer) canvasContainer.classList.add('showcase-active');
+                
+                // Ocultar sombra bajo los pies
+                if (footShadow) footShadow.visible = false;
+                
+                // Resetear personaje seleccionado
+                currentPresetCharacter = null;
+                
+                // Ocultar botón de PDF
+                if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.remove('active');
+            });
+        }
+        
+        // Botón 2: Modo juego (usar la función existente togglePlayMode)
+        if (playModeBtnMoved) {
+            playModeBtnMoved.addEventListener('click', () => {
+                togglePlayMode();
+            });
+        }
+        
+        // Botón 3: Abrir página de descarga
+        if (downloadPdfBtnMoved) {
+            downloadPdfBtnMoved.addEventListener('click', () => {
+                if (!currentPresetCharacter) {
+                    alert('Por favor, selecciona un personaje preestablecido primero.');
+                    return;
+                }
+                
+                // Abrir página de descarga
+                openDownloadPage();
+            });
+        }
+        
+        // Variables para la página de descarga
+        let generatedPdfBlob = null;
+        
+        // Función para abrir directamente la pasarela de pago
+        function openDownloadPage() {
+            const whopOverlay = document.getElementById('whop-checkout-overlay');
+            const paymentSuccess = document.getElementById('payment-success-message');
+            const pdfProgress = document.getElementById('pdf-progress-container');
+            const downloadBtn = document.getElementById('final-download-btn');
+            const progressBar = document.getElementById('pdf-progress-bar');
+            const progressText = document.getElementById('pdf-progress-text');
+            
+            // Mostrar overlay de checkout de Whop a pantalla completa
+            if (whopOverlay) whopOverlay.classList.remove('hidden');
+            
+            // Ocultar todo lo demás
+            if (paymentSuccess) paymentSuccess.classList.add('hidden');
+            if (pdfProgress) pdfProgress.classList.add('hidden');
+            if (downloadBtn) downloadBtn.classList.add('hidden');
+            
+            // Resetear progreso
+            if (progressBar) progressBar.style.width = '0%';
+            if (progressText) progressText.textContent = '0%';
+            
+            // Resetear PDF generado y estado de pago
+            generatedPdfBlob = null;
+            paymentCompleted = false;
+            paymentReceiptId = null;
+            
+            console.log('💳 Pasarela de pago abierta. Esperando pago del usuario...');
+        }
+        
+        // Función para cerrar la pasarela de pago (ya no se usa, el usuario solo puede completar el pago)
+        function closeDownloadPage() {
+            const whopOverlay = document.getElementById('whop-checkout-overlay');
+            const paymentSuccess = document.getElementById('payment-success-message');
+            const pdfProgress = document.getElementById('pdf-progress-container');
+            const downloadBtn = document.getElementById('final-download-btn');
+            
+            // Ocultar todo
+            if (whopOverlay) whopOverlay.classList.add('hidden');
+            if (paymentSuccess) paymentSuccess.classList.add('hidden');
+            if (pdfProgress) pdfProgress.classList.add('hidden');
+            if (downloadBtn) downloadBtn.classList.add('hidden');
+            
+            // Resetear PDF generado
+            generatedPdfBlob = null;
+        }
+        
+        // Función para generar PDF en la página de descarga
+        async function generatePDFForDownloadPage() {
+            // Verificar que el pago fue completado
+            if (!paymentCompleted) {
+                console.warn('⚠️ Pago no completado. No se puede generar el PDF.');
+                alert('Debes completar el pago antes de descargar el PDF.');
+                return;
+            }
+            
+            if (isGeneratingPDF) {
+                console.log('Ya se está generando un PDF, por favor espera...');
+                return;
+            }
+            
+            isGeneratingPDF = true;
+            
+            try {
+                // Generar el PDF y guardarlo en blob
+                // La función generatePDF ahora actualizará la barra de progreso incrustada
+                generatedPdfBlob = await generatePDF(true); // true = retornar blob en lugar de descargar
+                
+                // Ocultar barra de progreso
+                const pdfProgressContainer = document.getElementById('pdf-progress-container');
+                if (pdfProgressContainer) {
+                    pdfProgressContainer.classList.add('hidden');
+                }
+                
+                // Mostrar botón de descarga
+                const downloadBtn = document.getElementById('final-download-btn');
+                if (downloadBtn) {
+                    downloadBtn.classList.remove('hidden');
+                }
+                
+                console.log('✅ PDF generado y listo para descargar');
+                console.log('📧 Receipt ID:', paymentReceiptId);
+            } catch (error) {
+                console.error('Error al generar PDF:', error);
+                alert('Hubo un error al generar el PDF. Por favor, intenta de nuevo.');
+                closeDownloadPage();
+            } finally {
+                isGeneratingPDF = false;
+            }
+        }
+        
+        
+        // Event listener para botón de descarga final
+        const finalDownloadBtn = document.getElementById('final-download-btn');
+        if (finalDownloadBtn) {
+            finalDownloadBtn.addEventListener('click', () => {
+                if (generatedPdfBlob) {
+                    // Descargar el PDF ya generado
+                    const url = URL.createObjectURL(generatedPdfBlob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = `${currentPresetCharacter}_Papelcool.pdf`;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    
+                    console.log('📥 PDF descargado exitosamente');
+                } else {
+                    alert('El PDF aún no está listo. Por favor espera un momento.');
+                }
+            });
+        }
         
         // Función para obtener color de una parte del modelo 3D
         function getPartColor(part) {
@@ -6114,9 +6784,9 @@
         }
         
         // Función principal para generar el PDF
-        async function generatePDF() {
+        async function generatePDF(returnBlob = false) {
             // Verificar que no se esté generando ya un PDF
-            if (isGeneratingPDF) {
+            if (isGeneratingPDF && !returnBlob) {
                 console.warn('⚠️ Already generating a PDF. Please wait...');
                 alert('A PDF is already being generated. Please wait for it to finish.');
                 return;
@@ -6138,33 +6808,43 @@
             isGeneratingPDF = true;
             console.log('🔄 Iniciando generación de PDF para:', currentPresetCharacter);
             
-            // Crear contenedor de barra de progreso
-            const progressContainer = document.createElement('div');
-            progressContainer.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.95);padding:2rem 3rem;border-radius:15px;z-index:9999;font-family:Orbitron,sans-serif;min-width:400px;box-shadow:0 10px 40px rgba(0,255,255,0.3);border:2px solid rgba(0,255,255,0.5);';
+            // Variables para la barra de progreso
+            let progressContainer, progressBar, percentText;
             
-            // Título
-            const title = document.createElement('div');
-            title.style.cssText = 'color:#00ffff;font-size:1.2rem;font-weight:bold;margin-bottom:1rem;text-align:center;text-shadow:0 0 10px rgba(0,255,255,0.8);';
-            title.textContent = 'Generating PDF...';
-            progressContainer.appendChild(title);
-            
-            // Contenedor de la barra
-            const barContainer = document.createElement('div');
-            barContainer.style.cssText = 'width:100%;height:30px;background:rgba(0,0,0,0.5);border-radius:15px;overflow:hidden;border:2px solid rgba(0,255,255,0.3);margin-bottom:1rem;';
-            
-            // Barra de progreso
-            const progressBar = document.createElement('div');
-            progressBar.style.cssText = 'width:0%;height:100%;background:linear-gradient(90deg,#00ffff,#00ccff,#0099ff);transition:width 0.3s ease;box-shadow:0 0 20px rgba(0,255,255,0.8);';
-            barContainer.appendChild(progressBar);
-            progressContainer.appendChild(barContainer);
-            
-            // Texto de porcentaje
-            const percentText = document.createElement('div');
-            percentText.style.cssText = 'color:#00ffff;font-size:1.5rem;font-weight:bold;text-align:center;text-shadow:0 0 10px rgba(0,255,255,0.8);';
-            percentText.textContent = '0%';
-            progressContainer.appendChild(percentText);
-            
-            document.body.appendChild(progressContainer);
+            // Si returnBlob es true, usar la barra incrustada en la página de descarga
+            if (returnBlob) {
+                progressBar = document.getElementById('pdf-progress-bar');
+                percentText = document.getElementById('pdf-progress-text');
+                progressContainer = null; // No hay popup
+            } else {
+                // Crear contenedor de barra de progreso (popup)
+                progressContainer = document.createElement('div');
+                progressContainer.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.95);padding:2rem 3rem;border-radius:15px;z-index:9999;font-family:Orbitron,sans-serif;min-width:400px;box-shadow:0 10px 40px rgba(0,255,255,0.3);border:2px solid rgba(0,255,255,0.5);';
+                
+                // Título
+                const title = document.createElement('div');
+                title.style.cssText = 'color:#00ffff;font-size:1.2rem;font-weight:bold;margin-bottom:1rem;text-align:center;text-shadow:0 0 10px rgba(0,255,255,0.8);';
+                title.textContent = 'Generating PDF...';
+                progressContainer.appendChild(title);
+                
+                // Contenedor de la barra
+                const barContainer = document.createElement('div');
+                barContainer.style.cssText = 'width:100%;height:30px;background:rgba(0,0,0,0.5);border-radius:15px;overflow:hidden;border:2px solid rgba(0,255,255,0.3);margin-bottom:1rem;';
+                
+                // Barra de progreso
+                progressBar = document.createElement('div');
+                progressBar.style.cssText = 'width:0%;height:100%;background:linear-gradient(90deg,#00ffff,#00ccff,#0099ff);transition:width 0.3s ease;box-shadow:0 0 20px rgba(0,255,255,0.8);';
+                barContainer.appendChild(progressBar);
+                progressContainer.appendChild(barContainer);
+                
+                // Texto de porcentaje
+                percentText = document.createElement('div');
+                percentText.style.cssText = 'color:#00ffff;font-size:1.5rem;font-weight:bold;text-align:center;text-shadow:0 0 10px rgba(0,255,255,0.8);';
+                percentText.textContent = '0%';
+                progressContainer.appendChild(percentText);
+                
+                document.body.appendChild(progressContainer);
+            }
             
             // Función para actualizar progreso
             function updateProgress(percent) {
@@ -6759,17 +7439,34 @@
                 // Completado al 100%
                 updateProgress(100);
                 
-                // Pequeña pausa para mostrar el 100% antes de descargar
+                // Pequeña pausa para mostrar el 100% antes de descargar/retornar
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
-                pdf.save(filename);
+                // Si returnBlob es true, retornar el blob en lugar de descargar
+                if (returnBlob) {
+                    const pdfBlob = pdf.output('blob');
+                    console.log('✅ PDF blob generado:', pdfBlob);
+                    
+                    // Limpiar barra de progreso
+                    if (progressContainer && progressContainer.parentNode) {
+                        progressContainer.remove();
+                    }
+                    
+                    return pdfBlob;
+                } else {
+                    // Descargar normalmente
+                    pdf.save(filename);
+                }
                 
             } catch (error) {
                 console.error('❌ Error generando PDF:', error);
                 alert('Error generating PDF: ' + error.message);
+                throw error; // Re-lanzar el error para que sea capturado en generatePDFForDownloadPage
             } finally {
                 // Limpiar
-                isGeneratingPDF = false;
+                if (!returnBlob) {
+                    isGeneratingPDF = false;
+                }
                 if (progressContainer && progressContainer.parentNode) {
                     progressContainer.remove();
                 }
