@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <script async defer src="https://js.whop.com/static/checkout/loader.js"></script>
+  <style>
+    div { box-sizing: border-box; }
+    body { margin: 0 }
+    /* Ensure the generated Whop iframe fills the viewport and can scroll internally */
+    div[data-whop-checkout-plan-id] iframe {
+      display: block;
+      width: 100%;
+      border: 0;
+      height: 100vh; min-height: 100vh;
+      height: 100dvh; min-height: 100dvh;
+      height: 100svh; min-height: 100svh;
+    }
+  </style>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const presetCharacter = urlParams.get('preset') || 'mira';
+    
+    window.onWhopPaymentComplete = (planId, receiptId) => {
+      window.location.href = `index.html?payment=success&preset=${presetCharacter}&receipt=${receiptId}`;
+    };
+    
+    // After Whop mounts the iframe, ensure it allows internal scrolling
+    document.addEventListener('DOMContentLoaded', () => {
+      const root = document.querySelector('[data-whop-checkout-plan-id]');
+      if (!root) return;
+      const apply = () => {
+        const iframe = root.querySelector('iframe');
+        if (iframe) {
+          iframe.setAttribute('scrolling', 'yes');
+          iframe.style.overflow = 'auto';
+        }
+      };
+      const observer = new MutationObserver(apply);
+      observer.observe(root, { childList: true, subtree: true });
+      apply();
+    });
+  </script>
+</head>
+<body>
+  <div id="whop-wrapper" style="min-height: 100vh; min-height: 100dvh; min-height: 100svh; padding-block: 4vh; padding-block: 4dvh; padding-block: 4svh; box-sizing: border-box;">
+    <div 
+      data-whop-checkout-plan-id="plan_EyvFAPscVswNH"
+      data-whop-checkout-theme="dark"
+      data-whop-checkout-theme-accent-color="cyan"
+      data-whop-checkout-skip-redirect="true"
+      data-whop-checkout-on-complete="onWhopPaymentComplete"
+      style="height: fit-content; overflow: hidden;"
+    ></div>
+  </div>
+</body>
+</html>

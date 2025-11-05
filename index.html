@@ -28,8 +28,6 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
     <!-- jsPDF para generación de PDFs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-    <!-- Whop Payments - Pasarela de pago -->
-    <script async defer src="https://js.whop.com/static/checkout/loader.js"></script>
     <style>
         * {
             margin: 0;
@@ -1799,44 +1797,6 @@
             height: 24px;
         }
         
-        /* Overlay para checkout de Whop - Pantalla completa */
-        .whop-checkout-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 9999;
-            background: #0a0e27;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-        
-        .whop-checkout-overlay.hidden {
-            display: none;
-        }
-        
-        /* Contenedor del checkout - sin restricciones */
-        #whop-checkout-embed {
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        /* Estilizar el iframe generado por Whop - CLAVE PARA PANTALLA COMPLETA */
-        .whop-checkout-overlay iframe,
-        #whop-checkout-embed iframe {
-            width: 100% !important;
-            min-width: 100% !important;
-            max-width: 100% !important;
-            height: 100vh !important;
-            min-height: 100vh !important;
-            border: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-        }
         
         .pdf-progress-bar-container {
             width: 100%;
@@ -2062,13 +2022,6 @@
                 height: 100%;
             }
             
-            .whop-payment-container {
-                padding: 70px 10px 10px 10px;
-            }
-            
-            #whop-checkout-embed {
-                min-height: 500px !important;
-            }
             
             .pdf-progress-bar-container {
                 height: 35px;
@@ -2185,54 +2138,6 @@
         }
     </style>
     
-    <!-- Whop Payments - Callback de pago exitoso -->
-    <script>
-        // Variable global para controlar si el pago fue exitoso
-        let paymentCompleted = false;
-        let paymentReceiptId = null;
-        
-        // Callback que se ejecuta cuando el pago en Whop es exitoso
-        window.onWhopPaymentComplete = (planId, receiptId) => {
-            console.log('✅ Pago completado exitosamente!');
-            console.log('Plan ID:', planId);
-            console.log('Receipt ID:', receiptId);
-            
-            // Guardar información del pago
-            paymentCompleted = true;
-            paymentReceiptId = receiptId;
-            
-            // Ocultar overlay de checkout
-            const whopOverlay = document.getElementById('whop-checkout-overlay');
-            if (whopOverlay) {
-                whopOverlay.classList.add('hidden');
-            }
-            
-            // Mostrar mensaje de pago exitoso
-            const paymentSuccess = document.getElementById('payment-success-message');
-            if (paymentSuccess) {
-                paymentSuccess.classList.remove('hidden');
-            }
-            
-            // Esperar 2 segundos para que el usuario vea el mensaje de éxito
-            setTimeout(() => {
-                // Ocultar mensaje de éxito
-                if (paymentSuccess) {
-                    paymentSuccess.classList.add('hidden');
-                }
-                
-                // Mostrar barra de progreso
-                const pdfProgressContainer = document.getElementById('pdf-progress-container');
-                if (pdfProgressContainer) {
-                    pdfProgressContainer.classList.remove('hidden');
-                }
-                
-                // Iniciar generación del PDF automáticamente
-                if (typeof generatePDFForDownloadPage === 'function') {
-                    generatePDFForDownloadPage();
-                }
-            }, 2000);
-        };
-    </script>
 </head>
 <body class="text-white">
 
@@ -2249,29 +2154,6 @@
     <!-- Fondo degradado azul para showcase -->
     <div id="showcase-background"></div>
     
-    <!-- Overlay para checkout de Whop -->
-    <div id="whop-checkout-overlay" class="whop-checkout-overlay hidden">
-        <!-- Checkout de Whop -->
-        <div 
-            id="whop-checkout-embed"
-            data-whop-checkout-plan-id="plan_EyvFAPscVswNH"
-            data-whop-checkout-theme="dark"
-            data-whop-checkout-theme-accent-color="cyan"
-            data-whop-checkout-skip-redirect="true"
-            data-whop-checkout-on-complete="onWhopPaymentComplete"
-        ></div>
-    </div>
-    
-    <!-- Mensaje de pago exitoso (oculto inicialmente) -->
-    <div id="payment-success-message" class="payment-success-message hidden">
-        <div class="success-icon-check">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
-            </svg>
-        </div>
-        <h3 class="success-title">¡Pago exitoso!</h3>
-        <p class="success-text">Generando tu PDF personalizado...</p>
-    </div>
     
     <!-- Barra de progreso (oculta inicialmente) -->
     <div id="pdf-progress-container" class="pdf-progress-overlay hidden">
@@ -6337,95 +6219,63 @@
         // Variables para la página de descarga
         let generatedPdfBlob = null;
         
-        // Función para abrir directamente la pasarela de pago
+        // Función para redirigir a la pasarela de pago
         function openDownloadPage() {
-            const whopOverlay = document.getElementById('whop-checkout-overlay');
-            const paymentSuccess = document.getElementById('payment-success-message');
-            const pdfProgress = document.getElementById('pdf-progress-container');
-            const downloadBtn = document.getElementById('final-download-btn');
-            const progressBar = document.getElementById('pdf-progress-bar');
-            const progressText = document.getElementById('pdf-progress-text');
-            
-            // Mostrar overlay de checkout de Whop a pantalla completa
-            if (whopOverlay) whopOverlay.classList.remove('hidden');
-            
-            // Ocultar todo lo demás
-            if (paymentSuccess) paymentSuccess.classList.add('hidden');
-            if (pdfProgress) pdfProgress.classList.add('hidden');
-            if (downloadBtn) downloadBtn.classList.add('hidden');
-            
-            // Resetear progreso
-            if (progressBar) progressBar.style.width = '0%';
-            if (progressText) progressText.textContent = '0%';
-            
-            // Resetear PDF generado y estado de pago
-            generatedPdfBlob = null;
-            paymentCompleted = false;
-            paymentReceiptId = null;
-            
-            console.log('💳 Pasarela de pago abierta. Esperando pago del usuario...');
+            // Redirigir a checkout.html con el preset seleccionado como parámetro
+            window.location.href = `checkout.html?preset=${currentPresetCharacter}`;
         }
         
-        // Función para cerrar la pasarela de pago (ya no se usa, el usuario solo puede completar el pago)
-        function closeDownloadPage() {
-            const whopOverlay = document.getElementById('whop-checkout-overlay');
-            const paymentSuccess = document.getElementById('payment-success-message');
+        // Detectar si el usuario vuelve del checkout con pago exitoso
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const paymentStatus = urlParams.get('payment');
+            const presetFromUrl = urlParams.get('preset');
+            const receiptId = urlParams.get('receipt');
+            
+            if (paymentStatus === 'success' && presetFromUrl && receiptId) {
+                console.log('✅ Pago completado. Generando PDF...');
+                console.log('Preset:', presetFromUrl);
+                console.log('Receipt ID:', receiptId);
+                
+                // Cargar el preset correspondiente
+                currentPresetCharacter = presetFromUrl;
+                loadPreset(presetFromUrl);
+                
+                // Esperar a que el modelo se cargue y generar PDF automáticamente
+                setTimeout(() => {
+                    generatePDFAfterPayment(receiptId);
+                }, 2000);
+            }
+        });
+        
+        // Función para generar PDF después del pago
+        async function generatePDFAfterPayment(receiptId) {
             const pdfProgress = document.getElementById('pdf-progress-container');
             const downloadBtn = document.getElementById('final-download-btn');
             
-            // Ocultar todo
-            if (whopOverlay) whopOverlay.classList.add('hidden');
-            if (paymentSuccess) paymentSuccess.classList.add('hidden');
-            if (pdfProgress) pdfProgress.classList.add('hidden');
-            if (downloadBtn) downloadBtn.classList.add('hidden');
-            
-            // Resetear PDF generado
-            generatedPdfBlob = null;
-        }
-        
-        // Función para generar PDF en la página de descarga
-        async function generatePDFForDownloadPage() {
-            // Verificar que el pago fue completado
-            if (!paymentCompleted) {
-                console.warn('⚠️ Pago no completado. No se puede generar el PDF.');
-                alert('Debes completar el pago antes de descargar el PDF.');
-                return;
-            }
-            
-            if (isGeneratingPDF) {
-                console.log('Ya se está generando un PDF, por favor espera...');
-                return;
-            }
-            
-            isGeneratingPDF = true;
+            // Mostrar barra de progreso
+            if (pdfProgress) pdfProgress.classList.remove('hidden');
             
             try {
-                // Generar el PDF y guardarlo en blob
-                // La función generatePDF ahora actualizará la barra de progreso incrustada
-                generatedPdfBlob = await generatePDF(true); // true = retornar blob en lugar de descargar
+                // Generar el PDF
+                generatedPdfBlob = await generatePDF(true);
                 
                 // Ocultar barra de progreso
-                const pdfProgressContainer = document.getElementById('pdf-progress-container');
-                if (pdfProgressContainer) {
-                    pdfProgressContainer.classList.add('hidden');
-                }
+                if (pdfProgress) pdfProgress.classList.add('hidden');
                 
                 // Mostrar botón de descarga
-                const downloadBtn = document.getElementById('final-download-btn');
-                if (downloadBtn) {
-                    downloadBtn.classList.remove('hidden');
-                }
+                if (downloadBtn) downloadBtn.classList.remove('hidden');
                 
                 console.log('✅ PDF generado y listo para descargar');
-                console.log('📧 Receipt ID:', paymentReceiptId);
+                console.log('📧 Receipt ID:', receiptId);
             } catch (error) {
                 console.error('Error al generar PDF:', error);
                 alert('Hubo un error al generar el PDF. Por favor, intenta de nuevo.');
-                closeDownloadPage();
-            } finally {
-                isGeneratingPDF = false;
+                // Limpiar parámetros de URL
+                window.history.replaceState({}, document.title, window.location.pathname);
             }
         }
+        
         
         
         // Event listener para botón de descarga final
@@ -6442,6 +6292,15 @@
                     URL.revokeObjectURL(url);
                     
                     console.log('📥 PDF descargado exitosamente');
+                    
+                    // Ocultar botón de descarga
+                    finalDownloadBtn.classList.add('hidden');
+                    
+                    // Limpiar parámetros de URL
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    
+                    // Resetear blob
+                    generatedPdfBlob = null;
                 } else {
                     alert('El PDF aún no está listo. Por favor espera un momento.');
                 }
