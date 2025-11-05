@@ -247,6 +247,11 @@
             box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
                 0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
             font-size: 1rem;
+            width: 120px;   /* Ancho fijo para hacer cuadrado */
+            height: 120px;  /* Alto igual al ancho = cuadrado */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .preset-character-btn::after {
@@ -276,6 +281,8 @@
             box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
                 0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
                 0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
+            width: 100%;
+            height: 100%;
         }
         
         .preset-character-btn:hover .button-outer {
@@ -302,6 +309,9 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
             box-shadow:
                 0 0 0 0 inset rgba(5, 5, 5, 0.1),
                 -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
@@ -551,7 +561,7 @@
             position: relative;
             z-index: 1;
             border-radius: inherit;
-            padding: 1em;
+            padding: 1em 1.5em;
             background-image: linear-gradient(135deg,
                     rgba(230, 230, 230, 1),
                     rgba(180, 180, 180, 1));
@@ -564,24 +574,38 @@
             align-items: center;
             justify-content: center;
             box-shadow:
+                /* 1 */
                 0 0 0 0 inset rgba(5, 5, 5, 0.1),
+                /* 2 */
                 -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
+                /* 3 */
                 0 0 0 0 inset rgba(5, 5, 5, 0.1),
+                /* 4 */
                 0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
+                /* 5 */
                 0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
+                /* 6 */
                 0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
+                /* 7 */
                 -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
         }
         
         .play-mode-btn:hover .button-inner {
             clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 999vw);
             box-shadow:
+                /* 1 */
                 0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
+                /* 2 */
                 -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
+                /* 3 */
                 0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
+                /* 4 */
                 0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
+                /* 5 */
                 0 0 0 0 inset rgba(255, 255, 255, 1),
+                /* 6 */
                 0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
+                /* 7 */
                 -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
         }
         
@@ -601,34 +625,7 @@
             top: 1rem;
             left: 1rem;
             z-index: 1000;
-        }
-        
-        /* Estilos responsivos para móviles y tablets */
-        #play-mode-btn-mobile {
             display: none;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            width: 56px !important;
-            height: 56px !important;
-            border-radius: 50% !important;
-            padding: 0 !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        #camera-toggle-btn {
-            position: fixed;
-            top: 5.5rem;
-            left: 1rem;
-            z-index: 50;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-            width: 56px !important;
-            height: 56px !important;
-            border-radius: 50% !important;
-            padding: 0 !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
         
         #editor-panel-wrapper {
@@ -651,9 +648,6 @@
                 display: block;
             }
             
-            #camera-toggle-btn {
-                display: flex;
-            }
             
             #editor-panel-wrapper {
                 position: fixed;
@@ -751,12 +745,12 @@
             }
             
             /* Botón de cámara en desktop - posicionado dentro del panel */
-            #camera-toggle-btn {
-                position: absolute;
-                top: 1rem;
-                right: 5rem;
-                left: auto;
+            
+            /* Ocultar controles móviles en desktop */
+            #mobile-game-controls {
+                display: none !important;
             }
+            
         }
         
         /* Estilos para controles de juego móvil */
@@ -879,14 +873,16 @@
             right: 30px;
             cursor: pointer;
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            border-radius: 999vw;
+            border-radius: 50%;  /* Circular perfecto como joystick */
             background-color: rgba(0, 0, 0, 0.75);
             box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
                 0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
-            font-size: 2rem;
+            font-size: 1rem;  /* Mismo tamaño base que joystick */
             touch-action: manipulation;
             user-select: none;
             -webkit-user-select: none;
+            width: 120px;   /* Mismo ancho que joystick */
+            height: 120px;  /* Mismo alto que joystick */
         }
         
         #jump-button::after {
@@ -916,6 +912,8 @@
             box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
                 0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
                 0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
+            width: 100%;
+            height: 100%;
         }
         
         #jump-button:active .button-outer {
@@ -928,7 +926,7 @@
             position: relative;
             z-index: 1;
             border-radius: inherit;
-            padding: 1em;
+            padding: 0;  /* Sin padding para que el icono se vea mejor */
             background-image: linear-gradient(135deg,
                     rgba(230, 230, 230, 1),
                     rgba(180, 180, 180, 1));
@@ -940,6 +938,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
             box-shadow:
                 0 0 0 0 inset rgba(5, 5, 5, 0.1),
                 -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
@@ -966,9 +967,9 @@
         #jump-button .button-inner span {
             position: relative;
             z-index: 4;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5em;
-            font-weight: 700;
+            font-size: 3em;  /* Icono más grande */
+            font-weight: 900;
+            line-height: 1;
             color: rgba(0, 0, 0, 0);
             background-image: linear-gradient(135deg,
                     rgba(25, 25, 25, 1),
@@ -976,7 +977,9 @@
             -webkit-background-clip: text;
             background-clip: text;
             transition: transform 250ms ease;
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             will-change: transform;
             text-shadow: rgba(0, 0, 0, 0.1) 0 0 0.1em;
             -webkit-user-select: none;
@@ -1912,11 +1915,6 @@
         </div>
     </button>
     
-    <!-- Botón de cambio de cámara (responsive - móvil y desktop) -->
-    <button type="button" id="camera-toggle-btn" class="icon-btn pointer-events-auto" style="display: none;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="w-6 h-6 m-auto"><path fill="currentColor" d="M20 4h-3.17L15 2H9L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m-8 3c1.63 0 3.06.79 3.98 2H12c-1.66 0-3 1.34-3 3s1.34 3 3 3h3.98c-.92 1.21-2.35 2-3.98 2c-2.76 0-5-2.24-5-5s2.24-5 5-5m0 2c-1.66 0-3 1.34-3 3s1.34 3 3 3s3-1.34 3-3s-1.34-3-3-3"/></svg>
-    </button>
-    
     <!-- Controles de juego para móvil -->
     <div id="mobile-game-controls">
         <div id="joystick-container">
@@ -2274,27 +2272,34 @@
         controls.minDistance = 3;  // Zoom in máximo (más cerca)
         controls.maxDistance = 25; // Zoom out máximo (más lejos)
         
-        // Luz ambiental base - ilumina todo uniformemente
-        scene.add(new THREE.AmbientLight(0xffffff, 1.5));
+        // Iluminación sin sombras - 100% clara y uniforme
+        // Luz ambiental fuerte - ilumina todo uniformemente sin crear sombras
+        scene.add(new THREE.AmbientLight(0xffffff, 2.0));
         
-        // Luz principal (frontal superior) - más suave
-        const mainLight = new THREE.DirectionalLight(0xffffff, 1.2);
-        mainLight.position.set(5, 10, 7.5);
-        scene.add(mainLight);
+        // Luces direccionales suaves desde múltiples ángulos para eliminar sombras
+        // Luz frontal superior
+        const frontLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        frontLight.position.set(0, 10, 10);
+        scene.add(frontLight);
         
-        // Luz de relleno (lateral izquierda) - suaviza sombras del lado izquierdo
-        const fillLightLeft = new THREE.DirectionalLight(0xffffff, 0.6);
-        fillLightLeft.position.set(-5, 5, 5);
-        scene.add(fillLightLeft);
+        // Luz frontal inferior (elimina sombras bajo la barbilla)
+        const frontBottomLight = new THREE.DirectionalLight(0xffffff, 0.4);
+        frontBottomLight.position.set(0, -5, 10);
+        scene.add(frontBottomLight);
         
-        // Luz de relleno (lateral derecha) - suaviza sombras del lado derecho
-        const fillLightRight = new THREE.DirectionalLight(0xffffff, 0.6);
-        fillLightRight.position.set(5, 5, -5);
-        scene.add(fillLightRight);
+        // Luz lateral izquierda
+        const leftLight = new THREE.DirectionalLight(0xffffff, 0.4);
+        leftLight.position.set(-10, 5, 5);
+        scene.add(leftLight);
         
-        // Luz trasera suave - ilumina la parte de atrás del modelo
-        const backLight = new THREE.DirectionalLight(0xffffff, 0.4);
-        backLight.position.set(0, 3, -8);
+        // Luz lateral derecha
+        const rightLight = new THREE.DirectionalLight(0xffffff, 0.4);
+        rightLight.position.set(10, 5, 5);
+        scene.add(rightLight);
+        
+        // Luz trasera (elimina sombras en la parte de atrás)
+        const backLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        backLight.position.set(0, 5, -10);
         scene.add(backLight);
 
         // Referencia al grid para poder alternar visibilidad
@@ -2914,10 +2919,36 @@
         let isAnimatingCamera = false;
         let cameraTargetPos = new THREE.Vector3(), controlsTargetPos = new THREE.Vector3();
         
+        // Variables para animación circular de cámara
+        let isCircularCameraAnimation = false;
+        let circularAnimStartAngle = 0;
+        let circularAnimTargetAngle = 0;
+        let circularAnimProgress = 0;
+        let circularAnimRadius = 0;
+        let circularAnimHeight = 0;
+        
+        // Variables para guardar el estado original de la cámara en modo presets
+        let savedPresetCameraPos = null;
+        let savedPresetCameraTarget = null;
+        let savedPresetCameraDistance = null;  // Distancia (zoom) de la cámara al target
+        
         function animateCameraTo(pos, target) { 
             cameraTargetPos.copy(pos); 
             controlsTargetPos.copy(target); 
             isAnimatingCamera = true; 
+        }
+        
+        // Nueva función para animación circular lateral
+        function animateCameraCircular(targetAngle, duration = 1500, targetRadius = null) {
+            const currentPos = camera.position.clone();
+            // Si se proporciona un radio objetivo (distancia/zoom), usarlo; si no, usar el actual
+            circularAnimRadius = targetRadius !== null ? targetRadius : Math.sqrt(currentPos.x * currentPos.x + currentPos.z * currentPos.z);
+            circularAnimHeight = currentPos.y;
+            circularAnimStartAngle = Math.atan2(currentPos.x, currentPos.z);
+            circularAnimTargetAngle = targetAngle;
+            circularAnimProgress = 0;
+            isCircularCameraAnimation = true;
+            isAnimatingCamera = false; // Desactivar animación lineal
         }
 
         function updateButtons() {
@@ -3145,6 +3176,16 @@
                 ui.playBtnMobile.classList.add('active-btn');
                 ui.playBtnDesktop.classList.add('active-btn');
                 
+                // GUARDAR estado actual de la cámara en modo presets (ANTES de la animación)
+                savedPresetCameraPos = camera.position.clone();
+                savedPresetCameraTarget = controls.target.clone();
+                // Calcular y guardar la distancia (zoom) actual
+                savedPresetCameraDistance = camera.position.distanceTo(controls.target);
+                console.log('📸 Guardado estado de cámara presets:');
+                console.log('   Posición:', savedPresetCameraPos);
+                console.log('   Target:', savedPresetCameraTarget);
+                console.log('   Distancia/Zoom:', savedPresetCameraDistance);
+                
                 // En móvil, ocultar el panel del editor y mostrar controles de juego
                 if (isMobile) {
                     ui.editorPanelWrapper.classList.add('hidden-mobile');
@@ -3153,23 +3194,19 @@
                     ui.editor.style.display = 'none';
                 }
                 
-                // Cambiar a vista trasera al entrar en modo juego
-                cameraView = 'back';
-                cameraAngle = 0;
-                targetCameraAngle = 0;
-                isCameraTransitioning = false;
-                
-                // Rotar el personaje 180 grados para que dé la espalda a la cámara
-                if (loadedModel) {
-                    loadedModel.rotation.y = Math.PI; // 180 grados
-                }
-                
-                // Mostrar botón de cambio de cámara
-                cameraToggleBtn.style.display = 'flex';
-                
+                // NUEVA ANIMACIÓN: Girar cámara lateralmente 180° hacia la espalda del modelo
                 controls.enabled = false;
+                
+                // Obtener ángulo actual y calcular ángulo objetivo (180° más)
+                const currentPos = camera.position.clone();
+                const currentAngle = Math.atan2(currentPos.x, currentPos.z);
+                const targetAngle = currentAngle + Math.PI; // +180 grados
+                
+                // Iniciar animación circular lateral
+                animateCameraCircular(targetAngle, 1500); // 1.5 segundos de giro lateral
+                
             } else {
-                // Modo edición
+                // Modo edición (volver a presets)
                 ui.playBtnMobile.innerHTML = icons.play;
                 ui.playBtnDesktop.innerHTML = icons.play;
                 ui.playBtnMobile.classList.remove('active-btn');
@@ -3183,15 +3220,36 @@
                     ui.editor.style.display = 'block';
                 }
                 
-                // Ocultar botón de cambio de cámara
-                cameraToggleBtn.style.display = 'none';
-                
+                // ANIMACIÓN DE REGRESO: Restaurar posición y dirección exacta de modo presets
                 controls.enabled = true;
+                
+                // Resetear posición y rotación del modelo
                 if(loadedModel) {
                     loadedModel.position.set(0, groundY, 0);
                     loadedModel.rotation.set(0, 0, 0);
                 }
-                animateCameraTo(originalCameraPos, modelCenter);
+                
+                // Verificar que tengamos el estado guardado
+                if (savedPresetCameraPos && savedPresetCameraTarget && savedPresetCameraDistance) {
+                    console.log('🔄 Restaurando estado de cámara presets:');
+                    console.log('   Posición:', savedPresetCameraPos);
+                    console.log('   Target:', savedPresetCameraTarget);
+                    console.log('   Distancia/Zoom:', savedPresetCameraDistance);
+                    
+                    // Calcular ángulo objetivo basado en la posición guardada
+                    const targetAngle = Math.atan2(savedPresetCameraPos.x, savedPresetCameraPos.z);
+                    
+                    // Iniciar animación circular lateral hacia la posición guardada
+                    // IMPORTANTE: Pasar la distancia guardada como tercer parámetro
+                    animateCameraCircular(targetAngle, 1500, savedPresetCameraDistance);
+                    
+                    // Después de la animación, también restaurar el target (hacia dónde mira)
+                    // Esto se hará cuando termine la animación circular
+                } else {
+                    // Fallback: usar posición original si no hay estado guardado
+                    console.warn('⚠️ No hay estado guardado, usando posición original');
+                    animateCameraTo(originalCameraPos, modelCenter, 1500);
+                }
             }
         }
         
@@ -3208,13 +3266,6 @@
         // Inicializar controles móviles
         setupJoystick();
         setupJumpButton();
-        
-        // Botón de cambio de cámara
-        const cameraToggleBtn = document.getElementById('camera-toggle-btn');
-        cameraToggleBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            toggleCameraView();
-        });
         
         function changeEyeTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
@@ -4718,11 +4769,14 @@
             }
         }
 
-        const cameraDistance = 6;
-        const cameraHeight = 2;
+        const cameraDistance = 8;  // Aumentado para mejor vista
+        const cameraHeight = 4;    // Aumentado para vista lateral hacia arriba (no desde arriba)
         
         function updatePlayCamera() {
             if (!loadedModel) return;
+            
+            // No actualizar cámara durante animación circular
+            if (isCircularCameraAnimation) return;
             
             // Interpolar suavemente el ángulo actual hacia el ángulo objetivo
             if (isCameraTransitioning) {
@@ -4756,11 +4810,6 @@
             controls.target.lerp(lookAtPos, 0.1);
         }
         
-        function toggleCameraView() {
-            cameraView = cameraView === 'back' ? 'front' : 'back';
-            targetCameraAngle = cameraView === 'back' ? 0 : Math.PI; // 0° para atrás, 180° para adelante
-            isCameraTransitioning = true;
-        }
         
         // Handler de resize optimizado y unificado con debounce
         let resizeTimeout;
@@ -4863,6 +4912,51 @@
                 }
             }
 
+             // Animación circular de cámara (giro lateral)
+             if(isCircularCameraAnimation) {
+                 circularAnimProgress += dt / 1.5; // 1.5 segundos de duración
+                 
+                 if(circularAnimProgress >= 1.0) {
+                     circularAnimProgress = 1.0;
+                     isCircularCameraAnimation = false;
+                     
+                     // Al terminar la animación
+                     if(appMode === 'play') {
+                         // Modo juego: configurar cameraAngle para que updatePlayCamera mantenga la posición
+                         if(loadedModel) {
+                             const camPos = camera.position.clone();
+                             const modelPos = loadedModel.position.clone();
+                             const relativePos = camPos.sub(modelPos);
+                             cameraAngle = Math.atan2(relativePos.x, relativePos.z) - loadedModel.rotation.y;
+                             targetCameraAngle = cameraAngle;
+                         }
+                     } else {
+                         // Modo presets: restaurar posición y target exactos guardados
+                         if(savedPresetCameraPos && savedPresetCameraTarget) {
+                             camera.position.copy(savedPresetCameraPos);
+                             controls.target.copy(savedPresetCameraTarget);
+                             console.log('✅ Cámara restaurada a estado presets');
+                         }
+                     }
+                 }
+                 
+                 // Interpolación suave con easing (ease-in-out)
+                 const t = circularAnimProgress;
+                 const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+                 
+                 // Calcular ángulo actual interpolado
+                 const currentAnimAngle = circularAnimStartAngle + (circularAnimTargetAngle - circularAnimStartAngle) * eased;
+                 
+                 // Actualizar posición de cámara en círculo
+                 camera.position.x = circularAnimRadius * Math.sin(currentAnimAngle);
+                 camera.position.y = circularAnimHeight;
+                 camera.position.z = circularAnimRadius * Math.cos(currentAnimAngle);
+                 
+                 // Mantener cámara mirando al centro del modelo
+                 controls.target.copy(modelCenter);
+             }
+             
+             // Animación lineal de cámara (para otros casos)
              if(isAnimatingCamera){
                  camera.position.lerp(cameraTargetPos, 0.1);
                  controls.target.lerp(controlsTargetPos, 0.1);
@@ -5797,6 +5891,7 @@
                 case 'hair-front':
                     return currentHairFrontURL;
                 case 'hair-back':
+                case 'hair-back-2':  // Duplicado usa la misma textura que hair-back
                     return currentHairBackURL;
                 case 'hair-left':
                     return currentHairLeftURL;
@@ -5966,24 +6061,35 @@
                 
                 img.onload = () => {
                     try {
-                        // Crear canvas con las dimensiones de la imagen
-                        const canvas = document.createElement('canvas');
-                        canvas.width = img.width || 1122; // A4 horizontal aprox
-                        canvas.height = img.height || 794;
+                        // ALTA RESOLUCIÓN: Multiplicar por 16 para calidad máxima absoluta
+                        // A4 horizontal: 297mm x 210mm a 300 DPI = 3507.9 x 2480.3 px
+                        // Usamos 16x para calidad suprema definitiva: ~56126 x 39685 px (equivalente a ~4800 DPI)
+                        const scaleFactor = 16;
+                        const baseWidth = img.width || 3508;  // A4 horizontal a 300 DPI
+                        const baseHeight = img.height || 2480;
                         
-                        const ctx = canvas.getContext('2d', { alpha: true });
+                        const canvas = document.createElement('canvas');
+                        canvas.width = baseWidth * scaleFactor;
+                        canvas.height = baseHeight * scaleFactor;
+                        
+                        const ctx = canvas.getContext('2d', { 
+                            alpha: true,
+                            willReadFrequently: false
+                        });
                         if (!ctx) {
                             reject(new Error('No se pudo obtener contexto 2D del canvas'));
                             return;
                         }
                         
+                        // Configurar calidad de renderizado máxima
+                        ctx.imageSmoothingEnabled = true;
+                        ctx.imageSmoothingQuality = 'high';
+                        
                         // NO agregar fondo blanco - mantener transparencia
                         // Los templates SVG tienen fondo transparente para verse superpuestos
-                        // ctx.fillStyle = '#FFFFFF';  ← ELIMINADO
-                        // ctx.fillRect(0, 0, canvas.width, canvas.height);  ← ELIMINADO
                         
-                        // Dibujar la imagen SVG con transparencia
-                        ctx.drawImage(img, 0, 0);
+                        // Dibujar la imagen SVG escalada a alta resolución
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                         
                         // Convertir a data URL
                         const dataURL = canvas.toDataURL('image/png', 1.0);
@@ -6011,19 +6117,19 @@
         async function generatePDF() {
             // Verificar que no se esté generando ya un PDF
             if (isGeneratingPDF) {
-                console.warn('⚠️ Ya se está generando un PDF. Por favor espera...');
-                alert('Ya se está generando un PDF. Por favor espera a que termine.');
+                console.warn('⚠️ Already generating a PDF. Please wait...');
+                alert('A PDF is already being generated. Please wait for it to finish.');
                 return;
             }
             
             if (!currentPresetCharacter) {
-                alert('Por favor, selecciona un personaje preestablecido primero.');
+                alert('Please select a preset character first.');
                 return;
             }
             
             // Verificar que jsPDF esté cargado
             if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
-                alert('La librería PDF no está cargada correctamente. Por favor, recarga la página.');
+                alert('PDF library not loaded correctly. Please reload the page.');
                 console.error('jsPDF no está disponible');
                 return;
             }
@@ -6032,11 +6138,39 @@
             isGeneratingPDF = true;
             console.log('🔄 Iniciando generación de PDF para:', currentPresetCharacter);
             
-            // Mostrar indicador de carga
-            const loadingMsg = document.createElement('div');
-            loadingMsg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.9);color:#00ffff;padding:2rem;border-radius:10px;z-index:9999;font-family:Orbitron,sans-serif;';
-            loadingMsg.textContent = 'Generando PDF...';
-            document.body.appendChild(loadingMsg);
+            // Crear contenedor de barra de progreso
+            const progressContainer = document.createElement('div');
+            progressContainer.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.95);padding:2rem 3rem;border-radius:15px;z-index:9999;font-family:Orbitron,sans-serif;min-width:400px;box-shadow:0 10px 40px rgba(0,255,255,0.3);border:2px solid rgba(0,255,255,0.5);';
+            
+            // Título
+            const title = document.createElement('div');
+            title.style.cssText = 'color:#00ffff;font-size:1.2rem;font-weight:bold;margin-bottom:1rem;text-align:center;text-shadow:0 0 10px rgba(0,255,255,0.8);';
+            title.textContent = 'Generating PDF...';
+            progressContainer.appendChild(title);
+            
+            // Contenedor de la barra
+            const barContainer = document.createElement('div');
+            barContainer.style.cssText = 'width:100%;height:30px;background:rgba(0,0,0,0.5);border-radius:15px;overflow:hidden;border:2px solid rgba(0,255,255,0.3);margin-bottom:1rem;';
+            
+            // Barra de progreso
+            const progressBar = document.createElement('div');
+            progressBar.style.cssText = 'width:0%;height:100%;background:linear-gradient(90deg,#00ffff,#00ccff,#0099ff);transition:width 0.3s ease;box-shadow:0 0 20px rgba(0,255,255,0.8);';
+            barContainer.appendChild(progressBar);
+            progressContainer.appendChild(barContainer);
+            
+            // Texto de porcentaje
+            const percentText = document.createElement('div');
+            percentText.style.cssText = 'color:#00ffff;font-size:1.5rem;font-weight:bold;text-align:center;text-shadow:0 0 10px rgba(0,255,255,0.8);';
+            percentText.textContent = '0%';
+            progressContainer.appendChild(percentText);
+            
+            document.body.appendChild(progressContainer);
+            
+            // Función para actualizar progreso
+            function updateProgress(percent) {
+                progressBar.style.width = percent + '%';
+                percentText.textContent = Math.round(percent) + '%';
+            }
             
             try {
                 // Inicializar jsPDF (A4 horizontal)
@@ -6054,6 +6188,9 @@
                 // Dimensiones reales del PDF A4 en píxeles
                 const PDF_WIDTH_PX = 3507.9;   // Ancho real del PDF en píxeles
                 const PDF_HEIGHT_PX = 2480.3;  // Alto real del PDF en píxeles
+                
+                // Inicializar progreso
+                updateProgress(5);
                 
                 console.log('📄 Generando UNA SOLA PÁGINA con todos los templates');
                 console.log('📐 Tamaño de página: A4 horizontal (297mm x 210mm)');
@@ -6104,21 +6241,14 @@
                     { file: 'template-border-logo.svg', color: null, textureName: null, layer: 5 },
                     
                     // ========================================================================
-                    // CAPA 6 - TEMPLATE EXCLUSIVO PARA TEXTURAS (8vo template, encima de todo)
+                    // CAPAS DE TEXTURAS - REORGANIZADAS POR PROFUNDIDAD
                     // ========================================================================
-                    // Este template vacío/transparente sirve como contenedor para TODAS las texturas
+                    // Este template vacío/transparente sirve como contenedor para las texturas
                     // Usa 'template-textures-layer.svg' que es un SVG vacío
                     
-                    // Orejas
-                    { file: 'template-textures-layer.svg', color: null, textureName: 'ear-left', layer: 6 },
-                    { file: 'template-textures-layer.svg', color: null, textureName: 'ear-right', layer: 6 },
-                    
-                    // Cabello (5 partes: front, back, left, right, up)
-                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-front', layer: 6 },
-                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-back', layer: 6 },
-                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-left', layer: 6 },
-                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-right', layer: 6 },
-                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-up', layer: 6 },
+                    // ========================================================================
+                    // CAPA 6 (ABAJO) - Piernas y Brazos
+                    // ========================================================================
                     
                     // Brazos (front y back)
                     { file: 'template-textures-layer.svg', color: null, textureName: 'arm-left-front', layer: 6 },
@@ -6132,9 +6262,27 @@
                     { file: 'template-textures-layer.svg', color: null, textureName: 'leg-right-front', layer: 6 },
                     { file: 'template-textures-layer.svg', color: null, textureName: 'leg-right-back', layer: 6 },
                     
+                    // ========================================================================
+                    // CAPA 7 (MEDIO) - Torsos y Cabello
+                    // ========================================================================
+                    
                     // Torso (front y back)
-                    { file: 'template-textures-layer.svg', color: null, textureName: 'torso-front', layer: 6 },
-                    { file: 'template-textures-layer.svg', color: null, textureName: 'torso-back', layer: 6 }
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'torso-front', layer: 7 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'torso-back', layer: 7 },
+                    
+                    // Cabello (3 partes en página 1: left, right, up)
+                    // NOTA: hair-front y hair-back están SOLO en página 2
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-left', layer: 7 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-right', layer: 7 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-up', layer: 7 },
+                    
+                    // ========================================================================
+                    // CAPA 8 (ARRIBA) - Orejas
+                    // ========================================================================
+                    
+                    // Orejas
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'ear-left', layer: 8 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'ear-right', layer: 8 }
                 ];
                 
                 // ============================================
@@ -6162,26 +6310,26 @@
                 const textureOffsets = {
                     // ===== TEXTURAS FACIALES (para página 2) =====
                     'eyes': { 
-                        offsetX: 0, 
-                        offsetY: 0, 
-                        width: null, 
-                        height: null, 
+                        offsetX: 1413.9, 
+                        offsetY: 759.9, 
+                        width: 680.1, 
+                        height: 680.1, 
                         rotation: 0,
                         flipX: false
                     },
                     'eyebrows': { 
-                        offsetX: 0, 
-                        offsetY: 0, 
-                        width: null, 
-                        height: null, 
+                        offsetX: 1413.9, 
+                        offsetY: 759.9, 
+                        width: 680.1, 
+                        height: 680.1, 
                         rotation: 0,
                         flipX: false
                     },
                     'nose': { 
-                        offsetX: 0, 
-                        offsetY: 0, 
-                        width: null, 
-                        height: null, 
+                        offsetX: 1413.9, 
+                        offsetY: 759.9, 
+                        width: 680.1, 
+                        height: 680.1, 
                         rotation: 0,
                         flipX: false
                     },
@@ -6206,20 +6354,28 @@
                     
                     // ===== CABELLO (5 PARTES) =====
                     'hair-front': { 
-                        offsetX: 0, 
-                        offsetY: 0, 
-                        width: null, 
-                        height: null, 
+                        offsetX: 916.8, 
+                        offsetY: 403, 
+                        width: 1674.2, 
+                        height: 1674.2, 
                         rotation: 0,
                         flipX: false
                     },
                     'hair-back': { 
-                        offsetX: 0, 
-                        offsetY: 0, 
-                        width: null, 
-                        height: null, 
+                        offsetX: 2046.2, 
+                        offsetY: 403, 
+                        width: 1674.2, 
+                        height: 1674.2, 
                         rotation: 0,
                         flipX: false
+                    },
+                    'hair-back-2': {  // Duplicado de hair-back para página 2
+                        offsetX: 1461.7, 
+                        offsetY: 403, 
+                        width: 1674.2, 
+                        height: 1674.2, 
+                        rotation: 0,
+                        flipX: true
                     },
                     'hair-left': {  // Mismo tamaño y posición que ear-left
                         offsetX: 1970.8, 
@@ -6230,19 +6386,19 @@
                         flipX: true
                     },
                     'hair-right': {  // Mismo tamaño y posición que ear-right
-                        offsetX: 528.1, 
-                        offsetY: 2442.4, 
+                        offsetX: 47.2, 
+                        offsetY: 1961.4, 
                         width: 680.1, 
                         height: 680.1, 
                         rotation: -135,
-                        flipX: false
+                        flipX: true
                     },
                     'hair-up': {  // Mismo tamaño que eyes, posicionado arriba
-                        offsetX: 0, 
-                        offsetY: 0, 
-                        width: null,  // Ajustar según dimensiones de eyes
-                        height: null, 
-                        rotation: 0,
+                        offsetX: 2451.6, 
+                        offsetY: 518.8, 
+                        width: 680.1,  // Ajustar según dimensiones de eyes
+                        height: 680.1, 
+                        rotation: 135,
                         flipX: false
                     },
                     
@@ -6339,6 +6495,9 @@
                 console.log('📐 Todos los templates en la misma posición: X=0, Y=0');
                 console.log('📏 Tamaño de cada template: 297mm x 210mm (página completa)');
                 
+                // Actualizar progreso: configuración completada
+                updateProgress(10);
+                
                 // ⚠️ IMPORTANTE: ORDENAR templates POR LAYER (de menor a mayor)
                 // Esto asegura que las capas se procesen en el orden correcto
                 const sortedTemplates = [...templates].sort((a, b) => a.layer - b.layer);
@@ -6349,8 +6508,13 @@
                 });
                 
                 // Procesar cada template y agregarlo SUPERPUESTO
+                const totalTemplatesPage1 = sortedTemplates.length;
                 for (let i = 0; i < sortedTemplates.length; i++) {
                     const template = sortedTemplates[i];
+                    
+                    // Actualizar progreso (10% a 50% para página 1)
+                    const progressPage1 = 10 + ((i + 1) / totalTemplatesPage1) * 40;
+                    updateProgress(progressPage1);
                     
                     console.log(`\n🔄 Procesando layer ${template.layer} (${i + 1}/${sortedTemplates.length}): ${template.file}${template.textureName ? ` + textura ${template.textureName}` : ''}`);
                     
@@ -6413,7 +6577,8 @@
                         console.log(`   📏 Tamaño: ${pageWidth}mm x ${pageHeight}mm`);
                         
                         // Agregar imagen SUPERPUESTA en la MISMA posición
-                        pdf.addImage(imageDataURL, 'PNG', x, y, pageWidth, pageHeight, undefined, 'FAST');
+                        // Usar 'SLOW' para mejor compresión y calidad
+                        pdf.addImage(imageDataURL, 'PNG', x, y, pageWidth, pageHeight, undefined, 'SLOW');
                         console.log(`   ✅ Capa ${i + 1} agregada (superpuesta)`);
                         
                     } catch (templateError) {
@@ -6423,6 +6588,8 @@
                     }
                 }
                 
+                // Página 1 completada
+                updateProgress(50);
                 console.log('\n✨ Todos los templates SUPERPUESTOS en PÁGINA 1 completados');
                 
                 // ============================================
@@ -6431,6 +6598,7 @@
                 console.log('\n\n📄 === GENERANDO PÁGINA 2: TEMPLATE-HEAD-2 ===');
                 
                 // Agregar nueva página
+                updateProgress(55);
                 pdf.addPage();
                 
                 // Configuración de templates para página 2
@@ -6444,8 +6612,12 @@
                     { file: 'template-textures-layer.svg', color: null, textureName: 'eyebrows', layer: 2 },
                     { file: 'template-textures-layer.svg', color: null, textureName: 'nose', layer: 2 },
                     { file: 'template-textures-layer.svg', color: null, textureName: 'hair-front', layer: 2 },
-                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-back', layer: 2 }
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-back', layer: 2 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-back-2', layer: 2 }  // Duplicado de hair-back
                 ];
+                
+                // Actualizar progreso: iniciando página 2
+                updateProgress(60);
                 
                 // Ordenar por layer
                 const sortedPage2Templates = [...page2Templates].sort((a, b) => a.layer - b.layer);
@@ -6456,8 +6628,13 @@
                 });
                 
                 // Procesar templates de página 2
+                const totalTemplatesPage2 = sortedPage2Templates.length;
                 for (let i = 0; i < sortedPage2Templates.length; i++) {
                     const template = sortedPage2Templates[i];
+                    
+                    // Actualizar progreso (60% a 90% para página 2)
+                    const progressPage2 = 60 + ((i + 1) / totalTemplatesPage2) * 30;
+                    updateProgress(progressPage2);
                     
                     console.log(`\n🔄 Procesando página 2 - layer ${template.layer} (${i + 1}/${sortedPage2Templates.length}): ${template.file}${template.textureName ? ` + textura ${template.textureName}` : ''}`);
                     
@@ -6496,9 +6673,35 @@
                                 console.log(`      🔄 Rotación: ${config.rotation}°`);
                                 console.log(`      🔀 Volteo horizontal: ${config.flipX ? 'Sí' : 'No'}`);
                                 
+                                // Si es la nariz, colorearla con el color de la cabeza pero 25% más oscuro
+                                let coloredTextureURL = textureURL;
+                                if (template.textureName === 'nose') {
+                                    console.log(`      🎨 Coloreando nariz con color de cabeza (25% más oscuro)`);
+                                    // Calcular color 25% más oscuro (0.75 = mantener 75% del brillo)
+                                    const headColorHex = headColor.replace('#', '');
+                                    const r = parseInt(headColorHex.substr(0, 2), 16);
+                                    const g = parseInt(headColorHex.substr(2, 2), 16);
+                                    const b = parseInt(headColorHex.substr(4, 2), 16);
+                                    const darkenedR = Math.floor(r * 0.75);
+                                    const darkenedG = Math.floor(g * 0.75);
+                                    const darkenedB = Math.floor(b * 0.75);
+                                    const darkenedColor = `#${darkenedR.toString(16).padStart(2, '0')}${darkenedG.toString(16).padStart(2, '0')}${darkenedB.toString(16).padStart(2, '0')}`;
+                                    console.log(`      🎨 Color cabeza: ${headColor}, Color nariz: ${darkenedColor}`);
+                                    
+                                    // Cargar y colorear la textura de la nariz
+                                    const noseResponse = await fetch(textureURL);
+                                    if (noseResponse.ok) {
+                                        let noseSVG = await noseResponse.text();
+                                        noseSVG = colorSVG(noseSVG, darkenedColor);
+                                        // Crear un blob temporal con la nariz coloreada
+                                        const noseBlob = new Blob([noseSVG], { type: 'image/svg+xml;charset=utf-8' });
+                                        coloredTextureURL = URL.createObjectURL(noseBlob);
+                                    }
+                                }
+                                
                                 svgContent = await overlayTextureOnTemplate(
                                     svgContent, 
-                                    textureURL, 
+                                    coloredTextureURL, 
                                     config.offsetX, 
                                     config.offsetY, 
                                     config.width, 
@@ -6506,6 +6709,11 @@
                                     config.rotation,
                                     config.flipX
                                 );
+                                
+                                // Limpiar URL temporal si se creó
+                                if (template.textureName === 'nose' && coloredTextureURL !== textureURL) {
+                                    URL.revokeObjectURL(coloredTextureURL);
+                                }
                             }
                         }
                         
@@ -6513,7 +6721,8 @@
                         const imageDataURL = await svgToImageDataURL(svgContent);
                         
                         // Agregar en posición (0, 0) ocupando toda la página
-                        pdf.addImage(imageDataURL, 'PNG', 0, 0, pageWidth, pageHeight, undefined, 'FAST');
+                        // Usar 'SLOW' para mejor compresión y calidad
+                        pdf.addImage(imageDataURL, 'PNG', 0, 0, pageWidth, pageHeight, undefined, 'SLOW');
                         console.log(`   ✅ Capa ${i + 1} agregada a página 2`);
                         
                     } catch (templateError) {
@@ -6522,10 +6731,16 @@
                     }
                 }
                 
+                // Página 2 completada
+                updateProgress(90);
                 console.log('\n✨ PÁGINA 2 completada con template-head-2 y texturas faciales');
                 
+                // Finalizando PDF
+                updateProgress(95);
+                
                 // Descargar el PDF (CON 2 PÁGINAS)
-                const filename = `Papelcool-${currentPresetCharacter}-${Date.now()}.pdf`;
+                // Nombre simple: Papelcool-NombrePersonaje.pdf (sin timestamp)
+                const filename = `Papelcool-${currentPresetCharacter}.pdf`;
                 
                 console.log('\n=== PDF CON 2 PÁGINAS GENERADO ===');
                 console.log('📄 Archivo:', filename);
@@ -6541,24 +6756,22 @@
                 
                 console.log('\n💾 Descargando PDF con 2 páginas...');
                 
+                // Completado al 100%
+                updateProgress(100);
+                
+                // Pequeña pausa para mostrar el 100% antes de descargar
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
                 pdf.save(filename);
                 
-                console.log('✅ ¡PDF con templates SUPERPUESTOS descargado exitosamente!');
-                console.log('🎉 Los 7 templates están UNO ENCIMA DE OTRO en la misma página');
-                
             } catch (error) {
-                console.error('Error generando PDF:', error);
-                console.error('Error message:', error.message);
-                console.error('Error stack:', error.stack);
-                alert('Error al generar el PDF: ' + (error.message || 'Error desconocido'));
+                console.error('❌ Error generando PDF:', error);
+                alert('Error generating PDF: ' + error.message);
             } finally {
-                // Resetear flag para permitir nuevas generaciones
+                // Limpiar
                 isGeneratingPDF = false;
-                console.log('🏁 Generación de PDF finalizada. Flag reseteado.');
-                
-                // Remover indicador de carga
-                if (document.body.contains(loadingMsg)) {
-                    document.body.removeChild(loadingMsg);
+                if (progressContainer && progressContainer.parentNode) {
+                    progressContainer.remove();
                 }
             }
         }
