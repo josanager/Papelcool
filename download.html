@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Papelcool – Descargar PDF</title>
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #050505; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+
+    /* Layout central */
+    .container { min-height: 100svh; display: grid; place-items: center; padding: 24px; }
+
+    /* Barra de progreso */
+    .progress-wrap { width: min(520px, 92vw); text-align: center; }
+    .progress-title { color: #00ffff; font-weight: 700; font-size: 1.5rem; margin: 0 0 1rem; }
+    .progress-bar-container { width: 100%; height: 40px; background: rgba(255,255,255,0.06); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); }
+    .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #00ffff, #0099ff); box-shadow: 0 0 18px rgba(0,255,255,0.45); transition: width .3s ease; }
+    .progress-percent { color: #e6f7ff; font-weight: 700; margin: 12px 0 6px; font-size: 1.6rem; }
+    .progress-msg { color: rgba(255,255,255,0.8); margin: 0 0 24px; font-size: 1rem; }
+
+    /* Botón descargar */
+    .download-btn { display: none; margin-top: 12px; background: linear-gradient(135deg, #00ffff 0%, #0099ff 100%); border: none; color: #000; font-weight: 800; letter-spacing: .02em; padding: 14px 28px; border-radius: 999px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,255,255,0.35); }
+    .download-btn.show { display: inline-flex; align-items: center; gap: 10px; }
+    .download-btn svg { width: 22px; height: 22px; }
+
+    /* iFrame worker oculto */
+    #worker { position: absolute; inset: 0; width: 0; height: 0; border: 0; opacity: 0; pointer-events: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="progress-wrap">
+      <div class="progress-title">Generando tu PDF...</div>
+      <div class="progress-bar-container"><div id="bar" class="progress-bar"></div></div>
+      <div id="percent" class="progress-percent">0%</div>
+      <p id="msg" class="progress-msg">Por favor espera unos segundos.</p>
+      <button id="download" class="download-btn" type="button" aria-label="Descargar PDF">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 12v7H5v-7H3v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2zm-6 .67 2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z"/></svg>
+        Descargar PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- Worker oculto: carga index.html para reutilizar la generación del PDF -->
+  <iframe id="worker" src="index.html"></iframe>
+
+  <script>
+    let generatedBlob = null;
+
+    function qs(id){ return document.getElementById(id); }
+    const bar = qs('bar');
+    const percentText = qs('percent');
+    const msg = qs('msg');
+    const downloadBtn = qs('download');
+
+    // Enviar solicitud al worker cuando esté listo
+    window.addEventListener('load', () => {
+      const url = new URL(window.location.href);
+      const preset = url.searchParams.get('preset') || 'mira';
+      const worker = document.getElementById('worker');
+
+      const requestStart = () => {
+        try {
+          worker.contentWindow.postMessage({ type: 'REQUEST_GENERATE_PDF', preset }, '*');
+        } catch (e) {
+          console.error('No se pudo enviar solicitud al worker:', e);
+          msg.textContent = 'No se pudo iniciar la generación. Recarga la página.';
+        }
+      };
+
+      if (worker.contentWindow) {
+        // Espera breve para que index.html termine de cargar sus scripts
+        setTimeout(requestStart, 800);
+      } else {
+        worker.addEventListener('load', requestStart, { once: true });
+      }
+    });
+
+    // Recibir progreso y resultado desde index.html
+    window.addEventListener('message', (event) => {
+      const data = event.data || {};
+      if (data.type === 'PDF_PROGRESS') {
+        const p = Math.max(0, Math.min(100, Number(data.percent) || 0));
+        bar.style.width = p + '%';
+        percentText.textContent = Math.round(p) + '%';
+      }
+      if (data.type === 'PDF_READY') {
+        generatedBlob = data.blob;
+        msg.textContent = '¡Tu PDF está listo!';
+        downloadBtn.classList.add('show');
+      }
+      if (data.type === 'PDF_ERROR') {
+        msg.textContent = 'Hubo un error generando el PDF. Intenta de nuevo.';
+      }
+    });
+
+    // Descargar cuando esté listo
+    document.getElementById('download').addEventListener('click', () => {
+      if (!generatedBlob) return;
+      const url = URL.createObjectURL(generatedBlob);
+      const preset = new URLSearchParams(location.search).get('preset') || 'mira';
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Papelcool-${preset}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      // Ocultar botón tras descarga
+      document.getElementById('download').classList.remove('show');
+    });
+  </script>
+</body>
+</html>

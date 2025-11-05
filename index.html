@@ -6247,6 +6247,27 @@
                 }, 2000);
             }
         });
+
+        window.addEventListener('message', async (event) => {
+            const data = event.data || {};
+            if (data.type === 'REQUEST_GENERATE_PDF') {
+                try {
+                    if (data.preset) {
+                        currentPresetCharacter = data.preset;
+                        loadPreset(data.preset);
+                        await new Promise(r => setTimeout(r, 1500));
+                    }
+                    const pdfBlob = await generatePDF(true);
+                    if (window.parent && window.parent !== window) {
+                        window.parent.postMessage({ type: 'PDF_READY', blob: pdfBlob, preset: currentPresetCharacter }, '*');
+                    }
+                } catch (err) {
+                    if (window.parent && window.parent !== window) {
+                        window.parent.postMessage({ type: 'PDF_ERROR', message: (err && err.message) ? err.message : 'Error generating PDF' }, '*');
+                    }
+                }
+            }
+        });
         
         // Función para generar PDF después del pago
         async function generatePDFAfterPayment(receiptId) {
@@ -6707,8 +6728,13 @@
             
             // Función para actualizar progreso
             function updateProgress(percent) {
-                progressBar.style.width = percent + '%';
-                percentText.textContent = Math.round(percent) + '%';
+                if (progressBar) { progressBar.style.width = percent + '%'; }
+                if (percentText) { percentText.textContent = Math.round(percent) + '%'; }
+                try {
+                    if (window.parent && window.parent !== window) {
+                        window.parent.postMessage({ type: 'PDF_PROGRESS', percent }, '*');
+                    }
+                } catch (e) {}
             }
             
             try {
