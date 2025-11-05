@@ -6,12 +6,13 @@
   <script async defer src="https://js.whop.com/static/checkout/loader.js"></script>
   <style>
     div { box-sizing: border-box; }
-    body { margin: 0 }
+    body { margin: 0; background: #050505 }
     /* Ensure the generated Whop iframe fills the viewport and can scroll internally */
     div[data-whop-checkout-plan-id] iframe {
       display: block;
       width: 100%;
       border: 0;
+      border-radius: 30px;
       height: 100vh; min-height: 100vh;
       height: 100dvh; min-height: 100dvh;
       height: 100svh; min-height: 100svh;
@@ -43,7 +44,7 @@
   </script>
 </head>
 <body>
-  <div id="whop-wrapper" style="min-height: 100vh; min-height: 100dvh; min-height: 100svh; padding: 0; box-sizing: border-box;">
+  <div id="whop-wrapper" style="min-height: 100vh; min-height: 100dvh; min-height: 100svh; padding-block: 4vh; padding-block: 4dvh; padding-block: 4svh; box-sizing: border-box;">
     <div 
       data-whop-checkout-plan-id="plan_EyvFAPscVswNH"
       data-whop-checkout-theme="dark"
