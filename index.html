@@ -238,44 +238,125 @@
         }
         
         .preset-character-btn {
-            flex: 1;
-            min-width: 80px;
-            height: 100px;
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
+            all: unset;
             cursor: pointer;
-            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            position: relative;
+            border-radius: 16px;
+            background-color: rgba(0, 0, 0, 0.75);
+            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
+                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
+            font-size: 1rem;
+        }
+        
+        .preset-character-btn::after {
+            content: "";
+            position: absolute;
+            z-index: 0;
+            width: calc(100% + 0.3em);
+            height: calc(100% + 0.3em);
+            top: -0.15em;
+            left: -0.15em;
+            border-radius: inherit;
+            background: linear-gradient(-135deg,
+                    rgba(5, 5, 5, 0.5),
+                    transparent 20%,
+                    transparent 100%);
+            filter: blur(0.0125em);
+            opacity: 0.25;
+            mix-blend-mode: multiply;
+        }
+        
+        .preset-character-btn .button-outer {
+            position: relative;
+            z-index: 1;
+            border-radius: inherit;
+            transition: box-shadow 300ms ease;
+            will-change: box-shadow;
+            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
+                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
+                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
+        }
+        
+        .preset-character-btn:hover .button-outer {
+            box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
+                0 0 0 0 rgba(5, 5, 5, 0.25);
+        }
+        
+        .preset-character-btn .button-inner {
+            --inset: 0.035em;
+            position: relative;
+            z-index: 1;
+            border-radius: inherit;
+            padding: 1em;
+            background-image: linear-gradient(135deg,
+                    rgba(230, 230, 230, 1),
+                    rgba(180, 180, 180, 1));
+            transition: box-shadow 300ms ease, clip-path 250ms ease,
+                background-image 250ms ease, transform 250ms ease;
+            will-change: box-shadow, clip-path, background-image, transform;
+            overflow: clip;
+            clip-path: inset(0 0 0 0 round 16px);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            position: relative;
-            overflow: hidden;
+            box-shadow:
+                0 0 0 0 inset rgba(5, 5, 5, 0.1),
+                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
+                0 0 0 0 inset rgba(5, 5, 5, 0.1),
+                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
+                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
+                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
+                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
         }
         
-        .preset-character-btn:hover {
-            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2) 0%, rgba(138, 43, 226, 0.2) 100%);
-            border-color: rgba(0, 255, 255, 0.4);
-            transform: translateY(-4px) scale(1.05);
-            box-shadow: 0 8px 24px rgba(0, 255, 255, 0.3);
+        .preset-character-btn:hover .button-inner {
+            clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 16px);
+            box-shadow:
+                0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
+                -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
+                0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
+                0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
+                0 0 0 0 inset rgba(255, 255, 255, 1),
+                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
+                -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
         }
         
-        .preset-character-btn:active {
-            transform: translateY(-2px) scale(1.02);
+        .preset-character-btn:active .button-inner {
+            transform: scale(0.975);
+        }
+        
+        .preset-character-btn .character-icon-img {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
         }
         
         .preset-character-btn .character-name {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
+            letter-spacing: 0.05em;
             font-weight: 700;
-            color: #fff;
-            text-shadow: 0 2px 8px rgba(0, 255, 255, 0.5);
+            font-size: 0.85rem;
+            color: rgba(0, 0, 0, 0);
+            background-image: linear-gradient(135deg,
+                    rgba(25, 25, 25, 1),
+                    rgba(75, 75, 75, 1));
+            -webkit-background-clip: text;
+            background-clip: text;
+            transition: transform 250ms ease;
+            display: block;
+            will-change: transform;
+            text-shadow: rgba(0, 0, 0, 0.1) 0 0 0.1em;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         
-        .preset-character-btn .character-icon {
-            font-size: 2rem;
+        .preset-character-btn:hover .character-name {
+            transform: scale(0.975);
         }
         
         .icon-btn {
@@ -418,12 +499,112 @@
             animation: pulse-glow 2s ease-in-out infinite;
         }
         
-        /* Estilos responsivos para móviles y tablets */
+        /* Estilos para botón de modo juego (móvil y desktop) */
+        .play-mode-btn {
+            all: unset;
+            cursor: pointer;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            position: relative;
+            border-radius: 999vw;
+            background-color: rgba(0, 0, 0, 0.75);
+            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
+                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
+            font-size: 1.5rem;
+        }
+        
+        .play-mode-btn::after {
+            content: "";
+            position: absolute;
+            z-index: 0;
+            width: calc(100% + 0.3em);
+            height: calc(100% + 0.3em);
+            top: -0.15em;
+            left: -0.15em;
+            border-radius: inherit;
+            background: linear-gradient(-135deg,
+                    rgba(5, 5, 5, 0.5),
+                    transparent 20%,
+                    transparent 100%);
+            filter: blur(0.0125em);
+            opacity: 0.25;
+            mix-blend-mode: multiply;
+        }
+        
+        .play-mode-btn .button-outer {
+            position: relative;
+            z-index: 1;
+            border-radius: inherit;
+            transition: box-shadow 300ms ease;
+            will-change: box-shadow;
+            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
+                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
+                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
+        }
+        
+        .play-mode-btn:hover .button-outer {
+            box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
+                0 0 0 0 rgba(5, 5, 5, 0.25);
+        }
+        
+        .play-mode-btn .button-inner {
+            --inset: 0.035em;
+            position: relative;
+            z-index: 1;
+            border-radius: inherit;
+            padding: 1em;
+            background-image: linear-gradient(135deg,
+                    rgba(230, 230, 230, 1),
+                    rgba(180, 180, 180, 1));
+            transition: box-shadow 300ms ease, clip-path 250ms ease,
+                background-image 250ms ease, transform 250ms ease;
+            will-change: box-shadow, clip-path, background-image, transform;
+            overflow: clip;
+            clip-path: inset(0 0 0 0 round 999vw);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                0 0 0 0 inset rgba(5, 5, 5, 0.1),
+                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
+                0 0 0 0 inset rgba(5, 5, 5, 0.1),
+                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
+                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
+                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
+                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
+        }
+        
+        .play-mode-btn:hover .button-inner {
+            clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 999vw);
+            box-shadow:
+                0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
+                -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
+                0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
+                0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
+                0 0 0 0 inset rgba(255, 255, 255, 1),
+                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
+                -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
+        }
+        
+        .play-mode-btn:active .button-inner {
+            transform: scale(0.975);
+        }
+        
+        .play-mode-btn .play-icon {
+            width: 1.5em;
+            height: 1.5em;
+            color: rgba(0, 0, 0, 0.8);
+        }
+        
+        /* Posicionamiento específico para móvil */
         #play-mode-btn-mobile {
             position: fixed;
             top: 1rem;
             left: 1rem;
-            z-index: 50;
+            z-index: 1000;
+        }
+        
+        /* Estilos responsivos para móviles y tablets */
+        #play-mode-btn-mobile {
             display: none;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
             width: 56px !important;
@@ -607,61 +788,205 @@
         #joystick-base {
             width: 120px;
             height: 120px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
             position: relative;
             touch-action: none;
             -webkit-user-select: none;
             user-select: none;
+            cursor: pointer;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.75);
+            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
+                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
+            font-size: 1rem;
+        }
+        
+        #joystick-base::after {
+            content: "";
+            position: absolute;
+            z-index: 0;
+            width: calc(100% + 0.3em);
+            height: calc(100% + 0.3em);
+            top: -0.15em;
+            left: -0.15em;
+            border-radius: inherit;
+            background: linear-gradient(-135deg,
+                    rgba(5, 5, 5, 0.5),
+                    transparent 20%,
+                    transparent 100%);
+            filter: blur(0.0125em);
+            opacity: 0.25;
+            mix-blend-mode: multiply;
+        }
+        
+        .joystick-outer {
+            position: relative;
+            z-index: 1;
+            border-radius: inherit;
+            width: 100%;
+            height: 100%;
+            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
+                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
+                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
+        }
+        
+        .joystick-inner {
+            position: relative;
+            z-index: 1;
+            border-radius: inherit;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(135deg,
+                    rgba(230, 230, 230, 1),
+                    rgba(180, 180, 180, 1));
+            overflow: clip;
+            clip-path: inset(0 0 0 0 round 999vw);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow:
+                0 0 0 0 inset rgba(5, 5, 5, 0.1),
+                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
+                0 0 0 0 inset rgba(5, 5, 5, 0.1),
+                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
+                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
+                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
+                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
         }
         
         #joystick-stick {
             width: 50px;
             height: 50px;
-            background: rgba(0, 255, 255, 0.6);
-            border: 3px solid rgba(0, 255, 255, 0.8);
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.8), rgba(0, 200, 200, 0.9));
+            border: 2px solid rgba(0, 255, 255, 1);
             border-radius: 50%;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 2px 10px rgba(0, 255, 255, 0.6);
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.6),
+                0 0 20px rgba(0, 255, 255, 0.4);
             pointer-events: none;
             will-change: transform;
+            z-index: 10;
         }
         
         /* Botón de salto */
         #jump-button {
+            all: unset;
             position: absolute;
             bottom: 30px;
             right: 30px;
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(0, 255, 255, 0.6) 0%, rgba(138, 43, 226, 0.6) 100%);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 3px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.4);
+            cursor: pointer;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            border-radius: 999vw;
+            background-color: rgba(0, 0, 0, 0.75);
+            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
+                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
+            font-size: 2rem;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        #jump-button::after {
+            content: "";
+            position: absolute;
+            z-index: 0;
+            width: calc(100% + 0.3em);
+            height: calc(100% + 0.3em);
+            top: -0.15em;
+            left: -0.15em;
+            border-radius: inherit;
+            background: linear-gradient(-135deg,
+                    rgba(5, 5, 5, 0.5),
+                    transparent 20%,
+                    transparent 100%);
+            filter: blur(0.0125em);
+            opacity: 0.25;
+            mix-blend-mode: multiply;
+        }
+        
+        #jump-button .button-outer {
+            position: relative;
+            z-index: 1;
+            border-radius: inherit;
+            transition: box-shadow 300ms ease;
+            will-change: box-shadow;
+            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
+                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
+                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
+        }
+        
+        #jump-button:active .button-outer {
+            box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
+                0 0 0 0 rgba(5, 5, 5, 0.25);
+        }
+        
+        #jump-button .button-inner {
+            --inset: 0.035em;
+            position: relative;
+            z-index: 1;
+            border-radius: inherit;
+            padding: 1em;
+            background-image: linear-gradient(135deg,
+                    rgba(230, 230, 230, 1),
+                    rgba(180, 180, 180, 1));
+            transition: box-shadow 300ms ease, clip-path 250ms ease,
+                background-image 250ms ease, transform 250ms ease;
+            will-change: box-shadow, clip-path, background-image, transform;
+            overflow: clip;
+            clip-path: inset(0 0 0 0 round 999vw);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-shadow: 0 2px 10px rgba(0, 255, 255, 0.8);
-            transition: all 0.2s ease;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
+            box-shadow:
+                0 0 0 0 inset rgba(5, 5, 5, 0.1),
+                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
+                0 0 0 0 inset rgba(5, 5, 5, 0.1),
+                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
+                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
+                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
+                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
         }
         
-        #jump-button:active {
-            transform: scale(0.9);
-            box-shadow: 0 2px 10px rgba(0, 255, 255, 0.6);
+        #jump-button:active .button-inner {
+            clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 999vw);
+            box-shadow:
+                0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
+                -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
+                0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
+                0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
+                0 0 0 0 inset rgba(255, 255, 255, 1),
+                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
+                -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
+            transform: scale(0.975);
+        }
+        
+        #jump-button .button-inner span {
+            position: relative;
+            z-index: 4;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0);
+            background-image: linear-gradient(135deg,
+                    rgba(25, 25, 25, 1),
+                    rgba(75, 75, 75, 1));
+            -webkit-background-clip: text;
+            background-clip: text;
+            transition: transform 250ms ease;
+            display: block;
+            will-change: transform;
+            text-shadow: rgba(0, 0, 0, 0.1) 0 0 0.1em;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        #jump-button:active .button-inner span {
+            transform: scale(0.975);
         }
         
         /* Botones de showcase inicial - Push Button Style */
@@ -1269,39 +1594,141 @@
             height: 24px;
         }
         
-        /* Botón de descargar plantilla PDF */
+        /* Botón de descargar plantilla PDF - Nuevo estilo */
         #download-pdf-btn {
+            /* Reset de estilos primero */
+            all: unset;
+            /* Posicionamiento y visibilidad */
             position: fixed;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            display: none; /* Oculto por defecto */
-            padding: 0.7rem 1.5rem;
-            background: linear-gradient(135deg, #00ffff 0%, #8a2be2 100%);
-            border: 2px solid rgba(0, 255, 255, 0.3);
-            border-radius: 10px;
-            color: #0a0e27;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 700;
+            z-index: 1000;
+            display: none;
+            /* Estilos del botón */
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 16px rgba(0, 255, 255, 0.4);
-            z-index: 25;
-            pointer-events: auto;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+            border-radius: 999vw;
+            background-color: rgba(0, 0, 0, 0.75);
+            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
+                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
+            font-size: 1.8rem;
         }
         
-        #download-pdf-btn:hover {
-            transform: translateX(-50%) translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.5);
-            background: linear-gradient(135deg, #00ffff 0%, #9d4edd 100%);
+        #download-pdf-btn::after {
+            content: "";
+            position: absolute;
+            z-index: 0;
+            width: calc(100% + 0.3em);
+            height: calc(100% + 0.3em);
+            top: -0.15em;
+            left: -0.15em;
+            border-radius: inherit;
+            background: linear-gradient(-135deg,
+                    rgba(5, 5, 5, 0.5),
+                    transparent 20%,
+                    transparent 100%);
+            filter: blur(0.0125em);
+            opacity: 0.25;
+            mix-blend-mode: multiply;
         }
         
-        #download-pdf-btn:active {
-            transform: translateX(-50%) translateY(0);
-            box-shadow: 0 2px 8px rgba(0, 255, 255, 0.3);
+        #download-pdf-btn .button-outer {
+            position: relative;
+            z-index: 1;
+            border-radius: inherit;
+            transition: box-shadow 300ms ease;
+            will-change: box-shadow;
+            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
+                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
+                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
+        }
+        
+        #download-pdf-btn:hover .button-outer {
+            box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
+                0 0 0 0 rgba(5, 5, 5, 0.25);
+        }
+        
+        #download-pdf-btn .button-inner {
+            --inset: 0.035em;
+            position: relative;
+            z-index: 1;
+            border-radius: inherit;
+            padding: 1em 1.5em;
+            background-image: linear-gradient(135deg,
+                    rgba(255, 255, 0, 1),
+                    rgba(255, 215, 0, 1));
+            transition: box-shadow 300ms ease, clip-path 250ms ease,
+                background-image 250ms ease, transform 250ms ease;
+            will-change: box-shadow, clip-path, background-image, transform;
+            overflow: clip;
+            clip-path: inset(0 0 0 0 round 999vw);
+            box-shadow:
+                /* 1 */
+                0 0 0 0 inset rgba(5, 5, 5, 0.1),
+                /* 2 */
+                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
+                /* 3 */
+                0 0 0 0 inset rgba(5, 5, 5, 0.1),
+                /* 4 */
+                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
+                /* 5 */
+                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
+                /* 6 */
+                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
+                /* 7 */
+                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
+        }
+        
+        #download-pdf-btn:hover .button-inner {
+            clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 999vw);
+            box-shadow:
+                /* 1 */
+                0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
+                /* 2 */
+                -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
+                /* 3 */
+                0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
+                /* 4 */
+                0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
+                /* 5 */
+                0 0 0 0 inset rgba(255, 255, 255, 1),
+                /* 6 */
+                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
+                /* 7 */
+                -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
+        }
+        
+        #download-pdf-btn .button-inner span {
+            position: relative;
+            z-index: 4;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85em;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            color: rgba(0, 0, 0, 0);
+            background-image: linear-gradient(135deg,
+                    rgba(25, 25, 25, 1),
+                    rgba(75, 75, 75, 1));
+            -webkit-background-clip: text;
+            background-clip: text;
+            transition: transform 250ms ease;
+            display: block;
+            will-change: transform;
+            text-shadow: rgba(0, 0, 0, 0.1) 0 0 0.1em;
+            white-space: nowrap;
+            -webkit-user-select: none; 
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        #download-pdf-btn:hover .button-inner span {
+            transform: scale(0.975);
+        }
+        
+        #download-pdf-btn:active .button-inner {
+            transform: scale(0.975);
         }
         
         #download-pdf-btn.active {
@@ -1381,7 +1808,11 @@
     
     <!-- Botón de descargar plantilla PDF (fuera de la ventana, centrado arriba) -->
     <button type="button" id="download-pdf-btn" class="pointer-events-auto">
-        DOWNLOAD PDF
+        <div class="button-outer">
+            <div class="button-inner">
+                <span>DOWNLOAD PDF</span>
+            </div>
+        </div>
     </button>
     
     <!-- Botones de redes sociales (solo visible en showcase) -->
@@ -1471,7 +1902,15 @@
     </div>
 
     <!-- Botón de modo para móvil (oculto durante showcase) -->
-    <button type="button" id="play-mode-btn-mobile" class="icon-btn p-3 pointer-events-auto" style="display: none;"></button>
+    <button type="button" id="play-mode-btn-mobile" class="play-mode-btn pointer-events-auto" style="display: none;">
+        <div class="button-outer">
+            <div class="button-inner">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="play-icon">
+                    <path fill="currentColor" d="M8 5.14v14l11-7z"></path>
+                </svg>
+            </div>
+        </div>
+    </button>
     
     <!-- Botón de cambio de cámara (responsive - móvil y desktop) -->
     <button type="button" id="camera-toggle-btn" class="icon-btn pointer-events-auto" style="display: none;">
@@ -1482,10 +1921,20 @@
     <div id="mobile-game-controls">
         <div id="joystick-container">
             <div id="joystick-base">
-                <div id="joystick-stick"></div>
+                <div class="joystick-outer">
+                    <div class="joystick-inner">
+                        <div id="joystick-stick"></div>
+                    </div>
+                </div>
             </div>
         </div>
-        <button type="button" id="jump-button">↑</button>
+        <button type="button" id="jump-button">
+            <div class="button-outer">
+                <div class="button-inner">
+                    <span>↑</span>
+                </div>
+            </div>
+        </button>
     </div>
 
     <!-- Panel del editor (responsivo) -->
@@ -1493,25 +1942,44 @@
         <div class="ui-panel p-4 space-y-4">
             <!-- Botón de modo para desktop (dentro del panel) -->
             <div id="play-mode-btn-desktop" class="flex justify-end items-center" style="margin-bottom: -0.5rem;">
-                 <button type="button" id="play-mode-btn-desktop-btn" class="icon-btn pointer-events-auto" style="width: 56px; height: 56px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center;"></button>
+                 <button type="button" id="play-mode-btn-desktop-btn" class="play-mode-btn pointer-events-auto">
+                    <div class="button-outer">
+                        <div class="button-inner">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" class="play-icon">
+                                <path fill="currentColor" d="M8 5.14v14l11-7z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </button>
             </div>
 
             <div id="editor-container">
                 <!-- Botones de personajes preestablecidos -->
                 <div id="presets-section" class="pt-2 border-t border-cyan-500/30 mb-4 hidden">
-                    <h2 class="text-md font-bold text-cyan-300 mb-3">PERSONAJES PREESTABLECIDOS</h2>
                     <div class="flex gap-3 pointer-events-auto">
                         <button type="button" id="preset-mira-btn" class="preset-character-btn">
-                            <span class="character-icon">👧</span>
-                            <span class="character-name">MIRA</span>
+                            <div class="button-outer">
+                                <div class="button-inner">
+                                    <img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/Mira-icon.svg" alt="Mira" class="character-icon-img">
+                                    <span class="character-name">MIRA</span>
+                                </div>
+                            </div>
                         </button>
                         <button type="button" id="preset-rumi-btn" class="preset-character-btn">
-                            <span class="character-icon">👦</span>
-                            <span class="character-name">RUMI</span>
+                            <div class="button-outer">
+                                <div class="button-inner">
+                                    <img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/Rumi-icon.svg" alt="Rumi" class="character-icon-img">
+                                    <span class="character-name">RUMI</span>
+                                </div>
+                            </div>
                         </button>
                         <button type="button" id="preset-zoey-btn" class="preset-character-btn">
-                            <span class="character-icon">👩</span>
-                            <span class="character-name">ZOEY</span>
+                            <div class="button-outer">
+                                <div class="button-inner">
+                                    <img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/Zoey-icon.svg" alt="Zoey" class="character-icon-img">
+                                    <span class="character-name">ZOEY</span>
+                                </div>
+                            </div>
                         </button>
                     </div>
                 </div>
@@ -1806,14 +2274,32 @@
         controls.minDistance = 3;  // Zoom in máximo (más cerca)
         controls.maxDistance = 25; // Zoom out máximo (más lejos)
         
-        scene.add(new THREE.AmbientLight(0xffffff, 1.2));
-        const dirLight = new THREE.DirectionalLight(0xffffff, 2.5);
-        dirLight.position.set(5, 10, 7.5);
-        scene.add(dirLight);
+        // Luz ambiental base - ilumina todo uniformemente
+        scene.add(new THREE.AmbientLight(0xffffff, 1.5));
+        
+        // Luz principal (frontal superior) - más suave
+        const mainLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        mainLight.position.set(5, 10, 7.5);
+        scene.add(mainLight);
+        
+        // Luz de relleno (lateral izquierda) - suaviza sombras del lado izquierdo
+        const fillLightLeft = new THREE.DirectionalLight(0xffffff, 0.6);
+        fillLightLeft.position.set(-5, 5, 5);
+        scene.add(fillLightLeft);
+        
+        // Luz de relleno (lateral derecha) - suaviza sombras del lado derecho
+        const fillLightRight = new THREE.DirectionalLight(0xffffff, 0.6);
+        fillLightRight.position.set(5, 5, -5);
+        scene.add(fillLightRight);
+        
+        // Luz trasera suave - ilumina la parte de atrás del modelo
+        const backLight = new THREE.DirectionalLight(0xffffff, 0.4);
+        backLight.position.set(0, 3, -8);
+        scene.add(backLight);
 
         // Referencia al grid para poder alternar visibilidad
-        const gridHelper = new THREE.GridHelper(200, 200, 0x00ffff);
-        gridHelper.material.opacity = 0.2;
+        const gridHelper = new THREE.GridHelper(200, 200, 0x404040);
+        gridHelper.material.opacity = 0.4;
         gridHelper.material.transparent = true;
         scene.add(gridHelper);
         
@@ -2915,9 +3401,12 @@
                         noseMesh.position.set(0, 1.029, 1.129); 
                         modelParts.head.add(noseMesh);
                         
-                        // Aplicar el color inicial de la cabeza si existe
-                        if (modelParts.head && modelParts.head.material) {
+                        // Aplicar el color inicial de la cabeza (50% más oscuro)
+                        if (modelParts.head && modelParts.head.material && modelParts.head.material.color) {
                             applyNoseColor(modelParts.head.material.color.getHex());
+                        } else {
+                            // Si no hay color de cabeza definido, usar blanco con 50% oscuridad
+                            applyNoseColor(0xffffff);
                         }
                     } else {
                         // Actualizar textura del mesh existente
@@ -4610,6 +5099,9 @@
             const canvasContainer = document.getElementById('canvas-container');
             if (canvasContainer) canvasContainer.classList.remove('showcase-active');
             
+            // Mostrar sombra bajo los pies cuando se sale del showcase
+            if (footShadow) footShadow.visible = true;
+            
             // Ocultar logo del showcase
             const showcaseLogoContainer = document.getElementById('showcase-logo-container');
             if (showcaseLogoContainer) showcaseLogoContainer.classList.add('hidden');
@@ -5041,6 +5533,9 @@
                         }
                     }
                 });
+                
+                // Aplicar color a la nariz (50% más oscuro que la cabeza)
+                applyNoseColor(lightestSkinColor.getHex());
             }
             
             // Aplicar color al torso
