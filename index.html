@@ -1880,25 +1880,37 @@
 
         // --- DATA PARA CABELLO ---
         const hairTextures = [
-            { name: 'None', frontUrl: null, backUrl: null }, // Opción sin cabello
+            { name: 'None', frontUrl: null, backUrl: null, leftUrl: null, rightUrl: null, upUrl: null }, // Opción sin cabello
             { 
                 name: 'Mira', 
                 frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Mira-front-hair.svg',
-                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Mira-back-hair.svg'
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Mira-back-hair.svg',
+                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/hair/Mira-hair-left.svg',
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/hair/Mira-hair-right.svg',
+                upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/hair/Mira-hair-up.svg'
             },
             { 
                 name: 'Rumi', 
                 frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Rumi-front-hair.svg',
-                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Rumi-back-hair.svg'
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Rumi-back-hair.svg',
+                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/hair/Rumi-hair-left.svg',
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/hair/Rumi-hair-right.svg',
+                upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/hair/Rumi-hair-up.svg'
             },
             { 
                 name: 'Zoey', 
                 frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Zoey-front-hair.svg',
-                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Zoey-back-hair.svg'
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Zoey-back-hair.svg',
+                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/hair/Zoey-hair-left.svg',
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/hair/Zoey-hair-right.svg',
+                upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/hair/Zoey-hair-up.svg'
             }
         ];
         let currentHairFrontURL = hairTextures[0].frontUrl; // Por defecto 'None'
         let currentHairBackURL = hairTextures[0].backUrl; // Por defecto 'None'
+        let currentHairLeftURL = hairTextures[0].leftUrl; // Por defecto 'None'
+        let currentHairRightURL = hairTextures[0].rightUrl; // Por defecto 'None'
+        let currentHairUpURL = hairTextures[0].upUrl; // Por defecto 'None'
 
         // --- DATA PARA VESTIMENTA DEL TORSO ---
         const torsoClothingTextures = [
@@ -2165,6 +2177,9 @@
         let earRightMesh = null;
         let hairFrontMesh = null;
         let hairBackMesh = null;
+        let hairLeftMesh = null;
+        let hairRightMesh = null;
+        let hairUpMesh = null;
         let torsoFrontMesh = null;
         let torsoBackMesh = null;
         let armLeftFrontMesh = null;
@@ -2245,7 +2260,7 @@
                     changeNoseTexture(currentNoseTextureURL, true); // Cargar textura inicial de nariz
                     changeEarTexture('left', currentEarTextureURL, true); // Cargar textura inicial de oreja izquierda
                     changeEarTexture('right', currentEarTextureURL, true); // Cargar textura inicial de oreja derecha
-                    changeHairTexture(currentHairFrontURL, currentHairBackURL, true); // Cargar cabello inicial (none)
+                    changeHairTexture(currentHairFrontURL, currentHairBackURL, currentHairLeftURL, currentHairRightURL, currentHairUpURL, true); // Cargar cabello inicial (none)
                 }
                 if (modelParts.torso) {
                     changeTorsoClothing(currentTorsoFrontURL, currentTorsoBackURL, true); // Cargar vestimenta inicial (none)
@@ -3010,12 +3025,12 @@
                         
                         // Posición y rotación según el lado
                         if (side === 'left') {
-                            newEarMesh.position.set(-1.129, 1.029, 0); // Lado izquierdo
+                            newEarMesh.position.set(-1.13, 1.029, 0); // Lado izquierdo
                             newEarMesh.rotation.y = Math.PI / 2; // Rotar 90 grados hacia la izquierda
                             newEarMesh.scale.x = -1; // Invertir horizontalmente para oreja izquierda
                             earLeftMesh = newEarMesh;
                         } else {
-                            newEarMesh.position.set(1.129, 1.029, 0); // Lado derecho
+                            newEarMesh.position.set(1.13, 1.029, 0); // Lado derecho
                             newEarMesh.rotation.y = -Math.PI / 2; // Rotar 90 grados hacia la derecha
                             earRightMesh = newEarMesh;
                         }
@@ -3116,10 +3131,10 @@
             }
         }
 
-        function changeHairTexture(frontUrl, backUrl, isInitialLoad = false) {
+        function changeHairTexture(frontUrl, backUrl, leftUrl, rightUrl, upUrl, isInitialLoad = false) {
             if (!modelParts.head) return;
             
-            // Si frontUrl es null, significa "None" - remover el cabello
+            // Si frontUrl es null, significa "None" - remover todo el cabello
             if (frontUrl === null) {
                 if (hairFrontMesh) {
                     modelParts.head.remove(hairFrontMesh);
@@ -3134,6 +3149,27 @@
                     hairBackMesh.material.dispose();
                     hairBackMesh.geometry.dispose();
                     hairBackMesh = null;
+                }
+                if (hairLeftMesh) {
+                    modelParts.head.remove(hairLeftMesh);
+                    if (hairLeftMesh.material.map) hairLeftMesh.material.map.dispose();
+                    hairLeftMesh.material.dispose();
+                    hairLeftMesh.geometry.dispose();
+                    hairLeftMesh = null;
+                }
+                if (hairRightMesh) {
+                    modelParts.head.remove(hairRightMesh);
+                    if (hairRightMesh.material.map) hairRightMesh.material.map.dispose();
+                    hairRightMesh.material.dispose();
+                    hairRightMesh.geometry.dispose();
+                    hairRightMesh = null;
+                }
+                if (hairUpMesh) {
+                    modelParts.head.remove(hairUpMesh);
+                    if (hairUpMesh.material.map) hairUpMesh.material.map.dispose();
+                    hairUpMesh.material.dispose();
+                    hairUpMesh.geometry.dispose();
+                    hairUpMesh = null;
                 }
                 forceMemoryCleanup();
                 return;
@@ -3154,6 +3190,27 @@
                     hairBackMesh.material.dispose();
                     hairBackMesh.geometry.dispose();
                     hairBackMesh = null;
+                }
+                if (hairLeftMesh) {
+                    modelParts.head.remove(hairLeftMesh);
+                    if (hairLeftMesh.material.map) hairLeftMesh.material.map.dispose();
+                    hairLeftMesh.material.dispose();
+                    hairLeftMesh.geometry.dispose();
+                    hairLeftMesh = null;
+                }
+                if (hairRightMesh) {
+                    modelParts.head.remove(hairRightMesh);
+                    if (hairRightMesh.material.map) hairRightMesh.material.map.dispose();
+                    hairRightMesh.material.dispose();
+                    hairRightMesh.geometry.dispose();
+                    hairRightMesh = null;
+                }
+                if (hairUpMesh) {
+                    modelParts.head.remove(hairUpMesh);
+                    if (hairUpMesh.material.map) hairUpMesh.material.map.dispose();
+                    hairUpMesh.material.dispose();
+                    hairUpMesh.geometry.dispose();
+                    hairUpMesh = null;
                 }
                 forceMemoryCleanup();
             }
@@ -3223,6 +3280,114 @@
                     console.error("No se pudo cargar la textura del cabello trasero.", error);
                 }
             );
+            
+            // Cargar left hair (si existe)
+            if (leftUrl) {
+                loadOptimizedTexture(leftUrl,
+                    (texture) => {
+                        if (isInitialLoad || !hairLeftMesh) {
+                            // Creación inicial del cabello izquierdo (mismo tamaño que ojos)
+                            const hairMaterial = new THREE.MeshBasicMaterial({ 
+                                map: texture, 
+                                transparent: true, 
+                                side: THREE.DoubleSide, 
+                                alphaTest: 0.5
+                            });
+                            const planeHeight = 2.256; // Mismo tamaño que eyes
+                            const aspect = texture.image.width / texture.image.height;
+                            const planeWidth = planeHeight * aspect;
+                            const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                            hairLeftMesh = new THREE.Mesh(hairGeometry, hairMaterial);
+                            // Posición del cabello izquierdo (lado izquierdo de la cabeza)
+                            hairLeftMesh.position.set(-1.129, 1.029, 0);
+                            hairLeftMesh.rotation.y = -Math.PI / 2; // Rotar 90 grados
+                            modelParts.head.add(hairLeftMesh);
+                        } else {
+                            // Solo actualiza la textura si el mesh ya existe
+                            const oldMap = hairLeftMesh.material.map;
+                            hairLeftMesh.material.map = texture;
+                            hairLeftMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        }
+                    },
+                    undefined,
+                    (error) => {
+                        console.error("No se pudo cargar la textura del cabello izquierdo.", error);
+                    }
+                );
+            }
+            
+            // Cargar right hair (si existe)
+            if (rightUrl) {
+                loadOptimizedTexture(rightUrl,
+                    (texture) => {
+                        if (isInitialLoad || !hairRightMesh) {
+                            // Creación inicial del cabello derecho (mismo tamaño que ojos)
+                            const hairMaterial = new THREE.MeshBasicMaterial({ 
+                                map: texture, 
+                                transparent: true, 
+                                side: THREE.DoubleSide, 
+                                alphaTest: 0.5
+                            });
+                            const planeHeight = 2.256; // Mismo tamaño que eyes
+                            const aspect = texture.image.width / texture.image.height;
+                            const planeWidth = planeHeight * aspect;
+                            const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                            hairRightMesh = new THREE.Mesh(hairGeometry, hairMaterial);
+                            // Posición del cabello derecho (lado derecho de la cabeza)
+                            hairRightMesh.position.set(1.129, 1.029, 0);
+                            hairRightMesh.rotation.y = Math.PI / 2; // Rotar -90 grados
+                            modelParts.head.add(hairRightMesh);
+                        } else {
+                            // Solo actualiza la textura si el mesh ya existe
+                            const oldMap = hairRightMesh.material.map;
+                            hairRightMesh.material.map = texture;
+                            hairRightMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        }
+                    },
+                    undefined,
+                    (error) => {
+                        console.error("No se pudo cargar la textura del cabello derecho.", error);
+                    }
+                );
+            }
+            
+            // Cargar up hair (si existe)
+            if (upUrl) {
+                loadOptimizedTexture(upUrl,
+                    (texture) => {
+                        if (isInitialLoad || !hairUpMesh) {
+                            // Creación inicial del cabello superior (como techo, mismo tamaño que eyes)
+                            const hairMaterial = new THREE.MeshBasicMaterial({ 
+                                map: texture, 
+                                transparent: true, 
+                                side: THREE.DoubleSide, 
+                                alphaTest: 0.5
+                            });
+                            const planeHeight = 2.256; // Mismo tamaño que eyes
+                            const aspect = texture.image.width / texture.image.height;
+                            const planeWidth = planeHeight * aspect;
+                            const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                            hairUpMesh = new THREE.Mesh(hairGeometry, hairMaterial);
+                            // Posición del cabello superior (arriba de la cabeza, rotado para ser horizontal)
+                            hairUpMesh.position.set(0, 2.157, 0);
+                            hairUpMesh.rotation.x = -Math.PI / 2; // Rotar 90 grados para que sea horizontal
+                            modelParts.head.add(hairUpMesh);
+                        } else {
+                            // Solo actualiza la textura si el mesh ya existe
+                            const oldMap = hairUpMesh.material.map;
+                            hairUpMesh.material.map = texture;
+                            hairUpMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        }
+                    },
+                    undefined,
+                    (error) => {
+                        console.error("No se pudo cargar la textura del cabello superior.", error);
+                    }
+                );
+            }
         }
 
         function updateHairCarousel() {
@@ -3245,6 +3410,9 @@
                 
                 thumb.dataset.frontUrl = hair.frontUrl;
                 thumb.dataset.backUrl = hair.backUrl;
+                thumb.dataset.leftUrl = hair.leftUrl;
+                thumb.dataset.rightUrl = hair.rightUrl;
+                thumb.dataset.upUrl = hair.upUrl;
 
                 // Resaltar la miniatura activa
                 thumb.classList.toggle('border-cyan-500', hair.frontUrl === currentHairFrontURL);
@@ -3254,10 +3422,16 @@
                     e.preventDefault();
                     const newFrontURL = e.currentTarget.dataset.frontUrl === 'null' ? null : e.currentTarget.dataset.frontUrl;
                     const newBackURL = e.currentTarget.dataset.backUrl === 'null' ? null : e.currentTarget.dataset.backUrl;
+                    const newLeftURL = e.currentTarget.dataset.leftUrl === 'null' ? null : e.currentTarget.dataset.leftUrl;
+                    const newRightURL = e.currentTarget.dataset.rightUrl === 'null' ? null : e.currentTarget.dataset.rightUrl;
+                    const newUpURL = e.currentTarget.dataset.upUrl === 'null' ? null : e.currentTarget.dataset.upUrl;
                     if (newFrontURL !== currentHairFrontURL) {
                         currentHairFrontURL = newFrontURL;
                         currentHairBackURL = newBackURL;
-                        changeHairTexture(newFrontURL, newBackURL);
+                        currentHairLeftURL = newLeftURL;
+                        currentHairRightURL = newRightURL;
+                        currentHairUpURL = newUpURL;
+                        changeHairTexture(newFrontURL, newBackURL, newLeftURL, newRightURL, newUpURL);
                         // Solo actualizar clases
                         document.querySelectorAll('#hair-carousel-container > div').forEach(div => {
                             div.classList.toggle('border-cyan-500', div.dataset.frontUrl === newFrontURL);
@@ -4329,7 +4503,10 @@
             if (randomTexture) {
                 currentHairFrontURL = randomTexture.frontUrl;
                 currentHairBackURL = randomTexture.backUrl;
-                changeHairTexture(randomTexture.frontUrl, randomTexture.backUrl);
+                currentHairLeftURL = randomTexture.leftUrl;
+                currentHairRightURL = randomTexture.rightUrl;
+                currentHairUpURL = randomTexture.upUrl;
+                changeHairTexture(randomTexture.frontUrl, randomTexture.backUrl, randomTexture.leftUrl, randomTexture.rightUrl, randomTexture.upUrl);
             }
         }
 
@@ -4534,7 +4711,10 @@
             // Resetear cabello a "None"
             currentHairFrontURL = null;
             currentHairBackURL = null;
-            changeHairTexture(null, null);
+            currentHairLeftURL = null;
+            currentHairRightURL = null;
+            currentHairUpURL = null;
+            changeHairTexture(null, null, null, null, null);
             
             // Resetear ropa del torso a "None"
             currentTorsoFrontURL = null;
@@ -4952,7 +5132,10 @@
             if (hairTexture) {
                 currentHairFrontURL = hairTexture.frontUrl;
                 currentHairBackURL = hairTexture.backUrl;
-                changeHairTexture(hairTexture.frontUrl, hairTexture.backUrl);
+                currentHairLeftURL = hairTexture.leftUrl;
+                currentHairRightURL = hairTexture.rightUrl;
+                currentHairUpURL = hairTexture.upUrl;
+                changeHairTexture(hairTexture.frontUrl, hairTexture.backUrl, hairTexture.leftUrl, hairTexture.rightUrl, hairTexture.upUrl);
             }
             
             if (torsoTexture) {
@@ -5103,18 +5286,45 @@
         // Función para obtener la URL de textura actual de una parte
         function getCurrentTextureURL(partName) {
             switch(partName) {
-                case 'torso':
+                // Texturas faciales
+                case 'eyes':
+                    return currentEyeTextureURL;
+                case 'eyebrows':
+                    return currentEyebrowTextureURL;
+                case 'nose':
+                    return currentNoseTextureURL;
+                // Torso
+                case 'torso-front':
                     return currentTorsoFrontURL;
-                case 'arm-left':
+                case 'torso-back':
+                    return currentTorsoBackURL;
+                // Cabello - front, back, left, right, up
+                case 'hair-front':
+                    return currentHairFrontURL;
+                case 'hair-back':
+                    return currentHairBackURL;
+                case 'hair-left':
+                    return currentHairLeftURL;
+                case 'hair-right':
+                    return currentHairRightURL;
+                case 'hair-up':
+                    return currentHairUpURL;
+                // Brazos - front y back usan la misma textura pero se posicionan diferente
+                case 'arm-left-front':
+                case 'arm-left-back':
                     return currentArmLeftURL;
-                case 'arm-right':
+                case 'arm-right-front':
+                case 'arm-right-back':
                     return currentArmRightURL;
-                case 'leg-left':
+                // Piernas - front y back usan la misma textura pero se posicionan diferente
+                case 'leg-left-front':
+                case 'leg-left-back':
                     return currentLegLeftURL;
-                case 'leg-right':
+                case 'leg-right-front':
+                case 'leg-right-back':
                     return currentLegRightURL;
+                // Orejas
                 case 'ear-left':
-                    return currentEarTextureURL;
                 case 'ear-right':
                     return currentEarTextureURL;
                 default:
@@ -5123,7 +5333,7 @@
         }
         
         // Función para superponer una textura SVG sobre un template
-        async function overlayTextureOnTemplate(templateSVG, textureURL) {
+        async function overlayTextureOnTemplate(templateSVG, textureURL, offsetX = 0, offsetY = 0, width = null, height = null, rotation = 0, flipX = false) {
             if (!textureURL) return templateSVG;
             
             try {
@@ -5140,9 +5350,93 @@
                 const templateElement = templateDoc.documentElement;
                 const textureElement = textureDoc.documentElement;
                 
-                // Crear un grupo para la textura
+                // Crear un grupo para la textura con transformaciones
                 const textureGroup = templateDoc.createElementNS('http://www.w3.org/2000/svg', 'g');
                 textureGroup.setAttribute('id', 'texture-overlay');
+                
+                // APLICAR DIMENSIONES SI SE ESPECIFICAN
+                // Si width o height están definidos, ajustar el viewBox del grupo
+                if (width !== null || height !== null) {
+                    // Obtener dimensiones originales del SVG de textura
+                    const originalViewBox = textureElement.getAttribute('viewBox');
+                    const originalWidth = textureElement.getAttribute('width');
+                    const originalHeight = textureElement.getAttribute('height');
+                    
+                    let origW = parseFloat(originalWidth) || 100;
+                    let origH = parseFloat(originalHeight) || 100;
+                    
+                    // Si hay viewBox, usar esas dimensiones
+                    if (originalViewBox) {
+                        const vbParts = originalViewBox.split(/\s+/);
+                        if (vbParts.length === 4) {
+                            origW = parseFloat(vbParts[2]);
+                            origH = parseFloat(vbParts[3]);
+                        }
+                    }
+                    
+                    // Calcular escala basada en las dimensiones deseadas
+                    const scaleX = width !== null ? width / origW : 1.0;
+                    const scaleY = height !== null ? height / origH : 1.0;
+                    
+                    console.log(`[overlayTextureOnTemplate] Dimensiones originales: ${origW}x${origH}`);
+                    console.log(`[overlayTextureOnTemplate] Dimensiones objetivo: ${width || 'auto'}x${height || 'auto'}`);
+                    console.log(`[overlayTextureOnTemplate] Escala calculada: ${scaleX.toFixed(3)}x, ${scaleY.toFixed(3)}y`);
+                }
+                
+                // CONSTRUIR TRANSFORMACIÓN COMPLETA
+                // El orden de las transformaciones es importante: translate -> rotate -> scale
+                const transforms = [];
+                
+                // 1. Traslación (posición)
+                if (offsetX !== 0 || offsetY !== 0) {
+                    transforms.push(`translate(${offsetX}, ${offsetY})`);
+                }
+                
+                // 2. Rotación (en grados, alrededor del origen)
+                if (rotation !== 0) {
+                    transforms.push(`rotate(${rotation})`);
+                }
+                
+                // 3. Escala (tamaño) - calculada a partir de width/height
+                if (width !== null || height !== null || flipX) {
+                    // Obtener dimensiones originales
+                    const originalViewBox = textureElement.getAttribute('viewBox');
+                    const originalWidth = textureElement.getAttribute('width');
+                    const originalHeight = textureElement.getAttribute('height');
+                    
+                    let origW = parseFloat(originalWidth) || 100;
+                    let origH = parseFloat(originalHeight) || 100;
+                    
+                    if (originalViewBox) {
+                        const vbParts = originalViewBox.split(/\s+/);
+                        if (vbParts.length === 4) {
+                            origW = parseFloat(vbParts[2]);
+                            origH = parseFloat(vbParts[3]);
+                        }
+                    }
+                    
+                    let scaleX = width !== null ? width / origW : 1.0;
+                    const scaleY = height !== null ? height / origH : 1.0;
+                    
+                    // Aplicar volteo horizontal si flipX es true
+                    if (flipX) {
+                        scaleX = -scaleX; // Invertir el eje X para voltear horizontalmente
+                    }
+                    
+                    // Aplicar escala (incluyendo volteo si aplica)
+                    if (scaleX !== 1.0 || scaleY !== 1.0) {
+                        transforms.push(`scale(${scaleX}, ${scaleY})`);
+                    }
+                }
+                
+                // Aplicar todas las transformaciones
+                if (transforms.length > 0) {
+                    const transformValue = transforms.join(' ');
+                    textureGroup.setAttribute('transform', transformValue);
+                    console.log(`[overlayTextureOnTemplate] Transform aplicado: ${transformValue}`);
+                } else {
+                    console.log(`[overlayTextureOnTemplate] Sin transformaciones`);
+                }
                 
                 // Copiar todos los elementos de la textura al grupo
                 Array.from(textureElement.children).forEach(child => {
@@ -5152,6 +5446,8 @@
                 
                 // Agregar el grupo al template (antes del último elemento para que quede visible)
                 templateElement.appendChild(textureGroup);
+                
+                console.log(`[overlayTextureOnTemplate] Textura agregada con ${textureElement.children.length} elementos`);
                 
                 // Serializar de vuelta
                 const serializer = new XMLSerializer();
@@ -5256,12 +5552,17 @@
                     format: 'a4'
                 });
                 
-                // Dimensiones A4 horizontal: 297mm x 210mm
-                const pageWidth = 297;
-                const pageHeight = 210;
+                // Dimensiones A4 horizontal
+                const pageWidth = 297;   // 297mm
+                const pageHeight = 210;  // 210mm
+                
+                // Dimensiones reales del PDF A4 en píxeles
+                const PDF_WIDTH_PX = 3507.9;   // Ancho real del PDF en píxeles
+                const PDF_HEIGHT_PX = 2480.3;  // Alto real del PDF en píxeles
                 
                 console.log('📄 Generando UNA SOLA PÁGINA con todos los templates');
                 console.log('📐 Tamaño de página: A4 horizontal (297mm x 210mm)');
+                console.log('📏 Dimensiones reales en píxeles: 3507.9px x 2480.3px');
                 
                 // Obtener colores de las partes del modelo 3D
                 console.log('=== OBTENIENDO COLORES DEL MODELO 3D ===');
@@ -5282,33 +5583,281 @@
                 console.log('Leg Color:', legColor);
                 console.log('========================');
                 
-                // Lista de templates en ORDEN DE SUPERPOSICIÓN (de atrás hacia adelante)
-                // El primero se dibuja primero (atrás), el último se dibuja último (al frente)
+                // ============================================
+                // CONFIGURACIÓN DE TEMPLATES (Plantillas base)
+                // ============================================
+                // IMPORTANTE: Las capas se procesan en orden, de atrás hacia adelante
+                // Layer 1-4: Templates base coloreados (sin texturas)
+                // Layer 5: Border/Logo
+                // Layer 6: Template vacío exclusivo para TODAS las texturas (encima de todo)
                 const templates = [
-                    { file: 'template-head-1.svg', color: headColor, texture: null, layer: 1 },        // CAPA 1 (atrás)
-                    { file: 'template-arm-left.svg', color: armColor, texture: 'arm-left', layer: 2 }, // CAPA 2
-                    { file: 'template-arm-right.svg', color: armColor, texture: 'arm-right', layer: 2 }, // CAPA 2
-                    { file: 'template-leg-left.svg', color: legColor, texture: 'leg-left', layer: 3 }, // CAPA 3
-                    { file: 'template-leg-right.svg', color: legColor, texture: 'leg-right', layer: 3 }, // CAPA 3
-                    { file: 'template-torso.svg', color: torsoColor, texture: 'torso', layer: 4 },      // CAPA 4
-                    { file: 'template-border-logo.svg', color: null, texture: null, layer: 5 }          // CAPA 5 (al frente)
+                    // CAPA 1 - Cabeza (solo template, sin textura)
+                    { file: 'template-head-1.svg', color: headColor, textureName: null, layer: 1 },
+                    
+                    // CAPA 2 - Brazos (solo templates, sin texturas)
+                    { file: 'template-arm-left.svg', color: armColor, textureName: null, layer: 2 },
+                    { file: 'template-arm-right.svg', color: armColor, textureName: null, layer: 2 },
+                    
+                    // CAPA 3 - Piernas (solo templates, sin texturas)
+                    { file: 'template-leg-left.svg', color: legColor, textureName: null, layer: 3 },
+                    { file: 'template-leg-right.svg', color: legColor, textureName: null, layer: 3 },
+                    
+                    // CAPA 4 - Torso (solo templates, sin texturas)
+                    { file: 'template-torso.svg', color: torsoColor, textureName: null, layer: 4 },
+                    
+                    // CAPA 5 - Borde/Logo (debajo de las texturas)
+                    { file: 'template-border-logo.svg', color: null, textureName: null, layer: 5 },
+                    
+                    // ========================================================================
+                    // CAPA 6 - TEMPLATE EXCLUSIVO PARA TEXTURAS (8vo template, encima de todo)
+                    // ========================================================================
+                    // Este template vacío/transparente sirve como contenedor para TODAS las texturas
+                    // Usa 'template-textures-layer.svg' que es un SVG vacío
+                    
+                    // Orejas
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'ear-left', layer: 6 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'ear-right', layer: 6 },
+                    
+                    // Cabello (5 partes: front, back, left, right, up)
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-front', layer: 6 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-back', layer: 6 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-left', layer: 6 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-right', layer: 6 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-up', layer: 6 },
+                    
+                    // Brazos (front y back)
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'arm-left-front', layer: 6 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'arm-left-back', layer: 6 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'arm-right-front', layer: 6 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'arm-right-back', layer: 6 },
+                    
+                    // Piernas (front y back)
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'leg-left-front', layer: 6 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'leg-left-back', layer: 6 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'leg-right-front', layer: 6 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'leg-right-back', layer: 6 },
+                    
+                    // Torso (front y back)
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'torso-front', layer: 6 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'torso-back', layer: 6 }
                 ];
+                
+                // ============================================
+                // CONFIGURACIÓN DE TEXTURAS (Estilos/Clothing)
+                // ============================================
+                // ⚠️ IMPORTANTE: TODOS LOS VALORES ESTÁN EN PÍXELES
+                // 
+                // POSICIÓN (en píxeles):
+                // - offsetX: de 0 a 3507.9 píxeles (ancho del PDF)
+                //   valores positivos = derecha, negativos = izquierda
+                // - offsetY: de 0 a 2480.3 píxeles (alto del PDF)
+                //   valores positivos = abajo, negativos = arriba
+                //
+                // TAMAÑO (en píxeles):
+                // - width: ancho de la textura en píxeles (máximo recomendado: 3507.9px)
+                // - height: alto de la textura en píxeles (máximo recomendado: 2480.3px)
+                // - Si width o height es null, se mantiene el tamaño original del SVG
+                //
+                // ROTACIÓN (en grados):
+                // - rotation: 0 a 360 grados (sentido horario)
+                //   0° = sin rotación, 90° = girado a la derecha, 180° = invertido, 270° = girado a la izquierda
+                //
+                // VOLTEO HORIZONTAL:
+                // - flipX: true = voltear horizontalmente (espejo), false = normal
+                const textureOffsets = {
+                    // ===== TEXTURAS FACIALES (para página 2) =====
+                    'eyes': { 
+                        offsetX: 0, 
+                        offsetY: 0, 
+                        width: null, 
+                        height: null, 
+                        rotation: 0,
+                        flipX: false
+                    },
+                    'eyebrows': { 
+                        offsetX: 0, 
+                        offsetY: 0, 
+                        width: null, 
+                        height: null, 
+                        rotation: 0,
+                        flipX: false
+                    },
+                    'nose': { 
+                        offsetX: 0, 
+                        offsetY: 0, 
+                        width: null, 
+                        height: null, 
+                        rotation: 0,
+                        flipX: false
+                    },
+                    
+                    // ===== OREJAS =====
+                    'ear-left': { 
+                        offsetX: 1970.8, 
+                        offsetY: 999.7, 
+                        width: 680.1, 
+                        height: 680.1, 
+                        rotation: 45,
+                        flipX: true
+                    },
+                    'ear-right': { 
+                        offsetX: 528.1, 
+                        offsetY: 2442.4, 
+                        width: 680.1, 
+                        height: 680.1, 
+                        rotation: -135,
+                        flipX: false
+                    },
+                    
+                    // ===== CABELLO (5 PARTES) =====
+                    'hair-front': { 
+                        offsetX: 0, 
+                        offsetY: 0, 
+                        width: null, 
+                        height: null, 
+                        rotation: 0,
+                        flipX: false
+                    },
+                    'hair-back': { 
+                        offsetX: 0, 
+                        offsetY: 0, 
+                        width: null, 
+                        height: null, 
+                        rotation: 0,
+                        flipX: false
+                    },
+                    'hair-left': {  // Mismo tamaño y posición que ear-left
+                        offsetX: 1970.8, 
+                        offsetY: 999.7, 
+                        width: 680.1, 
+                        height: 680.1, 
+                        rotation: 45,
+                        flipX: true
+                    },
+                    'hair-right': {  // Mismo tamaño y posición que ear-right
+                        offsetX: 528.1, 
+                        offsetY: 2442.4, 
+                        width: 680.1, 
+                        height: 680.1, 
+                        rotation: -135,
+                        flipX: false
+                    },
+                    'hair-up': {  // Mismo tamaño que eyes, posicionado arriba
+                        offsetX: 0, 
+                        offsetY: 0, 
+                        width: null,  // Ajustar según dimensiones de eyes
+                        height: null, 
+                        rotation: 0,
+                        flipX: false
+                    },
+                    
+                    // ===== BRAZOS (FRONT Y BACK) =====
+                    'arm-left-front': { 
+                        offsetX: 3235.8, 
+                        offsetY: 400.6, 
+                        width: 492.9, 
+                        height: 492.9, 
+                        rotation: 0,
+                        flipX: false
+                    },
+                    'arm-left-back': { 
+                        offsetX: 2967.7, 
+                        offsetY: 400.6, 
+                        width: 492.9, 
+                        height: 492.9, 
+                        rotation: 0,
+                        flipX: true  // Volteado horizontalmente
+                    },
+                    'arm-right-front': { 
+                        offsetX: 2474.8, 
+                        offsetY: 47.2, 
+                        width: 492.9, 
+                        height: 492.9, 
+                        rotation: 0,
+                        flipX: false
+                    },
+                    'arm-right-back': { 
+                        offsetX: 3728.8, 
+                        offsetY: 47.2, 
+                        width: 492.9, 
+                        height: 492.9, 
+                        rotation: 0,
+                        flipX: true  // Volteado horizontalmente
+                    },
+                    
+                    // ===== PIERNAS (FRONT Y BACK) =====
+                    'leg-left-front': { 
+                        offsetX: 2609.4, 
+                        offsetY: 2032.5, 
+                        width: 637.3, 
+                        height: 637.3, 
+                        rotation: -45,
+                        flipX: false
+                    },
+                    'leg-left-back': { 
+                        offsetX: 2870.4, 
+                        offsetY: 1392.1, 
+                        width: 637.3, 
+                        height: 637.3, 
+                        rotation: 135,
+                        flipX: false
+                    },
+                    'leg-right-front': { 
+                        offsetX: 2609.4, 
+                        offsetY: 2032.5, 
+                        width: 637.3, 
+                        height: 637.3, 
+                        rotation: -45,
+                        flipX: false
+                    },
+                    'leg-right-back': { 
+                        offsetX: 2870.4, 
+                        offsetY: 1392.1, 
+                        width: 637.3, 
+                        height: 637.3, 
+                        rotation: 135,
+                        flipX: false
+                    },
+                    
+                    // ===== TORSO (FRONT Y BACK) =====
+                    'torso-front': { 
+                        offsetX: 2609.4, 
+                        offsetY: 2032.5, 
+                        width: 637.3, 
+                        height: 637.3, 
+                        rotation: -45,
+                        flipX: false
+                    },
+                    'torso-back': { 
+                        offsetX: 2870.4, 
+                        offsetY: 1392.1, 
+                        width: 637.3, 
+                        height: 637.3, 
+                        rotation: 135,
+                        flipX: false
+                    }
+                };
                 
                 // SUPERPOSICIÓN: Todos los templates en la MISMA posición (0,0)
                 // Ocupando TODA la página A4 horizontal
                 console.log('🎨 Configurando SUPERPOSICIÓN de templates en UNA SOLA PÁGINA');
                 console.log('📐 Todos los templates en la misma posición: X=0, Y=0');
                 console.log('📏 Tamaño de cada template: 297mm x 210mm (página completa)');
+                
+                // ⚠️ IMPORTANTE: ORDENAR templates POR LAYER (de menor a mayor)
+                // Esto asegura que las capas se procesen en el orden correcto
+                const sortedTemplates = [...templates].sort((a, b) => a.layer - b.layer);
+                
                 console.log('\n📚 Orden de capas (de atrás hacia adelante):');
-                templates.forEach((t, idx) => {
-                    console.log(`   Capa ${idx + 1}: ${t.file}`);
+                sortedTemplates.forEach((t, idx) => {
+                    console.log(`   Layer ${t.layer} - ${t.file}${t.textureName ? ` (textura: ${t.textureName})` : ''}`);
                 });
                 
                 // Procesar cada template y agregarlo SUPERPUESTO
-                for (let i = 0; i < templates.length; i++) {
-                    const template = templates[i];
+                for (let i = 0; i < sortedTemplates.length; i++) {
+                    const template = sortedTemplates[i];
                     
-                    console.log(`\n🔄 Procesando capa ${i + 1}/${templates.length}: ${template.file}`);
+                    console.log(`\n🔄 Procesando layer ${template.layer} (${i + 1}/${sortedTemplates.length}): ${template.file}${template.textureName ? ` + textura ${template.textureName}` : ''}`);
                     
                     try {
                         // Cargar el SVG del template
@@ -5326,11 +5875,35 @@
                         }
                         
                         // Superponer textura si aplica
-                        if (template.texture) {
-                            const textureURL = getCurrentTextureURL(template.texture);
+                        if (template.textureName) {
+                            const textureURL = getCurrentTextureURL(template.textureName);
                             if (textureURL) {
-                                console.log(`   🖼️ Aplicando textura`);
-                                svgContent = await overlayTextureOnTemplate(svgContent, textureURL);
+                                // Obtener la configuración completa de la textura
+                                const config = textureOffsets[template.textureName] || { 
+                                    offsetX: 0, 
+                                    offsetY: 0, 
+                                    width: null, 
+                                    height: null, 
+                                    rotation: 0,
+                                    flipX: false
+                                };
+                                
+                                console.log(`   🖼️ Aplicando textura '${template.textureName}'`);
+                                console.log(`      📍 Posición: (${config.offsetX}px, ${config.offsetY}px)`);
+                                console.log(`      📏 Tamaño: ${config.width || 'auto'}px x ${config.height || 'auto'}px`);
+                                console.log(`      🔄 Rotación: ${config.rotation}°`);
+                                console.log(`      🔀 Volteo horizontal: ${config.flipX ? 'Sí' : 'No'}`);
+                                
+                                svgContent = await overlayTextureOnTemplate(
+                                    svgContent, 
+                                    textureURL, 
+                                    config.offsetX, 
+                                    config.offsetY, 
+                                    config.width, 
+                                    config.height, 
+                                    config.rotation,
+                                    config.flipX
+                                );
                             }
                         }
                         
@@ -5355,25 +5928,123 @@
                     }
                 }
                 
-                console.log('\n✨ Todos los templates SUPERPUESTOS en UNA SOLA PÁGINA');
+                console.log('\n✨ Todos los templates SUPERPUESTOS en PÁGINA 1 completados');
                 
-                // Descargar el PDF (UN SOLO ARCHIVO con todas las páginas)
+                // ============================================
+                // PÁGINA 2: TEMPLATE-HEAD-2 CON TEXTURAS FACIALES
+                // ============================================
+                console.log('\n\n📄 === GENERANDO PÁGINA 2: TEMPLATE-HEAD-2 ===');
+                
+                // Agregar nueva página
+                pdf.addPage();
+                
+                // Configuración de templates para página 2
+                // Solo template-head-2 con texturas faciales (eyes, eyebrows, nose, hair-front, hair-back)
+                const page2Templates = [
+                    // Template base head-2 (coloreado)
+                    { file: 'template-head-2.svg', color: headColor, textureName: null, layer: 1 },
+                    
+                    // Texturas faciales en capa superior
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'eyes', layer: 2 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'eyebrows', layer: 2 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'nose', layer: 2 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-front', layer: 2 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'hair-back', layer: 2 }
+                ];
+                
+                // Ordenar por layer
+                const sortedPage2Templates = [...page2Templates].sort((a, b) => a.layer - b.layer);
+                
+                console.log('📚 Texturas en página 2:');
+                sortedPage2Templates.forEach((t, idx) => {
+                    console.log(`   Layer ${t.layer} - ${t.file}${t.textureName ? ` (textura: ${t.textureName})` : ''}`);
+                });
+                
+                // Procesar templates de página 2
+                for (let i = 0; i < sortedPage2Templates.length; i++) {
+                    const template = sortedPage2Templates[i];
+                    
+                    console.log(`\n🔄 Procesando página 2 - layer ${template.layer} (${i + 1}/${sortedPage2Templates.length}): ${template.file}${template.textureName ? ` + textura ${template.textureName}` : ''}`);
+                    
+                    try {
+                        // Cargar el SVG del template
+                        let svgContent = await loadSVGFile(template.file);
+                        
+                        if (!svgContent) {
+                            console.warn(`   ⚠️ Template ${template.file} no encontrado, continuando...`);
+                            continue;
+                        }
+                        
+                        // Colorear el template si tiene color
+                        if (template.color) {
+                            console.log(`   🎨 Coloreando con: ${template.color}`);
+                            svgContent = colorSVG(svgContent, template.color);
+                        }
+                        
+                        // Superponer textura si aplica
+                        if (template.textureName) {
+                            const textureURL = getCurrentTextureURL(template.textureName);
+                            if (textureURL) {
+                                // Obtener la configuración completa de la textura
+                                const config = textureOffsets[template.textureName] || { 
+                                    offsetX: 0, 
+                                    offsetY: 0, 
+                                    width: null, 
+                                    height: null, 
+                                    rotation: 0,
+                                    flipX: false
+                                };
+                                
+                                console.log(`   🖼️ Aplicando textura '${template.textureName}'`);
+                                console.log(`      📍 Posición: (${config.offsetX}px, ${config.offsetY}px)`);
+                                console.log(`      📏 Tamaño: ${config.width || 'auto'}px x ${config.height || 'auto'}px`);
+                                console.log(`      🔄 Rotación: ${config.rotation}°`);
+                                console.log(`      🔀 Volteo horizontal: ${config.flipX ? 'Sí' : 'No'}`);
+                                
+                                svgContent = await overlayTextureOnTemplate(
+                                    svgContent, 
+                                    textureURL, 
+                                    config.offsetX, 
+                                    config.offsetY, 
+                                    config.width, 
+                                    config.height, 
+                                    config.rotation,
+                                    config.flipX
+                                );
+                            }
+                        }
+                        
+                        // Convertir SVG a imagen
+                        const imageDataURL = await svgToImageDataURL(svgContent);
+                        
+                        // Agregar en posición (0, 0) ocupando toda la página
+                        pdf.addImage(imageDataURL, 'PNG', 0, 0, pageWidth, pageHeight, undefined, 'FAST');
+                        console.log(`   ✅ Capa ${i + 1} agregada a página 2`);
+                        
+                    } catch (templateError) {
+                        console.error(`   ❌ Error procesando ${template.file}:`, templateError);
+                        console.error(`   Error: ${templateError.message}`);
+                    }
+                }
+                
+                console.log('\n✨ PÁGINA 2 completada con template-head-2 y texturas faciales');
+                
+                // Descargar el PDF (CON 2 PÁGINAS)
                 const filename = `Papelcool-${currentPresetCharacter}-${Date.now()}.pdf`;
                 
-                console.log('\n=== PDF CON TEMPLATES SUPERPUESTOS GENERADO ===');
+                console.log('\n=== PDF CON 2 PÁGINAS GENERADO ===');
                 console.log('📄 Archivo:', filename);
                 console.log('📊 Número de páginas:', pdf.internal.getNumberOfPages());
                 console.log('📐 Formato: A4 Horizontal (297mm x 210mm)');
-                console.log('🎨 Tipo: SUPERPOSICIÓN (todos en X=0, Y=0)');
-                console.log('\n📚 Orden de capas (de atrás hacia adelante):');
-                console.log('   Capa 1 (atrás): Head');
-                console.log('   Capa 2: Arm-Left + Arm-Right');
-                console.log('   Capa 3: Leg-Left + Leg-Right');
-                console.log('   Capa 4: Torso');
-                console.log('   Capa 5 (frente): Border-Logo');
+                console.log('\n📄 PÁGINA 1: Templates superpuestos completos');
+                console.log('   - Head, Arms, Legs, Torso, Border-Logo');
+                console.log('   - Todas las texturas (orejas, cabello, ropa)');
+                console.log('\n📄 PÁGINA 2: Template-Head-2');
+                console.log('   - Eyes, Eyebrows, Nose');
+                console.log('   - Hair-Front, Hair-Back');
                 console.log('================================================');
                 
-                console.log('\n💾 Descargando PDF con templates SUPERPUESTOS...');
+                console.log('\n💾 Descargando PDF con 2 páginas...');
                 
                 pdf.save(filename);
                 
