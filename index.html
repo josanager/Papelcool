@@ -2148,13 +2148,17 @@
             background: rgba(255, 255, 255, 0.95);
             border: none;
             cursor: pointer;
-            display: flex;
+            display: none; /* Oculto por defecto, visible solo después de login */
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
             z-index: 20;
             pointer-events: auto;
+        }
+        
+        #account-button.visible {
+            display: flex;
         }
         
         #account-button:hover {
@@ -6519,10 +6523,10 @@
             });
         }
         
-        // Subscribe button
+        // Subscribe button - ir a página de pricing
         if (subscribeBtn) {
             subscribeBtn.addEventListener('click', () => {
-                window.location.href = `/checkout/?preset=${currentPresetCharacter || 'mira'}`;
+                window.location.href = `/pricing/?preset=${currentPresetCharacter || 'mira'}`;
             });
         }
         
@@ -6545,14 +6549,25 @@
                 if (data.authenticated) {
                     userSession = data.user;
                     await checkMembership();
+                    // Mostrar botón Account después de login exitoso
+                    if (accountButton) {
+                        accountButton.classList.add('visible');
+                    }
                 } else {
                     userSession = null;
                     hasActiveSubscription = false;
+                    // Ocultar botón Account si no hay sesión
+                    if (accountButton) {
+                        accountButton.classList.remove('visible');
+                    }
                 }
             } catch (error) {
                 console.error('Session check error:', error);
                 userSession = null;
                 hasActiveSubscription = false;
+                if (accountButton) {
+                    accountButton.classList.remove('visible');
+                }
             }
         }
         
@@ -6600,7 +6615,7 @@
         
         // Función para abrir descarga o pago
         async function openDownloadPage() {
-            // Si no hay sesión activa, mostrar modal para login
+            // Si no hay sesión activa, mostrar modal para login/registro
             if (!userSession) {
                 accountModal.classList.add('active');
                 updateModalContent();
@@ -6612,8 +6627,9 @@
                 console.log('✓ Usuario con suscripción activa. Generando PDF...');
                 await generatePDFAfterPayment('subscription');
             } else {
-                // Si no tiene suscripción, redirigir a checkout
-                window.location.href = `/checkout/?preset=${currentPresetCharacter}`;
+                // Si está logueado pero NO tiene suscripción, ir a página de pricing
+                console.log('⚠️ Usuario sin suscripción. Redirigiendo a pricing...');
+                window.location.href = `/pricing/?preset=${currentPresetCharacter}`;
             }
         }
         
