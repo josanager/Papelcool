@@ -295,20 +295,18 @@
             position: relative;
             z-index: 1;
             border-radius: inherit;
-            padding: 1em;
+            padding: 0;
             background-image: linear-gradient(135deg,
                     rgba(230, 230, 230, 1),
                     rgba(180, 180, 180, 1));
             transition: box-shadow 300ms ease, clip-path 250ms ease,
                 background-image 250ms ease, transform 250ms ease;
             will-change: box-shadow, clip-path, background-image, transform;
-            overflow: clip;
+            overflow: hidden;
             clip-path: inset(0 0 0 0 round 16px);
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 8px;
             width: 100%;
             height: 100%;
             box-sizing: border-box;
@@ -339,34 +337,54 @@
         }
         
         .preset-character-btn .character-icon-img {
-            width: 60px;
-            height: 60px;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 16px;
         }
         
-        .preset-character-btn .character-name {
+        /* Nombre del personaje en la parte superior */
+        #character-name-display {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 30;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        #character-name-display.active {
+            opacity: 1;
+        }
+        
+        #character-name-text {
             font-family: 'Orbitron', sans-serif;
-            letter-spacing: 0.05em;
+            font-size: 2rem;
             font-weight: 700;
-            font-size: 0.85rem;
+            letter-spacing: 0.1em;
             color: rgba(0, 0, 0, 0);
             background-image: linear-gradient(135deg,
-                    rgba(25, 25, 25, 1),
-                    rgba(75, 75, 75, 1));
+                    rgba(0, 217, 255, 1),
+                    rgba(0, 150, 255, 1));
             -webkit-background-clip: text;
             background-clip: text;
-            transition: transform 250ms ease;
-            display: block;
-            will-change: transform;
-            text-shadow: rgba(0, 0, 0, 0.1) 0 0 0.1em;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
+            text-shadow: 0 4px 12px rgba(0, 217, 255, 0.3);
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
         }
         
-        .preset-character-btn:hover .character-name {
-            transform: scale(0.975);
+        @media (max-width: 1024px) {
+            #character-name-text {
+                font-size: 1.5rem;
+                padding: 0.4rem 1rem;
+            }
         }
         
         .icon-btn {
@@ -714,7 +732,7 @@
             
             #editor-panel-wrapper {
                 position: absolute;
-                top: 0;
+                top: 80px; /* Mover más abajo para evitar sobreposición con botones sociales */
                 left: 0;
                 width: auto;
                 max-width: 28rem;
@@ -1544,6 +1562,14 @@
             pointer-events: auto;
         }
         
+        /* En desktop: botones horizontales */
+        @media (min-width: 1025px) {
+            #social-media-buttons {
+                flex-direction: row;
+                gap: 12px;
+            }
+        }
+        
         #social-media-buttons.active {
             display: flex;
         }
@@ -2060,6 +2086,14 @@
             pointer-events: auto;
         }
         
+        /* En desktop: botones horizontales */
+        @media (min-width: 1025px) {
+            #preset-action-buttons {
+                flex-direction: row;
+                gap: 12px;
+            }
+        }
+        
         #preset-action-buttons.active {
             display: flex;
         }
@@ -2349,6 +2383,10 @@
     <!-- Fondo degradado azul para showcase -->
     <div id="showcase-background"></div>
     
+    <!-- Nombre del personaje seleccionado (centrado arriba) -->
+    <div id="character-name-display">
+        <span id="character-name-text"></span>
+    </div>
     
     <!-- Barra de progreso (oculta inicialmente) -->
     <div id="pdf-progress-container" class="pdf-progress-overlay hidden">
@@ -2592,7 +2630,6 @@
                             <div class="button-outer">
                                 <div class="button-inner">
                                     <img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/Mira-icon.svg" alt="Mira" class="character-icon-img">
-                                    <span class="character-name">MIRA</span>
                                 </div>
                             </div>
                         </button>
@@ -2600,7 +2637,6 @@
                             <div class="button-outer">
                                 <div class="button-inner">
                                     <img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/Rumi-icon.svg" alt="Rumi" class="character-icon-img">
-                                    <span class="character-name">RUMI</span>
                                 </div>
                             </div>
                         </button>
@@ -2608,7 +2644,6 @@
                             <div class="button-outer">
                                 <div class="button-inner">
                                     <img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/Zoey-icon.svg" alt="Zoey" class="character-icon-img">
-                                    <span class="character-name">ZOEY</span>
                                 </div>
                             </div>
                         </button>
@@ -3829,12 +3864,16 @@
                 savedPresetCameraDistance = 5;
                 console.log('📸 Modo Juego - Posición objetivo:', playCameraPos);
                 
+                // Ocultar nombre del personaje
+                hideCharacterName();
+                
                 // En móvil, ocultar el panel del editor y mostrar controles de juego
                 if (isMobile) {
                     ui.editorPanelWrapper.classList.add('hidden-mobile');
                     mobileGameControls.classList.add('active');
                 } else {
-                    ui.editor.style.display = 'none';
+                    // En desktop, ocultar completamente el panel del editor
+                    ui.editorPanelWrapper.style.display = 'none';
                 }
                 
                 // ANIMACIÓN: Girar cámara 180° hacia posición fija de modo juego
@@ -3871,12 +3910,18 @@
                     downloadPdfBtnMoved.style.display = '';
                 }
                 
+                // Mostrar nombre del personaje si hay uno seleccionado
+                if (currentPresetCharacter) {
+                    showCharacterName(currentPresetCharacter);
+                }
+                
                 // En móvil, mostrar el panel del editor y ocultar controles de juego
                 if (isMobile) {
                     ui.editorPanelWrapper.classList.remove('hidden-mobile');
                     mobileGameControls.classList.remove('active');
                 } else {
-                    ui.editor.style.display = 'block';
+                    // En desktop, mostrar el panel del editor
+                    ui.editorPanelWrapper.style.display = 'block';
                 }
                 
                 // ANIMACIÓN DE REGRESO: Volver a posición fija de modo presets
@@ -6452,9 +6497,24 @@
         // Event listeners para botones de personajes preestablecidos
         const downloadPdfBtn = document.getElementById('download-pdf-btn');
         
+        // Función para mostrar el nombre del personaje
+        function showCharacterName(name) {
+            const characterNameDisplay = document.getElementById('character-name-display');
+            const characterNameText = document.getElementById('character-name-text');
+            characterNameText.textContent = name.toUpperCase();
+            characterNameDisplay.classList.add('active');
+        }
+        
+        // Función para ocultar el nombre del personaje
+        function hideCharacterName() {
+            const characterNameDisplay = document.getElementById('character-name-display');
+            characterNameDisplay.classList.remove('active');
+        }
+        
         document.getElementById('preset-mira-btn').addEventListener('click', () => {
             currentPresetCharacter = 'Mira';
             applyPresetCharacter('Mira');
+            showCharacterName('Mira');
             // Mostrar botón pequeño de PDF en la esquina superior izquierda
             const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
@@ -6463,6 +6523,7 @@
         document.getElementById('preset-rumi-btn').addEventListener('click', () => {
             currentPresetCharacter = 'Rumi';
             applyPresetCharacter('Rumi');
+            showCharacterName('Rumi');
             // Mostrar botón pequeño de PDF en la esquina superior izquierda
             const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
@@ -6471,6 +6532,7 @@
         document.getElementById('preset-zoey-btn').addEventListener('click', () => {
             currentPresetCharacter = 'Zoey';
             applyPresetCharacter('Zoey');
+            showCharacterName('Zoey');
             // Mostrar botón pequeño de PDF en la esquina superior izquierda
             const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
@@ -6488,6 +6550,9 @@
                 editorPanelWrapper.style.display = 'none';
                 presetsSection.classList.add('hidden');
                 customizeSection.classList.add('hidden');
+                
+                // Ocultar nombre del personaje
+                hideCharacterName();
                 
                 // Ocultar botones de acciones de presets
                 const presetActionButtons = document.getElementById('preset-action-buttons');
