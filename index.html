@@ -2518,6 +2518,18 @@
         </div>
     </div>
 
+    <!-- Coming Soon Modal -->
+    <div id="coming-soon-modal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000;">
+        <div style="background: #0b102f; border: 1px solid rgba(0, 255, 255, 0.18); border-radius: 14px; padding: 24px; width: min(92vw, 420px); color: #fff; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.35);">
+            <button type="button" id="coming-soon-close" aria-label="Close" style="position:absolute; top:10px; right:10px; background:transparent; border:none; color:#9aa6ff; cursor:pointer; font-size:20px;">×</button>
+            <h2 style="margin:0 0 10px; font-size:22px; font-weight:700; letter-spacing:0.2px;">Coming Soon</h2>
+            <p style="margin:0 0 16px; line-height:1.5; color: rgba(255,255,255,0.85);">This feature will be available very soon. We're working to bring you the best experience.</p>
+            <div style="display:flex; gap:10px; justify-content:flex-end;">
+                <button type="button" id="coming-soon-ok" style="background:#00d9ff; color:#001628; border:none; border-radius:10px; padding:10px 16px; font-weight:700; cursor:pointer;">Got it</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Panel de edición móvil optimizado -->
     <div id="mobile-editor-panel">
         <div class="mobile-editor-header">
@@ -6467,6 +6479,8 @@
         let generatedPdfBlob = null;
         let userSession = null;
         let hasActiveSubscription = false;
+        // Flag para activar POPUP "Coming Soon" en el botón Descargar (ACTIVADO)
+        let comingSoonMode = true;
         
         // Account Modal Management
         const accountButton = document.getElementById('account-button');
@@ -6486,6 +6500,22 @@
                 updateModalContent();
             });
         }
+
+        // Coming Soon modal handlers
+        const comingSoonModal = document.getElementById('coming-soon-modal');
+        const comingSoonClose = document.getElementById('coming-soon-close');
+        const comingSoonOk = document.getElementById('coming-soon-ok');
+        function showComingSoon() {
+            if (comingSoonModal) comingSoonModal.style.display = 'flex';
+        }
+        function hideComingSoon() {
+            if (comingSoonModal) comingSoonModal.style.display = 'none';
+        }
+        if (comingSoonClose) comingSoonClose.addEventListener('click', hideComingSoon);
+        if (comingSoonOk) comingSoonOk.addEventListener('click', hideComingSoon);
+        if (comingSoonModal) comingSoonModal.addEventListener('click', (e) => {
+            if (e.target === comingSoonModal) hideComingSoon();
+        });
         
         // Close modal
         if (modalCloseBtn) {
@@ -6637,6 +6667,12 @@
         
         // Función para abrir descarga o pago
         async function openDownloadPage() {
+            // Fallback temporal: mostrar popup "Próximamente" cuando el flag esté activo
+            if (comingSoonMode) {
+                showComingSoon();
+                return;
+            }
+
             // Si no hay sesión activa, mostrar modal para login/registro
             if (!userSession) {
                 accountModal.classList.add('active');

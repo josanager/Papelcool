@@ -100,8 +100,18 @@ function base64UrlEncode(bytes) {
 
 function randomBytes(length) {
   const array = new Uint8Array(length);
-  crypto.getRandomValues(array);
+  (globalThis.crypto || crypto).getRandomValues(array);
   return array;
+}
+
+function safeRandomBytes(length) {
+  try {
+    return randomBytes(length);
+  } catch (e) {
+    const arr = new Uint8Array(length);
+    for (let i = 0; i < length; i++) arr[i] = Math.floor(Math.random() * 256);
+    return arr;
+  }
 }
 
 async function pkceChallengeFromVerifier(verifier) {
@@ -112,18 +122,36 @@ async function pkceChallengeFromVerifier(verifier) {
 
 // Iniciar login OAuth
 async function handleLogin(env) {
-  const REDIRECT_URI = 'https://papelcool.com/api/auth/callback';
-  const scope = encodeURIComponent('user:read memberships:read');
-  const state = base64UrlEncode(randomBytes(16));
-  const verifier = base64UrlEncode(randomBytes(32));
-  const challenge = await pkceChallengeFromVerifier(verifier);
-  const authUrl = `https://whop.com/oauth?client_id=${encodeURIComponent(env.WHOP_CLIENT_ID)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${scope}&state=${state}&code_challenge=${challenge}&code_challenge_method=S256`;
-  
-  // Guardar state y verifier en cookie temporal
-  const oauthMeta = btoa(JSON.stringify({ state, verifier, ts: Date.now() }));
-  const resp = Response.redirect(authUrl, 302);
-  resp.headers.set('Set-Cookie', `whop_oauth=${oauthMeta}; Path=/; Domain=papelcool.com; HttpOnly; Secure; SameSite=Lax; Max-Age=600`);
-  return resp;
+  try {
+    const REDIRECT_URI = 'https://papelcool.com/api/auth/callback';
+    const scope = encodeURIComponent('user:read memberships:read');
+    const state = base64UrlEncode(safeRandomBytes(16));
+    let verifier = null;
+    let challenge = null;
+    try {
+      verifier = base64UrlEncode(randomBytes(32));
+      challenge = await pkceChallengeFromVerifier(verifier);
+    } catch (e) {
+      // Fallback sin PKCE
+      console.warn('PKCE generation failed, continuing without PKCE');
+    }
+
+    const baseUrl = `https://whop.com/oauth?client_id=${encodeURIComponent(env.WHOP_CLIENT_ID)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${scope}&state=${state}`;
+    const authUrl = challenge ? `${baseUrl}&code_challenge=${challenge}&code_challenge_method=S256` : baseUrl;
+
+    // Guardar state y verifier en cookie temporal
+    const meta = { state, ts: Date.now() };
+    if (verifier) meta.verifier = verifier;
+    const oauthMeta = btoa(JSON.stringify(meta));
+    const resp = Response.redirect(authUrl, 302);
+    resp.headers.set('Set-Cookie', `whop_oauth=${oauthMeta}; Path=/; Domain=papelcool.com; HttpOnly; Secure; SameSite=Lax; Max-Age=600`);
+    return resp;
+  } catch (err) {
+    return new Response(JSON.stringify({ error: 'login_failed', message: String(err && err.message || err) }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://papelcool.com', 'Access-Control-Allow-Credentials': 'true' }
+    });
+  }
 }
 
 // Callback OAuth
