@@ -3800,10 +3800,22 @@
             appMode = appMode === 'edit' ? 'play' : 'edit';
             const isMobile = window.innerWidth <= 1024;
             
+            // Referencias a los botones de preset-action-buttons
+            const backToShowcaseBtn = document.getElementById('back-to-showcase-btn');
+            const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
+            
             if (appMode === 'play') {
                 // Modo juego
                 // NOTA: Botones de modo ahora están en preset-action-buttons
                 // El icono se actualiza automáticamente en el nuevo botón
+                
+                // Ocultar botones de volver a showcase y descargar PDF
+                if (backToShowcaseBtn) {
+                    backToShowcaseBtn.style.display = 'none';
+                }
+                if (downloadPdfBtnMoved && downloadPdfBtnMoved.classList.contains('active')) {
+                    downloadPdfBtnMoved.style.display = 'none';
+                }
                 
                 // GUARDAR estado actual de la cámara en modo presets (ANTES de la animación)
                 savedPresetCameraPos = camera.position.clone();
@@ -3838,6 +3850,14 @@
                 // Modo edición (volver a presets)
                 // NOTA: Botones de modo ahora están en preset-action-buttons
                 // El icono se actualiza automáticamente en el nuevo botón
+                
+                // Mostrar botones de volver a showcase y descargar PDF
+                if (backToShowcaseBtn) {
+                    backToShowcaseBtn.style.display = '';
+                }
+                if (downloadPdfBtnMoved && downloadPdfBtnMoved.classList.contains('active')) {
+                    downloadPdfBtnMoved.style.display = '';
+                }
                 
                 // En móvil, mostrar el panel del editor y ocultar controles de juego
                 if (isMobile) {
