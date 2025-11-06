@@ -2136,6 +2136,197 @@
                 height: 22px;
             }
         }
+        
+        /* Account button (top-right corner) */
+        #account-button {
+            position: fixed;
+            right: 20px;
+            top: 20px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 20;
+            pointer-events: auto;
+        }
+        
+        #account-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        #account-button svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        /* Account modal */
+        #account-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            backdrop-filter: blur(4px);
+        }
+        
+        #account-modal.active {
+            display: flex;
+        }
+        
+        .account-modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 255, 255, 0.2);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            position: relative;
+        }
+        
+        .modal-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .modal-close-btn svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+        }
+        
+        .modal-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: #00ffff;
+            margin: 0 0 1.5rem;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .modal-user-info {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-user-email {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin: 0 0 0.5rem;
+        }
+        
+        .modal-subscription-status {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-top: 0.5rem;
+        }
+        
+        .modal-subscription-status.active {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid rgba(76, 175, 80, 0.4);
+        }
+        
+        .modal-subscription-status.inactive {
+            background: rgba(255, 152, 0, 0.2);
+            color: #FF9800;
+            border: 1px solid rgba(255, 152, 0, 0.4);
+        }
+        
+        .modal-button {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 0.75rem;
+        }
+        
+        .modal-button-primary {
+            background: linear-gradient(135deg, #00ffff 0%, #0099ff 100%);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+        }
+        
+        .modal-button-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 255, 0.4);
+        }
+        
+        .modal-button-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .modal-button-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .modal-button-logout {
+            background: rgba(244, 67, 54, 0.1);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.3);
+        }
+        
+        .modal-button-logout:hover {
+            background: rgba(244, 67, 54, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 768px) {
+            #account-button {
+                right: 15px;
+                top: 15px;
+                width: 44px;
+                height: 44px;
+            }
+            
+            #account-button svg {
+                width: 22px;
+                height: 22px;
+            }
+            
+            .account-modal-content {
+                padding: 2rem;
+            }
+        }
     </style>
     
 </head>
@@ -2266,6 +2457,58 @@
                             <span>PRESETS</span>
                         </div>
                     </div>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Account Button -->
+    <button type="button" id="account-button" aria-label="Account">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+        </svg>
+    </button>
+    
+    <!-- Account Modal -->
+    <div id="account-modal">
+        <div class="account-modal-content">
+            <button type="button" class="modal-close-btn" id="modal-close-btn" aria-label="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+            
+            <h2 class="modal-title">Account</h2>
+            
+            <!-- Content when not logged in -->
+            <div id="modal-logged-out" style="display: none;">
+                <p style="color: rgba(255, 255, 255, 0.8); text-align: center; margin-bottom: 1.5rem;">
+                    Login to access your downloads and manage your subscription
+                </p>
+                <button type="button" id="login-btn" class="modal-button modal-button-primary">
+                    Login with Whop
+                </button>
+            </div>
+            
+            <!-- Content when logged in -->
+            <div id="modal-logged-in" style="display: none;">
+                <div class="modal-user-info">
+                    <p class="modal-user-email" id="user-email">email@example.com</p>
+                    <div class="modal-subscription-status" id="subscription-status">
+                        <!-- Will be updated dynamically -->
+                    </div>
+                </div>
+                
+                <button type="button" id="subscribe-btn" class="modal-button modal-button-primary" style="display: none;">
+                    Subscribe ($10/month)
+                </button>
+                
+                <button type="button" id="manage-subscription-btn" class="modal-button modal-button-secondary" style="display: none;">
+                    Manage Subscription
+                </button>
+                
+                <button type="button" id="logout-btn" class="modal-button modal-button-logout">
+                    Logout
                 </button>
             </div>
         </div>
@@ -6218,33 +6461,193 @@
         
         // Variables para la página de descarga
         let generatedPdfBlob = null;
+        let userSession = null;
+        let hasActiveSubscription = false;
         
-        // Función para redirigir a la pasarela de pago
-        function openDownloadPage() {
-            // Redirigir a /checkout/ con el preset seleccionado como parámetro
-            window.location.href = `/checkout/?preset=${currentPresetCharacter}`;
+        // Account Modal Management
+        const accountButton = document.getElementById('account-button');
+        const accountModal = document.getElementById('account-modal');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const subscribeBtn = document.getElementById('subscribe-btn');
+        const manageSubBtn = document.getElementById('manage-subscription-btn');
+        const modalLoggedOut = document.getElementById('modal-logged-out');
+        const modalLoggedIn = document.getElementById('modal-logged-in');
+        
+        // Open modal
+        if (accountButton) {
+            accountButton.addEventListener('click', () => {
+                accountModal.classList.add('active');
+                updateModalContent();
+            });
         }
         
-        // Detectar si el usuario vuelve del checkout con pago exitoso
-        window.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const paymentStatus = urlParams.get('payment');
-            const presetFromUrl = urlParams.get('preset');
-            const receiptId = urlParams.get('receipt');
+        // Close modal
+        if (modalCloseBtn) {
+            modalCloseBtn.addEventListener('click', () => {
+                accountModal.classList.remove('active');
+            });
+        }
+        
+        // Close modal when clicking outside
+        accountModal.addEventListener('click', (e) => {
+            if (e.target === accountModal) {
+                accountModal.classList.remove('active');
+            }
+        });
+        
+        // Login button
+        if (loginBtn) {
+            loginBtn.addEventListener('click', () => {
+                window.location.href = '/api/auth/login';
+            });
+        }
+        
+        // Logout button
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async () => {
+                try {
+                    await fetch('/api/auth/logout', { credentials: 'include' });
+                    userSession = null;
+                    hasActiveSubscription = false;
+                    accountModal.classList.remove('active');
+                    window.location.reload();
+                } catch (error) {
+                    console.error('Logout error:', error);
+                }
+            });
+        }
+        
+        // Subscribe button
+        if (subscribeBtn) {
+            subscribeBtn.addEventListener('click', () => {
+                window.location.href = `/checkout/?preset=${currentPresetCharacter || 'mira'}`;
+            });
+        }
+        
+        // Manage subscription button
+        if (manageSubBtn) {
+            manageSubBtn.addEventListener('click', () => {
+                // Open Whop customer portal
+                window.open('https://whop.com/hub/', '_blank');
+            });
+        }
+        
+        // Check session and update UI
+        async function checkSession() {
+            try {
+                const response = await fetch('/api/auth/session', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                if (data.authenticated) {
+                    userSession = data.user;
+                    await checkMembership();
+                } else {
+                    userSession = null;
+                    hasActiveSubscription = false;
+                }
+            } catch (error) {
+                console.error('Session check error:', error);
+                userSession = null;
+                hasActiveSubscription = false;
+            }
+        }
+        
+        // Check membership status
+        async function checkMembership() {
+            try {
+                const response = await fetch('/api/auth/memberships', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                
+                hasActiveSubscription = data.hasActivePlan || false;
+                console.log('Subscription status:', hasActiveSubscription ? 'Active' : 'Inactive');
+            } catch (error) {
+                console.error('Membership check error:', error);
+                hasActiveSubscription = false;
+            }
+        }
+        
+        // Update modal content based on session
+        function updateModalContent() {
+            if (userSession) {
+                modalLoggedOut.style.display = 'none';
+                modalLoggedIn.style.display = 'block';
+                
+                document.getElementById('user-email').textContent = userSession.email;
+                
+                const statusEl = document.getElementById('subscription-status');
+                if (hasActiveSubscription) {
+                    statusEl.textContent = '✓ Active Subscription';
+                    statusEl.className = 'modal-subscription-status active';
+                    subscribeBtn.style.display = 'none';
+                    manageSubBtn.style.display = 'block';
+                } else {
+                    statusEl.textContent = 'No Active Subscription';
+                    statusEl.className = 'modal-subscription-status inactive';
+                    subscribeBtn.style.display = 'block';
+                    manageSubBtn.style.display = 'none';
+                }
+            } else {
+                modalLoggedOut.style.display = 'block';
+                modalLoggedIn.style.display = 'none';
+            }
+        }
+        
+        // Función para abrir descarga o pago
+        async function openDownloadPage() {
+            // Si no hay sesión activa, mostrar modal para login
+            if (!userSession) {
+                accountModal.classList.add('active');
+                updateModalContent();
+                return;
+            }
             
-            if (paymentStatus === 'success' && presetFromUrl && receiptId) {
-                console.log('✅ Pago completado. Generando PDF...');
-                console.log('Preset:', presetFromUrl);
-                console.log('Receipt ID:', receiptId);
+            // Si tiene suscripción activa, generar PDF directamente
+            if (hasActiveSubscription) {
+                console.log('✓ Usuario con suscripción activa. Generando PDF...');
+                await generatePDFAfterPayment('subscription');
+            } else {
+                // Si no tiene suscripción, redirigir a checkout
+                window.location.href = `/checkout/?preset=${currentPresetCharacter}`;
+            }
+        }
+        
+        // Detectar eventos al cargar la página
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Check session on load
+            await checkSession();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Handle successful subscription
+            if (urlParams.get('subscribed') === 'true') {
+                console.log('✓ Subscripción exitosa. Revalidando...');
+                await checkSession();
+                const preset = urlParams.get('preset') || 'mira';
                 
-                // Cargar el preset correspondiente
-                currentPresetCharacter = presetFromUrl;
-                loadPreset(presetFromUrl);
+                if (hasActiveSubscription) {
+                    // Load preset and generate PDF
+                    currentPresetCharacter = preset;
+                    loadPreset(preset);
+                    setTimeout(async () => {
+                        await generatePDFAfterPayment('subscription');
+                    }, 2000);
+                }
                 
-                // Esperar a que el modelo se cargue y generar PDF automáticamente
-                setTimeout(() => {
-                    generatePDFAfterPayment(receiptId);
-                }, 2000);
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            // Handle logged status
+            if (urlParams.get('logged') === 'true') {
+                console.log('✓ Login exitoso');
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
             }
         });
 
