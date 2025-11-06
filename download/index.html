@@ -48,6 +48,9 @@
 
   <script>
     let generatedBlob = null;
+    let workerReady = false;
+    let started = false;
+    let requestStart = null;
 
     function qs(id){ return document.getElementById(id); }
     const bar = qs('bar');
@@ -61,7 +64,9 @@
       const preset = url.searchParams.get('preset') || 'mira';
       const worker = document.getElementById('worker');
 
-      const requestStart = () => {
+      requestStart = () => {
+        if (started) return;
+        started = true;
         try {
           worker.contentWindow.postMessage({ type: 'REQUEST_GENERATE_PDF', preset }, '*');
         } catch (e) {
@@ -71,16 +76,31 @@
       };
 
       if (worker.contentWindow) {
-        // Espera breve para que index.html termine de cargar sus scripts
-        setTimeout(requestStart, 800);
+        if (workerReady) {
+          requestStart();
+        } else {
+          setTimeout(() => { if (!started) requestStart(); }, 1200);
+        }
       } else {
-        worker.addEventListener('load', requestStart, { once: true });
+        worker.addEventListener('load', () => {
+          if (workerReady) {
+            requestStart();
+          } else {
+            setTimeout(() => { if (!started) requestStart(); }, 1200);
+          }
+        }, { once: true });
       }
     });
 
     // Recibir progreso y resultado desde index.html
     window.addEventListener('message', (event) => {
       const data = event.data || {};
+      if (data.type === 'WORKER_READY') {
+        workerReady = true;
+        if (requestStart && !started) {
+          requestStart();
+        }
+      }
       if (data.type === 'PDF_PROGRESS') {
         const p = Math.max(0, Math.min(100, Number(data.percent) || 0));
         bar.style.width = p + '%';

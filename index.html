@@ -6268,36 +6268,14 @@
                 }
             }
         });
-        
-        // Función para generar PDF después del pago
-        async function generatePDFAfterPayment(receiptId) {
-            const pdfProgress = document.getElementById('pdf-progress-container');
-            const downloadBtn = document.getElementById('final-download-btn');
-            
-            // Mostrar barra de progreso
-            if (pdfProgress) pdfProgress.classList.remove('hidden');
-            
+
+        window.addEventListener('load', () => {
             try {
-                // Generar el PDF
-                generatedPdfBlob = await generatePDF(true);
-                
-                // Ocultar barra de progreso
-                if (pdfProgress) pdfProgress.classList.add('hidden');
-                
-                // Mostrar botón de descarga
-                if (downloadBtn) downloadBtn.classList.remove('hidden');
-                
-                console.log('✅ PDF generado y listo para descargar');
-                console.log('📧 Receipt ID:', receiptId);
-            } catch (error) {
-                console.error('Error al generar PDF:', error);
-                alert('Hubo un error al generar el PDF. Por favor, intenta de nuevo.');
-                // Limpiar parámetros de URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-        }
-        
-        
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: 'WORKER_READY' }, '*');
+                }
+            } catch (e) {}
+        });
         
         // Event listener para botón de descarga final
         const finalDownloadBtn = document.getElementById('final-download-btn');
