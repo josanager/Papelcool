@@ -6542,18 +6542,38 @@
         async function checkSession() {
             try {
                 const response = await fetch('/api/auth/session', {
-                    credentials: 'include'
+                    credentials: 'include',
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
                 });
+                
+                console.log('Session response status:', response.status);
+                
+                if (!response.ok) {
+                    console.warn('Session check returned non-OK status:', response.status);
+                    userSession = null;
+                    hasActiveSubscription = false;
+                    if (accountButton) {
+                        accountButton.classList.remove('visible');
+                    }
+                    return;
+                }
+                
                 const data = await response.json();
+                console.log('Session data:', data);
                 
                 if (data.authenticated) {
                     userSession = data.user;
+                    console.log('✓ Usuario autenticado:', userSession.email);
                     await checkMembership();
                     // Mostrar botón Account después de login exitoso
                     if (accountButton) {
                         accountButton.classList.add('visible');
                     }
                 } else {
+                    console.log('Usuario NO autenticado');
                     userSession = null;
                     hasActiveSubscription = false;
                     // Ocultar botón Account si no hay sesión
@@ -6562,7 +6582,9 @@
                     }
                 }
             } catch (error) {
-                console.error('Session check error:', error);
+                console.error('Session check error (catch):', error);
+                console.error('Error type:', error.constructor.name);
+                console.error('Error message:', error.message);
                 userSession = null;
                 hasActiveSubscription = false;
                 if (accountButton) {
