@@ -23,7 +23,7 @@
     const presetCharacter = urlParams.get('preset') || 'mira';
     
     window.onWhopPaymentComplete = (planId, receiptId) => {
-      window.location.href = `/download/?preset=${presetCharacter}&receipt=${receiptId}`;
+      window.location.href = `/api/verify?receipt=${receiptId}&preset=${presetCharacter}`;
     };
     
     // After Whop mounts the iframe, ensure it allows internal scrolling
