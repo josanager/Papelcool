@@ -6221,8 +6221,8 @@
         
         // Función para redirigir a la pasarela de pago
         function openDownloadPage() {
-            // Redirigir a checkout.html con el preset seleccionado como parámetro
-            window.location.href = `checkout.html?preset=${currentPresetCharacter}`;
+            // Redirigir a /checkout/ con el preset seleccionado como parámetro
+            window.location.href = `/checkout/?preset=${currentPresetCharacter}`;
         }
         
         // Detectar si el usuario vuelve del checkout con pago exitoso

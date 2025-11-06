@@ -23,7 +23,7 @@
     const presetCharacter = urlParams.get('preset') || 'mira';
     
     window.onWhopPaymentComplete = (planId, receiptId) => {
-      window.location.href = `download.html?preset=${presetCharacter}&receipt=${receiptId}`;
+      window.location.href = `/download/?preset=${presetCharacter}&receipt=${receiptId}`;
     };
     
     // After Whop mounts the iframe, ensure it allows internal scrolling
@@ -46,7 +46,7 @@
 <body>
   <div id="whop-wrapper" style="min-height: 100vh; min-height: 100dvh; min-height: 100svh; padding-block: 4vh; padding-block: 4dvh; padding-block: 4svh; box-sizing: border-box;">
     <div 
-      data-whop-checkout-plan-id="plan_EyvFAPscVswNH"
+      data-whop-checkout-plan-id="plan_gu19tZ3r5G6Ie"
       data-whop-checkout-theme="dark"
       data-whop-checkout-theme-accent-color="cyan"
       data-whop-checkout-skip-redirect="true"
