@@ -3555,6 +3555,7 @@
         let circularAnimStartAngle = 0;
         let circularAnimTargetAngle = 0;
         let circularAnimProgress = 0;
+        let circularAnimTargetDuration = 1.5;
         let circularAnimRadius = 0;
         let circularAnimHeight = 0;
         
@@ -3577,6 +3578,7 @@
             circularAnimHeight = currentPos.y;
             circularAnimStartAngle = Math.atan2(currentPos.x, currentPos.z);
             circularAnimTargetAngle = targetAngle;
+            circularAnimTargetDuration = duration / 1000; // Convertir a segundos
             circularAnimProgress = 0;
             isCircularCameraAnimation = true;
             isAnimatingCamera = false; // Desactivar animación lineal
@@ -3817,15 +3819,15 @@
                     downloadPdfBtnMoved.style.display = 'none';
                 }
                 
-                // GUARDAR estado actual de la cámara en modo presets (ANTES de la animación)
-                savedPresetCameraPos = camera.position.clone();
-                savedPresetCameraTarget = controls.target.clone();
-                // Calcular y guardar la distancia (zoom) actual
-                savedPresetCameraDistance = camera.position.distanceTo(controls.target);
-                console.log('📸 Guardado estado de cámara presets:');
-                console.log('   Posición:', savedPresetCameraPos);
-                console.log('   Target:', savedPresetCameraTarget);
-                console.log('   Distancia/Zoom:', savedPresetCameraDistance);
+                // Posiciones fijas para modo presets y modo juego
+                const presetCameraPos = new THREE.Vector3(0, 1.5, 5);
+                const playCameraPos = new THREE.Vector3(0.0000061, 1.5, -5);
+                
+                // GUARDAR estado de cámara presets
+                savedPresetCameraPos = presetCameraPos.clone();
+                savedPresetCameraTarget = modelCenter.clone();
+                savedPresetCameraDistance = 5;
+                console.log('📸 Modo Juego - Posición objetivo:', playCameraPos);
                 
                 // En móvil, ocultar el panel del editor y mostrar controles de juego
                 if (isMobile) {
@@ -3835,16 +3837,26 @@
                     ui.editor.style.display = 'none';
                 }
                 
-                // NUEVA ANIMACIÓN: Girar cámara lateralmente 180° hacia la espalda del modelo
+                // ANIMACIÓN: Girar cámara 180° hacia posición fija de modo juego
                 controls.enabled = false;
                 
-                // Obtener ángulo actual y calcular ángulo objetivo (180° más)
-                const currentPos = camera.position.clone();
-                const currentAngle = Math.atan2(currentPos.x, currentPos.z);
-                const targetAngle = currentAngle + Math.PI; // +180 grados
+                // Calcular ángulo objetivo (π radianes = 180°, que lleva a Z = -5)
+                const targetAngle = Math.PI;
                 
-                // Iniciar animación circular lateral
-                animateCameraCircular(targetAngle, 1500); // 1.5 segundos de giro lateral
+                // Iniciar animación circular lateral hacia posición fija (rápida)
+                animateCameraCircular(targetAngle, 800, 5); // 800ms - rápida
+                
+                // Después de la animación, configurar controles para solo rotación horizontal
+                setTimeout(() => {
+                    // Configurar OrbitControls para solo rotación horizontal
+                    controls.enabled = true;
+                    controls.enablePan = false;
+                    controls.enableZoom = false;
+                    const polarAngle = Math.acos(1.5 / 5);
+                    controls.minPolarAngle = controls.maxPolarAngle = polarAngle;
+                    controls.enableDamping = true;
+                    controls.dampingFactor = 0.1;
+                }, 800);
                 
             } else {
                 // Modo edición (volver a presets)
@@ -3867,8 +3879,8 @@
                     ui.editor.style.display = 'block';
                 }
                 
-                // ANIMACIÓN DE REGRESO: Restaurar posición y dirección exacta de modo presets
-                controls.enabled = true;
+                // ANIMACIÓN DE REGRESO: Volver a posición fija de modo presets
+                controls.enabled = false;
                 
                 // Resetear posición y rotación del modelo
                 if(loadedModel) {
@@ -3876,27 +3888,23 @@
                     loadedModel.rotation.set(0, 0, 0);
                 }
                 
-                // Verificar que tengamos el estado guardado
-                if (savedPresetCameraPos && savedPresetCameraTarget && savedPresetCameraDistance) {
-                    console.log('🔄 Restaurando estado de cámara presets:');
-                    console.log('   Posición:', savedPresetCameraPos);
-                    console.log('   Target:', savedPresetCameraTarget);
-                    console.log('   Distancia/Zoom:', savedPresetCameraDistance);
-                    
-                    // Calcular ángulo objetivo basado en la posición guardada
-                    const targetAngle = Math.atan2(savedPresetCameraPos.x, savedPresetCameraPos.z);
-                    
-                    // Iniciar animación circular lateral hacia la posición guardada
-                    // IMPORTANTE: Pasar la distancia guardada como tercer parámetro
-                    animateCameraCircular(targetAngle, 1500, savedPresetCameraDistance);
-                    
-                    // Después de la animación, también restaurar el target (hacia dónde mira)
-                    // Esto se hará cuando termine la animación circular
-                } else {
-                    // Fallback: usar posición original si no hay estado guardado
-                    console.warn('⚠️ No hay estado guardado, usando posición original');
-                    animateCameraTo(originalCameraPos, modelCenter, 1500);
-                }
+                console.log('🔄 Restaurando cámara a modo presets: (0, 1.5, 5)');
+                
+                // Calcular ángulo objetivo para volver a Z=5 (ángulo 0)
+                const targetAngle = 0;
+                
+                // Iniciar animación circular lateral hacia posición fija de presets (rápida)
+                animateCameraCircular(targetAngle, 900, 5); // 900ms - rápida
+                
+                // Después de la animación, restaurar configuración completa de OrbitControls
+                setTimeout(() => {
+                    controls.enabled = true;
+                    controls.enablePan = true;
+                    controls.enableZoom = true;
+                    controls.minPolarAngle = 0;
+                    controls.maxPolarAngle = Math.PI;
+                    controls.dampingFactor = 0.1;
+                }, 900);
             }
         }
         
@@ -5418,6 +5426,41 @@
             // No actualizar cámara durante animación circular
             if (isCircularCameraAnimation) return;
             
+            // En modo juego con OrbitControls activos:
+            // - Mantener offset del modo juego: (0.0000061, 1.5, -5) desde el modelo
+            // - Seguir al modelo en X y Z según el ángulo actual de la cámara
+            // - Permitir rotación horizontal libre
+            if (controls.enabled) {
+                // Calcular el ángulo horizontal actual de la cámara respecto al modelo
+                const modelPos = loadedModel.position.clone();
+                const camPos = camera.position.clone();
+                const relativePos = camPos.sub(modelPos);
+                const currentAzimuth = Math.atan2(relativePos.x, relativePos.z);
+                
+                // Calcular nueva posición manteniendo el ángulo pero siguiendo al modelo
+                // Radio fijo de 5 unidades (distancia desde el modelo)
+                const radius = 5;
+                const offsetX = Math.sin(currentAzimuth) * radius;
+                const offsetZ = Math.cos(currentAzimuth) * radius;
+                
+                // Posición deseada = posición del modelo + offset rotado
+                const desiredPos = loadedModel.position.clone();
+                desiredPos.x += offsetX;
+                desiredPos.y += 1.5; // Altura fija relativa al modelo
+                desiredPos.z += offsetZ;
+                
+                // Actualizar posición de cámara
+                camera.position.lerp(desiredPos, 0.1);
+                
+                // Target siempre sigue al modelo
+                const lookAtPos = loadedModel.position.clone();
+                lookAtPos.y = modelCenter.y;
+                controls.target.lerp(lookAtPos, 0.1);
+                
+                return;
+            }
+            
+            // Código original solo se ejecuta si controls están desactivados
             // Interpolar suavemente el ángulo actual hacia el ángulo objetivo
             if (isCameraTransitioning) {
                 const angleDiff = targetCameraAngle - cameraAngle;
@@ -5554,7 +5597,9 @@
 
              // Animación circular de cámara (giro lateral)
              if(isCircularCameraAnimation) {
-                 circularAnimProgress += dt / 1.5; // 1.5 segundos de duración
+                 // Duración dinámica basada en el tiempo objetivo
+                 const animDuration = circularAnimTargetDuration || 1.5;
+                 circularAnimProgress += dt / animDuration;
                  
                  if(circularAnimProgress >= 1.0) {
                      circularAnimProgress = 1.0;
