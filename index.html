@@ -747,13 +747,6 @@
                 display: none !important;
             }
             
-            /* Botón de cámara en desktop - posicionado dentro del panel */
-            
-            /* Ocultar controles móviles en desktop */
-            #mobile-game-controls {
-                display: none !important;
-            }
-            
         }
         
         /* Estilos para controles de juego móvil */
@@ -3501,8 +3494,6 @@
             legRightCarouselPanel: document.getElementById('leg-right-carousel-panel'),
             legRightCarouselContainer: document.getElementById('leg-right-carousel-container'),
             palette: document.getElementById('color-palette'),
-            playBtnMobile: null, // Eliminado - ahora en preset-action-buttons
-            playBtnDesktop: null, // Eliminado - ahora en preset-action-buttons
             editorPanelWrapper: document.getElementById('editor-panel-wrapper'),
             editor: document.getElementById('editor-container'),
             title: document.getElementById('title'),
@@ -3519,7 +3510,6 @@
                     ui.headParts[key].innerHTML = icons[key];
                 }
             });
-            // NOTA: Botones de modo ahora están en preset-action-buttons
         }
         
         // Función para crear el botón de cabello animado
@@ -3846,9 +3836,6 @@
             
             if (appMode === 'play') {
                 // Modo juego
-                // NOTA: Botones de modo ahora están en preset-action-buttons
-                // El icono se actualiza automáticamente en el nuevo botón
-                
                 // Ocultar botones de volver a showcase y descargar PDF
                 if (backToShowcaseBtn) {
                     backToShowcaseBtn.style.display = 'none';
@@ -3865,7 +3852,6 @@
                 savedPresetCameraPos = presetCameraPos.clone();
                 savedPresetCameraTarget = modelCenter.clone();
                 savedPresetCameraDistance = 5;
-                console.log('📸 Modo Juego - Posición objetivo:', playCameraPos);
                 
                 // Ocultar nombre del personaje
                 hideCharacterName();
@@ -3902,9 +3888,6 @@
                 
             } else {
                 // Modo edición (volver a presets)
-                // NOTA: Botones de modo ahora están en preset-action-buttons
-                // El icono se actualiza automáticamente en el nuevo botón
-                
                 // Mostrar botones de volver a showcase y descargar PDF
                 if (backToShowcaseBtn) {
                     backToShowcaseBtn.style.display = '';
@@ -3936,8 +3919,6 @@
                     loadedModel.rotation.set(0, 0, 0);
                 }
                 
-                console.log('🔄 Restaurando cámara a modo presets: (0, 1.5, 5)');
-                
                 // Calcular ángulo objetivo para volver a Z=5 (ángulo 0)
                 const targetAngle = 0;
                 
@@ -3955,9 +3936,6 @@
                 }, 900);
             }
         }
-        
-        // NOTA: Event listeners de botones de modo ahora están en preset-action-buttons
-        // Ver líneas ~5934-5938 donde se configura playModeBtnMoved
         
         // Inicializar controles móviles
         setupJoystick();
@@ -5668,7 +5646,6 @@
                          if(savedPresetCameraPos && savedPresetCameraTarget) {
                              camera.position.copy(savedPresetCameraPos);
                              controls.target.copy(savedPresetCameraTarget);
-                             console.log('✅ Cámara restaurada a estado presets');
                          }
                      }
                  }
@@ -6070,8 +6047,6 @@
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-            
-            // NOTA: Botón de modo ahora está en preset-action-buttons
         }
         
         function updateShowcaseRotation() {
@@ -6507,8 +6482,6 @@
                 changeLegClothing('left', legTexture.leftUrl);
                 changeLegClothing('right', legTexture.rightUrl);
             }
-            
-            console.log(`Personaje ${characterName} aplicado completamente`);
         }
         
         // Variables globales para almacenar el personaje actual seleccionado
@@ -6730,8 +6703,6 @@
                     }
                 });
                 
-                console.log('Session response status:', response.status);
-                
                 if (!response.ok) {
                     console.warn('Session check returned non-OK status:', response.status);
                     userSession = null;
@@ -6743,18 +6714,15 @@
                 }
                 
                 const data = await response.json();
-                console.log('Session data:', data);
                 
                 if (data.authenticated) {
                     userSession = data.user;
-                    console.log('✓ Usuario autenticado:', userSession.email);
                     await checkMembership();
                     // Mostrar botón Account después de login exitoso
                     if (accountButton) {
                         accountButton.classList.add('visible');
                     }
                 } else {
-                    console.log('Usuario NO autenticado');
                     userSession = null;
                     hasActiveSubscription = false;
                     // Ocultar botón Account si no hay sesión
@@ -6783,7 +6751,6 @@
                 const data = await response.json();
                 
                 hasActiveSubscription = data.hasActivePlan || false;
-                console.log('Subscription status:', hasActiveSubscription ? 'Active' : 'Inactive');
             } catch (error) {
                 console.error('Membership check error:', error);
                 hasActiveSubscription = false;
@@ -6833,11 +6800,9 @@
             
             // Si tiene suscripción activa, generar PDF directamente
             if (hasActiveSubscription) {
-                console.log('✓ Usuario con suscripción activa. Generando PDF...');
                 await generatePDFAfterPayment('subscription');
             } else {
                 // Si está logueado pero NO tiene suscripción, ir a página de pricing
-                console.log('⚠️ Usuario sin suscripción. Redirigiendo a pricing...');
                 window.location.href = `/pricing/?preset=${currentPresetCharacter}`;
             }
         }
@@ -6851,7 +6816,6 @@
             
             // Handle successful subscription
             if (urlParams.get('subscribed') === 'true') {
-                console.log('✓ Subscripción exitosa. Revalidando...');
                 await checkSession();
                 const preset = urlParams.get('preset') || 'mira';
                 
@@ -6870,7 +6834,6 @@
             
             // Handle logged status
             if (urlParams.get('logged') === 'true') {
-                console.log('✓ Login exitoso');
                 // Clean URL
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
@@ -6914,9 +6877,6 @@
                 
                 // Mostrar botón de descarga
                 if (downloadBtn) downloadBtn.classList.remove('hidden');
-                
-                console.log('✅ PDF generado y listo para descargar');
-                console.log('📧 Receipt ID:', receiptId);
             } catch (error) {
                 console.error('Error al generar PDF:', error);
                 alert('Hubo un error al generar el PDF. Por favor, intenta de nuevo.');
@@ -6939,8 +6899,6 @@
                     link.download = `${currentPresetCharacter}_Papelcool.pdf`;
                     link.click();
                     URL.revokeObjectURL(url);
-                    
-                    console.log('📥 PDF descargado exitosamente');
                     
                     // Ocultar botón de descarga
                     finalDownloadBtn.classList.add('hidden');
@@ -6986,8 +6944,6 @@
         
         // Función para colorear un SVG (mejorada para colorear TODOS los elementos)
         function colorSVG(svgText, color) {
-            console.log(`[colorSVG] Coloreando con: ${color}`);
-            
             // Crear un parser DOM
             const parser = new DOMParser();
             const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
@@ -7027,8 +6983,6 @@
                     elementsColored++;
                 }
             });
-            
-            console.log(`[colorSVG] Elementos coloreados: ${elementsColored}`);
             
             // Serializar de vuelta a string
             const serializer = new XMLSerializer();
@@ -7145,10 +7099,6 @@
                     // Calcular escala basada en las dimensiones deseadas
                     const scaleX = width !== null ? width / origW : 1.0;
                     const scaleY = height !== null ? height / origH : 1.0;
-                    
-                    console.log(`[overlayTextureOnTemplate] Dimensiones originales: ${origW}x${origH}`);
-                    console.log(`[overlayTextureOnTemplate] Dimensiones objetivo: ${width || 'auto'}x${height || 'auto'}`);
-                    console.log(`[overlayTextureOnTemplate] Escala calculada: ${scaleX.toFixed(3)}x, ${scaleY.toFixed(3)}y`);
                 }
                 
                 // CONSTRUIR TRANSFORMACIÓN COMPLETA
@@ -7201,9 +7151,6 @@
                 if (transforms.length > 0) {
                     const transformValue = transforms.join(' ');
                     textureGroup.setAttribute('transform', transformValue);
-                    console.log(`[overlayTextureOnTemplate] Transform aplicado: ${transformValue}`);
-                } else {
-                    console.log(`[overlayTextureOnTemplate] Sin transformaciones`);
                 }
                 
                 // Copiar todos los elementos de la textura al grupo
@@ -7214,8 +7161,6 @@
                 
                 // Agregar el grupo al template (antes del último elemento para que quede visible)
                 templateElement.appendChild(textureGroup);
-                
-                console.log(`[overlayTextureOnTemplate] Textura agregada con ${textureElement.children.length} elementos`);
                 
                 // Serializar de vuelta
                 const serializer = new XMLSerializer();
