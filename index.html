@@ -3069,18 +3069,18 @@
             { name: 'None', frontUrl: null, backUrl: null }, // Opción sin ropa
             { 
                 name: 'Mira', 
-                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/torso/front/Mira-torso-front.svg',
-                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/torso/back/Mira-torso-back.svg'
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/torso/Mira-torso-front.svg',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/torso/Mira-torso-back.svg'
             },
             { 
                 name: 'Rumi', 
-                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/torso/front/Rumi-torso-front.svg',
-                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/torso/back/Rumi-torso-back.svg'
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/torso/Rumi-torso-front.svg',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/torso/Rumi-torso-back.svg'
             },
             { 
                 name: 'Zoey', 
-                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/torso/front/Zoey-torso-front.svg',
-                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/torso/back/Zoey-torso-back.svg'
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/torso/Zoey-torso-front.svg',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/torso/Zoey-torso-back.svg'
             }
         ];
         let currentTorsoFrontURL = torsoClothingTextures[0].frontUrl; // Por defecto 'None'
@@ -3114,15 +3114,15 @@
             { name: 'None', leftUrl: null, rightUrl: null }, // Opción sin estilo
             { 
                 name: 'Mira', 
-                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/left/Mira-leg-left.svg',
-                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/right/Mira-leg-right.svg'
+                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/legs/Mira-legs-left.svg',
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/legs/Mira-legs-right.svg'
             },
             { 
                 name: 'Rumi', 
-                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/left/Rumi-leg-left.svg',
-                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/right/Rumi-leg-right.svg'
+                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/legs/Rumi-legs-left.svg',
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/legs/Rumi-legs-right.svg'
             },
-            { 
+            {
                 name: 'Zoey', 
                 leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/left/Zoey-leg-left.svg',
                 rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/right/Zoey-leg-right.svg'
@@ -6367,16 +6367,24 @@
             
             // Aplicar color al torso
             if (modelParts.torso) {
+                // Colores especiales para torso
+                let torsoColor = lightestSkinColor;
+                if (characterName === 'Mira') {
+                    torsoColor = new THREE.Color('#243267');
+                } else if (characterName === 'Rumi') {
+                    torsoColor = new THREE.Color('#FAB823');
+                }
+                
                 modelParts.torso.traverse((child) => {
                     if (child.isMesh && child.material && child.material.color) {
                         // Excluir meshes de ropa
                         if (child !== torsoFrontMesh && child !== torsoBackMesh) {
                             if (Array.isArray(child.material)) {
                                 child.material.forEach(mat => {
-                                    if (mat.color) mat.color.copy(lightestSkinColor);
+                                    if (mat.color) mat.color.copy(torsoColor);
                                 });
                             } else {
-                                child.material.color.copy(lightestSkinColor);
+                                child.material.color.copy(torsoColor);
                             }
                         }
                     }
@@ -6405,6 +6413,16 @@
             });
             
             // Aplicar color a las piernas
+            // Colores especiales para piernas
+            let legsColor = lightestSkinColor;
+            if (characterName === 'Mira') {
+                legsColor = new THREE.Color('#390626');
+            } else if (characterName === 'Rumi') {
+                legsColor = new THREE.Color('#292827');
+            } else if (characterName === 'Zoey') {
+                legsColor = new THREE.Color('#16275C');
+            }
+            
             modelParts.legs.forEach(leg => {
                 if (leg) {
                     leg.traverse((child) => {
@@ -6414,10 +6432,10 @@
                                 child !== legRightFrontMesh && child !== legRightBackMesh) {
                                 if (Array.isArray(child.material)) {
                                     child.material.forEach(mat => {
-                                        if (mat.color) mat.color.copy(lightestSkinColor);
+                                        if (mat.color) mat.color.copy(legsColor);
                                     });
                                 } else {
-                                    child.material.color.copy(lightestSkinColor);
+                                    child.material.color.copy(legsColor);
                                 }
                             }
                         }
