@@ -2620,15 +2620,19 @@
         <div class="ui-panel p-4 space-y-4">
             <div id="editor-container">
                 <!-- Botones de personajes preestablecidos -->
+                <!-- ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético) -->
+                <!-- Para añadir nuevos personajes: agregar al INICIO de la lista -->
                 <div id="presets-section" class="pt-2 border-t border-cyan-500/30 mb-4 hidden">
                     <div class="flex gap-3 pointer-events-auto">
-                        <button type="button" id="preset-mira-btn" class="preset-character-btn">
+                        <!-- ZOEY - Personaje más nuevo (2024) -->
+                        <button type="button" id="preset-zoey-btn" class="preset-character-btn">
                             <div class="button-outer">
                                 <div class="button-inner">
-                                    <img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/Mira-icon.svg" alt="Mira" class="character-icon-img">
+                                    <img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/Zoey-icon.svg" alt="Zoey" class="character-icon-img">
                                 </div>
                             </div>
                         </button>
+                        <!-- RUMI - Personaje intermedio (2024) -->
                         <button type="button" id="preset-rumi-btn" class="preset-character-btn">
                             <div class="button-outer">
                                 <div class="button-inner">
@@ -2636,10 +2640,11 @@
                                 </div>
                             </div>
                         </button>
-                        <button type="button" id="preset-zoey-btn" class="preset-character-btn">
+                        <!-- MIRA - Personaje más antiguo (2024) -->
+                        <button type="button" id="preset-mira-btn" class="preset-character-btn">
                             <div class="button-outer">
                                 <div class="button-inner">
-                                    <img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/Zoey-icon.svg" alt="Zoey" class="character-icon-img">
+                                    <img src="https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/Mira-icon.svg" alt="Mira" class="character-icon-img">
                                 </div>
                             </div>
                         </button>
@@ -2998,22 +3003,24 @@
         const modelURL = './papelcool.glb';
         
         // --- DATA PARA OJOS ---
+        // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
         const eyeTextures = [
             { name: 'Male', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Male-eyes.svg' },
             { name: 'Female', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Female-eyes.svg' },
-            { name: 'Mira', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Mira-eyes.svg' },
+            { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Zoey-eyes.svg' },
             { name: 'Rumi', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Rumi-eyes.svg' },
-            { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Zoey-eyes.svg' }
+            { name: 'Mira', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Mira-eyes.svg' }
         ];
         let currentEyeTextureURL = eyeTextures[0].url;
 
         // --- DATA PARA CEJAS ---
+        // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
         const eyebrowTextures = [
             { name: 'Male', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Male-eyebrown.svg' },
             { name: 'Female', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Female-eyebrown.svg' },
-            { name: 'Mira', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Mira-eyebrown.svg' },
+            { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Zoey-eyebrown.svg' },
             { name: 'Rumi', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Rumi-eyebrown.svg' },
-            { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Zoey-eyebrown.svg' }
+            { name: 'Mira', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Mira-eyebrown.svg' }
         ];
         let currentEyebrowTextureURL = eyebrowTextures[0].url;
 
@@ -3024,25 +3031,27 @@
         let currentNoseTextureURL = noseTextures[0].url;
 
         // --- DATA PARA OREJAS ---
+        // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
         const earTextures = [
             { name: 'Basic', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Basic-ears.svg' },
-            { name: 'Mira', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Mira-ears.svg' },
+            { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Zoey-ears.svg' },
             { name: 'Rumi', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Rumi-ears.svg' },
-            { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Zoey-ears.svg' }
+            { name: 'Mira', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Mira-ears.svg' }
         ];
         let currentEarTextureURL = earTextures[0].url;
         let currentEarSide = null; // 'left' o 'right'
 
         // --- DATA PARA CABELLO ---
+        // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
         const hairTextures = [
             { name: 'None', frontUrl: null, backUrl: null, leftUrl: null, rightUrl: null, upUrl: null }, // Opción sin cabello
             { 
-                name: 'Mira', 
-                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Mira-front-hair.svg',
-                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Mira-back-hair.svg',
-                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/hair/Mira-hair-left.svg',
-                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/hair/Mira-hair-right.svg',
-                upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/hair/Mira-hair-up.svg'
+                name: 'Zoey', 
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Zoey-front-hair.svg',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Zoey-back-hair.svg',
+                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/hair/Zoey-hair-left.svg',
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/hair/Zoey-hair-right.svg',
+                upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/hair/Zoey-hair-up.svg'
             },
             { 
                 name: 'Rumi', 
@@ -3053,12 +3062,12 @@
                 upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/hair/Rumi-hair-up.svg'
             },
             { 
-                name: 'Zoey', 
-                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Zoey-front-hair.svg',
-                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Zoey-back-hair.svg',
-                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/hair/Zoey-hair-left.svg',
-                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/hair/Zoey-hair-right.svg',
-                upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/hair/Zoey-hair-up.svg'
+                name: 'Mira', 
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Mira-front-hair.svg',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Mira-back-hair.svg',
+                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/hair/Mira-hair-left.svg',
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/hair/Mira-hair-right.svg',
+                upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/hair/Mira-hair-up.svg'
             }
         ];
         let currentHairFrontURL = hairTextures[0].frontUrl; // Por defecto 'None'
@@ -3068,12 +3077,13 @@
         let currentHairUpURL = hairTextures[0].upUrl; // Por defecto 'None'
 
         // --- DATA PARA VESTIMENTA DEL TORSO ---
+        // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
         const torsoClothingTextures = [
             { name: 'None', frontUrl: null, backUrl: null }, // Opción sin ropa
             { 
-                name: 'Mira', 
-                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/torso/Mira-torso-front.svg',
-                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/torso/Mira-torso-back.svg'
+                name: 'Zoey', 
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/torso/Zoey-torso-front.svg',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/torso/Zoey-torso-back.svg'
             },
             { 
                 name: 'Rumi', 
@@ -3081,21 +3091,22 @@
                 backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/torso/Rumi-torso-back.svg'
             },
             { 
-                name: 'Zoey', 
-                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/torso/Zoey-torso-front.svg',
-                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/torso/Zoey-torso-back.svg'
+                name: 'Mira', 
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/torso/Mira-torso-front.svg',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/torso/Mira-torso-back.svg'
             }
         ];
         let currentTorsoFrontURL = torsoClothingTextures[0].frontUrl; // Por defecto 'None'
         let currentTorsoBackURL = torsoClothingTextures[0].backUrl; // Por defecto 'None'
 
         // --- DATA PARA ESTILOS DE BRAZOS ---
+        // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
         const armTextures = [
             { name: 'None', leftUrl: null, rightUrl: null }, // Opción sin estilo
-            { 
-                name: 'Mira', 
-                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/left/Mira-arm-left.svg',
-                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/right/Mira-arm-right.svg'
+            {
+                name: 'Zoey', 
+                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/left/Zoey-arm-left.svg',
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/right/Zoey-arm-right.svg'
             },
             {
                 name: 'Rumi',
@@ -3103,9 +3114,9 @@
                 rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/right/Rumi-arm-right.svg'
             },
             {
-                name: 'Zoey',
-                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/left/Zoey-arm-left.svg',
-                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/right/Zoey-arm-right.svg'
+                name: 'Mira',
+                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/left/Mira-arm-left.svg',
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/right/Mira-arm-right.svg'
             }
         ];
         let currentArmLeftURL = armTextures[0].leftUrl; // Por defecto 'None'
@@ -3113,12 +3124,13 @@
         let currentArmSide = null; // 'left' o 'right'
 
         // --- DATA PARA ESTILOS DE PIERNAS ---
+        // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
         const legTextures = [
             { name: 'None', leftUrl: null, rightUrl: null }, // Opción sin estilo
-            { 
-                name: 'Mira', 
-                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/legs/Mira-legs-left.svg',
-                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/legs/Mira-legs-right.svg'
+            {
+                name: 'Zoey', 
+                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/left/Zoey-leg-left.svg',
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/right/Zoey-leg-right.svg'
             },
             { 
                 name: 'Rumi', 
@@ -3126,9 +3138,9 @@
                 rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/legs/Rumi-legs-right.svg'
             },
             {
-                name: 'Zoey', 
-                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/left/Zoey-leg-left.svg',
-                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/right/Zoey-leg-right.svg'
+                name: 'Mira', 
+                leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/legs/Mira-legs-left.svg',
+                rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/legs/Mira-legs-right.svg'
             }
         ];
         let currentLegLeftURL = legTextures[0].leftUrl; // Por defecto 'None'
