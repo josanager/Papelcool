@@ -1965,24 +1965,7 @@
             margin: 0;
         }
         
-        /* Botón de descarga - overlay pantalla completa */
-        .final-download-btn-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #0a0e27;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-        
-        .final-download-btn-overlay.hidden {
-            display: none !important;
-        }
-        
+        /* Botón de descarga - Opción A: centrado, moderno, ancho fijo */
         .final-download-btn-overlay {
             position: fixed;
             top: 50%;
@@ -1990,7 +1973,7 @@
             transform: translate(-50%, -50%);
             background: linear-gradient(135deg, #00ffff 0%, #0099ff 100%);
             border: none;
-            color: #000;
+            color: #001628;
             font-family: 'Orbitron', sans-serif;
             font-size: 1.3rem;
             font-weight: 700;
@@ -2001,15 +1984,21 @@
             align-items: center;
             gap: 0.75rem;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.4);
-            max-width: 350px;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.5), 0 0 40px rgba(0, 255, 255, 0.3);
+            width: 280px;
+            height: 60px;
             justify-content: center;
             z-index: 10000;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+        
+        .final-download-btn-overlay.hidden {
+            display: none !important;
         }
         
         .final-download-btn-overlay:hover {
             transform: translate(-50%, calc(-50% - 3px)) scale(1.05);
-            box-shadow: 0 8px 30px rgba(0, 255, 255, 0.6);
+            box-shadow: 0 8px 30px rgba(0, 255, 255, 0.7), 0 0 60px rgba(0, 255, 255, 0.5);
         }
         
         .final-download-btn-overlay:active {
@@ -2019,11 +2008,7 @@
         .final-download-btn-overlay svg {
             width: 28px;
             height: 28px;
-        }
-        
-        .final-download-btn svg {
-            width: 28px;
-            height: 28px;
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
         }
         
         @media (max-width: 768px) {
@@ -2058,13 +2043,14 @@
                 margin-bottom: 2rem;
             }
             
-            .final-download-btn {
+            .final-download-btn-overlay {
                 font-size: 1.1rem;
                 padding: 1rem 2rem;
-                max-width: 100%;
+                width: 240px;
+                height: 56px;
             }
             
-            .final-download-btn svg {
+            .final-download-btn-overlay svg {
                 width: 24px;
                 height: 24px;
             }
@@ -6649,6 +6635,9 @@
                         try {
                             const details = await actions.order.capture();
                             if (details && details.status === 'COMPLETED') {
+                                // Cerrar modal automáticamente
+                                accountModal.classList.remove('active');
+                                // Generar PDF
                                 await generatePDFAfterPayment('paypal');
                             }
                         } catch (e) {}
