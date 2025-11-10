@@ -7,12 +7,75 @@ export default {
   }
 };
 
+const ALLOWED_ORIGINS = new Set([
+  'https://papelcool.com',
+  'https://www.papelcool.com',
+  'https://papelcool.pages.dev'
+]);
+
+function resolveOrigin(request) {
+  const requestOrigin = request.headers.get('Origin');
+  if (requestOrigin && ALLOWED_ORIGINS.has(requestOrigin)) {
+    return requestOrigin;
+  }
+  const { protocol, hostname } = new URL(request.url);
+  const fallbackOrigin = `${protocol}//${hostname}`;
+  if (ALLOWED_ORIGINS.has(fallbackOrigin)) {
+    return fallbackOrigin;
+  }
+  return 'https://papelcool.com';
+}
+
+function applyCorsHeaders(headers, origin, includeCredentials = true) {
+  headers.set('Access-Control-Allow-Origin', origin);
+  if (includeCredentials) {
+    headers.set('Access-Control-Allow-Credentials', 'true');
+  }
+  headers.set('Vary', 'Origin');
+}
+
+function resolveCookieDomain(hostname) {
+  if (!hostname) return null;
+
+  if (hostname === 'papelcool.com' || hostname.endsWith('.papelcool.com')) {
+    return 'papelcool.com';
+  }
+
+  if (hostname === 'papelcool.pages.dev') {
+    return 'papelcool.pages.dev';
+  }
+
+  if (hostname.includes('.')) {
+    return hostname;
+  }
+
+  return null;
+}
+
+function formatCookie(name, value, {
+  domain,
+  path = '/',
+  httpOnly = false,
+  secure = false,
+  sameSite,
+  maxAge
+} = {}) {
+  let cookie = `${name}=${value}`;
+  if (domain) cookie += `; Domain=${domain}`;
+  if (path) cookie += `; Path=${path}`;
+  if (httpOnly) cookie += '; HttpOnly';
+  if (secure) cookie += '; Secure';
+  if (sameSite) cookie += `; SameSite=${sameSite}`;
+  if (typeof maxAge === 'number') cookie += `; Max-Age=${maxAge}`;
+  return cookie;
+}
+
 async function handleRequest(request, env) {
   const url = new URL(request.url);
-  
+
   // Manejar OPTIONS para CORS preflight
   if (request.method === 'OPTIONS') {
-    return handleCORS();
+    return handleCORS(request);
   }
   
   // OAuth callback
@@ -22,7 +85,7 @@ async function handleRequest(request, env) {
   
   // Login endpoint
   if (url.pathname === '/api/auth/login') {
-    return handleLogin(env);
+    return handleLogin(request, env);
   }
   
   // Session check
@@ -32,7 +95,7 @@ async function handleRequest(request, env) {
   
   // Logout
   if (url.pathname === '/api/auth/logout') {
-    return handleLogout();
+    return handleLogout(request);
   }
   
   // Check memberships
@@ -50,21 +113,23 @@ async function handleRequest(request, env) {
 }
 
 // Manejar CORS preflight
-function handleCORS() {
+function handleCORS(request) {
+  const origin = resolveOrigin(request);
+  const headers = new Headers({
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Accept, Authorization',
+    'Access-Control-Max-Age': '86400'
+  });
+  applyCorsHeaders(headers, origin);
   return new Response(null, {
     status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': 'https://papelcool.com',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Accept',
-      'Access-Control-Allow-Credentials': 'true',
-      'Access-Control-Max-Age': '86400',
-    }
+    headers
   });
 }
 
 // Endpoint de diagnóstico (no expone valores, solo estados)
 function handleDebug(request, env) {
+  const origin = resolveOrigin(request);
   const cookies = request.headers.get('Cookie') || '';
   const hasSession = /whop_session=([^;]+)/.test(cookies);
   const hasOauth = /whop_oauth=([^;]+)/.test(cookies);
@@ -82,13 +147,9 @@ function handleDebug(request, env) {
     route_ok: true,
     now: new Date().toISOString()
   };
-  return new Response(JSON.stringify(info, null, 2), {
-    headers: {
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': 'https://papelcool.com',
-      'Access-Control-Allow-Credentials': 'true'
-    }
-  });
+  const headers = new Headers({ 'Content-Type': 'application/json' });
+  applyCorsHeaders(headers, origin);
+  return new Response(JSON.stringify(info, null, 2), { headers });
 }
 
 // Helpers PKCE
@@ -121,8 +182,11 @@ async function pkceChallengeFromVerifier(verifier) {
 }
 
 // Iniciar login OAuth
-async function handleLogin(env) {
+async function handleLogin(request, env) {
   try {
+    const url = new URL(request.url);
+    const cookieDomain = resolveCookieDomain(url.hostname);
+    const secure = url.protocol === 'https:';
     const REDIRECT_URI = 'https://papelcool.com/api/auth/callback';
     const scope = encodeURIComponent('user:read memberships:read');
     const state = base64UrlEncode(safeRandomBytes(16));
@@ -144,12 +208,24 @@ async function handleLogin(env) {
     if (verifier) meta.verifier = verifier;
     const oauthMeta = btoa(JSON.stringify(meta));
     const resp = Response.redirect(authUrl, 302);
-    resp.headers.set('Set-Cookie', `whop_oauth=${oauthMeta}; Path=/; Domain=papelcool.com; HttpOnly; Secure; SameSite=Lax; Max-Age=600`);
+    const cookie = formatCookie('whop_oauth', oauthMeta, {
+      domain: cookieDomain,
+      httpOnly: true,
+      secure,
+      sameSite: 'Lax',
+      maxAge: 600
+    });
+    resp.headers.set('Set-Cookie', cookie);
     return resp;
   } catch (err) {
+    const origin = resolveOrigin(request);
     return new Response(JSON.stringify({ error: 'login_failed', message: String(err && err.message || err) }), {
       status: 500,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': 'https://papelcool.com', 'Access-Control-Allow-Credentials': 'true' }
+      headers: (() => {
+        const headers = new Headers({ 'Content-Type': 'application/json' });
+        applyCorsHeaders(headers, origin);
+        return headers;
+      })()
     });
   }
 }
@@ -158,7 +234,9 @@ async function handleLogin(env) {
 async function handleOAuthCallback(url, request, env) {
   const code = url.searchParams.get('code');
   const state = url.searchParams.get('state');
-  
+  const cookieDomain = resolveCookieDomain(url.hostname);
+  const secure = url.protocol === 'https:';
+
   if (!code) {
     console.error('No code in callback');
     return Response.redirect('https://papelcool.com/?error=auth_failed', 302);
@@ -289,10 +367,24 @@ async function handleOAuthCallback(url, request, env) {
       }
     });
     // Limpiar cookie PKCE/state y setear sesión
-    response.headers.set('Set-Cookie', `whop_oauth=; Path=/; Domain=papelcool.com; HttpOnly; Secure; SameSite=Lax; Max-Age=0`);
-    response.headers.append('Set-Cookie', `whop_session=${sessionToken}; Path=/; Domain=papelcool.com; HttpOnly; Secure; SameSite=Lax; Max-Age=${7*24*60*60}`);
+    const clearOauthCookie = formatCookie('whop_oauth', '', {
+      domain: cookieDomain,
+      httpOnly: true,
+      secure,
+      sameSite: 'Lax',
+      maxAge: 0
+    });
+    const sessionCookie = formatCookie('whop_session', sessionToken, {
+      domain: cookieDomain,
+      httpOnly: true,
+      secure,
+      sameSite: 'Lax',
+      maxAge: 7 * 24 * 60 * 60
+    });
+    response.headers.set('Set-Cookie', clearOauthCookie);
+    response.headers.append('Set-Cookie', sessionCookie);
     return response;
-    
+
   } catch (error) {
     console.error('OAuth error:', error.message);
     return Response.redirect('https://papelcool.com/?error=oauth_error', 302);
@@ -302,7 +394,8 @@ async function handleOAuthCallback(url, request, env) {
 // Verificar sesión actual
 async function handleSession(request, env) {
   const session = await getSession(request, env);
-  
+  const origin = resolveOrigin(request);
+
   const response = new Response(JSON.stringify(
     session ? {
       authenticated: true,
@@ -315,29 +408,30 @@ async function handleSession(request, env) {
     }
   ), {
     status: 200,
-    headers: { 
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Origin': 'https://papelcool.com',
-      'Access-Control-Allow-Credentials': 'true',
-      'Cache-Control': 'no-store, no-cache, must-revalidate'
-    }
+    headers: (() => {
+      const headers = new Headers({
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-store, no-cache, must-revalidate'
+      });
+      applyCorsHeaders(headers, origin);
+      return headers;
+    })()
   });
-  
+
   return response;
 }
 
 // Obtener membresías del usuario
 async function handleMemberships(request, env) {
   const session = await getSession(request, env);
-  
+  const origin = resolveOrigin(request);
+
   if (!session) {
+    const headers = new Headers({ 'Content-Type': 'application/json' });
+    applyCorsHeaders(headers, origin);
     return new Response(JSON.stringify({ error: 'Not authenticated', hasActivePlan: false }), {
       status: 401,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'https://papelcool.com',
-        'Access-Control-Allow-Credentials': 'true'
-      }
+      headers
     });
   }
   
@@ -350,13 +444,11 @@ async function handleMemberships(request, env) {
     
     if (!membershipsResponse.ok) {
       console.error('Memberships fetch failed:', membershipsResponse.status);
+      const headers = new Headers({ 'Content-Type': 'application/json' });
+      applyCorsHeaders(headers, origin);
       return new Response(JSON.stringify({ hasActivePlan: false, memberships: [] }), {
         status: 200,
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': 'https://papelcool.com',
-          'Access-Control-Allow-Credentials': 'true'
-        }
+        headers
       });
     }
     
@@ -371,37 +463,41 @@ async function handleMemberships(request, env) {
     
     console.log('Memberships check:', activeMembership ? 'ACTIVE' : 'INACTIVE');
     
+    const headers = new Headers({ 'Content-Type': 'application/json' });
+    applyCorsHeaders(headers, origin);
     return new Response(JSON.stringify({
       hasActivePlan: !!activeMembership,
       membership: activeMembership || null
     }), {
       status: 200,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'https://papelcool.com',
-        'Access-Control-Allow-Credentials': 'true'
-      }
+      headers
     });
-    
+
   } catch (error) {
     console.error('Memberships error:', error);
+    const headers = new Headers({ 'Content-Type': 'application/json' });
+    applyCorsHeaders(headers, origin);
     return new Response(JSON.stringify({ error: 'Failed to fetch memberships', hasActivePlan: false }), {
       status: 500,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'https://papelcool.com',
-        'Access-Control-Allow-Credentials': 'true'
-      }
+      headers
     });
   }
 }
 
 // Logout
-function handleLogout() {
+function handleLogout(request) {
+  const url = new URL(request.url);
+  const cookieDomain = resolveCookieDomain(url.hostname);
+  const secure = url.protocol === 'https:';
   const response = Response.redirect('https://papelcool.com/?logged_out=true', 302);
-  response.headers.set('Set-Cookie', 
-    'whop_session=; Path=/; Domain=papelcool.com; HttpOnly; Secure; SameSite=Lax; Max-Age=0'
-  );
+  const cookie = formatCookie('whop_session', '', {
+    domain: cookieDomain,
+    httpOnly: true,
+    secure,
+    sameSite: 'Lax',
+    maxAge: 0
+  });
+  response.headers.set('Set-Cookie', cookie);
   return response;
 }
 
