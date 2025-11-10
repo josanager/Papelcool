@@ -2526,6 +2526,7 @@
                 <button type="button" id="login-btn" class="modal-button modal-button-primary">
                     Login with Whop
                 </button>
+                <div id="paypal-button-container" style="margin-top: 12px;"></div>
             </div>
             
             <!-- Content when logged in -->
@@ -6794,6 +6795,50 @@
                 modalLoggedIn.style.display = 'none';
             }
         }
+
+        let paypalButtonsRendered = false;
+        async function setupPayPalButtons() {
+            const container = document.getElementById('paypal-button-container');
+            if (!container || paypalButtonsRendered) return;
+            const CLIENT_ID = 'AaX814j4yRb4LgDMVuYLuyMolRMrl4NtOcqNXfPAdhGe4_snn3o9LW9qh4TgNo4hN98qbBCR6mbtzCNr';
+            if (!CLIENT_ID || CLIENT_ID === 'REPLACE_WITH_PAYPAL_CLIENT_ID') return;
+            function render() {
+                if (!window.paypal) return;
+                paypal.Buttons({
+                    style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'paypal' },
+                    createOrder: (data, actions) => {
+                        const amount = '5.00';
+                        const description = `Papelcool Template: ${currentPresetCharacter || 'preset'}`;
+                        return actions.order.create({
+                            purchase_units: [{
+                                amount: { value: amount, currency_code: 'USD' },
+                                description,
+                            }],
+                            application_context: { shipping_preference: 'NO_SHIPPING' }
+                        });
+                    },
+                    onApprove: async (data, actions) => {
+                        try {
+                            const details = await actions.order.capture();
+                            if (details && details.status === 'COMPLETED') {
+                                await generatePDFAfterPayment('paypal');
+                            }
+                        } catch (e) {}
+                    },
+                    onError: () => {}
+                }).render('#paypal-button-container');
+                paypalButtonsRendered = true;
+            }
+            if (!document.getElementById('paypal-sdk')) {
+                const s = document.createElement('script');
+                s.id = 'paypal-sdk';
+                s.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(CLIENT_ID)}&currency=USD&intent=capture&components=buttons`;
+                s.onload = render;
+                document.head.appendChild(s);
+            } else {
+                render();
+            }
+        }
         
         // Función para abrir descarga o pago
         async function openDownloadPage() {
@@ -6807,6 +6852,7 @@
             if (!userSession) {
                 accountModal.classList.add('active');
                 updateModalContent();
+                setupPayPalButtons();
                 return;
             }
             
@@ -6825,6 +6871,11 @@
             await checkSession();
             
             const urlParams = new URLSearchParams(window.location.search);
+            
+            // Abrir pestaña Presets si viene en la URL (?tab=presets)
+            if (urlParams.get('tab') === 'presets' && typeof presetsBtn !== 'undefined' && presetsBtn) {
+                try { presetsBtn.click(); } catch (e) { /* noop */ }
+            }
             
             // Handle successful subscription
             if (urlParams.get('subscribed') === 'true') {
