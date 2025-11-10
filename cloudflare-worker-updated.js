@@ -1,9 +1,17 @@
 // Cloudflare Worker - Sistema de OAuth y Suscripción para Papelcool
-// Versión actualizada con mejor manejo de CORS y cookies
+// Versión ES Module - Compatible con Cloudflare Workers
 
 export default {
   async fetch(request, env, ctx) {
-    return handleRequest(request, env);
+    try {
+      return await handleRequest(request, env);
+    } catch (error) {
+      console.error('Worker error:', error);
+      return new Response(JSON.stringify({ error: 'Internal server error', message: error.message }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
   }
 };
 
@@ -143,8 +151,16 @@ async function handleLogin(env) {
     const meta = { state, ts: Date.now() };
     if (verifier) meta.verifier = verifier;
     const oauthMeta = btoa(JSON.stringify(meta));
-    const resp = Response.redirect(authUrl, 302);
-    resp.headers.set('Set-Cookie', `whop_oauth=${oauthMeta}; Path=/; Domain=papelcool.com; HttpOnly; Secure; SameSite=Lax; Max-Age=600`);
+    
+    // Crear respuesta manualmente para poder modificar headers (Response.redirect es inmutable)
+    // SameSite=None es necesario para cookies cross-site
+    const resp = new Response(null, {
+      status: 302,
+      headers: {
+        'Location': authUrl,
+        'Set-Cookie': `whop_oauth=${oauthMeta}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=600`
+      }
+    });
     return resp;
   } catch (err) {
     return new Response(JSON.stringify({ error: 'login_failed', message: String(err && err.message || err) }), {
@@ -161,7 +177,10 @@ async function handleOAuthCallback(url, request, env) {
   
   if (!code) {
     console.error('No code in callback');
-    return Response.redirect('https://papelcool.com/?error=auth_failed', 302);
+    return new Response(null, {
+      status: 302,
+      headers: { 'Location': 'https://papelcool.com/?error=auth_failed' }
+    });
   }
   
   try {
@@ -220,7 +239,10 @@ async function handleOAuthCallback(url, request, env) {
     if (!tokenResponse.ok) {
       const errorText = await tokenResponse.text();
       console.error('Token exchange failed:', tokenResponse.status, errorText);
-      return Response.redirect('https://papelcool.com/?error=token_failed', 302);
+      return new Response(null, {
+        status: 302,
+        headers: { 'Location': 'https://papelcool.com/?error=token_failed' }
+      });
     }
     
     const tokenData = await tokenResponse.json();
@@ -236,7 +258,10 @@ async function handleOAuthCallback(url, request, env) {
     
     if (!userResponse.ok) {
       console.error('User fetch failed:', userResponse.status);
-      return Response.redirect('https://papelcool.com/?error=user_failed', 302);
+      return new Response(null, {
+        status: 302,
+        headers: { 'Location': 'https://papelcool.com/?error=user_failed' }
+      });
     }
     
     const userData = await userResponse.json();
@@ -267,35 +292,22 @@ async function handleOAuthCallback(url, request, env) {
     
     console.log('✓ Cookie de sesión creada');
     
-    // Responder con HTML (200) para asegurar que el navegador persista la cookie
-    const html = `<!doctype html>
-      <html>
-        <head><meta charset="utf-8"><title>Logging in...</title></head>
-        <body style="background:#0a0e27;color:#fff;font-family:system-ui;display:flex;align-items:center;justify-content:center;height:100vh;">
-          <div>
-            <h1 style="font-family:Arial;margin:0 0 8px;">Iniciando sesión...</h1>
-            <p>Redirigiendo a Papelcool</p>
-            <script>
-              setTimeout(function(){ window.location.replace('https://papelcool.com/?logged=true'); }, 50);
-            </script>
-          </div>
-        </body>
-      </html>`;
-    const response = new Response(html, {
-      status: 200,
-      headers: {
-        'Content-Type': 'text/html; charset=utf-8',
-        'Cache-Control': 'no-store'
-      }
-    });
-    // Limpiar cookie PKCE/state y setear sesión
-    response.headers.set('Set-Cookie', `whop_oauth=; Path=/; Domain=papelcool.com; HttpOnly; Secure; SameSite=Lax; Max-Age=0`);
-    response.headers.append('Set-Cookie', `whop_session=${sessionToken}; Path=/; Domain=papelcool.com; HttpOnly; Secure; SameSite=Lax; Max-Age=${7*24*60*60}`);
-    return response;
+    // Usar redirect 302 real con cookies (siguiendo documentación oficial de Whop)
+    // Redirigir a la pestaña Presets en lugar del showcase
+    const headers = new Headers();
+    headers.set('Location', 'https://papelcool.com/?tab=presets&logged=true');
+    headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+    // Limpiar cookie PKCE/state y setear sesión (dos Set-Cookie en el mismo response)
+    headers.append('Set-Cookie', `whop_oauth=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0`);
+    headers.append('Set-Cookie', `whop_session=${sessionToken}; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=${7*24*60*60}`);
+    return new Response(null, { status: 302, headers });
     
   } catch (error) {
     console.error('OAuth error:', error.message);
-    return Response.redirect('https://papelcool.com/?error=oauth_error', 302);
+    return new Response(null, {
+      status: 302,
+      headers: { 'Location': 'https://papelcool.com/?error=oauth_error' }
+    });
   }
 }
 
@@ -398,10 +410,14 @@ async function handleMemberships(request, env) {
 
 // Logout
 function handleLogout() {
-  const response = Response.redirect('https://papelcool.com/?logged_out=true', 302);
-  response.headers.set('Set-Cookie', 
-    'whop_session=; Path=/; Domain=papelcool.com; HttpOnly; Secure; SameSite=Lax; Max-Age=0'
-  );
+  // Crear respuesta manualmente para poder modificar headers (Response.redirect es inmutable)
+  const response = new Response(null, {
+    status: 302,
+    headers: {
+      'Location': 'https://papelcool.com/?logged_out=true',
+      'Set-Cookie': 'whop_session=; Path=/; HttpOnly; Secure; SameSite=None; Max-Age=0'
+    }
+  });
   return response;
 }
 
