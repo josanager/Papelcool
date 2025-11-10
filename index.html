@@ -6615,8 +6615,8 @@
         let generatedPdfBlob = null;
         let userSession = null;
         let hasActiveSubscription = false;
-        // Flag para activar POPUP "Coming Soon" en el botón Descargar (ACTIVADO)
-        let comingSoonMode = true;
+        // Flag para activar POPUP "Coming Soon" en el botón Descargar (DESACTIVADO - Sistema de autenticación activo)
+        let comingSoonMode = false;
         
         // Account Modal Management
         const accountButton = document.getElementById('account-button');
