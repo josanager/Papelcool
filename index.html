@@ -38,6 +38,8 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
     <!-- jsPDF para generación de PDFs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <!-- Canvas Confetti para animación de celebración -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -1838,21 +1840,60 @@
             box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
         }
         
-        .pdf-progress-text {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3rem;
-            font-weight: 700;
-            color: white;
-            margin: 0 0 1rem;
-            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-        }
-        
-        .pdf-progress-message {
+        .pdf-preparing-text {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.2rem;
+            font-weight: 600;
             color: rgba(255, 255, 255, 0.9);
-            margin: 0 0 2.5rem;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .pdf-progress-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #00ffff;
+            margin: 0;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+        }
+        
+        /* Botón de descarga DENTRO del modal */
+        .final-download-btn-modal {
+            width: 100%;
+            padding: 1.2rem 2rem;
+            background: linear-gradient(135deg, #00ff88 0%, #00cc66 100%);
+            border: none;
+            border-radius: 15px;
+            color: #001628;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .final-download-btn-modal:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 30px rgba(0, 255, 136, 0.7);
+        }
+        
+        .final-download-btn-modal svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .pdf-download-message {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+            text-align: center;
+            line-height: 1.4;
+            margin-top: 1rem;
         }
         
         
@@ -1895,7 +1936,7 @@
             display: none !important;
         }
         
-        /* Contenedor de progreso PDF - overlay pantalla completa */
+        /* Contenedor de progreso PDF - fondo oscuro transparente */
         .pdf-progress-overlay {
             position: fixed;
             top: 0;
@@ -1906,17 +1947,31 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: #0a0e27;
+            background: rgba(0, 0, 0, 0.7);
             z-index: 9999;
+        }
+        
+        /* Modal interno - ventana flotante pequeña */
+        .pdf-progress-modal {
+            background: rgba(0, 22, 40, 0.98);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 255, 255, 0.4);
+            border: 2px solid rgba(0, 255, 255, 0.6);
+            max-width: 500px;
+            width: 90%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
         }
         
         .pdf-progress-overlay.hidden {
             display: none !important;
         }
         
-        .pdf-progress-overlay .pdf-progress-bar-container {
-            width: 90%;
-            max-width: 500px;
+        .pdf-progress-modal .pdf-progress-bar-container {
+            width: 100%;
         }
         
         @keyframes fadeIn {
@@ -2035,12 +2090,7 @@
             }
             
             .pdf-progress-text {
-                font-size: 2.5rem;
-            }
-            
-            .pdf-progress-message {
-                font-size: 1rem;
-                margin-bottom: 2rem;
+                font-size: 1.5rem;
             }
             
             .final-download-btn-overlay {
@@ -2084,7 +2134,7 @@
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.95);
+            background: #FFD700;
             border: none;
             cursor: pointer;
             display: flex;
@@ -2098,6 +2148,7 @@
         .preset-action-btn:hover {
             transform: translateY(-3px) scale(1.05);
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            background: #FFC700;
         }
         
         .preset-action-btn:active {
@@ -2107,6 +2158,10 @@
         .preset-action-btn svg {
             width: 24px;
             height: 24px;
+        }
+        
+        .preset-action-btn svg path {
+            fill: #000000;
         }
         
         /* Botón de PDF inicialmente oculto */
@@ -2372,20 +2427,25 @@
     
     <!-- Barra de progreso (oculta inicialmente) -->
     <div id="pdf-progress-container" class="pdf-progress-overlay hidden">
-        <div id="pdf-progress-bar-container" class="pdf-progress-bar-container">
-            <div id="pdf-progress-bar" class="pdf-progress-bar"></div>
+        <div class="pdf-progress-modal">
+            <div id="pdf-preparing-text" class="pdf-preparing-text">Preparing PDF...</div>
+            <div id="pdf-progress-bar-container" class="pdf-progress-bar-container">
+                <div id="pdf-progress-bar" class="pdf-progress-bar"></div>
+            </div>
+            <div id="pdf-progress-text" class="pdf-progress-text">0%</div>
+            
+            <!-- Botón de descarga DENTRO del modal (oculto inicialmente) -->
+            <button type="button" id="final-download-btn" class="final-download-btn-modal hidden">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z"/>
+                </svg>
+                <span>DOWNLOAD PDF</span>
+            </button>
+            <div id="pdf-download-message" class="pdf-download-message hidden">
+                ℹ️ Your download will start through your browser.<br>Please check your downloads folder.
+            </div>
         </div>
-        <div id="pdf-progress-text" class="pdf-progress-text">0%</div>
-        <p id="pdf-progress-message" class="pdf-progress-message">Generando tu PDF...</p>
     </div>
-    
-    <!-- Botón de descarga (oculto inicialmente) -->
-    <button type="button" id="final-download-btn" class="final-download-btn-overlay hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z"/>
-        </svg>
-        <span>Descargar PDF</span>
-    </button>
 
     <div id="canvas-container"></div>
     <div id="loading-indicator">
@@ -2449,17 +2509,24 @@
         
         <!-- Botón 2: Modo juego (ya existe, lo moveré aquí) -->
         <button type="button" id="play-mode-btn-desktop-moved" class="preset-action-btn play-mode-btn" aria-label="Modo juego">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000">
-                <path d="M10 16.5l6-4.5-6-4.5v9zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M8 5.14v14l11-7z"/>
             </svg>
         </button>
         
         <!-- Botón 3: Descargar PDF (solo visible cuando se selecciona preset) -->
         <button type="button" id="download-pdf-btn-moved" class="preset-action-btn" aria-label="Descargar PDF">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000">
-                <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z"/>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z"/>
             </svg>
         </button>
+        
+        <!-- Botón 4: PROVISIONAL - DESHABILITADO -->
+        <!-- <button type="button" id="quick-download-btn-test" class="preset-action-btn" style="background: linear-gradient(135deg, #00ff88 0%, #00cc66 100%); display: none;" aria-label="Quick Download (TEST)" title="PROVISIONAL: Descarga rápida sin PayPal">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#000000">
+                <path d="M5 20h14v-2H5v2zM19 9h-4V3H9v6H5l7 7 7-7z"/>
+            </svg>
+        </button> -->
     </div>
     
     <!-- Botones de showcase inicial (sin overlay) -->
@@ -2495,8 +2562,6 @@
                     <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                 </svg>
             </button>
-            
-            <h2 class="modal-title">Account</h2>
             
             <!-- Content when not logged in -->
             <div id="modal-logged-out" style="display: none;">
@@ -3011,8 +3076,8 @@
             },
             { 
                 name: 'Rumi', 
-                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Rumi-front-hair.svg',
-                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/back/Rumi-back-hair.svg',
+                frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/hair/Rumi-hair-front.svg',
+                backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/hair/Rumi-hair-back.svg',
                 leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/hair/Rumi-hair-left.svg',
                 rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/hair/Rumi-hair-right.svg',
                 upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/hair/Rumi-hair-up.svg'
@@ -3804,6 +3869,12 @@
             
             if (appMode === 'play') {
                 // Modo juego
+                // Cambiar icono del botón a pausa
+                const playModeBtn = document.getElementById('play-mode-btn-desktop-moved');
+                if (playModeBtn) {
+                    playModeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M14 19h4V5h-4M6 19h4V5H6z"/></svg>';
+                }
+                
                 // Ocultar botones de volver a showcase y descargar PDF
                 if (backToShowcaseBtn) {
                     backToShowcaseBtn.style.display = 'none';
@@ -3856,6 +3927,12 @@
                 
             } else {
                 // Modo edición (volver a presets)
+                // Restaurar icono del botón a play
+                const playModeBtn = document.getElementById('play-mode-btn-desktop-moved');
+                if (playModeBtn) {
+                    playModeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.14v14l11-7z"/></svg>';
+                }
+                
                 // Mostrar botones de volver a showcase y descargar PDF
                 if (backToShowcaseBtn) {
                     backToShowcaseBtn.style.display = '';
@@ -6480,6 +6557,9 @@
             // Mostrar botón pequeño de PDF en la esquina superior izquierda
             const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            // Mostrar botón provisional de descarga rápida
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
         });
         
         document.getElementById('preset-rumi-btn').addEventListener('click', () => {
@@ -6489,6 +6569,9 @@
             // Mostrar botón pequeño de PDF en la esquina superior izquierda
             const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            // Mostrar botón provisional de descarga rápida
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
         });
         
         document.getElementById('preset-zoey-btn').addEventListener('click', () => {
@@ -6498,6 +6581,9 @@
             // Mostrar botón pequeño de PDF en la esquina superior izquierda
             const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            // Mostrar botón provisional de descarga rápida
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
         });
         
         // Event listeners para botones de acciones de presets
@@ -6544,6 +6630,9 @@
                 
                 // Ocultar botón de PDF
                 if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.remove('active');
+                // Ocultar botón provisional
+                const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+                if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'none';
             });
         }
         
@@ -6564,6 +6653,21 @@
                 
                 // Abrir página de descarga
                 openDownloadPage();
+            });
+        }
+        
+        // Botón 4: PROVISIONAL - Descarga rápida sin PayPal (solo para testing)
+        const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+        if (quickDownloadBtnTest) {
+            quickDownloadBtnTest.addEventListener('click', async () => {
+                if (!currentPresetCharacter) {
+                    alert('Por favor, selecciona un personaje preestablecido primero.');
+                    return;
+                }
+                
+                console.log('🚀 DESCARGA RÁPIDA ACTIVADA (sin PayPal)');
+                // Generar PDF directamente, simulando el flujo después del pago
+                await generatePDFAfterPayment('test-quick-download');
             });
         }
         
@@ -6614,7 +6718,8 @@
         async function setupPayPalButtons() {
             const container = document.getElementById('paypal-button-container');
             if (!container || paypalButtonsRendered) return;
-            const CLIENT_ID = 'AaX814j4yRb4LgDMVuYLuyMolRMrl4NtOcqNXfPAdhGe4_snn3o9LW9qh4TgNo4hN98qbBCR6mbtzCNr';
+            // LIVE MODE - Aplicación "Papel Cool" en producción
+            const CLIENT_ID = 'Ac6mtYy-qtDOXerqbrdx5U9geEOM28JoKYa4wd5G1xdNSO3W4KN_TjqNN3zm3UCcO_s9E19nNBwf4REw';
             if (!CLIENT_ID || CLIENT_ID === 'REPLACE_WITH_PAYPAL_CLIENT_ID') return;
             function render() {
                 if (!window.paypal) return;
@@ -6712,6 +6817,10 @@
         async function generatePDFAfterPayment(receiptId) {
             const pdfProgress = document.getElementById('pdf-progress-container');
             const downloadBtn = document.getElementById('final-download-btn');
+            const preparingText = document.getElementById('pdf-preparing-text');
+            const progressBarContainer = document.getElementById('pdf-progress-bar-container');
+            const progressText = document.getElementById('pdf-progress-text');
+            const downloadMessage = document.getElementById('pdf-download-message');
             
             // Mostrar barra de progreso
             if (pdfProgress) pdfProgress.classList.remove('hidden');
@@ -6720,14 +6829,25 @@
                 // Generar el PDF
                 generatedPdfBlob = await generatePDF(true);
                 
-                // Ocultar barra de progreso
-                if (pdfProgress) pdfProgress.classList.add('hidden');
+                // NO cerrar el modal, sino reemplazar contenido
+                // Ocultar texto "Preparing PDF...", barra y porcentaje
+                if (preparingText) preparingText.classList.add('hidden');
+                if (progressBarContainer) progressBarContainer.classList.add('hidden');
+                if (progressText) progressText.classList.add('hidden');
                 
-                // Mostrar botón de descarga
+                // Mostrar botón de descarga DENTRO del modal
                 if (downloadBtn) downloadBtn.classList.remove('hidden');
+                if (downloadMessage) downloadMessage.classList.remove('hidden');
+                
+                // Lanzar confetti
+                if (typeof confetti !== 'undefined') {
+                    launchConfetti();
+                }
             } catch (error) {
                 console.error('Error al generar PDF:', error);
                 alert('Hubo un error al generar el PDF. Por favor, intenta de nuevo.');
+                // Cerrar modal en caso de error
+                if (pdfProgress) pdfProgress.classList.add('hidden');
                 // Limpiar parámetros de URL
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
@@ -6748,8 +6868,28 @@
                     link.click();
                     URL.revokeObjectURL(url);
                     
-                    // Ocultar botón de descarga
-                    finalDownloadBtn.classList.add('hidden');
+                    // Cerrar el modal completamente
+                    const pdfProgress = document.getElementById('pdf-progress-container');
+                    const preparingText = document.getElementById('pdf-preparing-text');
+                    const progressBarContainer = document.getElementById('pdf-progress-bar-container');
+                    const progressText = document.getElementById('pdf-progress-text');
+                    const downloadMessage = document.getElementById('pdf-download-message');
+                    
+                    setTimeout(() => {
+                        if (pdfProgress) pdfProgress.classList.add('hidden');
+                        
+                        // Resetear estado del modal para próxima vez
+                        if (preparingText) preparingText.classList.remove('hidden');
+                        if (progressBarContainer) progressBarContainer.classList.remove('hidden');
+                        if (progressText) progressText.classList.remove('hidden');
+                        if (finalDownloadBtn) finalDownloadBtn.classList.add('hidden');
+                        if (downloadMessage) downloadMessage.classList.add('hidden');
+                        
+                        // Resetear barra de progreso
+                        const progressBar = document.getElementById('pdf-progress-bar');
+                        if (progressBar) progressBar.style.width = '0%';
+                        if (progressText) progressText.textContent = '0%';
+                    }, 500);
                     
                     // Limpiar parámetros de URL
                     window.history.replaceState({}, document.title, window.location.pathname);
@@ -7084,6 +7224,81 @@
             });
         }
         
+        // Función para mostrar botón de descarga con confetti
+        async function showDownloadButton(pdf, filename, progressContainer, percentText) {
+            // Ocultar porcentaje
+            if (percentText) {
+                percentText.style.display = 'none';
+            }
+            
+            // Crear botón de descarga
+            const downloadBtn = document.createElement('button');
+            downloadBtn.style.cssText = 'width:100%;padding:1.2rem 2rem;background:linear-gradient(135deg,#00ff88 0%,#00cc66 100%);border:none;border-radius:15px;color:#001628;font-family:Orbitron,sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;transition:all 0.3s ease;box-shadow:0 4px 20px rgba(0,255,136,0.5);margin-bottom:1rem;';
+            downloadBtn.textContent = 'DOWNLOAD PDF';
+            downloadBtn.onmouseover = () => {
+                downloadBtn.style.transform = 'scale(1.05)';
+                downloadBtn.style.boxShadow = '0 6px 30px rgba(0,255,136,0.7)';
+            };
+            downloadBtn.onmouseout = () => {
+                downloadBtn.style.transform = 'scale(1)';
+                downloadBtn.style.boxShadow = '0 4px 20px rgba(0,255,136,0.5)';
+            };
+            downloadBtn.onclick = () => {
+                pdf.save(filename);
+                // Cerrar modal después de descargar
+                setTimeout(() => {
+                    const overlay = document.getElementById('pdf-generation-overlay');
+                    if (overlay) overlay.remove();
+                    isGeneratingPDF = false;
+                }, 500);
+            };
+            
+            // Crear mensaje informativo
+            const message = document.createElement('div');
+            message.style.cssText = 'color:rgba(255,255,255,0.8);font-size:0.85rem;text-align:center;line-height:1.4;';
+            message.innerHTML = 'ℹ️ Your download will start through your browser.<br>Please check your downloads folder.';
+            
+            // Agregar botón y mensaje al contenedor
+            progressContainer.appendChild(downloadBtn);
+            progressContainer.appendChild(message);
+            
+            // Lanzar confetti
+            launchConfetti();
+        }
+        
+        // Función para lanzar confetti
+        function launchConfetti() {
+            const duration = 3000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000 };
+            
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+            
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+                
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+                
+                const particleCount = 50 * (timeLeft / duration);
+                
+                // Confetti desde la izquierda
+                confetti(Object.assign({}, defaults, {
+                    particleCount,
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+                }));
+                
+                // Confetti desde la derecha
+                confetti(Object.assign({}, defaults, {
+                    particleCount,
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+                }));
+            }, 250);
+        }
+        
         // Función principal para generar el PDF
         async function generatePDF(returnBlob = false) {
             // Verificar que no se esté generando ya un PDF
@@ -7118,19 +7333,18 @@
                 percentText = document.getElementById('pdf-progress-text');
                 progressContainer = null; // No hay popup
             } else {
-                // Crear contenedor de barra de progreso (popup)
-                progressContainer = document.createElement('div');
-                progressContainer.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.95);padding:2rem 3rem;border-radius:15px;z-index:9999;font-family:Orbitron,sans-serif;min-width:400px;box-shadow:0 10px 40px rgba(0,255,255,0.3);border:2px solid rgba(0,255,255,0.5);';
+                // Crear overlay de fondo oscuro transparente
+                const overlay = document.createElement('div');
+                overlay.id = 'pdf-generation-overlay';
+                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9998;display:flex;align-items:center;justify-content:center;';
                 
-                // Título
-                const title = document.createElement('div');
-                title.style.cssText = 'color:#00ffff;font-size:1.2rem;font-weight:bold;margin-bottom:1rem;text-align:center;text-shadow:0 0 10px rgba(0,255,255,0.8);';
-                title.textContent = 'Generating PDF...';
-                progressContainer.appendChild(title);
+                // Crear ventana flotante (mismo tamaño que modal de PayPal)
+                progressContainer = document.createElement('div');
+                progressContainer.style.cssText = 'background:rgba(0,22,40,0.98);padding:3rem;border-radius:20px;z-index:9999;font-family:Orbitron,sans-serif;width:90%;max-width:500px;box-shadow:0 20px 60px rgba(0,255,255,0.4);border:2px solid rgba(0,255,255,0.6);';
                 
                 // Contenedor de la barra
                 const barContainer = document.createElement('div');
-                barContainer.style.cssText = 'width:100%;height:30px;background:rgba(0,0,0,0.5);border-radius:15px;overflow:hidden;border:2px solid rgba(0,255,255,0.3);margin-bottom:1rem;';
+                barContainer.style.cssText = 'width:100%;height:40px;background:rgba(0,0,0,0.5);border-radius:20px;overflow:hidden;border:2px solid rgba(0,255,255,0.4);margin-bottom:1.5rem;';
                 
                 // Barra de progreso
                 progressBar = document.createElement('div');
@@ -7140,11 +7354,12 @@
                 
                 // Texto de porcentaje
                 percentText = document.createElement('div');
-                percentText.style.cssText = 'color:#00ffff;font-size:1.5rem;font-weight:bold;text-align:center;text-shadow:0 0 10px rgba(0,255,255,0.8);';
+                percentText.style.cssText = 'color:#00ffff;font-size:2rem;font-weight:bold;text-align:center;text-shadow:0 0 10px rgba(0,255,255,0.8);';
                 percentText.textContent = '0%';
                 progressContainer.appendChild(percentText);
                 
-                document.body.appendChild(progressContainer);
+                overlay.appendChild(progressContainer);
+                document.body.appendChild(overlay);
             }
             
             // Función para actualizar progreso
@@ -7184,10 +7399,22 @@
                 
                 // Obtener colores de las partes del modelo 3D
                 console.log('=== OBTENIENDO COLORES DEL MODELO 3D ===');
+                console.log('loadedModel existe:', !!loadedModel);
                 console.log('modelParts.head:', modelParts.head);
                 console.log('modelParts.torso:', modelParts.torso);
                 console.log('modelParts.arms:', modelParts.arms);
                 console.log('modelParts.legs:', modelParts.legs);
+                
+                // Verificar que loadedModel existe
+                if (!loadedModel) {
+                    console.error('❌ ERROR: loadedModel es null. El modelo 3D no está cargado.');
+                    alert('Por favor espera a que el modelo 3D se cargue completamente antes de generar el PDF.');
+                    if (progressContainer && progressContainer.parentNode) {
+                        progressContainer.parentNode.removeChild(progressContainer);
+                    }
+                    isGeneratingPDF = false;
+                    return;
+                }
                 
                 const headColor = getPartColor(modelParts.head);
                 const torsoColor = getPartColor(modelParts.torso);
@@ -7199,6 +7426,11 @@
                 console.log('Torso Color:', torsoColor);
                 console.log('Arm Color:', armColor);
                 console.log('Leg Color:', legColor);
+                
+                // Advertir si los colores son blancos (puede indicar problema)
+                if (headColor === '#ffffff' && torsoColor === '#ffffff' && armColor === '#ffffff' && legColor === '#ffffff') {
+                    console.warn('⚠️ ADVERTENCIA: Todos los colores son blancos. Puede que modelParts no esté poblado correctamente.');
+                }
                 console.log('========================');
                 
                 // ============================================
@@ -7322,7 +7554,7 @@
                     
                     // ===== OREJAS =====
                     'ear-left': { 
-                        offsetX: 1970.8, 
+                        offsetX: 2023.6, 
                         offsetY: 999.7, 
                         width: 680.1, 
                         height: 680.1, 
@@ -7330,7 +7562,7 @@
                         flipX: true
                     },
                     'ear-right': { 
-                        offsetX: 528.1, 
+                        offsetX: 580.9, 
                         offsetY: 2442.4, 
                         width: 680.1, 
                         height: 680.1, 
@@ -7364,7 +7596,7 @@
                         flipX: true
                     },
                     'hair-left': {  // Mismo tamaño y posición que ear-left
-                        offsetX: 1970.8, 
+                        offsetX: 2023.6, 
                         offsetY: 999.7, 
                         width: 680.1, 
                         height: 680.1, 
@@ -7372,7 +7604,7 @@
                         flipX: true
                     },
                     'hair-right': {  // Mismo tamaño y posición que ear-right
-                        offsetX: 47.2, 
+                        offsetX: 100, 
                         offsetY: 1961.4, 
                         width: 680.1, 
                         height: 680.1, 
@@ -7380,7 +7612,7 @@
                         flipX: true
                     },
                     'hair-up': {  // Mismo tamaño que eyes, posicionado arriba
-                        offsetX: 2451.6, 
+                        offsetX: 2504.4, 
                         offsetY: 518.8, 
                         width: 680.1,  // Ajustar según dimensiones de eyes
                         height: 680.1, 
@@ -7390,32 +7622,32 @@
                     
                     // ===== BRAZOS (FRONT Y BACK) =====
                     'arm-left-front': { 
-                        offsetX: 3235.8, 
-                        offsetY: 400.6, 
+                        offsetX: 2969.6, 
+                        offsetY: 960.6, 
                         width: 492.9, 
                         height: 492.9, 
-                        rotation: 0,
+                        rotation: 135,
                         flipX: false
                     },
                     'arm-left-back': { 
-                        offsetX: 2967.7, 
-                        offsetY: 400.6, 
+                        offsetX: 3159.2, 
+                        offsetY: 771, 
                         width: 492.9, 
                         height: 492.9, 
-                        rotation: 0,
+                        rotation: 135,
                         flipX: true  // Volteado horizontalmente
                     },
                     'arm-right-front': { 
-                        offsetX: 2474.8, 
-                        offsetY: 47.2, 
+                        offsetX: 75.9, 
+                        offsetY: 100,
                         width: 492.9, 
                         height: 492.9, 
                         rotation: 0,
                         flipX: false
                     },
                     'arm-right-back': { 
-                        offsetX: 3728.8, 
-                        offsetY: 47.2, 
+                        offsetX: 1329.9, 
+                        offsetY: 100, 
                         width: 492.9, 
                         height: 492.9, 
                         rotation: 0,
@@ -7424,32 +7656,32 @@
                     
                     // ===== PIERNAS (FRONT Y BACK) =====
                     'leg-left-front': { 
-                        offsetX: 2609.4, 
-                        offsetY: 2032.5, 
+                        offsetX: 2556.6, 
+                        offsetY: 1979.7, 
                         width: 637.3, 
                         height: 637.3, 
                         rotation: -45,
                         flipX: false
                     },
                     'leg-left-back': { 
-                        offsetX: 2870.4, 
-                        offsetY: 1392.1, 
+                        offsetX: 2817.6, 
+                        offsetY: 1339.3, 
                         width: 637.3, 
                         height: 637.3, 
                         rotation: 135,
                         flipX: false
                     },
                     'leg-right-front': { 
-                        offsetX: 2609.4, 
-                        offsetY: 2032.5, 
+                        offsetX: 2556.6, 
+                        offsetY: 1979.7, 
                         width: 637.3, 
                         height: 637.3, 
                         rotation: -45,
                         flipX: false
                     },
                     'leg-right-back': { 
-                        offsetX: 2870.4, 
-                        offsetY: 1392.1, 
+                        offsetX: 2817.6, 
+                        offsetY: 1339.3, 
                         width: 637.3, 
                         height: 637.3, 
                         rotation: 135,
@@ -7458,16 +7690,16 @@
                     
                     // ===== TORSO (FRONT Y BACK) =====
                     'torso-front': { 
-                        offsetX: 2609.4, 
-                        offsetY: 2032.5, 
+                        offsetX: 2556.6, 
+                        offsetY: 1979.7, 
                         width: 637.3, 
                         height: 637.3, 
                         rotation: -45,
                         flipX: false
                     },
                     'torso-back': { 
-                        offsetX: 2870.4, 
-                        offsetY: 1392.1, 
+                        offsetX: 2817.6, 
+                        offsetY: 1339.3, 
                         width: 637.3, 
                         height: 637.3, 
                         rotation: 135,
@@ -7740,13 +7972,13 @@
                 console.log('   - Hair-Front, Hair-Back');
                 console.log('================================================');
                 
-                console.log('\n💾 Descargando PDF con 2 páginas...');
+                console.log('\n💾 PDF generado con 2 páginas');
                 
                 // Completado al 100%
                 updateProgress(100);
                 
-                // Pequeña pausa para mostrar el 100% antes de descargar/retornar
-                await new Promise(resolve => setTimeout(resolve, 500));
+                // Pequeña pausa para mostrar el 100%
+                await new Promise(resolve => setTimeout(resolve, 300));
                 
                 // Si returnBlob es true, retornar el blob en lugar de descargar
                 if (returnBlob) {
@@ -7760,8 +7992,8 @@
                     
                     return pdfBlob;
                 } else {
-                    // Descargar normalmente
-                    pdf.save(filename);
+                    // Mostrar botón de descarga en lugar de descargar automáticamente
+                    await showDownloadButton(pdf, filename, progressContainer, percentText);
                 }
                 
             } catch (error) {
@@ -7769,13 +8001,8 @@
                 alert('Error generating PDF: ' + error.message);
                 throw error; // Re-lanzar el error para que sea capturado en generatePDFForDownloadPage
             } finally {
-                // Limpiar
-                if (!returnBlob) {
-                    isGeneratingPDF = false;
-                }
-                if (progressContainer && progressContainer.parentNode) {
-                    progressContainer.remove();
-                }
+                // Limpiar solo si hubo error (si no hubo error, el botón de descarga maneja el cierre)
+                // No hacer nada aquí - el botón de descarga se encarga de cerrar el modal
             }
         }
         
