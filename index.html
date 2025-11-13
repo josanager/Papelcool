@@ -369,7 +369,7 @@
             border-radius: 16px;
         }
         
-        /* Contenedor de presets - Grid 3x3 en desktop, carrusel en móvil */
+        /* Contenedor de presets - Grid 3x3 en desktop Y MÓVIL (carrusel desactivado para prueba) */
         .presets-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);  /* 3 columnas en desktop */
@@ -378,8 +378,8 @@
             max-width: 320px;  /* Ancho máximo para 3 columnas */
         }
         
-        /* Carrusel en móvil */
-        @media (max-width: 1024px) {
+        /* CARRUSEL EN MÓVIL DESACTIVADO TEMPORALMENTE PARA PRUEBA */
+        /* @media (max-width: 1024px) {
             .presets-container {
                 display: flex;
                 grid-template-columns: none;
@@ -388,20 +388,20 @@
                 overflow-y: hidden;
                 scroll-snap-type: x mandatory;
                 -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;  /* Firefox */
-                -ms-overflow-style: none;  /* IE/Edge */
+                scrollbar-width: none;
+                -ms-overflow-style: none;
                 padding: 4px 0;
                 max-width: 100%;
             }
             
             .presets-container::-webkit-scrollbar {
-                display: none;  /* Chrome/Safari */
+                display: none;
             }
             
             .presets-container .preset-character-btn {
                 scroll-snap-align: start;
             }
-        }
+        } */
         
         /* Nombre del personaje en la parte superior */
         #character-name-display {
