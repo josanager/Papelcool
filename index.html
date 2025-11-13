@@ -57,7 +57,8 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <!-- Character & Texture Data - Archivo separado para organización -->
-    <script src="character-data.js"></script>
+    <!-- CRÍTICO: defer garantiza que se carga DESPUÉS del DOM y en orden correcto -->
+    <script src="character-data.js" defer></script>
     <style>
         * {
             margin: 0;
@@ -3123,78 +3124,69 @@
         let currentLegRightURL = legTextures[0].rightUrl; // Por defecto 'None'
         let currentLegSide = null; // 'left' o 'right'
         
-        // Cargar iconos de presets dinámicamente (ejecutar cuando el DOM esté listo)
+        // Cargar iconos de presets dinámicamente con espera garantizada de character-data.js
+        // SOLUCIÓN: Con defer en character-data.js, esta función se ejecuta cuando TODO está listo
         function loadPresetIcons() {
             try {
+                // Validación estricta: character-data.js debe estar completamente cargado
                 if (typeof presetIcons === 'undefined') {
-                    console.error('presetIcons no está definido. Verifica que character-data.js se haya cargado.');
+                    console.warn('⏳ presetIcons aún no disponible. Reintentando en 100ms...');
+                    setTimeout(loadPresetIcons, 100);
                     return;
                 }
+                
+                // Marcar que ya ejecutamos para evitar duplicados
+                if (window.iconsLoaded) return;
+                window.iconsLoaded = true;
+                
                 const abbyIcon = document.getElementById('abby-icon');
                 const jinuIcon = document.getElementById('jinu-icon');
                 const zoeyIcon = document.getElementById('zoey-icon');
                 const rumiIcon = document.getElementById('rumi-icon');
                 const miraIcon = document.getElementById('mira-icon');
-                if (abbyIcon && presetIcons['Abby']) {
-                    abbyIcon.onerror = function() {
+                
+                // Función helper para cargar con fallback CDN
+                function loadIconWithFallback(imgElement, url, name) {
+                    if (!imgElement || !url) return;
+                    imgElement.onerror = function() {
                         if (!this.dataset.cdnTried) {
                             this.dataset.cdnTried = '1';
-                            const cdn = typeof toCdnUrl === 'function' ? toCdnUrl(presetIcons['Abby']) : presetIcons['Abby'];
+                            const cdn = typeof toCdnUrl === 'function' ? toCdnUrl(url) : url;
+                            console.warn(`⚠️ Fallback CDN para icono de ${name}`);
                             this.src = cdn + (cdn.includes('?') ? '&' : '?') + 't=' + Date.now();
+                        } else {
+                            console.error(`❌ Falló carga de icono ${name} incluso con CDN`);
                         }
                     };
-                    abbyIcon.src = presetIcons['Abby'];
+                    imgElement.src = url;
                 }
-                if (jinuIcon && presetIcons['Jinu']) {
-                    jinuIcon.onerror = function() {
-                        if (!this.dataset.cdnTried) {
-                            this.dataset.cdnTried = '1';
-                            const cdn = typeof toCdnUrl === 'function' ? toCdnUrl(presetIcons['Jinu']) : presetIcons['Jinu'];
-                            this.src = cdn + (cdn.includes('?') ? '&' : '?') + 't=' + Date.now();
-                        }
-                    };
-                    jinuIcon.src = presetIcons['Jinu'];
-                }
-                if (zoeyIcon && presetIcons['Zoey']) {
-                    zoeyIcon.onerror = function() {
-                        if (!this.dataset.cdnTried) {
-                            this.dataset.cdnTried = '1';
-                            const cdn = typeof toCdnUrl === 'function' ? toCdnUrl(presetIcons['Zoey']) : presetIcons['Zoey'];
-                            this.src = cdn + (cdn.includes('?') ? '&' : '?') + 't=' + Date.now();
-                        }
-                    };
-                    zoeyIcon.src = presetIcons['Zoey'];
-                }
-                if (rumiIcon && presetIcons['Rumi']) {
-                    rumiIcon.onerror = function() {
-                        if (!this.dataset.cdnTried) {
-                            this.dataset.cdnTried = '1';
-                            const cdn = typeof toCdnUrl === 'function' ? toCdnUrl(presetIcons['Rumi']) : presetIcons['Rumi'];
-                            this.src = cdn + (cdn.includes('?') ? '&' : '?') + 't=' + Date.now();
-                        }
-                    };
-                    rumiIcon.src = presetIcons['Rumi'];
-                }
-                if (miraIcon && presetIcons['Mira']) {
-                    miraIcon.onerror = function() {
-                        if (!this.dataset.cdnTried) {
-                            this.dataset.cdnTried = '1';
-                            const cdn = typeof toCdnUrl === 'function' ? toCdnUrl(presetIcons['Mira']) : presetIcons['Mira'];
-                            this.src = cdn + (cdn.includes('?') ? '&' : '?') + 't=' + Date.now();
-                        }
-                    };
-                    miraIcon.src = presetIcons['Mira'];
-                }
-                console.log('✓ Iconos de presets cargados correctamente');
+                
+                // CRÍTICO: Abby primero para evitar problemas de timing en carrusel móvil
+                loadIconWithFallback(abbyIcon, presetIcons['Abby'], 'Abby');
+                loadIconWithFallback(jinuIcon, presetIcons['Jinu'], 'Jinu');
+                loadIconWithFallback(zoeyIcon, presetIcons['Zoey'], 'Zoey');
+                loadIconWithFallback(rumiIcon, presetIcons['Rumi'], 'Rumi');
+                loadIconWithFallback(miraIcon, presetIcons['Mira'], 'Mira');
+                
+                console.log('✅ Iconos de presets cargados correctamente:', {
+                    Abby: presetIcons['Abby'] ? '✓' : '✗',
+                    Jinu: presetIcons['Jinu'] ? '✓' : '✗',
+                    Zoey: presetIcons['Zoey'] ? '✓' : '✗',
+                    Rumi: presetIcons['Rumi'] ? '✓' : '✗',
+                    Mira: presetIcons['Mira'] ? '✓' : '✗'
+                });
             } catch (error) {
-                console.error('Error al cargar iconos de presets:', error);
+                console.error('❌ Error crítico al cargar iconos de presets:', error);
             }
         }
-        // Ejecutar cuando el DOM esté listo (robusto en móvil)
-        document.addEventListener('DOMContentLoaded', loadPresetIcons);
-        window.addEventListener('load', loadPresetIcons);
-        // Intento tardío por si el DOM tardó en hidratar (Safari móvil)
-        setTimeout(loadPresetIcons, 500);
+        
+        // Con defer en character-data.js, DOMContentLoaded es suficiente y más confiable
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadPresetIcons);
+        } else {
+            // DOM ya está listo, ejecutar inmediatamente
+            loadPresetIcons();
+        }
         
         // Habilitar caché de THREE.js para evitar recargas de red
         THREE.Cache.enabled = true;
@@ -6876,23 +6868,9 @@
         
         // Detectar eventos al cargar la página
         window.addEventListener('DOMContentLoaded', async () => {
-            // Asegurar binding del botón de Abby en móvil si por timing no existía aún
-            try {
-                const abbyBtn = document.getElementById('preset-abby-btn');
-                if (abbyBtn && !abbyBtn.dataset.bound) {
-                    abbyBtn.addEventListener('click', () => {
-                        currentPresetCharacter = 'Abby';
-                        applyPresetCharacter('Abby');
-                        showCharacterName('Abby');
-                        const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
-                        if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
-                        const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
-                        if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
-                    });
-                    abbyBtn.dataset.bound = '1';
-                }
-            } catch (e) { /* noop */ }
-
+            // Con defer en character-data.js, ya no necesitamos re-binding del botón de Abby
+            // Los event listeners ya están definidos correctamente arriba
+            
             const urlParams = new URLSearchParams(window.location.search);
             
             // Abrir pestaña Presets si viene en la URL (?tab=presets)
