@@ -35,6 +35,9 @@
     <!-- Google Fonts para un estilo futurista - Optimizado -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Preconnect para cargar SVG desde GitHub/CDN más rápido y con CORS correcto -->
+    <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet"></noscript>
     <!-- Import map para three.js -->
@@ -3120,31 +3123,78 @@
         let currentLegRightURL = legTextures[0].rightUrl; // Por defecto 'None'
         let currentLegSide = null; // 'left' o 'right'
         
-        // Cargar iconos de presets dinámicamente - IMPORTANTE: debe ejecutarse ANTES de cualquier otra inicialización
-        (function loadPresetIcons() {
+        // Cargar iconos de presets dinámicamente (ejecutar cuando el DOM esté listo)
+        function loadPresetIcons() {
             try {
                 if (typeof presetIcons === 'undefined') {
                     console.error('presetIcons no está definido. Verifica que character-data.js se haya cargado.');
                     return;
                 }
-                
                 const abbyIcon = document.getElementById('abby-icon');
                 const jinuIcon = document.getElementById('jinu-icon');
                 const zoeyIcon = document.getElementById('zoey-icon');
                 const rumiIcon = document.getElementById('rumi-icon');
                 const miraIcon = document.getElementById('mira-icon');
-                
-                if (abbyIcon && presetIcons['Abby']) abbyIcon.src = presetIcons['Abby'];
-                if (jinuIcon && presetIcons['Jinu']) jinuIcon.src = presetIcons['Jinu'];
-                if (zoeyIcon && presetIcons['Zoey']) zoeyIcon.src = presetIcons['Zoey'];
-                if (rumiIcon && presetIcons['Rumi']) rumiIcon.src = presetIcons['Rumi'];
-                if (miraIcon && presetIcons['Mira']) miraIcon.src = presetIcons['Mira'];
-                
+                if (abbyIcon && presetIcons['Abby']) {
+                    abbyIcon.onerror = function() {
+                        if (!this.dataset.cdnTried) {
+                            this.dataset.cdnTried = '1';
+                            const cdn = typeof toCdnUrl === 'function' ? toCdnUrl(presetIcons['Abby']) : presetIcons['Abby'];
+                            this.src = cdn + (cdn.includes('?') ? '&' : '?') + 't=' + Date.now();
+                        }
+                    };
+                    abbyIcon.src = presetIcons['Abby'];
+                }
+                if (jinuIcon && presetIcons['Jinu']) {
+                    jinuIcon.onerror = function() {
+                        if (!this.dataset.cdnTried) {
+                            this.dataset.cdnTried = '1';
+                            const cdn = typeof toCdnUrl === 'function' ? toCdnUrl(presetIcons['Jinu']) : presetIcons['Jinu'];
+                            this.src = cdn + (cdn.includes('?') ? '&' : '?') + 't=' + Date.now();
+                        }
+                    };
+                    jinuIcon.src = presetIcons['Jinu'];
+                }
+                if (zoeyIcon && presetIcons['Zoey']) {
+                    zoeyIcon.onerror = function() {
+                        if (!this.dataset.cdnTried) {
+                            this.dataset.cdnTried = '1';
+                            const cdn = typeof toCdnUrl === 'function' ? toCdnUrl(presetIcons['Zoey']) : presetIcons['Zoey'];
+                            this.src = cdn + (cdn.includes('?') ? '&' : '?') + 't=' + Date.now();
+                        }
+                    };
+                    zoeyIcon.src = presetIcons['Zoey'];
+                }
+                if (rumiIcon && presetIcons['Rumi']) {
+                    rumiIcon.onerror = function() {
+                        if (!this.dataset.cdnTried) {
+                            this.dataset.cdnTried = '1';
+                            const cdn = typeof toCdnUrl === 'function' ? toCdnUrl(presetIcons['Rumi']) : presetIcons['Rumi'];
+                            this.src = cdn + (cdn.includes('?') ? '&' : '?') + 't=' + Date.now();
+                        }
+                    };
+                    rumiIcon.src = presetIcons['Rumi'];
+                }
+                if (miraIcon && presetIcons['Mira']) {
+                    miraIcon.onerror = function() {
+                        if (!this.dataset.cdnTried) {
+                            this.dataset.cdnTried = '1';
+                            const cdn = typeof toCdnUrl === 'function' ? toCdnUrl(presetIcons['Mira']) : presetIcons['Mira'];
+                            this.src = cdn + (cdn.includes('?') ? '&' : '?') + 't=' + Date.now();
+                        }
+                    };
+                    miraIcon.src = presetIcons['Mira'];
+                }
                 console.log('✓ Iconos de presets cargados correctamente');
             } catch (error) {
                 console.error('Error al cargar iconos de presets:', error);
             }
-        })();
+        }
+        // Ejecutar cuando el DOM esté listo (robusto en móvil)
+        document.addEventListener('DOMContentLoaded', loadPresetIcons);
+        window.addEventListener('load', loadPresetIcons);
+        // Intento tardío por si el DOM tardó en hidratar (Safari móvil)
+        setTimeout(loadPresetIcons, 500);
         
         // Habilitar caché de THREE.js para evitar recargas de red
         THREE.Cache.enabled = true;
@@ -3218,6 +3268,20 @@
         
         // Función para cargar SVG a alta resolución con colores correctos y cache
         // Convierte SVG vectorial a imagen de alta calidad antes de usarlo como textura
+        function toCdnUrl(url) {
+            try {
+                // raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/... -> cdn.jsdelivr.net/gh/josanager/Textures-Papelcool@main/...
+                const RAW_PREFIX = 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/';
+                if (url.startsWith(RAW_PREFIX)) {
+                    const tail = url.substring(RAW_PREFIX.length);
+                    return `https://cdn.jsdelivr.net/gh/josanager/Textures-Papelcool@main/${tail}`;
+                }
+            } catch (e) { /* noop */ }
+            return url;
+        }
+
+        const attemptedFallback = new Set();
+
         function loadSVGAsHighResTexture(url, onLoad, onError) {
             // Verificar cache primero
             const cachedTexture = getCachedTexture(url);
@@ -3266,6 +3330,14 @@
             
             img.onerror = function(error) {
                 console.error('Error cargando SVG:', url, error);
+                // Fallback a CDN confiable si falla raw.githubusercontent.com (común en móvil)
+                const cdnUrl = toCdnUrl(url);
+                if (cdnUrl !== url && !attemptedFallback.has(cdnUrl)) {
+                    attemptedFallback.add(cdnUrl);
+                    console.warn('Reintentando desde CDN:', cdnUrl);
+                    img.src = cdnUrl + (cdnUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
+                    return;
+                }
                 if (onError) onError(error);
             };
             
@@ -6804,6 +6876,23 @@
         
         // Detectar eventos al cargar la página
         window.addEventListener('DOMContentLoaded', async () => {
+            // Asegurar binding del botón de Abby en móvil si por timing no existía aún
+            try {
+                const abbyBtn = document.getElementById('preset-abby-btn');
+                if (abbyBtn && !abbyBtn.dataset.bound) {
+                    abbyBtn.addEventListener('click', () => {
+                        currentPresetCharacter = 'Abby';
+                        applyPresetCharacter('Abby');
+                        showCharacterName('Abby');
+                        const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
+                        if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+                        const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+                        if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
+                    });
+                    abbyBtn.dataset.bound = '1';
+                }
+            } catch (e) { /* noop */ }
+
             const urlParams = new URLSearchParams(window.location.search);
             
             // Abrir pestaña Presets si viene en la URL (?tab=presets)
