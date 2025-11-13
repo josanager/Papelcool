@@ -57,8 +57,8 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <!-- Character & Texture Data - Archivo separado para organización -->
-    <!-- CRÍTICO: defer garantiza que se carga DESPUÉS del DOM y en orden correcto -->
-    <script src="character-data.js" defer></script>
+    <!-- CRÍTICO: SIN defer porque el script principal necesita estos arrays INMEDIATAMENTE -->
+    <script src="character-data.js"></script>
     <style>
         * {
             margin: 0;
@@ -3124,17 +3124,11 @@
         let currentLegRightURL = legTextures[0].rightUrl; // Por defecto 'None'
         let currentLegSide = null; // 'left' o 'right'
         
-        // Cargar iconos de presets dinámicamente con espera garantizada de character-data.js
-        // SOLUCIÓN: Con defer en character-data.js, esta función se ejecuta cuando TODO está listo
+        // Cargar iconos de presets dinámicamente cuando el DOM esté listo
+        // IMPORTANTE: character-data.js se carga síncronamente ANTES de este script,
+        // por lo que los arrays ya están disponibles
         function loadPresetIcons() {
             try {
-                // Validación estricta: character-data.js debe estar completamente cargado
-                if (typeof presetIcons === 'undefined') {
-                    console.warn('⏳ presetIcons aún no disponible. Reintentando en 100ms...');
-                    setTimeout(loadPresetIcons, 100);
-                    return;
-                }
-                
                 // Marcar que ya ejecutamos para evitar duplicados
                 if (window.iconsLoaded) return;
                 window.iconsLoaded = true;
@@ -3147,7 +3141,10 @@
                 
                 // Función helper para cargar con fallback CDN
                 function loadIconWithFallback(imgElement, url, name) {
-                    if (!imgElement || !url) return;
+                    if (!imgElement || !url) {
+                        console.warn(`⚠️ Elemento o URL faltante para icono de ${name}`);
+                        return;
+                    }
                     imgElement.onerror = function() {
                         if (!this.dataset.cdnTried) {
                             this.dataset.cdnTried = '1';
@@ -3161,14 +3158,14 @@
                     imgElement.src = url;
                 }
                 
-                // CRÍTICO: Abby primero para evitar problemas de timing en carrusel móvil
+                // CRÍTICO: Abby primero para garantizar carga prioritaria en móvil
                 loadIconWithFallback(abbyIcon, presetIcons['Abby'], 'Abby');
                 loadIconWithFallback(jinuIcon, presetIcons['Jinu'], 'Jinu');
                 loadIconWithFallback(zoeyIcon, presetIcons['Zoey'], 'Zoey');
                 loadIconWithFallback(rumiIcon, presetIcons['Rumi'], 'Rumi');
                 loadIconWithFallback(miraIcon, presetIcons['Mira'], 'Mira');
                 
-                console.log('✅ Iconos de presets cargados correctamente:', {
+                console.log('✅ Iconos de presets cargados:', {
                     Abby: presetIcons['Abby'] ? '✓' : '✗',
                     Jinu: presetIcons['Jinu'] ? '✓' : '✗',
                     Zoey: presetIcons['Zoey'] ? '✓' : '✗',
@@ -3176,11 +3173,11 @@
                     Mira: presetIcons['Mira'] ? '✓' : '✗'
                 });
             } catch (error) {
-                console.error('❌ Error crítico al cargar iconos de presets:', error);
+                console.error('❌ Error al cargar iconos de presets:', error);
             }
         }
         
-        // Con defer en character-data.js, DOMContentLoaded es suficiente y más confiable
+        // Ejecutar cuando el DOM esté listo
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', loadPresetIcons);
         } else {
