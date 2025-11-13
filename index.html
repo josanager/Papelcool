@@ -2660,7 +2660,15 @@
                 <!-- Para añadir nuevos personajes: agregar al INICIO de la lista -->
                 <div id="presets-section" class="pt-2 border-t border-cyan-500/30 mb-4 hidden">
                     <div class="flex gap-3 pointer-events-auto">
-                        <!-- ZOEY - Personaje más nuevo (2024) -->
+                        <!-- JINU - Personaje más nuevo (2024) -->
+                        <button type="button" id="preset-jinu-btn" class="preset-character-btn">
+                            <div class="button-outer">
+                                <div class="button-inner">
+                                    <img id="jinu-icon" src="" alt="Jinu" class="character-icon-img">
+                                </div>
+                            </div>
+                        </button>
+                        <!-- ZOEY - Personaje (2024) -->
                         <button type="button" id="preset-zoey-btn" class="preset-character-btn">
                             <div class="button-outer">
                                 <div class="button-inner">
@@ -3069,6 +3077,7 @@
         let currentLegSide = null; // 'left' o 'right'
         
         // Cargar iconos de presets dinámicamente
+        document.getElementById('jinu-icon').src = presetIcons['Jinu'];
         document.getElementById('zoey-icon').src = presetIcons['Zoey'];
         document.getElementById('rumi-icon').src = presetIcons['Rumi'];
         document.getElementById('mira-icon').src = presetIcons['Mira'];
@@ -6304,7 +6313,9 @@
             if (modelParts.torso) {
                 // Colores especiales para torso
                 let torsoColor = lightestSkinColor;
-                if (characterName === 'Mira') {
+                if (characterName === 'Jinu') {
+                    torsoColor = new THREE.Color('#1A1A1A'); // Negro para Jinu
+                } else if (characterName === 'Mira') {
                     torsoColor = new THREE.Color('#243267');
                 } else if (characterName === 'Rumi') {
                     torsoColor = new THREE.Color('#FAB823');
@@ -6350,7 +6361,9 @@
             // Aplicar color a las piernas
             // Colores especiales para piernas
             let legsColor = lightestSkinColor;
-            if (characterName === 'Mira') {
+            if (characterName === 'Jinu') {
+                legsColor = new THREE.Color('#1A1A1A'); // Negro para Jinu
+            } else if (characterName === 'Mira') {
                 legsColor = new THREE.Color('#390626');
             } else if (characterName === 'Rumi') {
                 legsColor = new THREE.Color('#292827');
@@ -6483,6 +6496,18 @@
             currentPresetCharacter = 'Zoey';
             applyPresetCharacter('Zoey');
             showCharacterName('Zoey');
+            // Mostrar botón pequeño de PDF en la esquina superior izquierda
+            const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
+            if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            // Mostrar botón provisional de descarga rápida
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
+        });
+        
+        document.getElementById('preset-jinu-btn').addEventListener('click', () => {
+            currentPresetCharacter = 'Jinu';
+            applyPresetCharacter('Jinu');
+            showCharacterName('Jinu');
             // Mostrar botón pequeño de PDF en la esquina superior izquierda
             const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');

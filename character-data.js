@@ -11,6 +11,7 @@
 
 // --- ICONOS DE PERSONAJES PREESTABLECIDOS ---
 const presetIcons = {
+    'Jinu': 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/Jinu-icon.svg',
     'Zoey': 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/Zoey-icon.svg',
     'Rumi': 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/Rumi-icon.svg',
     'Mira': 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mira/Mira-icon.svg'
@@ -19,6 +20,7 @@ const presetIcons = {
 // --- DATA PARA OJOS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const eyeTextures = [
+    { name: 'Jinu', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/eyes/Jinu-eyes.svg' },
     { name: 'Male', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Male-eyes.svg' },
     { name: 'Female', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Female-eyes.svg' },
     { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Zoey-eyes.svg' },
@@ -29,6 +31,7 @@ const eyeTextures = [
 // --- DATA PARA CEJAS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const eyebrowTextures = [
+    { name: 'Jinu', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/eyebrown/Jinu-eyebrown.svg' },
     { name: 'Male', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Male-eyebrown.svg' },
     { name: 'Female', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Female-eyebrown.svg' },
     { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Zoey-eyebrown.svg' },
@@ -44,6 +47,7 @@ const noseTextures = [
 // --- DATA PARA OREJAS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const earTextures = [
+    { name: 'Jinu', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/ears/Jinu-ears.svg' },
     { name: 'Basic', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Basic-ears.svg' },
     { name: 'Zoey', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Zoey-ears.svg' },
     { name: 'Rumi', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Rumi-ears.svg' },
@@ -54,6 +58,14 @@ const earTextures = [
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const hairTextures = [
     { name: 'None', frontUrl: null, backUrl: null, leftUrl: null, rightUrl: null, upUrl: null }, // Opción sin cabello
+    { 
+        name: 'Jinu', 
+        frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/hair/Jinu-hair-front.svg',
+        backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/hair/Jinu-hair-back.svg',
+        leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/hair/Jinu-hair-left.svg',
+        rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/hair/Jinu-hair-right.svg',
+        upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/hair/Jinu-hair-up.svg'
+    },
     { 
         name: 'Zoey', 
         frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/hair/front/Zoey-front-hair.svg',
@@ -85,6 +97,11 @@ const hairTextures = [
 const torsoClothingTextures = [
     { name: 'None', frontUrl: null, backUrl: null }, // Opción sin ropa
     { 
+        name: 'Jinu', 
+        frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/torso/Jinu-torso-front.svg',
+        backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/torso/Jinu-torso-back.svg'
+    },
+    { 
         name: 'Zoey', 
         frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/torso/Zoey-torso-front.svg',
         backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/torso/Zoey-torso-back.svg'
@@ -106,6 +123,11 @@ const torsoClothingTextures = [
 const armTextures = [
     { name: 'None', leftUrl: null, rightUrl: null }, // Opción sin estilo
     {
+        name: 'Jinu', 
+        leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/arms/Jinu-arm-left.svg',
+        rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/arms/Jinu-arm-right.svg'
+    },
+    {
         name: 'Zoey', 
         leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/left/Zoey-arm-left.svg',
         rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/arms/right/Zoey-arm-right.svg'
@@ -126,6 +148,11 @@ const armTextures = [
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const legTextures = [
     { name: 'None', leftUrl: null, rightUrl: null }, // Opción sin estilo
+    {
+        name: 'Jinu', 
+        leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/legs/Jinu-leg-left.svg',
+        rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/legs/Jinu-leg-right.svg'
+    },
     {
         name: 'Zoey', 
         leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/legs/left/Zoey-leg-left.svg',
