@@ -267,11 +267,13 @@
             box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
                 0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
             font-size: 1rem;
-            width: 120px;   /* Ancho fijo para hacer cuadrado */
-            height: 120px;  /* Alto igual al ancho = cuadrado */
+            width: 90px;   /* Ancho base */
+            height: 120px;  /* Alto = ancho * 4/3 para aspect ratio 3:4 */
+            aspect-ratio: 3 / 4;  /* Aspect ratio 3:4 */
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-shrink: 0;  /* No reducir en carrusel */
         }
         
         .preset-character-btn::after {
@@ -361,6 +363,40 @@
             height: 100%;
             object-fit: cover;
             border-radius: 16px;
+        }
+        
+        /* Contenedor de presets - Grid 3x3 en desktop, carrusel en móvil */
+        .presets-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);  /* 3 columnas en desktop */
+            gap: 12px;
+            width: 100%;
+            max-width: 320px;  /* Ancho máximo para 3 columnas */
+        }
+        
+        /* Carrusel en móvil */
+        @media (max-width: 1024px) {
+            .presets-container {
+                display: flex;
+                grid-template-columns: none;
+                gap: 12px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;  /* Firefox */
+                -ms-overflow-style: none;  /* IE/Edge */
+                padding: 4px 0;
+                max-width: 100%;
+            }
+            
+            .presets-container::-webkit-scrollbar {
+                display: none;  /* Chrome/Safari */
+            }
+            
+            .presets-container .preset-character-btn {
+                scroll-snap-align: start;
+            }
         }
         
         /* Nombre del personaje en la parte superior */
@@ -2659,8 +2695,16 @@
                 <!-- ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético) -->
                 <!-- Para añadir nuevos personajes: agregar al INICIO de la lista -->
                 <div id="presets-section" class="pt-2 border-t border-cyan-500/30 mb-4 hidden">
-                    <div class="flex gap-3 pointer-events-auto">
-                        <!-- JINU - Personaje más nuevo (2024) -->
+                    <div id="presets-container" class="presets-container pointer-events-auto">
+                        <!-- ABBY - Personaje más nuevo (2024) -->
+                        <button type="button" id="preset-abby-btn" class="preset-character-btn">
+                            <div class="button-outer">
+                                <div class="button-inner">
+                                    <img id="abby-icon" src="" alt="Abby" class="character-icon-img">
+                                </div>
+                            </div>
+                        </button>
+                        <!-- JINU - Personaje (2024) -->
                         <button type="button" id="preset-jinu-btn" class="preset-character-btn">
                             <div class="button-outer">
                                 <div class="button-inner">
@@ -3077,6 +3121,7 @@
         let currentLegSide = null; // 'left' o 'right'
         
         // Cargar iconos de presets dinámicamente
+        document.getElementById('abby-icon').src = presetIcons['Abby'];
         document.getElementById('jinu-icon').src = presetIcons['Jinu'];
         document.getElementById('zoey-icon').src = presetIcons['Zoey'];
         document.getElementById('rumi-icon').src = presetIcons['Rumi'];
@@ -6286,10 +6331,12 @@
             // Aplicar color de piel más claro (#F7D5CF) a todos los personajes preestablecidos
             const lightestSkinColor = new THREE.Color('#F7D5CF');
             
-            // Color especial para cabeza de Jinu
+            // Color especial para cabeza de Jinu y Abby
             let headColor = lightestSkinColor;
             if (characterName === 'Jinu') {
                 headColor = new THREE.Color('#FCD5C6'); // Color piel para Jinu
+            } else if (characterName === 'Abby') {
+                headColor = new THREE.Color('#F7D5CF'); // Color piel para Abby
             }
             
             // Aplicar color a la cabeza
@@ -6319,7 +6366,9 @@
             if (modelParts.torso) {
                 // Colores especiales para torso
                 let torsoColor = lightestSkinColor;
-                if (characterName === 'Jinu') {
+                if (characterName === 'Abby') {
+                    torsoColor = new THREE.Color('#F7D5CF'); // Color piel para Abby
+                } else if (characterName === 'Jinu') {
                     torsoColor = new THREE.Color('#F4F4F2'); // Gris claro para Jinu
                 } else if (characterName === 'Mira') {
                     torsoColor = new THREE.Color('#243267');
@@ -6344,10 +6393,12 @@
             }
             
             // Aplicar color a los brazos
-            // Color especial para brazos de Jinu
+            // Color especial para brazos de Jinu y Abby
             let armsColor = lightestSkinColor;
             if (characterName === 'Jinu') {
                 armsColor = new THREE.Color('#FCD5C6'); // Color piel para Jinu
+            } else if (characterName === 'Abby') {
+                armsColor = new THREE.Color('#F7D5CF'); // Color piel para Abby
             }
             
             modelParts.arms.forEach(arm => {
@@ -6373,7 +6424,9 @@
             // Aplicar color a las piernas
             // Colores especiales para piernas
             let legsColor = lightestSkinColor;
-            if (characterName === 'Jinu') {
+            if (characterName === 'Abby') {
+                legsColor = new THREE.Color('#F7D5CF'); // Color piel para Abby
+            } else if (characterName === 'Jinu') {
                 legsColor = new THREE.Color('#91C9FA'); // Azul claro para Jinu
             } else if (characterName === 'Mira') {
                 legsColor = new THREE.Color('#390626');
@@ -6520,6 +6573,18 @@
             currentPresetCharacter = 'Jinu';
             applyPresetCharacter('Jinu');
             showCharacterName('Jinu');
+            // Mostrar botón pequeño de PDF en la esquina superior izquierda
+            const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
+            if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            // Mostrar botón provisional de descarga rápida
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
+        });
+        
+        document.getElementById('preset-abby-btn').addEventListener('click', () => {
+            currentPresetCharacter = 'Abby';
+            applyPresetCharacter('Abby');
+            showCharacterName('Abby');
             // Mostrar botón pequeño de PDF en la esquina superior izquierda
             const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
