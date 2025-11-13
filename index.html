@@ -6286,6 +6286,12 @@
             // Aplicar color de piel más claro (#F7D5CF) a todos los personajes preestablecidos
             const lightestSkinColor = new THREE.Color('#F7D5CF');
             
+            // Color especial para cabeza de Jinu
+            let headColor = lightestSkinColor;
+            if (characterName === 'Jinu') {
+                headColor = new THREE.Color('#FCD5C6'); // Color piel para Jinu
+            }
+            
             // Aplicar color a la cabeza
             if (modelParts.head) {
                 modelParts.head.traverse((child) => {
@@ -6296,17 +6302,17 @@
                             child !== hairFrontMesh && child !== hairBackMesh) {
                             if (Array.isArray(child.material)) {
                                 child.material.forEach(mat => {
-                                    if (mat.color) mat.color.copy(lightestSkinColor);
+                                    if (mat.color) mat.color.copy(headColor);
                                 });
                             } else {
-                                child.material.color.copy(lightestSkinColor);
+                                child.material.color.copy(headColor);
                             }
                         }
                     }
                 });
                 
                 // Aplicar color a la nariz (50% más oscuro que la cabeza)
-                applyNoseColor(lightestSkinColor.getHex());
+                applyNoseColor(headColor.getHex());
             }
             
             // Aplicar color al torso
@@ -6314,7 +6320,7 @@
                 // Colores especiales para torso
                 let torsoColor = lightestSkinColor;
                 if (characterName === 'Jinu') {
-                    torsoColor = new THREE.Color('#1A1A1A'); // Negro para Jinu
+                    torsoColor = new THREE.Color('#F4F4F2'); // Gris claro para Jinu
                 } else if (characterName === 'Mira') {
                     torsoColor = new THREE.Color('#243267');
                 } else if (characterName === 'Rumi') {
@@ -6338,6 +6344,12 @@
             }
             
             // Aplicar color a los brazos
+            // Color especial para brazos de Jinu
+            let armsColor = lightestSkinColor;
+            if (characterName === 'Jinu') {
+                armsColor = new THREE.Color('#FCD5C6'); // Color piel para Jinu
+            }
+            
             modelParts.arms.forEach(arm => {
                 if (arm) {
                     arm.traverse((child) => {
@@ -6347,10 +6359,10 @@
                                 child !== armRightFrontMesh && child !== armRightBackMesh) {
                                 if (Array.isArray(child.material)) {
                                     child.material.forEach(mat => {
-                                        if (mat.color) mat.color.copy(lightestSkinColor);
+                                        if (mat.color) mat.color.copy(armsColor);
                                     });
                                 } else {
-                                    child.material.color.copy(lightestSkinColor);
+                                    child.material.color.copy(armsColor);
                                 }
                             }
                         }
@@ -6362,7 +6374,7 @@
             // Colores especiales para piernas
             let legsColor = lightestSkinColor;
             if (characterName === 'Jinu') {
-                legsColor = new THREE.Color('#1A1A1A'); // Negro para Jinu
+                legsColor = new THREE.Color('#91C9FA'); // Azul claro para Jinu
             } else if (characterName === 'Mira') {
                 legsColor = new THREE.Color('#390626');
             } else if (characterName === 'Rumi') {
