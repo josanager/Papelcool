@@ -6281,8 +6281,8 @@
             if (downloadPdfBtn) downloadPdfBtn.classList.remove('active');
         });
         
-        // Función para aplicar personaje preestablecido
-        function applyPresetCharacter(characterName) {
+        // Función para aplicar personaje preestablecido (OPTIMIZADA PARA MÓVIL)
+        async function applyPresetCharacter(characterName) {
             // Aplicar color de piel más claro (#F7D5CF) a todos los personajes preestablecidos
             const lightestSkinColor = new THREE.Color('#F7D5CF');
             
@@ -6412,50 +6412,116 @@
             const armTexture = armTextures.find(t => t.name === characterName);
             const legTexture = legTextures.find(t => t.name === characterName);
             
-            // Aplicar todas las texturas del personaje
-            if (eyeTexture) {
-                currentEyeTextureURL = eyeTexture.url;
-                changeEyeTexture(eyeTexture.url);
-            }
+            // OPTIMIZACIÓN MÓVIL: Cargar texturas en secuencia para evitar fallas
+            // En desktop: carga paralela (rápido)
+            // En móvil: carga secuencial con delays (confiable)
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
             
-            if (eyebrowTexture) {
-                currentEyebrowTextureURL = eyebrowTexture.url;
-                changeEyebrowTexture(eyebrowTexture.url);
-            }
-            
-            if (earTexture) {
-                currentEarTextureURL = earTexture.url;
-                changeEarTexture('left', earTexture.url);
-                changeEarTexture('right', earTexture.url);
-            }
-            
-            if (hairTexture) {
-                currentHairFrontURL = hairTexture.frontUrl;
-                currentHairBackURL = hairTexture.backUrl;
-                currentHairLeftURL = hairTexture.leftUrl;
-                currentHairRightURL = hairTexture.rightUrl;
-                currentHairUpURL = hairTexture.upUrl;
-                changeHairTexture(hairTexture.frontUrl, hairTexture.backUrl, hairTexture.leftUrl, hairTexture.rightUrl, hairTexture.upUrl);
-            }
-            
-            if (torsoTexture) {
-                currentTorsoFrontURL = torsoTexture.frontUrl;
-                currentTorsoBackURL = torsoTexture.backUrl;
-                changeTorsoClothing(torsoTexture.frontUrl, torsoTexture.backUrl);
-            }
-            
-            if (armTexture) {
-                currentArmLeftURL = armTexture.leftUrl;
-                currentArmRightURL = armTexture.rightUrl;
-                changeArmClothing('left', armTexture.leftUrl);
-                changeArmClothing('right', armTexture.rightUrl);
-            }
-            
-            if (legTexture) {
-                currentLegLeftURL = legTexture.leftUrl;
-                currentLegRightURL = legTexture.rightUrl;
-                changeLegClothing('left', legTexture.leftUrl);
-                changeLegClothing('right', legTexture.rightUrl);
+            if (isMobile) {
+                // MÓVIL: Carga secuencial con prioridad visual
+                console.log('📱 Carga optimizada para móvil - Secuencial');
+                
+                // Grupo 1: Cara (más visible)
+                if (eyeTexture) {
+                    currentEyeTextureURL = eyeTexture.url;
+                    changeEyeTexture(eyeTexture.url);
+                    await delay(50);
+                }
+                if (eyebrowTexture) {
+                    currentEyebrowTextureURL = eyebrowTexture.url;
+                    changeEyebrowTexture(eyebrowTexture.url);
+                    await delay(50);
+                }
+                if (earTexture) {
+                    currentEarTextureURL = earTexture.url;
+                    changeEarTexture('left', earTexture.url);
+                    await delay(30);
+                    changeEarTexture('right', earTexture.url);
+                    await delay(50);
+                }
+                
+                // Grupo 2: Cabello
+                if (hairTexture) {
+                    currentHairFrontURL = hairTexture.frontUrl;
+                    currentHairBackURL = hairTexture.backUrl;
+                    currentHairLeftURL = hairTexture.leftUrl;
+                    currentHairRightURL = hairTexture.rightUrl;
+                    currentHairUpURL = hairTexture.upUrl;
+                    changeHairTexture(hairTexture.frontUrl, hairTexture.backUrl, hairTexture.leftUrl, hairTexture.rightUrl, hairTexture.upUrl);
+                    await delay(80);
+                }
+                
+                // Grupo 3: Torso
+                if (torsoTexture) {
+                    currentTorsoFrontURL = torsoTexture.frontUrl;
+                    currentTorsoBackURL = torsoTexture.backUrl;
+                    changeTorsoClothing(torsoTexture.frontUrl, torsoTexture.backUrl);
+                    await delay(80);
+                }
+                
+                // Grupo 4: Brazos (CRÍTICO - a menudo falla)
+                if (armTexture) {
+                    currentArmLeftURL = armTexture.leftUrl;
+                    currentArmRightURL = armTexture.rightUrl;
+                    changeArmClothing('left', armTexture.leftUrl);
+                    await delay(60); // Delay entre brazos
+                    changeArmClothing('right', armTexture.rightUrl);
+                    await delay(60);
+                }
+                
+                // Grupo 5: Piernas (CRÍTICO - a menudo falla)
+                if (legTexture) {
+                    currentLegLeftURL = legTexture.leftUrl;
+                    currentLegRightURL = legTexture.rightUrl;
+                    changeLegClothing('left', legTexture.leftUrl);
+                    await delay(60); // Delay entre piernas
+                    changeLegClothing('right', legTexture.rightUrl);
+                }
+                
+                console.log('✅ Carga móvil completada');
+            } else {
+                // DESKTOP: Carga paralela (como antes - rápido)
+                console.log('💻 Carga desktop - Paralela');
+                
+                if (eyeTexture) {
+                    currentEyeTextureURL = eyeTexture.url;
+                    changeEyeTexture(eyeTexture.url);
+                }
+                if (eyebrowTexture) {
+                    currentEyebrowTextureURL = eyebrowTexture.url;
+                    changeEyebrowTexture(eyebrowTexture.url);
+                }
+                if (earTexture) {
+                    currentEarTextureURL = earTexture.url;
+                    changeEarTexture('left', earTexture.url);
+                    changeEarTexture('right', earTexture.url);
+                }
+                if (hairTexture) {
+                    currentHairFrontURL = hairTexture.frontUrl;
+                    currentHairBackURL = hairTexture.backUrl;
+                    currentHairLeftURL = hairTexture.leftUrl;
+                    currentHairRightURL = hairTexture.rightUrl;
+                    currentHairUpURL = hairTexture.upUrl;
+                    changeHairTexture(hairTexture.frontUrl, hairTexture.backUrl, hairTexture.leftUrl, hairTexture.rightUrl, hairTexture.upUrl);
+                }
+                if (torsoTexture) {
+                    currentTorsoFrontURL = torsoTexture.frontUrl;
+                    currentTorsoBackURL = torsoTexture.backUrl;
+                    changeTorsoClothing(torsoTexture.frontUrl, torsoTexture.backUrl);
+                }
+                if (armTexture) {
+                    currentArmLeftURL = armTexture.leftUrl;
+                    currentArmRightURL = armTexture.rightUrl;
+                    changeArmClothing('left', armTexture.leftUrl);
+                    changeArmClothing('right', armTexture.rightUrl);
+                }
+                if (legTexture) {
+                    currentLegLeftURL = legTexture.leftUrl;
+                    currentLegRightURL = legTexture.rightUrl;
+                    changeLegClothing('left', legTexture.leftUrl);
+                    changeLegClothing('right', legTexture.rightUrl);
+                }
             }
         }
         
