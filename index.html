@@ -3120,13 +3120,6 @@
         let currentLegRightURL = legTextures[0].rightUrl; // Por defecto 'None'
         let currentLegSide = null; // 'left' o 'right'
         
-        // Cargar iconos de presets dinámicamente
-        document.getElementById('abby-icon').src = presetIcons['Abby'];
-        document.getElementById('jinu-icon').src = presetIcons['Jinu'];
-        document.getElementById('zoey-icon').src = presetIcons['Zoey'];
-        document.getElementById('rumi-icon').src = presetIcons['Rumi'];
-        document.getElementById('mira-icon').src = presetIcons['Mira'];
-
         // Habilitar caché de THREE.js para evitar recargas de red
         THREE.Cache.enabled = true;
         
@@ -6785,6 +6778,31 @@
         
         // Detectar eventos al cargar la página
         window.addEventListener('DOMContentLoaded', async () => {
+            // Cargar iconos de presets dinámicamente
+            try {
+                const abbyIcon = document.getElementById('abby-icon');
+                const jinuIcon = document.getElementById('jinu-icon');
+                const zoeyIcon = document.getElementById('zoey-icon');
+                const rumiIcon = document.getElementById('rumi-icon');
+                const miraIcon = document.getElementById('mira-icon');
+                
+                if (abbyIcon) abbyIcon.src = presetIcons['Abby'];
+                if (jinuIcon) jinuIcon.src = presetIcons['Jinu'];
+                if (zoeyIcon) zoeyIcon.src = presetIcons['Zoey'];
+                if (rumiIcon) rumiIcon.src = presetIcons['Rumi'];
+                if (miraIcon) miraIcon.src = presetIcons['Mira'];
+                
+                console.log('Preset icons loaded:', {
+                    Abby: presetIcons['Abby'],
+                    Jinu: presetIcons['Jinu'],
+                    Zoey: presetIcons['Zoey'],
+                    Rumi: presetIcons['Rumi'],
+                    Mira: presetIcons['Mira']
+                });
+            } catch (error) {
+                console.error('Error loading preset icons:', error);
+            }
+            
             const urlParams = new URLSearchParams(window.location.search);
             
             // Abrir pestaña Presets si viene en la URL (?tab=presets)
