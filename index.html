@@ -6339,7 +6339,9 @@
             
             // Colores especiales para cabeza
             let headColor = lightestSkinColor;
-            if (characterName === 'Jinu') {
+            if (characterName === 'Abby') {
+                headColor = new THREE.Color('#FCD5C6'); // Color piel para Abby
+            } else if (characterName === 'Jinu') {
                 headColor = new THREE.Color('#FCD5C6'); // Color piel para Jinu
             }
             
@@ -6370,7 +6372,9 @@
             if (modelParts.torso) {
                 // Colores especiales para torso
                 let torsoColor = lightestSkinColor;
-                if (characterName === 'Jinu') {
+                if (characterName === 'Abby') {
+                    torsoColor = new THREE.Color('#A8F4E4'); // Color torso para Abby
+                } else if (characterName === 'Jinu') {
                     torsoColor = new THREE.Color('#F4F4F2'); // Gris claro para Jinu
                 } else if (characterName === 'Mira') {
                     torsoColor = new THREE.Color('#243267');
@@ -6397,7 +6401,9 @@
             // Aplicar color a los brazos
             // Colores especiales para brazos
             let armsColor = lightestSkinColor;
-            if (characterName === 'Jinu') {
+            if (characterName === 'Abby') {
+                armsColor = new THREE.Color('#FCD5C6'); // Color piel para Abby
+            } else if (characterName === 'Jinu') {
                 armsColor = new THREE.Color('#FCD5C6'); // Color piel para Jinu
             }
             
@@ -6424,7 +6430,9 @@
             // Aplicar color a las piernas
             // Colores especiales para piernas
             let legsColor = lightestSkinColor;
-            if (characterName === 'Jinu') {
+            if (characterName === 'Abby') {
+                legsColor = new THREE.Color('#91C9FA'); // Azul claro para Abby
+            } else if (characterName === 'Jinu') {
                 legsColor = new THREE.Color('#91C9FA'); // Azul claro para Jinu
             } else if (characterName === 'Mira') {
                 legsColor = new THREE.Color('#390626');
