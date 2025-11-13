@@ -6339,7 +6339,9 @@
             
             // Colores especiales para cabeza
             let headColor = lightestSkinColor;
-            if (characterName === 'Abby') {
+            if (characterName === 'Romance') {
+                headColor = new THREE.Color('#FCD5C6'); // Color piel para Romance
+            } else if (characterName === 'Abby') {
                 headColor = new THREE.Color('#FCD5C6'); // Color piel para Abby
             } else if (characterName === 'Jinu') {
                 headColor = new THREE.Color('#FCD5C6'); // Color piel para Jinu
@@ -6372,7 +6374,9 @@
             if (modelParts.torso) {
                 // Colores especiales para torso
                 let torsoColor = lightestSkinColor;
-                if (characterName === 'Abby') {
+                if (characterName === 'Romance') {
+                    torsoColor = new THREE.Color('#FCEE35'); // Color torso para Romance (amarillo)
+                } else if (characterName === 'Abby') {
                     torsoColor = new THREE.Color('#A8F4E4'); // Color torso para Abby
                 } else if (characterName === 'Jinu') {
                     torsoColor = new THREE.Color('#F4F4F2'); // Gris claro para Jinu
@@ -6401,7 +6405,9 @@
             // Aplicar color a los brazos
             // Colores especiales para brazos
             let armsColor = lightestSkinColor;
-            if (characterName === 'Abby') {
+            if (characterName === 'Romance') {
+                armsColor = new THREE.Color('#FCD5C6'); // Color piel para Romance
+            } else if (characterName === 'Abby') {
                 armsColor = new THREE.Color('#FCD5C6'); // Color piel para Abby
             } else if (characterName === 'Jinu') {
                 armsColor = new THREE.Color('#FCD5C6'); // Color piel para Jinu
@@ -6430,7 +6436,9 @@
             // Aplicar color a las piernas
             // Colores especiales para piernas
             let legsColor = lightestSkinColor;
-            if (characterName === 'Abby') {
+            if (characterName === 'Romance') {
+                legsColor = new THREE.Color('#DEFEFF'); // Azul muy claro para Romance
+            } else if (characterName === 'Abby') {
                 legsColor = new THREE.Color('#91C9FA'); // Azul claro para Abby
             } else if (characterName === 'Jinu') {
                 legsColor = new THREE.Color('#91C9FA'); // Azul claro para Jinu
