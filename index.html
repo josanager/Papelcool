@@ -35,9 +35,6 @@
     <!-- Google Fonts para un estilo futurista - Optimizado -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Preconnect para cargar SVG desde GitHub/CDN más rápido y con CORS correcto -->
-    <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;600&display=swap" rel="stylesheet"></noscript>
     <!-- Import map para three.js -->
@@ -57,7 +54,6 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <!-- Character & Texture Data - Archivo separado para organización -->
-    <!-- CRÍTICO: SIN defer porque el script principal necesita estos arrays INMEDIATAMENTE -->
     <script src="character-data.js"></script>
     <style>
         * {
@@ -271,13 +267,11 @@
             box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
                 0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
             font-size: 1rem;
-            width: 90px;   /* Ancho base */
-            height: 120px;  /* Alto = ancho * 4/3 para aspect ratio 3:4 */
-            aspect-ratio: 3 / 4;  /* Aspect ratio 3:4 */
+            width: 120px;   /* Ancho fijo para hacer cuadrado */
+            height: 120px;  /* Alto igual al ancho = cuadrado */
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;  /* No reducir en carrusel */
         }
         
         .preset-character-btn::after {
@@ -368,40 +362,6 @@
             object-fit: cover;
             border-radius: 16px;
         }
-        
-        /* Contenedor de presets - Grid 3x3 en desktop Y MÓVIL (carrusel desactivado para prueba) */
-        .presets-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);  /* 3 columnas en desktop */
-            gap: 12px;
-            width: 100%;
-            max-width: 320px;  /* Ancho máximo para 3 columnas */
-        }
-        
-        /* CARRUSEL EN MÓVIL DESACTIVADO TEMPORALMENTE PARA PRUEBA */
-        /* @media (max-width: 1024px) {
-            .presets-container {
-                display: flex;
-                grid-template-columns: none;
-                gap: 12px;
-                overflow-x: auto;
-                overflow-y: hidden;
-                scroll-snap-type: x mandatory;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                -ms-overflow-style: none;
-                padding: 4px 0;
-                max-width: 100%;
-            }
-            
-            .presets-container::-webkit-scrollbar {
-                display: none;
-            }
-            
-            .presets-container .preset-character-btn {
-                scroll-snap-align: start;
-            }
-        } */
         
         /* Nombre del personaje en la parte superior */
         #character-name-display {
@@ -2699,7 +2659,7 @@
                 <!-- ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético) -->
                 <!-- Para añadir nuevos personajes: agregar al INICIO de la lista -->
                 <div id="presets-section" class="pt-2 border-t border-cyan-500/30 mb-4 hidden">
-                    <div id="presets-container" class="presets-container pointer-events-auto">
+                    <div class="flex gap-3 pointer-events-auto">
                         <!-- ABBY - Personaje más nuevo (2024) -->
                         <button type="button" id="preset-abby-btn" class="preset-character-btn">
                             <div class="button-outer">
@@ -3124,67 +3084,13 @@
         let currentLegRightURL = legTextures[0].rightUrl; // Por defecto 'None'
         let currentLegSide = null; // 'left' o 'right'
         
-        // Cargar iconos de presets dinámicamente cuando el DOM esté listo
-        // IMPORTANTE: character-data.js se carga síncronamente ANTES de este script,
-        // por lo que los arrays ya están disponibles
-        function loadPresetIcons() {
-            try {
-                // Marcar que ya ejecutamos para evitar duplicados
-                if (window.iconsLoaded) return;
-                window.iconsLoaded = true;
-                
-                const abbyIcon = document.getElementById('abby-icon');
-                const jinuIcon = document.getElementById('jinu-icon');
-                const zoeyIcon = document.getElementById('zoey-icon');
-                const rumiIcon = document.getElementById('rumi-icon');
-                const miraIcon = document.getElementById('mira-icon');
-                
-                // Función helper para cargar con fallback CDN
-                function loadIconWithFallback(imgElement, url, name) {
-                    if (!imgElement || !url) {
-                        console.warn(`⚠️ Elemento o URL faltante para icono de ${name}`);
-                        return;
-                    }
-                    imgElement.onerror = function() {
-                        if (!this.dataset.cdnTried) {
-                            this.dataset.cdnTried = '1';
-                            const cdn = typeof toCdnUrl === 'function' ? toCdnUrl(url) : url;
-                            console.warn(`⚠️ Fallback CDN para icono de ${name}`);
-                            this.src = cdn + (cdn.includes('?') ? '&' : '?') + 't=' + Date.now();
-                        } else {
-                            console.error(`❌ Falló carga de icono ${name} incluso con CDN`);
-                        }
-                    };
-                    imgElement.src = url;
-                }
-                
-                // CRÍTICO: Abby primero para garantizar carga prioritaria en móvil
-                loadIconWithFallback(abbyIcon, presetIcons['Abby'], 'Abby');
-                loadIconWithFallback(jinuIcon, presetIcons['Jinu'], 'Jinu');
-                loadIconWithFallback(zoeyIcon, presetIcons['Zoey'], 'Zoey');
-                loadIconWithFallback(rumiIcon, presetIcons['Rumi'], 'Rumi');
-                loadIconWithFallback(miraIcon, presetIcons['Mira'], 'Mira');
-                
-                console.log('✅ Iconos de presets cargados:', {
-                    Abby: presetIcons['Abby'] ? '✓' : '✗',
-                    Jinu: presetIcons['Jinu'] ? '✓' : '✗',
-                    Zoey: presetIcons['Zoey'] ? '✓' : '✗',
-                    Rumi: presetIcons['Rumi'] ? '✓' : '✗',
-                    Mira: presetIcons['Mira'] ? '✓' : '✗'
-                });
-            } catch (error) {
-                console.error('❌ Error al cargar iconos de presets:', error);
-            }
-        }
-        
-        // Ejecutar cuando el DOM esté listo
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadPresetIcons);
-        } else {
-            // DOM ya está listo, ejecutar inmediatamente
-            loadPresetIcons();
-        }
-        
+        // Cargar iconos de presets dinámicamente
+        document.getElementById('abby-icon').src = presetIcons['Abby'];
+        document.getElementById('jinu-icon').src = presetIcons['Jinu'];
+        document.getElementById('zoey-icon').src = presetIcons['Zoey'];
+        document.getElementById('rumi-icon').src = presetIcons['Rumi'];
+        document.getElementById('mira-icon').src = presetIcons['Mira'];
+
         // Habilitar caché de THREE.js para evitar recargas de red
         THREE.Cache.enabled = true;
         
@@ -3257,20 +3163,6 @@
         
         // Función para cargar SVG a alta resolución con colores correctos y cache
         // Convierte SVG vectorial a imagen de alta calidad antes de usarlo como textura
-        function toCdnUrl(url) {
-            try {
-                // raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/... -> cdn.jsdelivr.net/gh/josanager/Textures-Papelcool@main/...
-                const RAW_PREFIX = 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/';
-                if (url.startsWith(RAW_PREFIX)) {
-                    const tail = url.substring(RAW_PREFIX.length);
-                    return `https://cdn.jsdelivr.net/gh/josanager/Textures-Papelcool@main/${tail}`;
-                }
-            } catch (e) { /* noop */ }
-            return url;
-        }
-
-        const attemptedFallback = new Set();
-
         function loadSVGAsHighResTexture(url, onLoad, onError) {
             // Verificar cache primero
             const cachedTexture = getCachedTexture(url);
@@ -3319,14 +3211,6 @@
             
             img.onerror = function(error) {
                 console.error('Error cargando SVG:', url, error);
-                // Fallback a CDN confiable si falla raw.githubusercontent.com (común en móvil)
-                const cdnUrl = toCdnUrl(url);
-                if (cdnUrl !== url && !attemptedFallback.has(cdnUrl)) {
-                    attemptedFallback.add(cdnUrl);
-                    console.warn('Reintentando desde CDN:', cdnUrl);
-                    img.src = cdnUrl + (cdnUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
-                    return;
-                }
                 if (onError) onError(error);
             };
             
@@ -6411,12 +6295,12 @@
             // Aplicar color de piel más claro (#F7D5CF) a todos los personajes preestablecidos
             const lightestSkinColor = new THREE.Color('#F7D5CF');
             
-            // Color especial para cabeza de Jinu y Abby
+            // Colores especiales para cabeza
             let headColor = lightestSkinColor;
-            if (characterName === 'Jinu') {
+            if (characterName === 'Abby') {
+                headColor = new THREE.Color('#FCD5C6'); // Color piel para Abby
+            } else if (characterName === 'Jinu') {
                 headColor = new THREE.Color('#FCD5C6'); // Color piel para Jinu
-            } else if (characterName === 'Abby') {
-                headColor = new THREE.Color('#F7D5CF'); // Color piel para Abby
             }
             
             // Aplicar color a la cabeza
@@ -6447,7 +6331,7 @@
                 // Colores especiales para torso
                 let torsoColor = lightestSkinColor;
                 if (characterName === 'Abby') {
-                    torsoColor = new THREE.Color('#F7D5CF'); // Color piel para Abby
+                    torsoColor = new THREE.Color('#A8F4E4'); // Color turquesa para Abby
                 } else if (characterName === 'Jinu') {
                     torsoColor = new THREE.Color('#F4F4F2'); // Gris claro para Jinu
                 } else if (characterName === 'Mira') {
@@ -6473,12 +6357,12 @@
             }
             
             // Aplicar color a los brazos
-            // Color especial para brazos de Jinu y Abby
+            // Colores especiales para brazos
             let armsColor = lightestSkinColor;
-            if (characterName === 'Jinu') {
+            if (characterName === 'Abby') {
+                armsColor = new THREE.Color('#FCD5C6'); // Color piel para Abby
+            } else if (characterName === 'Jinu') {
                 armsColor = new THREE.Color('#FCD5C6'); // Color piel para Jinu
-            } else if (characterName === 'Abby') {
-                armsColor = new THREE.Color('#F7D5CF'); // Color piel para Abby
             }
             
             modelParts.arms.forEach(arm => {
@@ -6505,7 +6389,7 @@
             // Colores especiales para piernas
             let legsColor = lightestSkinColor;
             if (characterName === 'Abby') {
-                legsColor = new THREE.Color('#F7D5CF'); // Color piel para Abby
+                legsColor = new THREE.Color('#91C9FA'); // Azul claro para Abby
             } else if (characterName === 'Jinu') {
                 legsColor = new THREE.Color('#91C9FA'); // Azul claro para Jinu
             } else if (characterName === 'Mira') {
@@ -6865,9 +6749,6 @@
         
         // Detectar eventos al cargar la página
         window.addEventListener('DOMContentLoaded', async () => {
-            // Con defer en character-data.js, ya no necesitamos re-binding del botón de Abby
-            // Los event listeners ya están definidos correctamente arriba
-            
             const urlParams = new URLSearchParams(window.location.search);
             
             // Abrir pestaña Presets si viene en la URL (?tab=presets)
