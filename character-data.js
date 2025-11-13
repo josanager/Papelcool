@@ -11,6 +11,7 @@
 
 // --- ICONOS DE PERSONAJES PREESTABLECIDOS ---
 const presetIcons = {
+    'Romance': 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/Romance-icon.svg',
     'Jinu': 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/Jinu-icon.svg',
     'Zoey': 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Zoey/Zoey-icon.svg',
     'Rumi': 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Rumi/Rumi-icon.svg',
@@ -20,6 +21,7 @@ const presetIcons = {
 // --- DATA PARA OJOS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const eyeTextures = [
+    { name: 'Romance', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/eyes/Romance-eyes.svg' },
     { name: 'Jinu', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/eyes/Jinu-eyes.svg' },
     { name: 'Male', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Male-eyes.svg' },
     { name: 'Female', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyes/Female-eyes.svg' },
@@ -31,6 +33,7 @@ const eyeTextures = [
 // --- DATA PARA CEJAS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const eyebrowTextures = [
+    { name: 'Romance', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/eyebrown/Romance-eyebrown.svg' },
     { name: 'Jinu', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/eyebrown/Jinu-eyebrown.svg' },
     { name: 'Male', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Male-eyebrown.svg' },
     { name: 'Female', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/eyesbrown/Female-eyebrown.svg' },
@@ -58,6 +61,14 @@ const earTextures = [
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const hairTextures = [
     { name: 'None', frontUrl: null, backUrl: null, leftUrl: null, rightUrl: null, upUrl: null }, // Opción sin cabello
+    { 
+        name: 'Romance', 
+        frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/hair/Romance-hair-front.svg',
+        backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/hair/Romance-hair-back.svg',
+        leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/hair/Romance-hair-left.svg',
+        rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/hair/Romance-hair-right.svg',
+        upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/hair/Romance-hair-up.svg'
+    },
     { 
         name: 'Jinu', 
         frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/hair/Jinu-hair-front.svg',
@@ -97,6 +108,11 @@ const hairTextures = [
 const torsoClothingTextures = [
     { name: 'None', frontUrl: null, backUrl: null }, // Opción sin ropa
     { 
+        name: 'Romance', 
+        frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/torso/Romance-torso-front.svg',
+        backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/torso/Romance-torso-back.svg'
+    },
+    { 
         name: 'Jinu', 
         frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/torso/Jinu-torso-front.svg',
         backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/torso/Jinu-torso-back.svg'
@@ -123,6 +139,11 @@ const torsoClothingTextures = [
 const armTextures = [
     { name: 'None', leftUrl: null, rightUrl: null }, // Opción sin estilo
     {
+        name: 'Romance', 
+        leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/arms/Romance-arm-left.svg',
+        rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/arms/Romance-arm-right.svg'
+    },
+    {
         name: 'Jinu', 
         leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/arms/Jinu-arm-left.svg',
         rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/arms/Jinu-arm-right.svg'
@@ -148,6 +169,11 @@ const armTextures = [
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const legTextures = [
     { name: 'None', leftUrl: null, rightUrl: null }, // Opción sin estilo
+    {
+        name: 'Romance', 
+        leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/legs/Romance-leg-left.svg',
+        rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/legs/Romance-leg-right.svg'
+    },
     {
         name: 'Jinu', 
         leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/legs/Jinu-leg-left.svg',
