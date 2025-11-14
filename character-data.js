@@ -11,6 +11,8 @@
 
 // --- ICONOS DE PERSONAJES PREESTABLECIDOS ---
 const presetIcons = {
+    'Baby': 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Baby/Baby-icon.svg',
+    'Mystery': 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mystery/Mystery-icon.svg',
     'Romance': 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/Romance-icon.svg',
     'Abby': 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Abby/Abby-icon.svg',
     'Jinu': 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/Jinu-icon.svg',
@@ -22,6 +24,7 @@ const presetIcons = {
 // --- DATA PARA OJOS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const eyeTextures = [
+    { name: 'Baby', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Baby/eyes/Baby-eyes.svg' },
     { name: 'Romance', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/eyes/Romance-eyes.svg' },
     { name: 'Abby', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Abby/eyes/Abby-eyes.svg' },
     { name: 'Jinu', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/eyes/Jinu-eyes.svg' },
@@ -35,6 +38,7 @@ const eyeTextures = [
 // --- DATA PARA CEJAS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const eyebrowTextures = [
+    { name: 'Baby', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Baby/eyebrown/Baby-eyebrown.svg' },
     { name: 'Romance', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/eyebrown/Romance-eyebrown.svg' },
     { name: 'Abby', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Abby/eyebrown/Abby-eyebrown.svg' },
     { name: 'Jinu', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/eyebrown/Jinu-eyebrown.svg' },
@@ -53,6 +57,8 @@ const noseTextures = [
 // --- DATA PARA OREJAS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const earTextures = [
+    { name: 'Baby', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Baby/ears/Baby-ears.svg' },
+    { name: 'Mystery', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mystery/ears/Mystery-ears.svg' },
     { name: 'Abby', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Abby/ears/Abby-ears.svg' },
     { name: 'Jinu', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Jinu/ears/Jinu-ears.svg' },
     { name: 'Basic', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/ears/Basic-ears.svg' },
@@ -65,6 +71,22 @@ const earTextures = [
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const hairTextures = [
     { name: 'None', frontUrl: null, backUrl: null, leftUrl: null, rightUrl: null, upUrl: null }, // Opción sin cabello
+    { 
+        name: 'Baby', 
+        frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Baby/hair/Baby-hair-front.svg',
+        backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Baby/hair/Baby-hair-back.svg',
+        leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Baby/hair/Baby-hair-left.svg',
+        rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Baby/hair/Baby-hair-right.svg',
+        upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Baby/hair/Baby-hair-up.svg'
+    },
+    { 
+        name: 'Mystery', 
+        frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mystery/hair/Mystery-hair-front.svg',
+        backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mystery/hair/Mystery-hair-back.svg',
+        leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mystery/hair/Mystery-hair-left.svg',
+        rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mystery/hair/Mystery-hair-right.svg',
+        upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mystery/hair/Mystery-hair-up.svg'
+    },
     { 
         name: 'Romance', 
         frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/hair/Romance-hair-front.svg',
@@ -120,6 +142,16 @@ const hairTextures = [
 const torsoClothingTextures = [
     { name: 'None', frontUrl: null, backUrl: null }, // Opción sin ropa
     { 
+        name: 'Baby', 
+        frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Baby/torso/Baby-torso-front.svg',
+        backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Baby/torso/Baby-torso-back.svg'
+    },
+    { 
+        name: 'Mystery', 
+        frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mystery/torso/Mystery-torso-front.svg',
+        backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mystery/torso/Mystery-torso-back.svg'
+    },
+    { 
         name: 'Romance', 
         frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/torso/Romance-torso-front.svg',
         backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/torso/Romance-torso-back.svg'
@@ -156,6 +188,16 @@ const torsoClothingTextures = [
 const armTextures = [
     { name: 'None', leftUrl: null, rightUrl: null }, // Opción sin estilo
     {
+        name: 'Baby', 
+        leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Baby/arms/Baby-arm-left.svg',
+        rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Baby/arms/Baby-arm-right.svg'
+    },
+    {
+        name: 'Mystery', 
+        leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mystery/arms/Mystery-arm-left.svg',
+        rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mystery/arms/Mystery-arm-right.svg'
+    },
+    {
         name: 'Romance', 
         leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/arms/Romance-arm-left.svg',
         rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/arms/Romance-arm-right.svg'
@@ -191,6 +233,16 @@ const armTextures = [
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const legTextures = [
     { name: 'None', leftUrl: null, rightUrl: null }, // Opción sin estilo
+    {
+        name: 'Baby', 
+        leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Baby/legs/Baby-leg-left.svg',
+        rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Baby/legs/Baby-leg-right.svg'
+    },
+    {
+        name: 'Mystery', 
+        leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mystery/legs/Mystery-leg-left.svg',
+        rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Mystery/legs/Mystery-leg-right.svg'
+    },
     {
         name: 'Romance', 
         leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Romance/legs/Romance-leg-left.svg',
