@@ -6917,34 +6917,15 @@
                 // Ocultar botones de acciones de presets
                 const presetActionButtons = document.getElementById('preset-action-buttons');
                 if (presetActionButtons) presetActionButtons.classList.remove('active');
-                
-                // Mostrar showcase
-                showcaseButtonsContainer.classList.remove('hidden');
-                isShowcaseActive = true;
-                
-                // Mostrar logo del showcase
-                const showcaseLogoContainer = document.getElementById('showcase-logo-container');
-                if (showcaseLogoContainer) showcaseLogoContainer.classList.remove('hidden');
-                
-                // Mostrar botones de redes sociales
-                const socialMediaButtons = document.getElementById('social-media-buttons');
-                if (socialMediaButtons) socialMediaButtons.classList.add('active');
-                
-                // Activar clase del canvas para showcase
-                const canvasContainer = document.getElementById('canvas-container');
-                if (canvasContainer) canvasContainer.classList.add('showcase-active');
-                
-                // Ocultar sombra bajo los pies
-                if (footShadow) footShadow.visible = false;
-                
-                // Resetear personaje seleccionado
+
+                // Resetear personaje seleccionado y botones de descarga
                 currentPresetCharacter = null;
-                
-                // Ocultar botón de PDF
                 if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.remove('active');
-                // Ocultar botón provisional
                 const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
                 if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'none';
+
+                // Restaurar showcase original (misma cámara, fondo, grid y controles)
+                startShowcase();
             });
         }
         
