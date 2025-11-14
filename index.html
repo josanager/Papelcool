@@ -2959,6 +2959,7 @@
         let showcaseTextureTimers = {
             eyes: 0,
             eyebrows: 0,
+            nose: 0,
             ears: 0,
             hair: 0,
             torso: 0,
@@ -2970,6 +2971,7 @@
         const showcaseTextureIntervals = {
             eyes: 2500,      // Cambiar cada 2.5 segundos
             eyebrows: 3000,   // Cambiar cada 3 segundos
+            nose: 3200,       // Cambiar cada 3.2 segundos
             ears: 3500,       // Cambiar cada 3.5 segundos
             hair: 4000,       // Cambiar cada 4 segundos
             torso: 4500,      // Cambiar cada 4.5 segundos
@@ -3118,27 +3120,27 @@
         // Aquí solo definimos las variables de estado actuales
         
         // Variables de estado para texturas actuales
-        let currentEyeTextureURL = eyeTextures[0].url;
-        let currentEyebrowTextureURL = eyebrowTextures[0].url;
-        let currentNoseTextureURL = noseTextures[0].url;
-        let currentEarTextureURL = earTextures[0].url;
+        let currentEyeTextureURL = null;
+        let currentEyebrowTextureURL = null;
+        let currentNoseTextureURL = null;
+        let currentEarTextureURL = null;
         let currentEarSide = null; // 'left' o 'right'
         
-        let currentHairFrontURL = hairTextures[0].frontUrl; // Por defecto 'None'
-        let currentHairBackURL = hairTextures[0].backUrl; // Por defecto 'None'
-        let currentHairLeftURL = hairTextures[0].leftUrl; // Por defecto 'None'
-        let currentHairRightURL = hairTextures[0].rightUrl; // Por defecto 'None'
-        let currentHairUpURL = hairTextures[0].upUrl; // Por defecto 'None'
+        let currentHairFrontURL = null; // Por defecto 'None'
+        let currentHairBackURL = null; // Por defecto 'None'
+        let currentHairLeftURL = null; // Por defecto 'None'
+        let currentHairRightURL = null; // Por defecto 'None'
+        let currentHairUpURL = null; // Por defecto 'None'
         
-        let currentTorsoFrontURL = torsoClothingTextures[0].frontUrl; // Por defecto 'None'
-        let currentTorsoBackURL = torsoClothingTextures[0].backUrl; // Por defecto 'None'
+        let currentTorsoFrontURL = null; // Por defecto 'None'
+        let currentTorsoBackURL = null; // Por defecto 'None'
         
-        let currentArmLeftURL = armTextures[0].leftUrl; // Por defecto 'None'
-        let currentArmRightURL = armTextures[0].rightUrl; // Por defecto 'None'
+        let currentArmLeftURL = null; // Por defecto 'None'
+        let currentArmRightURL = null; // Por defecto 'None'
         let currentArmSide = null; // 'left' o 'right'
         
-        let currentLegLeftURL = legTextures[0].leftUrl; // Por defecto 'None'
-        let currentLegRightURL = legTextures[0].rightUrl; // Por defecto 'None'
+        let currentLegLeftURL = null; // Por defecto 'None'
+        let currentLegRightURL = null; // Por defecto 'None'
         let currentLegSide = null; // 'left' o 'right'
         
         // Cargar iconos de presets dinámicamente
@@ -3404,6 +3406,21 @@
                 modelCenter.set(0, groundY, 0);
                 controls.target.copy(modelCenter);
                 scene.add(loadedModel);
+                
+                // Establecer el modelo base completamente en blanco al iniciar el showcase
+                if (loadedModel) {
+                    loadedModel.traverse((child) => {
+                        if (child.isMesh && child.material) {
+                            if (Array.isArray(child.material)) {
+                                child.material.forEach(mat => {
+                                    if (mat.color) mat.color.setHex(0xffffff);
+                                });
+                            } else if (child.material.color) {
+                                child.material.color.setHex(0xffffff);
+                            }
+                        }
+                    });
+                }
 
                 // Crear y añadir sombra bajo los pies (inicialmente oculta)
                 if (!footShadow) {
@@ -3414,7 +3431,7 @@
                     scene.add(footShadow);
                 }
                 
-                // Iniciar showcase primero (sin texturas)
+                // Iniciar showcase primero (sin texturas iniciales)
                 startShowcase();
                 
                 // Ocultar loading después de que showcase esté listo
@@ -3425,22 +3442,6 @@
                     }, 500);
                 }, 300);
 
-                if (modelParts.head) {
-                    changeEyeTexture(currentEyeTextureURL, true); // Cargar textura inicial
-                    changeEyebrowTexture(currentEyebrowTextureURL, true); // Cargar textura inicial de cejas
-                    changeNoseTexture(currentNoseTextureURL, true); // Cargar textura inicial de nariz
-                    changeEarTexture('left', currentEarTextureURL, true); // Cargar textura inicial de oreja izquierda
-                    changeEarTexture('right', currentEarTextureURL, true); // Cargar textura inicial de oreja derecha
-                    changeHairTexture(currentHairFrontURL, currentHairBackURL, currentHairLeftURL, currentHairRightURL, currentHairUpURL, true); // Cargar cabello inicial (none)
-                }
-                if (modelParts.torso) {
-                    changeTorsoClothing(currentTorsoFrontURL, currentTorsoBackURL, true); // Cargar vestimenta inicial (none)
-                }
-                if (modelParts.legs.length >= 2) {
-                    changeLegClothing('left', currentLegLeftURL, true); // Cargar estilo de pierna izquierda inicial (none)
-                    changeLegClothing('right', currentLegRightURL, true); // Cargar estilo de pierna derecha inicial (none)
-                }
-                
                 // Cachear referencias a extremidades para optimizar animación
                 cacheLimbReferences();
             },
@@ -4195,18 +4196,18 @@
             );
         }
 
-        // Función para aplicar color a la nariz (50% más oscuro que la cabeza)
+        // Función para aplicar color a la nariz (25% más oscuro que la cabeza)
         function applyNoseColor(headColorHex) {
             if (!noseMesh) return;
             
             // Convertir el color hex a RGB
             const color = new THREE.Color(headColorHex);
             
-            // Oscurecer el color un 50% (multiplicar por 0.5)
+            // Oscurecer el color un 25% (multiplicar por 0.75)
             const darkenedColor = new THREE.Color(
-                color.r * 0.5,
-                color.g * 0.5,
-                color.b * 0.5
+                color.r * 0.75,
+                color.g * 0.75,
+                color.b * 0.75
             );
             
             // Aplicar el color oscurecido a la nariz
@@ -5738,6 +5739,9 @@
                 earRightMesh, 
                 hairFrontMesh, 
                 hairBackMesh,
+                hairLeftMesh,
+                hairRightMesh,
+                hairUpMesh,
                 torsoFrontMesh,
                 torsoBackMesh,
                 armLeftFrontMesh,
@@ -5807,6 +5811,14 @@
             if (randomTexture) {
                 currentEyebrowTextureURL = randomTexture.url;
                 changeEyebrowTexture(randomTexture.url);
+            }
+        }
+
+        function applyRandomNoseTexture() {
+            const randomTexture = getRandomTexture(noseTextures);
+            if (randomTexture) {
+                currentNoseTextureURL = randomTexture.url;
+                changeNoseTexture(randomTexture.url);
             }
         }
 
@@ -6010,30 +6022,52 @@
                 }
             });
             
-            // NUEVO: Resetear todas las texturas SVG a "None" (estado inicial)
-            // Resetear ojos al primer estilo (default)
-            if (eyeTextures.length > 0) {
-                currentEyeTextureURL = eyeTextures[0].url;
-                changeEyeTexture(currentEyeTextureURL);
+            // NUEVO: Resetear todas las texturas SVG faciales a "None" (modelo totalmente en blanco)
+            // Ojos: eliminar mesh y limpiar referencia/URL
+            currentEyeTextureURL = null;
+            if (eyesMesh && modelParts.head) {
+                modelParts.head.remove(eyesMesh);
+                if (eyesMesh.material && eyesMesh.material.map) eyesMesh.material.map.dispose();
+                if (eyesMesh.material) eyesMesh.material.dispose();
+                if (eyesMesh.geometry) eyesMesh.geometry.dispose();
+                eyesMesh = null;
             }
             
-            // Resetear cejas al primer estilo (default)
-            if (eyebrowTextures.length > 0) {
-                currentEyebrowTextureURL = eyebrowTextures[0].url;
-                changeEyebrowTexture(currentEyebrowTextureURL);
+            // Cejas: eliminar mesh y limpiar referencia/URL
+            currentEyebrowTextureURL = null;
+            if (eyebrowsMesh && modelParts.head) {
+                modelParts.head.remove(eyebrowsMesh);
+                if (eyebrowsMesh.material && eyebrowsMesh.material.map) eyebrowsMesh.material.map.dispose();
+                if (eyebrowsMesh.material) eyebrowsMesh.material.dispose();
+                if (eyebrowsMesh.geometry) eyebrowsMesh.geometry.dispose();
+                eyebrowsMesh = null;
             }
             
-            // Resetear nariz al primer estilo (default)
-            if (noseTextures.length > 0) {
-                currentNoseTextureURL = noseTextures[0].url;
-                changeNoseTexture(currentNoseTextureURL);
+            // Nariz: eliminar mesh y limpiar referencia/URL
+            currentNoseTextureURL = null;
+            if (noseMesh && modelParts.head) {
+                modelParts.head.remove(noseMesh);
+                if (noseMesh.material && noseMesh.material.map) noseMesh.material.map.dispose();
+                if (noseMesh.material) noseMesh.material.dispose();
+                if (noseMesh.geometry) noseMesh.geometry.dispose();
+                noseMesh = null;
             }
             
-            // Resetear orejas al primer estilo (default)
-            if (earTextures.length > 0) {
-                currentEarTextureURL = earTextures[0].url;
-                changeEarTexture('left', currentEarTextureURL);
-                changeEarTexture('right', currentEarTextureURL);
+            // Orejas: eliminar meshes izquierdo/derecho y limpiar referencia/URL
+            currentEarTextureURL = null;
+            if (earLeftMesh && modelParts.head) {
+                modelParts.head.remove(earLeftMesh);
+                if (earLeftMesh.material && earLeftMesh.material.map) earLeftMesh.material.map.dispose();
+                if (earLeftMesh.material) earLeftMesh.material.dispose();
+                if (earLeftMesh.geometry) earLeftMesh.geometry.dispose();
+                earLeftMesh = null;
+            }
+            if (earRightMesh && modelParts.head) {
+                modelParts.head.remove(earRightMesh);
+                if (earRightMesh.material && earRightMesh.material.map) earRightMesh.material.map.dispose();
+                if (earRightMesh.material) earRightMesh.material.dispose();
+                if (earRightMesh.geometry) earRightMesh.geometry.dispose();
+                earRightMesh = null;
             }
             
             // Resetear cabello a "None"
@@ -6134,6 +6168,12 @@
                 if (now - showcaseTextureTimers.eyebrows > showcaseTextureIntervals.eyebrows) {
                     applyRandomEyebrowTexture();
                     showcaseTextureTimers.eyebrows = now;
+                }
+
+                // Nariz
+                if (now - showcaseTextureTimers.nose > showcaseTextureIntervals.nose) {
+                    applyRandomNoseTexture();
+                    showcaseTextureTimers.nose = now;
                 }
                 
                 // Orejas
@@ -6373,10 +6413,11 @@
             if (modelParts.head) {
                 modelParts.head.traverse((child) => {
                     if (child.isMesh && child.material && child.material.color) {
-                        // Excluir meshes de texturas SVG
+                        // Excluir meshes de texturas SVG (incluyendo TODO el cabello)
                         if (child !== eyesMesh && child !== eyebrowsMesh && child !== noseMesh && 
                             child !== earLeftMesh && child !== earRightMesh && 
-                            child !== hairFrontMesh && child !== hairBackMesh) {
+                            child !== hairFrontMesh && child !== hairBackMesh &&
+                            child !== hairLeftMesh && child !== hairRightMesh && child !== hairUpMesh) {
                             if (Array.isArray(child.material)) {
                                 child.material.forEach(mat => {
                                     if (mat.color) mat.color.copy(headColor);
@@ -6388,7 +6429,7 @@
                     }
                 });
                 
-                // Aplicar color a la nariz (50% más oscuro que la cabeza)
+                // Aplicar color a la nariz (25% más oscuro que la cabeza)
                 applyNoseColor(headColor.getHex());
             }
             
@@ -6505,13 +6546,54 @@
             });
             
             // Buscar todas las texturas del personaje
-            const eyeTexture = eyeTextures.find(t => t.name === characterName);
-            const eyebrowTexture = eyebrowTextures.find(t => t.name === characterName);
-            const earTexture = earTextures.find(t => t.name === characterName);
+            let eyeTexture = eyeTextures.find(t => t.name === characterName);
+            let eyebrowTexture = eyebrowTextures.find(t => t.name === characterName);
+            let earTexture = earTextures.find(t => t.name === characterName);
+            const noseTexture = noseTextures.length > 0 ? noseTextures[0] : null; // Nariz default para todos
             const hairTexture = hairTextures.find(t => t.name === characterName);
             const torsoTexture = torsoClothingTextures.find(t => t.name === characterName);
             const armTexture = armTextures.find(t => t.name === characterName);
             const legTexture = legTextures.find(t => t.name === characterName);
+
+            if (characterName === 'Romance') {
+                currentEarTextureURL = null;
+                if (earLeftMesh && modelParts.head) {
+                    modelParts.head.remove(earLeftMesh);
+                    if (earLeftMesh.material && earLeftMesh.material.map) earLeftMesh.material.map.dispose();
+                    if (earLeftMesh.material) earLeftMesh.material.dispose();
+                    if (earLeftMesh.geometry) earLeftMesh.geometry.dispose();
+                    earLeftMesh = null;
+                }
+                if (earRightMesh && modelParts.head) {
+                    modelParts.head.remove(earRightMesh);
+                    if (earRightMesh.material && earRightMesh.material.map) earRightMesh.material.map.dispose();
+                    if (earRightMesh.material) earRightMesh.material.dispose();
+                    if (earRightMesh.geometry) earRightMesh.geometry.dispose();
+                    earRightMesh = null;
+                }
+                earTexture = null;
+            } else if (characterName === 'Mystery') {
+                currentEyeTextureURL = null;
+                if (eyesMesh && modelParts.head) {
+                    modelParts.head.remove(eyesMesh);
+                    if (eyesMesh.material && eyesMesh.material.map) eyesMesh.material.map.dispose();
+                    if (eyesMesh.material) eyesMesh.material.dispose();
+                    if (eyesMesh.geometry) eyesMesh.geometry.dispose();
+                    eyesMesh = null;
+                }
+
+                currentEyebrowTextureURL = null;
+                if (eyebrowsMesh && modelParts.head) {
+                    modelParts.head.remove(eyebrowsMesh);
+                    if (eyebrowsMesh.material && eyebrowsMesh.material.map) eyebrowsMesh.material.map.dispose();
+                    if (eyebrowsMesh.material) eyebrowsMesh.material.dispose();
+                    if (eyebrowsMesh.geometry) eyebrowsMesh.geometry.dispose();
+                    eyebrowsMesh = null;
+                }
+
+                eyeTexture = null;
+                eyebrowTexture = null;
+            }
             
             // OPTIMIZACIÓN MÓVIL: Cargar texturas en secuencia para evitar fallas
             // En desktop: carga paralela (rápido)
@@ -6532,6 +6614,11 @@
                 if (eyebrowTexture) {
                     currentEyebrowTextureURL = eyebrowTexture.url;
                     changeEyebrowTexture(eyebrowTexture.url);
+                    await delay(50);
+                }
+                if (noseTexture) {
+                    currentNoseTextureURL = noseTexture.url;
+                    changeNoseTexture(noseTexture.url);
                     await delay(50);
                 }
                 if (earTexture) {
@@ -6592,6 +6679,10 @@
                 if (eyebrowTexture) {
                     currentEyebrowTextureURL = eyebrowTexture.url;
                     changeEyebrowTexture(eyebrowTexture.url);
+                }
+                if (noseTexture) {
+                    currentNoseTextureURL = noseTexture.url;
+                    changeNoseTexture(noseTexture.url);
                 }
                 if (earTexture) {
                     currentEarTextureURL = earTexture.url;
