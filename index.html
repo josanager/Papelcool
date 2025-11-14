@@ -2692,6 +2692,15 @@
                 <!-- ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético) -->
                 <!-- Para añadir nuevos personajes: agregar al INICIO de la lista -->
                 <div id="presets-section" class="pt-2 border-t border-cyan-500/30 mb-4 hidden">
+                    <div class="mb-3 pointer-events-auto">
+                        <input
+                            type="text"
+                            id="preset-search-input"
+                            placeholder="Search presets..."
+                            class="w-full px-4 py-2 text-sm bg-white border text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2"
+                            style="border-radius: 30px; border: 2px solid #FFFF00;"
+                        />
+                    </div>
                     <div id="presets-container" class="presets-grid pointer-events-auto">
                         <!-- BABY - Personaje más nuevo (2025) -->
                         <button type="button" id="preset-baby-btn" class="preset-character-btn">
@@ -6388,7 +6397,32 @@
             // Ocultar botón grande de PDF del centro
             const downloadPdfBtn = document.getElementById('download-pdf-btn');
             if (downloadPdfBtn) downloadPdfBtn.classList.remove('active');
+
+            // Resetear buscador de presets al entrar en la pestaña
+            const presetSearchInput = document.getElementById('preset-search-input');
+            const presetsContainer = document.getElementById('presets-container');
+            if (presetSearchInput && presetsContainer) {
+                presetSearchInput.value = '';
+                presetsContainer.querySelectorAll('.preset-character-btn').forEach(btn => {
+                    btn.style.display = '';
+                });
+            }
         });
+
+        // Lógica de filtrado en tiempo real para la barra de búsqueda de presets
+        const presetSearchInput = document.getElementById('preset-search-input');
+        const presetsContainer = document.getElementById('presets-container');
+        if (presetSearchInput && presetsContainer) {
+            presetSearchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                const buttons = presetsContainer.querySelectorAll('.preset-character-btn');
+                buttons.forEach(btn => {
+                    const img = btn.querySelector('img');
+                    const name = img && img.alt ? img.alt.toLowerCase() : '';
+                    btn.style.display = !query || name.includes(query) ? '' : 'none';
+                });
+            });
+        }
         
         // Función para aplicar personaje preestablecido (OPTIMIZADA PARA MÓVIL)
         async function applyPresetCharacter(characterName) {
