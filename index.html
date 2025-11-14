@@ -395,6 +395,13 @@
                 scroll-snap-align: center;
             }
         }
+
+        /* Reducir un poco el espacio inferior de la ventana de presets en móvil */
+        @media (max-width: 768px) {
+            #presets-section {
+                margin-bottom: 6px;
+            }
+        }
         
         /* Nombre del personaje en la parte superior */
         #character-name-display {
@@ -2613,6 +2620,28 @@
             
             <!-- Content when not logged in -->
             <div id="modal-logged-out" style="display: none;">
+                <div id="promo-code-container" style="margin-bottom: 1rem;">
+                    <p style="color: rgba(255, 255, 255, 0.8); text-align: center; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                        Have a promo code?
+                    </p>
+                    <div style="display: flex; gap: 8px; justify-content: center; align-items: center; flex-wrap: wrap;">
+                        <input
+                            type="text"
+                            id="promo-code-input"
+                            placeholder="Enter promo code"
+                            style="min-width: 180px; max-width: 260px; padding: 6px 10px; border-radius: 999px; border: 2px solid #FFFF00; outline: none; font-size: 0.9rem; background-color: #ffffff; color: #001628;"
+                        />
+                        <button
+                            type="button"
+                            id="promo-code-apply-btn"
+                            style="padding: 6px 14px; border-radius: 999px; border: none; background: #22c55e; color: #001628; font-weight: 600; font-size: 0.9rem; cursor: pointer;"
+                        >
+                            Apply
+                        </button>
+                    </div>
+                    <div id="promo-code-message" style="margin-top: 6px; text-align: center; font-size: 0.8rem; color: #facc15;"></div>
+                </div>
+
                 <p style="color: rgba(255, 255, 255, 0.8); text-align: center; margin-bottom: 1.5rem;">
                     Pay to download your custom template
                 </p>
@@ -2686,12 +2715,12 @@
 
     <!-- Panel del editor (responsivo) -->
     <div id="editor-panel-wrapper" class="pointer-events-none">
-        <div class="ui-panel p-4 space-y-4">
+        <div class="ui-panel p-4 space-y-4" style="padding-top: 8px; padding-bottom: 4px;">
             <div id="editor-container">
                 <!-- Botones de personajes preestablecidos -->
                 <!-- ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético) -->
                 <!-- Para añadir nuevos personajes: agregar al INICIO de la lista -->
-                <div id="presets-section" class="pt-2 border-t border-cyan-500/30 mb-4 hidden">
+                <div id="presets-section" class="pt-2 mb-4 hidden" style="padding-top: 4px; padding-bottom: 2px;">
                     <div class="mb-3 pointer-events-auto">
                         <input
                             type="text"
@@ -3411,8 +3440,9 @@
                 loadedModel.position.sub(center.multiplyScalar(scale));
                 const scaledHeight = size.y * scale;
                 groundY = scaledHeight / 2;
-                loadedModel.position.y = groundY;
-                modelCenter.set(0, groundY, 0);
+                // Levantar ligeramente el modelo para que no atraviese el suelo
+                loadedModel.position.y = groundY + 0.02;
+                modelCenter.set(0, groundY + 0.02, 0);
                 controls.target.copy(modelCenter);
                 scene.add(loadedModel);
                 
@@ -6962,7 +6992,123 @@
         const accountModal = document.getElementById('account-modal');
         const modalCloseBtn = document.getElementById('modal-close-btn');
         const modalLoggedOut = document.getElementById('modal-logged-out');
-        
+
+        // Elementos para código promocional
+        const promoCodeInput = document.getElementById('promo-code-input');
+        const promoCodeApplyBtn = document.getElementById('promo-code-apply-btn');
+        const promoCodeMessage = document.getElementById('promo-code-message');
+
+        let promoCodesCache = null;
+        let promoCodesLoaded = false;
+        const USED_PROMO_CODES_KEY = 'papelcool_used_promo_codes_v1';
+
+        async function loadPromoCodes() {
+            if (promoCodesLoaded) return promoCodesCache || [];
+            promoCodesLoaded = true;
+            try {
+                const res = await fetch('promo-codes.html', { cache: 'no-store' });
+                if (!res.ok) {
+                    promoCodesCache = [];
+                    return promoCodesCache;
+                }
+                const html = await res.text();
+                const match = html.match(/<pre[^>]*id=["']promo-codes["'][^>]*>([\s\S]*?)<\/pre>/i);
+                if (!match) {
+                    promoCodesCache = [];
+                    return promoCodesCache;
+                }
+                const content = match[1];
+                const lines = content.split('\n');
+                const codes = lines
+                    .map(line => line.trim())
+                    .filter(line => line && !line.startsWith('#'));
+                promoCodesCache = codes;
+                return promoCodesCache;
+            } catch (e) {
+                promoCodesCache = [];
+                return promoCodesCache;
+            }
+        }
+
+        function getUsedPromoCodes() {
+            try {
+                const raw = window.localStorage.getItem(USED_PROMO_CODES_KEY);
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function markPromoCodeUsed(code) {
+            try {
+                const current = getUsedPromoCodes();
+                if (!current.includes(code)) {
+                    current.push(code);
+                    window.localStorage.setItem(USED_PROMO_CODES_KEY, JSON.stringify(current));
+                }
+            } catch (e) {
+                // Ignorar errores de almacenamiento
+            }
+        }
+
+        async function handleApplyPromoCode() {
+            if (!promoCodeInput || !promoCodeMessage) return;
+
+            const raw = promoCodeInput.value.trim();
+            if (!raw) {
+                promoCodeMessage.textContent = 'Please enter a promo code.';
+                promoCodeMessage.style.color = '#f97316';
+                return;
+            }
+
+            const code = raw.toUpperCase();
+            promoCodeMessage.textContent = '';
+
+            const availableCodes = await loadPromoCodes();
+            if (!availableCodes.length) {
+                promoCodeMessage.textContent = 'Promo codes are not available right now.';
+                promoCodeMessage.style.color = '#f97316';
+                return;
+            }
+
+            const normalizedList = availableCodes.map(c => c.toUpperCase());
+            if (!normalizedList.includes(code)) {
+                promoCodeMessage.textContent = 'Invalid promo code.';
+                promoCodeMessage.style.color = '#f97316';
+                return;
+            }
+
+            const usedCodes = getUsedPromoCodes();
+            if (usedCodes.includes(code)) {
+                promoCodeMessage.textContent = 'This promo code has already been used.';
+                promoCodeMessage.style.color = '#f97316';
+                return;
+            }
+
+            markPromoCodeUsed(code);
+            promoCodeMessage.textContent = 'Promo code applied! Generating your download...';
+            promoCodeMessage.style.color = '#22c55e';
+
+            if (accountModal) {
+                accountModal.classList.remove('active');
+            }
+
+            await generatePDFAfterPayment('promo-' + code);
+        }
+
+        if (promoCodeApplyBtn && promoCodeInput) {
+            promoCodeApplyBtn.addEventListener('click', () => {
+                handleApplyPromoCode();
+            });
+            promoCodeInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleApplyPromoCode();
+                }
+            });
+        }
 
         // Coming Soon modal handlers
         const comingSoonModal = document.getElementById('coming-soon-modal');

@@ -101,7 +101,7 @@ const hairTextures = [
         backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Abby/hair/Abby-hair-back.svg',
         leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Abby/hair/Abby-hair-left.svg',
         rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Abby/hair/Abby-hair-right.svg',
-        upUrl: null
+        upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Kpop%20Demon%20Hunters/Abby/hair/Abby-hair-up.svg'
     },
     { 
         name: 'Jinu', 
