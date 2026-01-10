@@ -1,0 +1,590 @@
+3739-                        if (el.tagName === 'INPUT' && el.type === 'text') {
+3740-                            el.placeholder = translation;
+3741:                        } else {
+3742-                            el.innerHTML = translation;
+3743-                        }
+--
+4168-                if (index < maxPreload) {
+4169-                    img.src = url;
+4170:                } else {
+4171-                    // Placeholder SVG transparente mínimo
+4172-                    img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg"%3E%3C/svg%3E';
+4173-                    img.dataset.src = url;
+4174-                }
+4175:            } else {
+4176-                img.loading = 'lazy';
+4177-                img.src = url;
+--
+4236-                        const name = child.name.toLowerCase();
+4237-                        if (name.includes('head')) modelParts.head = child;
+4238:                        else if (name.includes('torso')) modelParts.torso = child;
+4239:                        else if (name.includes('arm')) {
+4240-                            modelParts.arms.push(child);
+4241-                            // Rotar brazo derecho 180 grados en el eje Y
+--
+4244-                            }
+4245-                        }
+4246:                        else if (name.includes('leg')) modelParts.legs.push(child);
+4247:                        else if (name.includes('eyebrow')) modelParts.eyebrows.push(child);
+4248:                        else if (name.includes('nose')) modelParts.nose = child;
+4249:                        else if (name.includes('ear')) modelParts.ears.push(child);
+4250:                        else if (name.includes('hair')) modelParts.hair = child;
+4251-
+4252-                        initialTransforms.set(child, {
+--
+4280-                                    if (mat.color) mat.color.setHex(0xffffff);
+4281-                                });
+4282:                            } else if (child.material.color) {
+4283-                                child.material.color.setHex(0xffffff);
+4284-                            }
+--
+4464-                        if (iconSpan) {
+4465-                            iconSpan.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M14 19h4V5h-4M6 19h4V5H6z"/></svg>';
+4466:                        } else {
+4467-                            btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M14 19h4V5h-4M6 19h4V5H6z"/></svg>';
+4468-                        }
+--
+4494-                    editorPanelWrapper.classList.add('hidden-mobile');
+4495-                    mobileGameControls.classList.add('active');
+4496:                } else {
+4497-                    // En desktop, ocultar completamente el panel del editor
+4498-                    editorPanelWrapper.style.display = 'none';
+--
+4520-                }, 800);
+4521-
+4522:            } else {
+4523-                // Modo edición (volver a presets)
+4524-                // Restaurar icono de los botones a play
+--
+4531-                        if (iconSpan) {
+4532-                            iconSpan.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.14v14l11-7z"/></svg>';
+4533:                        } else {
+4534-                            btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.14v14l11-7z"/></svg>';
+4535-                        }
+--
+4554-                    editorPanelWrapper.classList.remove('hidden-mobile');
+4555-                    mobileGameControls.classList.remove('active');
+4556:                } else {
+4557-                    // En desktop, mostrar el panel del editor
+4558-                    editorPanelWrapper.style.display = 'block';
+--
+4606-                        eyesMesh.position.set(0, 1.029, 1.129);
+4607-                        modelParts.head.add(eyesMesh);
+4608:                    } else {
+4609-                        // Actualizar textura del mesh existente (móvil y desktop)
+4610-                        const oldMap = eyesMesh.material.map;
+--
+4658-                        eyebrowsMesh.position.set(0, 1.029, 1.129);
+4659-                        modelParts.head.add(eyebrowsMesh);
+4660:                    } else {
+4661-                        // Actualizar textura del mesh existente
+4662-                        const oldMap = eyebrowsMesh.material.map;
+--
+4722-                        if (modelParts.head && modelParts.head.material && modelParts.head.material.color) {
+4723-                            applyNoseColor(modelParts.head.material.color.getHex());
+4724:                        } else {
+4725-                            // Si no hay color de cabeza definido, usar blanco con 50% oscuridad
+4726-                            applyNoseColor(0xffffff);
+4727-                        }
+4728:                    } else {
+4729-                        // Actualizar textura del mesh existente
+4730-                        const oldMap = noseMesh.material.map;
+--
+4809-                            newEarMesh.scale.x = -1; // Invertir horizontalmente para oreja izquierda
+4810-                            earLeftMesh = newEarMesh;
+4811:                        } else {
+4812-                            newEarMesh.position.set(1.13, 1.029, 0); // Lado derecho
+4813-                            newEarMesh.rotation.y = -Math.PI / 2; // Rotar 90 grados hacia la derecha
+--
+4816-
+4817-                        modelParts.head.add(newEarMesh);
+4818:                    } else {
+4819-                        // Actualizar textura del mesh existente
+4820-                        if (side === 'left' && earLeftMesh) {
+--
+4823-                            earLeftMesh.material.needsUpdate = true;
+4824-                            if (oldMap && oldMap !== texture) oldMap.dispose();
+4825:                        } else if (side === 'right' && earRightMesh) {
+4826-                            const oldMap = earRightMesh.material.map;
+4827-                            earRightMesh.material.map = texture;
+--
+4955-                        hairFrontMesh.position.set(0, 0.563, 1.130);
+4956-                        modelParts.head.add(hairFrontMesh);
+4957:                    } else {
+4958-                        // Solo actualiza la textura si el mesh ya existe
+4959-                        const oldMap = hairFrontMesh.material.map;
+--
+4988-                        hairBackMesh.position.set(0, 0.563, -1.129);
+4989-                        modelParts.head.add(hairBackMesh);
+4990:                    } else {
+4991-                        // Solo actualiza la textura si el mesh ya existe
+4992-                        const oldMap = hairBackMesh.material.map;
+--
+5023-                            hairLeftMesh.rotation.y = -Math.PI / 2; // Rotar 90 grados
+5024-                            modelParts.head.add(hairLeftMesh);
+5025:                        } else {
+5026-                            // Solo actualiza la textura si el mesh ya existe
+5027-                            const oldMap = hairLeftMesh.material.map;
+--
+5059-                            hairRightMesh.rotation.y = Math.PI / 2; // Rotar -90 grados
+5060-                            modelParts.head.add(hairRightMesh);
+5061:                        } else {
+5062-                            // Solo actualiza la textura si el mesh ya existe
+5063-                            const oldMap = hairRightMesh.material.map;
+--
+5095-                            hairUpMesh.rotation.x = -Math.PI / 2; // Rotar 90 grados para que sea horizontal
+5096-                            modelParts.head.add(hairUpMesh);
+5097:                        } else {
+5098-                            // Solo actualiza la textura si el mesh ya existe
+5099-                            const oldMap = hairUpMesh.material.map;
+--
+5173-                        torsoFrontMesh.position.set(0, -1.176, 0.453); // Torso frontal
+5174-                        modelParts.torso.add(torsoFrontMesh);
+5175:                    } else {
+5176-                        const oldMap = torsoFrontMesh.material.map;
+5177-                        torsoFrontMesh.material.map = texture;
+--
+5203-                        torsoBackMesh.position.set(0, -1.176, -0.453); // Torso trasero (Z invertido)
+5204-                        modelParts.torso.add(torsoBackMesh);
+5205:                    } else {
+5206-                        const oldMap = torsoBackMesh.material.map;
+5207-                        torsoBackMesh.material.map = texture;
+--
+5238-                    if (side === 'left') {
+5239-                        legLeftFrontMesh = null;
+5240:                    } else {
+5241-                        legRightFrontMesh = null;
+5242-                    }
+--
+5249-                    if (side === 'left') {
+5250-                        legLeftBackMesh = null;
+5251:                    } else {
+5252-                        legRightBackMesh = null;
+5253-                    }
+--
+5266-                    if (side === 'left') {
+5267-                        legLeftFrontMesh = null;
+5268:                    } else {
+5269-                        legRightFrontMesh = null;
+5270-                    }
+--
+5277-                    if (side === 'left') {
+5278-                        legLeftBackMesh = null;
+5279:                    } else {
+5280-                        legRightBackMesh = null;
+5281-                    }
+--
+5305-                            newMesh.position.set(0, -1.176, 0.452); // Pierna izquierda frontal
+5306-                            legLeftFrontMesh = newMesh;
+5307:                        } else {
+5308-                            newMesh.position.set(0, -1.176, 0.452); // Pierna derecha frontal
+5309-                            newMesh.rotation.y = Math.PI; // Rotar 180 grados
+--
+5312-
+5313-                        targetLeg.add(newMesh);
+5314:                    } else {
+5315-                        if (side === 'left' && legLeftFrontMesh) {
+5316-                            const oldMap = legLeftFrontMesh.material.map;
+--
+5318-                            legLeftFrontMesh.material.needsUpdate = true;
+5319-                            if (oldMap && oldMap !== texture) oldMap.dispose();
+5320:                        } else if (side === 'right' && legRightFrontMesh) {
+5321-                            const oldMap = legRightFrontMesh.material.map;
+5322-                            legRightFrontMesh.material.map = texture;
+--
+5353-                            newMesh.position.set(0, -1.176, -0.452); // Pierna izquierda trasera
+5354-                            legLeftBackMesh = newMesh;
+5355:                        } else {
+5356-                            newMesh.position.set(0, -1.176, -0.452); // Pierna derecha trasera
+5357-                            newMesh.rotation.y = Math.PI; // Rotar 180 grados
+--
+5360-
+5361-                        targetLeg.add(newMesh);
+5362:                    } else {
+5363-                        if (side === 'left' && legLeftBackMesh) {
+5364-                            const oldMap = legLeftBackMesh.material.map;
+--
+5366-                            legLeftBackMesh.material.needsUpdate = true;
+5367-                            if (oldMap && oldMap !== texture) oldMap.dispose();
+5368:                        } else if (side === 'right' && legRightBackMesh) {
+5369-                            const oldMap = legRightBackMesh.material.map;
+5370-                            legRightBackMesh.material.map = texture;
+--
+5414-                    if (side === 'left') {
+5415-                        armLeftFrontMesh = null;
+5416:                    } else {
+5417-                        armRightFrontMesh = null;
+5418-                    }
+--
+5425-                    if (side === 'left') {
+5426-                        armLeftBackMesh = null;
+5427:                    } else {
+5428-                        armRightBackMesh = null;
+5429-                    }
+--
+5442-                    if (side === 'left') {
+5443-                        armLeftFrontMesh = null;
+5444:                    } else {
+5445-                        armRightFrontMesh = null;
+5446-                    }
+--
+5453-                    if (side === 'left') {
+5454-                        armLeftBackMesh = null;
+5455:                    } else {
+5456-                        armRightBackMesh = null;
+5457-                    }
+--
+5480-                            newMesh.rotation.y = Math.PI; // 180 grados en el eje Y
+5481-                            armLeftFrontMesh = newMesh;
+5482:                        } else {
+5483-                            newMesh.rotation.y = 0; // Sin rotación
+5484-                            armRightFrontMesh = newMesh;
+--
+5486-
+5487-                        targetArm.add(newMesh);
+5488:                    } else {
+5489-                        if (side === 'left' && armLeftFrontMesh) {
+5490-                            const oldMap = armLeftFrontMesh.material.map;
+--
+5492-                            armLeftFrontMesh.material.needsUpdate = true;
+5493-                            if (oldMap && oldMap !== texture) oldMap.dispose();
+5494:                        } else if (side === 'right' && armRightFrontMesh) {
+5495-                            const oldMap = armRightFrontMesh.material.map;
+5496-                            armRightFrontMesh.material.map = texture;
+--
+5526-                            newMesh.rotation.y = Math.PI; // 180 grados en el eje Y
+5527-                            armLeftBackMesh = newMesh;
+5528:                        } else {
+5529-                            newMesh.rotation.y = 0; // Sin rotación
+5530-                            armRightBackMesh = newMesh;
+--
+5532-
+5533-                        targetArm.add(newMesh);
+5534:                    } else {
+5535-                        if (side === 'left' && armLeftBackMesh) {
+5536-                            const oldMap = armLeftBackMesh.material.map;
+--
+5538-                            armLeftBackMesh.material.needsUpdate = true;
+5539-                            if (oldMap && oldMap !== texture) oldMap.dispose();
+5540:                        } else if (side === 'right' && armRightBackMesh) {
+5541-                            const oldMap = armRightBackMesh.material.map;
+5542-                            armRightBackMesh.material.map = texture;
+--
+5617-                        if (Array.isArray(child.material)) {
+5618-                            child.material.forEach(mat => { if (mat.color) mat.color.copy(colorObj); });
+5619:                        } else {
+5620-                            child.material.color.copy(colorObj);
+5621-                        }
+--
+5806-                editorPanelWrapper.classList.add('hidden-mobile');
+5807-                mobileGameControls.classList.add('active');
+5808:            } else if (appMode === 'edit' && isMobile) {
+5809-                editorPanelWrapper.classList.remove('hidden-mobile');
+5810-                mobileGameControls.classList.remove('active');
+5811:            } else if (!isMobile) {
+5812-                mobileGameControls.classList.remove('active');
+5813-            }
+--
+5818-                // Usamos resizeToCanvasContainer para ajustar el renderer a ese tamaño
+5819-                resizeToCanvasContainer();
+5820:            } else if (isShowcaseActive) {
+5821-                const showcaseHeight = window.innerHeight * 0.6667;
+5822-                camera.fov = window.innerWidth <= 768 ? 50 : 75;
+--
+5824-                camera.updateProjectionMatrix();
+5825-                renderer.setSize(window.innerWidth, showcaseHeight);
+5826:            } else {
+5827-                camera.fov = 75;
+5828-                camera.aspect = window.innerWidth / window.innerHeight;
+--
+5885-                        leftLeg.rotation.x = initialLeftLegRot.x - angle;
+5886-                        rightArm.rotation.x = initialRightArmRot.x + angle;
+5887:                    } else {
+5888-                        // Volver a la pose original
+5889-                        const limbsArray = [leftArm, rightArm, leftLeg, rightLeg];
+--
+5921-                            targetCameraAngle = cameraAngle;
+5922-                        }
+5923:                    } else {
+5924-                        // Modo presets: restaurar posición y target exactos guardados
+5925-                        if (savedPresetCameraPos && savedPresetCameraTarget) {
+--
+5970-            if (max == min) {
+5971-                h = s = 0; // achromatic
+5972:            } else {
+5973-                var d = max - min;
+5974-                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+--
+6022-                    if (filteredColors.length >= 3) {
+6023-                        resultColor = filteredColors[2][0];
+6024:                    } else if (filteredColors.length >= 2) {
+6025-                        resultColor = filteredColors[1][0];
+6026:                    } else if (filteredColors.length >= 1) {
+6027-                        resultColor = filteredColors[0][0];
+6028:                    } else {
+6029-                        resultColor = "255,255,255";
+6030-                    }
+--
+6115-                            if (mat.color) mat.color.copy(randomColor);
+6116-                        });
+6117:                    } else if (child.material.color) {
+6118-                        child.material.color.copy(randomColor);
+6119-                    }
+--
+6207-                if (side === 'left') {
+6208-                    currentArmLeftURL = randomTexture.leftUrl;
+6209:                } else {
+6210-                    currentArmRightURL = randomTexture.rightUrl;
+6211-                }
+--
+6219-                if (side === 'left') {
+6220-                    currentLegLeftURL = randomTexture.leftUrl;
+6221:                } else {
+6222-                    currentLegRightURL = randomTexture.rightUrl;
+6223-                }
+--
+6256-            if (window.innerWidth <= 768) {
+6257-                camera.fov = 55; // Móvil: Tamaño moderado del modelo
+6258:            } else {
+6259-                camera.fov = 60; // Desktop: Tamaño moderado del modelo
+6260-            }
+--
+6322-                                if (mat.color) mat.color.copy(whiteColor);
+6323-                            });
+6324:                        } else {
+6325-                            child.material.color.copy(whiteColor);
+6326-                        }
+--
+6335-                                if (mat.color) mat.color.copy(whiteColor);
+6336-                            });
+6337:                        } else {
+6338-                            child.material.color.copy(whiteColor);
+6339-                        }
+--
+6349-                                    if (mat.color) mat.color.copy(whiteColor);
+6350-                                });
+6351:                            } else {
+6352-                                child.material.color.copy(whiteColor);
+6353-                            }
+--
+6364-                                    if (mat.color) mat.color.copy(whiteColor);
+6365-                                });
+6366:                            } else {
+6367-                                child.material.color.copy(whiteColor);
+6368-                            }
+--
+6680-                // Reiniciar showcase
+6681-                startShowcase();
+6682:            } else {
+6683-                // En otras partes, navegar hacia atrás
+6684-                currentPartIndex--;
+--
+6758-                if (typeof togglePlayMode === 'function') {
+6759-                    togglePlayMode();
+6760:                } else {
+6761-                    console.error('togglePlayMode function not found');
+6762-                }
+--
+6820-            if (characterName === 'Baby') {
+6821-                headColor = new THREE.Color('#FCD5C6'); // Color piel para Baby
+6822:            } else if (characterName === 'Mystery') {
+6823-                headColor = new THREE.Color('#FCD5C6'); // Color piel para Mystery
+6824:            } else if (characterName === 'Romance') {
+6825-                headColor = new THREE.Color('#FCD5C6'); // Color piel para Romance
+6826:            } else if (characterName === 'Abby') {
+6827-                headColor = new THREE.Color('#FCD5C6'); // Color piel para Abby
+6828:            } else if (characterName === 'Jinu') {
+6829-                headColor = new THREE.Color('#FCD5C6'); // Color piel para Jinu
+6830:            } else if (characterName === 'Steve') {
+6831-                headColor = new THREE.Color('#AF7E5C'); // Color piel para Steve
+6832-            }
+--
+6845-                                    if (mat.color) mat.color.copy(headColor);
+6846-                                });
+6847:                            } else {
+6848-                                child.material.color.copy(headColor);
+6849-                            }
+--
+6862-                if (characterName === 'Baby') {
+6863-                    torsoColor = new THREE.Color('#FE50C6'); // Rosa intenso para Baby
+6864:                } else if (characterName === 'Mystery') {
+6865-                    torsoColor = new THREE.Color('#8166F1'); // Morado para Mystery
+6866:                } else if (characterName === 'Romance') {
+6867-                    torsoColor = new THREE.Color('#FCEE35'); // Color torso para Romance (amarillo)
+6868:                } else if (characterName === 'Abby') {
+6869-                    torsoColor = new THREE.Color('#A8F4E4'); // Color torso para Abby
+6870:                } else if (characterName === 'Jinu') {
+6871-                    torsoColor = new THREE.Color('#F4F4F2'); // Gris claro para Jinu
+6872:                } else if (characterName === 'Mira') {
+6873-                    torsoColor = new THREE.Color('#243267');
+6874:                } else if (characterName === 'Rumi') {
+6875-                    torsoColor = new THREE.Color('#FAB823');
+6876:                } else if (characterName === 'Steve') {
+6877-                    torsoColor = new THREE.Color('#00A9AF'); // Camisa cian de Steve
+6878-                }
+--
+6886-                                    if (mat.color) mat.color.copy(torsoColor);
+6887-                                });
+6888:                            } else {
+6889-                                child.material.color.copy(torsoColor);
+6890-                            }
+--
+6899-            if (characterName === 'Baby') {
+6900-                armsColor = new THREE.Color('#FCD5C6'); // Color piel para Baby
+6901:            } else if (characterName === 'Mystery') {
+6902-                armsColor = new THREE.Color('#FCD5C6'); // Color piel para Mystery
+6903:            } else if (characterName === 'Romance') {
+6904-                armsColor = new THREE.Color('#FCD5C6'); // Color piel para Romance
+6905:            } else if (characterName === 'Abby') {
+6906-                armsColor = new THREE.Color('#FCD5C6'); // Color piel para Abby
+6907:            } else if (characterName === 'Jinu') {
+6908-                armsColor = new THREE.Color('#FCD5C6'); // Color piel para Jinu
+6909:            } else if (characterName === 'Steve') {
+6910-                armsColor = new THREE.Color('#AF7E5C'); // Piel de Steve
+6911-            }
+--
+6922-                                        if (mat.color) mat.color.copy(armsColor);
+6923-                                    });
+6924:                                } else {
+6925-                                    child.material.color.copy(armsColor);
+6926-                                }
+--
+6936-            if (characterName === 'Baby') {
+6937-                legsColor = new THREE.Color('#6A68E9'); // Azul violeta para Baby
+6938:            } else if (characterName === 'Mystery') {
+6939-                legsColor = new THREE.Color('#91C9FA'); // Azul claro para Mystery
+6940:            } else if (characterName === 'Romance') {
+6941-                legsColor = new THREE.Color('#DEFEFF'); // Azul muy claro para Romance
+6942:            } else if (characterName === 'Abby') {
+6943-                legsColor = new THREE.Color('#91C9FA'); // Azul claro para Abby
+6944:            } else if (characterName === 'Jinu') {
+6945-                legsColor = new THREE.Color('#91C9FA'); // Azul claro para Jinu
+6946:            } else if (characterName === 'Mira') {
+6947-                legsColor = new THREE.Color('#390626');
+6948:            } else if (characterName === 'Rumi') {
+6949-                legsColor = new THREE.Color('#292827');
+6950:            } else if (characterName === 'Zoey') {
+6951-                legsColor = new THREE.Color('#16275C');
+6952:            } else if (characterName === 'Steve') {
+6953-                legsColor = new THREE.Color('#4332A0'); // Pantalones azules de Steve
+6954-            }
+--
+6965-                                        if (mat.color) mat.color.copy(legsColor);
+6966-                                    });
+6967:                                } else {
+6968-                                    child.material.color.copy(legsColor);
+6969-                                }
+--
+7011-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/legs/Alex-leg-right.svg'
+7012-                };
+7013:            } else if (characterName === 'Zombie') {
+7014-                if (!eyeTexture) eyeTexture = { name: 'Zombie', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/eyes/Zombie-eyes.svg' };
+7015-                if (!noseTexture) noseTexture = { name: 'Zombie', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/nose/Zombie-nose.svg' };
+--
+7037-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/legs/Zombie-leg-right.svg'
+7038-                };
+7039:            } else if (characterName === 'Creeper') {
+7040-                if (!eyeTexture) eyeTexture = { name: 'Creeper', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/eyes/Creeper-eyes.svg' };
+7041-                if (!noseTexture) noseTexture = { name: 'Creeper', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/nose/Creeper-nose.svg' };
+--
+7060-                // Creeper NO TIENE BRAZOS
+7061-                armTexture = null;
+7062:            } else if (characterName === 'Skeleton') {
+7063-                if (!eyeTexture) eyeTexture = { name: 'Skeleton', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/eyes/Skeleton-eyes.svg' };
+7064-                if (!noseTexture) noseTexture = { name: 'Skeleton', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/nose/Skeleton-nose.svg' };
+--
+7080-                // Skeleton NO TIENE PELO
+7081-                hairTexture = null;
+7082:            } else if (characterName === 'Enderman') {
+7083-                if (!eyeTexture) eyeTexture = { name: 'Enderman', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/eyes/Enderman-eyes.svg' };
+7084-                if (!noseTexture) noseTexture = { name: 'Enderman', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/nose/Enderman-nose.svg' };
+--
+7118-            }
+7119-            earTexture = null;
+7120:        } else if (characterName === 'Mystery') {
+7121-            currentEyeTextureURL = null;
+7122-            if (eyesMesh && modelParts.head) {
+--
+7139-            eyeTexture = null;
+7140-            eyebrowTexture = null;
+7141:        } else if (characterName === 'Steve') {
+7142-            // Steve no tiene orejas ni cejas
+7143-            if (earLeftMesh && modelParts.head) {
+--
+7166-            currentEarTextureURL = null;
+7167-            currentEyebrowTextureURL = null;
+7168:        } else if (characterName === 'Alex') {
+7169-            // Alex no tiene orejas ni cejas
+7170-            if (earLeftMesh && modelParts.head) {
+--
+7184-            currentEarTextureURL = null;
+7185-            currentEyebrowTextureURL = null;
+7186:        } else if (characterName === 'Zombie') {
+7187-            // Zombie no tiene orejas ni cejas
+7188-            if (earLeftMesh && modelParts.head) {
+--
+7202-            currentEarTextureURL = null;
+7203-            currentEyebrowTextureURL = null;
+7204:        } else if (characterName === 'Creeper') {
+7205-            // Creeper no tiene orejas, cejas ni brazos
+7206-            if (earLeftMesh && modelParts.head) {
+--
+7226-            currentEarTextureURL = null;
+7227-            currentEyebrowTextureURL = null;
+7228:        } else if (characterName === 'Skeleton') {
+7229-            // Skeleton no tiene orejas, cejas ni pelo
+7230-            if (earLeftMesh && modelParts.head) {
+--
+7250-            currentEarTextureURL = null;
+7251-            currentEyebrowTextureURL = null;
+7252:        } else if (characterName === 'Enderman') {
+7253-            // Enderman no tiene orejas, cejas, brazos ni piernas
+7254-            if (earLeftMesh && modelParts.head) {
+--
+7355-
+7356-            console.log('✅ Carga móvil completada');
+7357:        } else {
+7358-            // DESKTOP: Carga paralela (como antes - rápido)
+7359-            console.log('💻 Carga desktop - Paralela');
+--
+7789-                    // Resetear blob
+7790-                    generatedPdfBlob = null;
+7791:                } else {
+7792-                    alert('El PDF aún no está listo. Por favor espera un momento.');
+7793-                }
+--
+7813-                        if (Array.isArray(child.material)) {
+7814-                            color = child.material[0].color;
+7815:                        } else {
+7816-                            color = child.material.color;
+7817-                        }
+--
+8228-                percentText = document.getElementById('pdf-progress-text');
+8229-                progressContainer = null; // No hay popup
+8230:            } else {
+8231-                // Crear overlay de fondo oscuro transparente
+8232-                const overlay = document.createElement('div');
+--
+8266-                        // Si ya terminó, cerrar inmediatamente (cancelando la descarga pendiente)
+8267-                        performClose();
+8268:                    } else {
+8269-                        // Si está en progreso, pedir confirmación
+8270-                        const lang = localStorage.getItem('papelcool_lang') || 'en';
+--
+8547-                    }
+8548-                    return pdfBlob;
+8549:                } else {
+8550-                    await showDownloadButton(pdf, filename, progressContainer, percentText);
+8551-                }
+--
+8687-                    };
+8688-                    btn.appendChild(img);
+8689:                } else {
+8690-                    const span = document.createElement('span');
+8691-                    span.className = 'text-[10px] text-center px-1';
+--
+8742-                        if (Array.isArray(child.material)) {
+8743-                            child.material.forEach(mat => { if (mat.color) mat.color.copy(color); });
+8744:                        } else {
+8745-                            child.material.color.copy(color);
+8746-                        }

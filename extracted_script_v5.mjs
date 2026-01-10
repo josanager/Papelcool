@@ -1,3649 +1,3 @@
-<!DOCTYPE html>
-<html lang="es">
-
-<head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F1L79TX6D6"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'G-F1L79TX6D6');
-    </script>
-
-    <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#00a1e0">
-    <meta name="mobile-web-app-capable" content="yes">
-    <title>Papelcool</title>
-
-    <!-- Favicon para navegadores -->
-    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
-    <link rel="shortcut icon" href="favicon.png">
-
-    <!-- Apple Touch Icon (WebClip) para iPhone/iPad -->
-    <link rel="apple-touch-icon" href="webclip.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="webclip.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="webclip.png">
-    <link rel="apple-touch-icon" sizes="120x120" href="webclip.png">
-    <link rel="apple-touch-icon" sizes="76x76" href="webclip.png">
-    <!-- Tailwind CSS para un diseño moderno y adaptable -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts para un estilo futurista - Optimizado -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;600&family=Montserrat:wght@400;500&display=swap"
-        rel="stylesheet" media="print" onload="this.media='all'">
-    <noscript>
-        <link
-            href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;600&family=Montserrat:wght@400;500&display=swap"
-            rel="stylesheet">
-    </noscript>
-    <!-- Import map para three.js -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
-            }
-        }
-    </script>
-    <!-- Legacy scripts removed to fix ReferenceError -->
-
-
-    <!-- jsPDF para generación de PDFs -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
-    <!-- Canvas Confetti para animación de celebración -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-    <!-- Character & Texture Data - Archivo separado para organización -->
-    <script src="character-data.js?v=1.1"></script>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            position: fixed;
-            overscroll-behavior: none;
-        }
-
-        body {
-            overflow: hidden;
-            width: 100%;
-            height: 100%;
-            position: fixed;
-            font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(135deg, #00a1e0 0%, #0078a8 50%, #005580 100%);
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
-            overscroll-behavior: none;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* Fondo con degradado azul para el showcase */
-        #showcase-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
-            background: linear-gradient(135deg, #00a1e0 0%, #0078a8 50%, #005580 100%);
-            z-index: 1;
-            opacity: 0;
-            transition: opacity 0.5s ease-out;
-            pointer-events: none;
-        }
-
-        #showcase-background.active {
-            opacity: 1;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
-            background-image:
-                radial-gradient(circle at 20% 50%, rgba(255, 238, 0, 0.08) 0%, transparent 50%),
-                radial-gradient(circle at 80% 80%, rgba(255, 77, 0, 0.08) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        h1,
-        h2 {
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: 1px;
-            text-shadow: 0 2px 10px rgba(255, 238, 0, 0.3);
-        }
-
-        #canvas-container {
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            cursor: grab;
-            z-index: 2;
-            overflow: hidden;
-            overscroll-behavior: none;
-        }
-
-        #canvas-container:active {
-            cursor: grabbing;
-        }
-
-        .ui-panel {
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 16px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-            animation: fadeIn 0.8s ease-out;
-            transition: all 0.3s ease;
-            position: relative;
-            z-index: 10;
-            will-change: transform;
-        }
-
-        .ui-panel:hover {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-30px) scale(0.95);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .color-swatch {
-            border: 2px solid rgba(255, 255, 255, 0.15);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow:
-                0 2px 8px rgba(0, 0, 0, 0.2),
-                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .color-swatch::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.4s, height 0.4s;
-        }
-
-        .color-swatch:hover {
-            transform: scale(1.2) translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.4);
-            box-shadow:
-                0 8px 20px rgba(0, 0, 0, 0.3),
-                0 0 20px rgba(255, 238, 0, 0.4),
-                0 0 0 2px rgba(255, 255, 255, 0.2) inset;
-        }
-
-        .color-swatch:hover::before {
-            width: 100%;
-            height: 100%;
-        }
-
-        .color-swatch:active {
-            transform: scale(1.1) translateY(0);
-        }
-
-        #loading-indicator {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #000000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease-out;
-        }
-
-        #loading-indicator.fade-out {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .loading-logo {
-            width: 300px;
-            max-width: 80vw;
-            height: auto;
-            margin-bottom: 40px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.8;
-                transform: scale(1.05);
-            }
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top-color: #ffee00;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        .preset-character-btn {
-            all: unset;
-            cursor: pointer;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            position: relative;
-            border-radius: 16px;
-            background-color: rgba(0, 0, 0, 0.75);
-            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
-                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
-            font-size: 1rem;
-            width: 90px;
-            /* Ancho base */
-            aspect-ratio: 3 / 4;
-            /* Aspect ratio 3:4 (vertical) */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .preset-character-btn::after {
-            content: "";
-            position: absolute;
-            z-index: 0;
-            width: calc(100% + 0.3em);
-            height: calc(100% + 0.3em);
-            top: -0.15em;
-            left: -0.15em;
-            border-radius: inherit;
-            background: linear-gradient(-135deg,
-                    rgba(5, 5, 5, 0.5),
-                    transparent 20%,
-                    transparent 100%);
-            filter: blur(0.0125em);
-            opacity: 0.25;
-            mix-blend-mode: multiply;
-        }
-
-        .preset-character-btn .button-outer {
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            transition: box-shadow 300ms ease;
-            will-change: box-shadow;
-            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
-                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
-                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
-            width: 100%;
-            height: 100%;
-        }
-
-        .preset-character-btn:hover .button-outer {
-            box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
-                0 0 0 0 rgba(5, 5, 5, 0.25);
-        }
-
-        .preset-character-btn .button-inner {
-            --inset: 0.035em;
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            padding: 0px;
-            /* Added padding to prevent image from covering shadows */
-            background-image: linear-gradient(135deg,
-                    rgba(230, 230, 230, 1),
-                    rgba(180, 180, 180, 1));
-            transition: box-shadow 300ms ease, clip-path 250ms ease,
-                background-image 250ms ease, transform 250ms ease;
-            will-change: box-shadow, clip-path, background-image, transform;
-            overflow: clip;
-            /* Changed from hidden to clip for consistent styling */
-            clip-path: inset(0 0 0 0 round 16px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            box-sizing: border-box;
-            box-shadow:
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
-                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        .preset-character-btn:hover .button-inner {
-            clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 16px);
-            box-shadow:
-                0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
-                -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
-                0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
-                0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
-                0 0 0 0 inset rgba(255, 255, 255, 1),
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        .preset-character-btn:active .button-inner {
-            transform: scale(0.975);
-        }
-
-        .preset-character-btn:hover .character-icon-img {
-            transform: scale(1.45);
-        }
-
-        .preset-character-btn:active .character-icon-img {
-            transform: scale(1.4);
-        }
-
-        .preset-character-btn .character-icon-img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            border-radius: 8px;
-            transform: scale(1.5);
-            flex-shrink: 0;
-            transition: transform 250ms ease;
-            will-change: transform;
-            z-index: 2;
-        }
-
-        /* Contenedor de presets - Grid 3 columnas en desktop */
-        .presets-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            justify-items: center;
-        }
-
-        /* Carrusel horizontal en móvil */
-        @media (max-width: 1024px) {
-            .presets-grid {
-                display: flex;
-                grid-template-columns: none;
-                gap: 16px;
-                overflow-x: auto;
-                overflow-y: hidden;
-                scroll-snap-type: x mandatory;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                /* Firefox */
-                padding: 8px 4px;
-                justify-items: flex-start;
-            }
-
-            .presets-grid::-webkit-scrollbar {
-                display: none;
-                /* Chrome, Safari, Edge */
-            }
-
-            .presets-grid .preset-character-btn {
-                flex-shrink: 0;
-                scroll-snap-align: center;
-            }
-        }
-
-        /* Reducir un poco el espacio inferior de la ventana de presets en móvil */
-        @media (max-width: 768px) {
-            #presets-section {
-                margin-bottom: 6px;
-            }
-        }
-
-        /* Nombre del personaje en la parte superior */
-        #character-name-display {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 30;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        #character-name-display.active {
-            opacity: 1;
-        }
-
-        #character-name-text {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2rem;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            color: rgba(0, 0, 0, 0);
-            background-image: linear-gradient(135deg,
-                    rgba(0, 217, 255, 1),
-                    rgba(0, 150, 255, 1));
-            -webkit-background-clip: text;
-            background-clip: text;
-            text-shadow: 0 4px 12px rgba(0, 217, 255, 0.3);
-            display: inline-block;
-            padding: 0.5rem 1.5rem;
-            background-color: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 16px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        @media (max-width: 1024px) {
-            #character-name-text {
-                font-size: 1.5rem;
-                padding: 0.4rem 1rem;
-            }
-        }
-
-        .icon-btn {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            position: relative;
-            overflow: hidden;
-            box-shadow:
-                0 2px 8px rgba(0, 0, 0, 0.2),
-                0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-        }
-
-        .icon-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s;
-        }
-
-        .icon-btn:hover {
-            background: linear-gradient(135deg, rgba(255, 238, 0, 0.2) 0%, rgba(255, 77, 0, 0.2) 100%);
-            border-color: rgba(255, 238, 0, 0.4);
-            color: white;
-            transform: translateY(-2px) scale(1.05);
-            box-shadow:
-                0 8px 24px rgba(0, 0, 0, 0.3),
-                0 0 20px rgba(255, 238, 0, 0.3),
-                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-        }
-
-        .icon-btn:hover::before {
-            left: 100%;
-        }
-
-        .icon-btn:active {
-            transform: translateY(0) scale(1);
-            box-shadow:
-                0 2px 8px rgba(0, 0, 0, 0.3),
-                0 0 10px rgba(255, 238, 0, 0.2) inset;
-        }
-
-        .icon-btn img {
-            width: 90%;
-            height: 90%;
-            object-fit: cover;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .active-btn {
-            background: linear-gradient(135deg, rgba(255, 238, 0, 0.3) 0%, rgba(255, 77, 0, 0.3) 100%);
-            border: 2px solid rgba(255, 238, 0, 0.6);
-            color: white;
-            box-shadow:
-                0 4px 20px rgba(255, 238, 0, 0.4),
-                0 0 30px rgba(255, 238, 0, 0.3);
-        }
-
-        /* Estilos para el carrusel de ojos */
-        #eyes-carousel-container {
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255, 238, 0, 0.4) rgba(255, 255, 255, 0.05);
-            -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
-        }
-
-        #eyes-carousel-container::-webkit-scrollbar {
-            height: 6px;
-            -webkit-appearance: none;
-        }
-
-        #eyes-carousel-container::-webkit-scrollbar-thumb {
-            background: linear-gradient(90deg, rgba(255, 238, 0, 0.4), rgba(255, 77, 0, 0.4));
-            border-radius: 10px;
-            transition: background 0.3s;
-        }
-
-        #eyes-carousel-container::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(90deg, rgba(255, 238, 0, 0.6), rgba(255, 77, 0, 0.6));
-        }
-
-        #eyes-carousel-container::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
-        }
-
-        /* Miniaturas de ojos mejoradas */
-        #eyes-carousel-container img {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        #eyes-carousel-container img:hover {
-            transform: scale(1.1) translateY(-2px);
-            box-shadow:
-                0 8px 20px rgba(0, 0, 0, 0.3),
-                0 0 20px rgba(255, 238, 0, 0.4);
-        }
-
-        /* Custom border color utility (handled by Tailwind in HTML) */
-        .custom-border-yellow {
-            border-color: rgba(255, 238, 0, 0.3) !important;
-        }
-
-        /* Animación de pulso sutil para elementos activos */
-        @keyframes pulse-glow {
-
-            0%,
-            100% {
-                box-shadow:
-                    0 8px 24px rgba(0, 0, 0, 0.3),
-                    0 0 30px rgba(255, 238, 0, 0.4),
-                    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-            }
-
-            50% {
-                box-shadow:
-                    0 8px 24px rgba(0, 0, 0, 0.3),
-                    0 0 40px rgba(255, 238, 0, 0.6),
-                    0 0 0 1px rgba(255, 255, 255, 0.3) inset;
-            }
-        }
-
-        .active-btn {
-            animation: pulse-glow 2s ease-in-out infinite;
-        }
-
-        /* Estilos para botón de modo juego (móvil y desktop) */
-        .play-mode-btn {
-            all: unset;
-            cursor: pointer;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            position: relative;
-            border-radius: 999vw;
-            background-color: transparent;
-            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
-                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
-            font-size: 1.5rem;
-        }
-
-        .play-mode-btn::after {
-            content: "";
-            position: absolute;
-            z-index: 0;
-            width: calc(100% + 0.3em);
-            height: calc(100% + 0.3em);
-            top: -0.15em;
-            left: -0.15em;
-            border-radius: inherit;
-            background: linear-gradient(-135deg,
-                    rgba(5, 5, 5, 0.5),
-                    transparent 20%,
-                    transparent 100%);
-            filter: blur(0.0125em);
-            opacity: 0.25;
-            mix-blend-mode: multiply;
-        }
-
-        .play-mode-btn .button-outer {
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            transition: box-shadow 300ms ease;
-            will-change: box-shadow;
-            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
-                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
-                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
-            width: 100%;
-            height: 100%;
-        }
-
-        .play-mode-btn:hover .button-outer {
-            box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
-                0 0 0 0 rgba(5, 5, 5, 0.25);
-        }
-
-        .play-mode-btn .button-inner {
-            --inset: 0.035em;
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            padding: 0;
-            background-image: linear-gradient(135deg,
-                    rgba(255, 255, 0, 1),
-                    rgba(255, 220, 0, 1));
-            transition: box-shadow 300ms ease, clip-path 250ms ease,
-                background-image 250ms ease, transform 250ms ease;
-            will-change: box-shadow, clip-path, background-image, transform;
-            overflow: clip;
-            clip-path: inset(0 0 0 0 round 999vw);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            box-shadow:
-                /* 1 */
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                /* 2 */
-                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
-                /* 3 */
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                /* 4 */
-                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
-                /* 5 */
-                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
-                /* 6 */
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                /* 7 */
-                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        .play-mode-btn:hover .button-inner {
-            clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 999vw);
-            box-shadow:
-                /* 1 */
-                0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
-                /* 2 */
-                -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
-                /* 3 */
-                0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
-                /* 4 */
-                0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
-                /* 5 */
-                0 0 0 0 inset rgba(255, 255, 255, 1),
-                /* 6 */
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                /* 7 */
-                -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        .play-mode-btn:active .button-inner {
-            transform: scale(0.975);
-        }
-
-        .play-mode-btn .play-icon,
-        .play-mode-btn svg {
-            width: 1.5em;
-            height: 1.5em;
-            color: #1a1a1a;
-        }
-
-        #editor-panel-wrapper {
-            transition: transform 0.3s ease-in-out;
-            display: none;
-            /* Oculto inicialmente, se muestra tras selección en showcase */
-        }
-
-        /* El canvas mantiene su aspect ratio correcto */
-        #canvas-container canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            object-position: center;
-        }
-
-        /* Mobile y Tablet (hasta 1024px) */
-        @media (max-width: 1024px) {
-            #editor-panel-wrapper {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                width: 100%;
-                max-width: 100%;
-                padding: 0.5rem;
-                z-index: 40;
-            }
-
-            #editor-panel-wrapper.hidden-mobile {
-                transform: translateY(100%);
-            }
-
-            #editor-panel-wrapper .ui-panel {
-                max-height: 55vh;
-                overflow-y: auto;
-                border-radius: 16px;
-                padding: 1rem !important;
-            }
-
-            #canvas-container {
-                height: 100vh;
-            }
-
-            /* Ocultar el botón de modo dentro del panel en móvil */
-            #editor-panel-wrapper #play-mode-btn-desktop {
-                display: none;
-            }
-
-            /* Ajustar grid de botones principales para móvil */
-            #main-parts-container {
-                grid-template-columns: repeat(4, 1fr) !important;
-                gap: 0.5rem !important;
-            }
-
-            /* Ajustar grid de partes de cabeza para móvil */
-            #head-parts-container {
-                grid-template-columns: repeat(5, 1fr) !important;
-                gap: 0.5rem !important;
-                justify-items: center;
-            }
-
-            /* Ajustar contenedores de botones principales en móvil */
-            #main-parts-container {
-                justify-items: center;
-            }
-
-            /* Ajustar carruseles para mejor visualización en móvil */
-            .carousel-container {
-                padding-bottom: 0.5rem;
-            }
-
-            /* Ajustar paleta de colores en móvil */
-            #color-palette {
-                grid-template-columns: repeat(6, 1fr) !important;
-                gap: 0.5rem !important;
-            }
-
-            /* Títulos más pequeños en móvil */
-            h2 {
-                font-size: 0.875rem !important;
-            }
-
-            /* Scrollbar más delgado en móvil */
-            #editor-panel-wrapper .ui-panel::-webkit-scrollbar {
-                width: 4px;
-            }
-        }
-
-        /* Desktop (más de 1024px) */
-        @media (min-width: 1025px) {
-            #play-mode-btn-mobile {
-                display: none !important;
-            }
-
-            #editor-panel-wrapper {
-                position: absolute;
-                top: 80px;
-                /* Mover más abajo para evitar sobreposición con botones sociales */
-                left: 0;
-                width: auto;
-                max-width: 28rem;
-                padding: 1rem 1.5rem;
-            }
-
-            /* Ocultar controles móviles en desktop */
-            #mobile-game-controls {
-                display: none !important;
-            }
-
-        }
-
-        /* Estilos para controles de juego móvil */
-        #mobile-game-controls {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 200px;
-            display: none;
-            z-index: 45;
-            pointer-events: none;
-        }
-
-        #mobile-game-controls.active {
-            display: flex;
-            pointer-events: auto;
-        }
-
-        /* Joystick */
-        #joystick-container {
-            position: absolute;
-            bottom: 30px;
-            left: 30px;
-            width: 120px;
-            height: 120px;
-        }
-
-        #joystick-base {
-            width: 120px;
-            height: 120px;
-            position: relative;
-            touch-action: none;
-            -webkit-user-select: none;
-            user-select: none;
-            cursor: pointer;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            border-radius: 50%;
-            background-color: rgba(0, 0, 0, 0.75);
-            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
-                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
-            font-size: 1rem;
-        }
-
-        #joystick-base::after {
-            content: "";
-            position: absolute;
-            z-index: 0;
-            width: calc(100% + 0.3em);
-            height: calc(100% + 0.3em);
-            top: -0.15em;
-            left: -0.15em;
-            border-radius: inherit;
-            background: linear-gradient(-135deg,
-                    rgba(5, 5, 5, 0.5),
-                    transparent 20%,
-                    transparent 100%);
-            filter: blur(0.0125em);
-            opacity: 0.25;
-            mix-blend-mode: multiply;
-        }
-
-        .joystick-outer {
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            width: 100%;
-            height: 100%;
-            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
-                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
-                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
-        }
-
-        .joystick-inner {
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            width: 100%;
-            height: 100%;
-            background-image: linear-gradient(135deg,
-                    rgba(230, 230, 230, 1),
-                    rgba(180, 180, 180, 1));
-            overflow: clip;
-            clip-path: inset(0 0 0 0 round 999vw);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow:
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
-                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        #joystick-stick {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, rgba(255, 238, 0, 0.8), rgba(0, 200, 200, 0.9));
-            border: 2px solid rgba(255, 238, 0, 1);
-            border-radius: 50%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 4px 15px rgba(255, 238, 0, 0.6),
-                0 0 20px rgba(255, 238, 0, 0.4);
-            pointer-events: none;
-            will-change: transform;
-            z-index: 10;
-        }
-
-        /* Botón de salto */
-        #jump-button {
-            all: unset;
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            cursor: pointer;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            border-radius: 50%;
-            /* Circular perfecto como joystick */
-            background-color: rgba(0, 0, 0, 0.75);
-            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
-                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
-            font-size: 1rem;
-            /* Mismo tamaño base que joystick */
-            touch-action: manipulation;
-            user-select: none;
-            -webkit-user-select: none;
-            width: 120px;
-            /* Mismo ancho que joystick */
-            height: 120px;
-            /* Mismo alto que joystick */
-        }
-
-        #jump-button::after {
-            content: "";
-            position: absolute;
-            z-index: 0;
-            width: calc(100% + 0.3em);
-            height: calc(100% + 0.3em);
-            top: -0.15em;
-            left: -0.15em;
-            border-radius: inherit;
-            background: linear-gradient(-135deg,
-                    rgba(5, 5, 5, 0.5),
-                    transparent 20%,
-                    transparent 100%);
-            filter: blur(0.0125em);
-            opacity: 0.25;
-            mix-blend-mode: multiply;
-        }
-
-        #jump-button .button-outer {
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            transition: box-shadow 300ms ease;
-            will-change: box-shadow;
-            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
-                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
-                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
-            width: 100%;
-            height: 100%;
-        }
-
-        #jump-button:active .button-outer {
-            box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
-                0 0 0 0 rgba(5, 5, 5, 0.25);
-        }
-
-        #jump-button .button-inner {
-            --inset: 0.035em;
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            padding: 0;
-            /* Sin padding para que el icono se vea mejor */
-            background-image: linear-gradient(135deg,
-                    rgba(230, 230, 230, 1),
-                    rgba(180, 180, 180, 1));
-            transition: box-shadow 300ms ease, clip-path 250ms ease,
-                background-image 250ms ease, transform 250ms ease;
-            will-change: box-shadow, clip-path, background-image, transform;
-            overflow: clip;
-            clip-path: inset(0 0 0 0 round 999vw);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            box-sizing: border-box;
-            box-shadow:
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
-                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        #jump-button:active .button-inner {
-            clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 999vw);
-            box-shadow:
-                0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
-                -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
-                0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
-                0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
-                0 0 0 0 inset rgba(255, 255, 255, 1),
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
-            transform: scale(0.975);
-        }
-
-        #jump-button .button-inner span {
-            position: relative;
-            z-index: 4;
-            font-size: 3em;
-            /* Icono más grande */
-            font-weight: 900;
-            line-height: 1;
-            color: rgba(0, 0, 0, 0);
-            background-image: linear-gradient(135deg,
-                    rgba(25, 25, 25, 1),
-                    rgba(75, 75, 75, 1));
-            -webkit-background-clip: text;
-            background-clip: text;
-            transition: transform 250ms ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            will-change: transform;
-            text-shadow: rgba(0, 0, 0, 0.1) 0 0 0.1em;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-        #jump-button:active .button-inner span {
-            transform: scale(0.975);
-        }
-
-        /* Botones de showcase inicial - Push Button Style */
-        #showcase-buttons-container {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 25vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 20;
-            /* Encima del espacio 3D */
-            transition: opacity 0.5s ease-out;
-            background: transparent;
-            pointer-events: none;
-            /* Permitir interacción con el 3D */
-        }
-
-        #showcase-buttons-container .showcase-btn {
-            pointer-events: auto;
-            /* Solo el botón es clickeable */
-        }
-
-        #showcase-buttons-container.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Contenedor del espacio 3D en showcase - Pantalla completa centrado */
-        #canvas-container.showcase-active {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            height: 100dvh !important;
-            /* Dynamic viewport height para móviles */
-            max-width: 100vw !important;
-            max-height: 100vh !important;
-            max-height: 100dvh !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            z-index: 2 !important;
-            /* Debajo del logo y botón */
-            overflow: hidden !important;
-            overscroll-behavior: none !important;
-        }
-
-        .showcase-buttons {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            gap: 1.5rem;
-            width: auto;
-            max-width: 100%;
-        }
-
-        /* Push Button Container */
-        .button-wrap {
-            position: relative;
-        }
-
-        .showcase-btn {
-            all: unset;
-            cursor: pointer;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            position: relative;
-            border-radius: 999vw;
-            background-color: rgba(0, 0, 0, 0.75);
-            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
-                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
-            font-size: 1.8rem;
-        }
-
-        .showcase-btn::after {
-            content: "";
-            position: absolute;
-            z-index: 0;
-            width: calc(100% + 0.3em);
-            height: calc(100% + 0.3em);
-            top: -0.15em;
-            left: -0.15em;
-            border-radius: inherit;
-            background: linear-gradient(-135deg,
-                    rgba(5, 5, 5, 0.5),
-                    transparent 20%,
-                    transparent 100%);
-            filter: blur(0.0125em);
-            opacity: 0.25;
-            mix-blend-mode: multiply;
-        }
-
-        .showcase-btn .button-outer {
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            transition: box-shadow 300ms ease;
-            will-change: box-shadow;
-            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
-                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
-                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
-        }
-
-        .showcase-btn:hover .button-outer {
-            box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
-                0 0 0 0 rgba(5, 5, 5, 0.25);
-        }
-
-        .button-inner {
-            --inset: 0.035em;
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            padding: 1em 1.5em;
-            background-image: linear-gradient(135deg,
-                    rgba(255, 255, 0, 1),
-                    rgba(255, 220, 0, 1));
-            transition: box-shadow 300ms ease, clip-path 250ms ease,
-                background-image 250ms ease, transform 250ms ease;
-            will-change: box-shadow, clip-path, background-image, transform;
-            overflow: clip;
-            clip-path: inset(0 0 0 0 round 999vw);
-            box-shadow:
-                /* 1 */
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                /* 2 */
-                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
-                /* 3 */
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                /* 4 */
-                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
-                /* 5 */
-                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
-                /* 6 */
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                /* 7 */
-                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        .showcase-btn:hover .button-inner {
-            clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 999vw);
-            box-shadow:
-                /* 1 */
-                0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
-                /* 2 */
-                -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
-                /* 3 */
-                0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
-                /* 4 */
-                0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
-                /* 5 */
-                0 0 0 0 inset rgba(255, 255, 255, 1),
-                /* 6 */
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                /* 7 */
-                -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        .showcase-btn .button-inner span {
-            position: relative;
-            z-index: 4;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: -0.05em;
-            font-weight: 500;
-            color: rgba(0, 0, 0, 0);
-            background-image: linear-gradient(135deg,
-                    rgba(50, 50, 50, 1),
-                    rgba(20, 20, 20, 1));
-            -webkit-background-clip: text;
-            background-clip: text;
-            transition: transform 250ms ease;
-            display: block;
-            will-change: transform;
-            text-shadow: rgba(0, 0, 0, 0.1) 0 0 0.1em;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-        .showcase-btn:hover .button-inner span {
-            transform: scale(0.975);
-        }
-
-        .showcase-btn:active .button-inner {
-            transform: scale(0.975);
-        }
-
-        /* Estilos táctiles para móvil - replicar efectos hover en active */
-        @media (hover: none) {
-            .showcase-btn:active .button-outer {
-                box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
-                    0 0 0 0 rgba(5, 5, 5, 0.25);
-            }
-
-            .showcase-btn:active .button-inner {
-                clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 999vw);
-                box-shadow:
-                    /* 1 */
-                    0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
-                    /* 2 */
-                    -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
-                    /* 3 */
-                    0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
-                    /* 4 */
-                    0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
-                    /* 5 */
-                    0 0 0 0 inset rgba(255, 255, 255, 1),
-                    /* 6 */
-                    0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                    /* 7 */
-                    -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
-                transform: scale(0.975);
-            }
-
-            .showcase-btn:active .button-inner span {
-                transform: scale(0.975);
-            }
-        }
-
-        /* Modo de edición móvil - Layout 50/50 */
-        .mobile-edit-mode #canvas-container {
-            height: 50vh !important;
-            top: 0;
-        }
-
-        .mobile-edit-mode #showcase-logo-container {
-            display: flex;
-            padding-top: 15px;
-        }
-
-        #mobile-editor-panel {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 50vh;
-            background: linear-gradient(180deg, #00a1e0 0%, #0078a8 100%);
-            z-index: 50;
-            display: none;
-            flex-direction: column;
-            padding: 0;
-            overflow: hidden;
-        }
-
-        #mobile-editor-panel.active {
-            display: flex;
-        }
-
-        .mobile-editor-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-            color: white;
-            padding: 1.5rem 1rem 0 1rem;
-        }
-
-        .mobile-editor-header svg {
-            width: 32px;
-            height: 32px;
-        }
-
-        .mobile-editor-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .mobile-options-grid {
-            flex: 1;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-            overflow-y: auto;
-            padding: 0 1rem;
-        }
-
-        .mobile-option-card {
-            aspect-ratio: 1;
-            background: rgba(255, 255, 255, 0.1);
-            border: 3px solid transparent;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .mobile-option-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .mobile-option-card.selected {
-            border-color: #ffee00;
-            box-shadow: 0 0 20px rgba(255, 238, 0, 0.5);
-            transform: scale(1.05);
-        }
-
-        .mobile-option-card:active {
-            transform: scale(0.95);
-        }
-
-        .mobile-nav-buttons {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            padding: 1rem 0.5rem;
-        }
-
-        /* Botones BACK/NEXT con estilo push button del showcase */
-        .mobile-nav-btn {
-            flex: 1;
-            all: unset;
-            cursor: pointer;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            position: relative;
-            border-radius: 999vw;
-            background-color: rgba(0, 0, 0, 0.75);
-            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
-                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
-            font-size: 1.1rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .mobile-nav-btn::after {
-            content: "";
-            position: absolute;
-            z-index: 0;
-            width: calc(100% + 0.3em);
-            height: calc(100% + 0.3em);
-            top: -0.15em;
-            left: -0.15em;
-            border-radius: inherit;
-            background: linear-gradient(-135deg,
-                    rgba(5, 5, 5, 0.5),
-                    transparent 20%,
-                    transparent 100%);
-            filter: blur(0.0125em);
-            opacity: 0.25;
-            mix-blend-mode: multiply;
-        }
-
-        .mobile-nav-btn .button-outer {
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            transition: box-shadow 300ms ease;
-            will-change: box-shadow;
-            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
-                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
-                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
-        }
-
-        .mobile-nav-btn .button-inner {
-            --inset: 0.035em;
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            padding: 1em 1.5em;
-            background-image: linear-gradient(135deg,
-                    rgba(255, 255, 0, 1),
-                    rgba(255, 220, 0, 1));
-            transition: box-shadow 300ms ease, clip-path 250ms ease,
-                background-image 250ms ease, transform 250ms ease;
-            will-change: box-shadow, clip-path, background-image, transform;
-            overflow: clip;
-            clip-path: inset(0 0 0 0 round 999vw);
-            box-shadow:
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
-                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        .mobile-nav-btn .button-inner span {
-            position: relative;
-            z-index: 4;
-            font-family: 'Orbitron', sans-serif;
-            letter-spacing: -0.05em;
-            font-weight: 500;
-            color: rgba(0, 0, 0, 0);
-            background-image: linear-gradient(135deg,
-                    rgba(50, 50, 50, 1),
-                    rgba(20, 20, 20, 1));
-            -webkit-background-clip: text;
-            background-clip: text;
-            transition: transform 250ms ease;
-            display: block;
-            will-change: transform;
-            text-shadow: rgba(0, 0, 0, 0.1) 0 0 0.1em;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-        /* Efectos hover para desktop */
-        .mobile-nav-btn:hover .button-outer {
-            box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
-                0 0 0 0 rgba(5, 5, 5, 0.25);
-        }
-
-        .mobile-nav-btn:hover .button-inner {
-            clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 999vw);
-            box-shadow:
-                /* 1 */
-                0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
-                /* 2 */
-                -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
-                /* 3 */
-                0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
-                /* 4 */
-                0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
-                /* 5 */
-                0 0 0 0 inset rgba(255, 255, 255, 1),
-                /* 6 */
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                /* 7 */
-                -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        .mobile-nav-btn:hover .button-inner span {
-            transform: scale(0.975);
-        }
-
-        .mobile-nav-btn:active .button-inner {
-            transform: scale(0.975);
-        }
-
-        /* Efectos táctiles para móvil */
-        @media (hover: none) {
-            .mobile-nav-btn:active .button-outer {
-                box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
-                    0 0 0 0 rgba(5, 5, 5, 0.25);
-            }
-
-            .mobile-nav-btn:active .button-inner {
-                clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 999vw);
-                box-shadow:
-                    0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
-                    -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
-                    0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
-                    0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
-                    0 0 0 0 inset rgba(255, 255, 255, 1),
-                    0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                    -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
-                transform: scale(0.975);
-            }
-
-            .mobile-nav-btn:active .button-inner span {
-                transform: scale(0.975);
-            }
-        }
-
-        .mobile-nav-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        /* Contenedor del logo del showcase */
-        #showcase-logo-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: auto;
-            padding: 15px 0;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            z-index: 20;
-            /* Encima del espacio 3D */
-            transition: opacity 0.5s ease-out;
-            pointer-events: none;
-        }
-
-        #showcase-logo-container.hidden {
-            opacity: 0;
-        }
-
-        #showcase-logo-container img {
-            height: 22px;
-            width: auto;
-            max-width: 200px;
-        }
-
-        @media (max-width: 768px) {
-            #showcase-buttons-container {
-                height: auto;
-                padding: 1.5rem 1rem 2rem 1rem;
-                bottom: env(safe-area-inset-bottom, 0);
-                /* Respeta área segura en iOS */
-            }
-
-            .showcase-buttons {
-                flex-direction: row;
-                justify-content: center;
-                align-items: center;
-                gap: 1rem;
-                width: 100%;
-                padding: 0 1rem;
-            }
-
-            .button-wrap {
-                width: 45%;
-                max-width: 180px;
-                display: flex;
-                justify-content: center;
-            }
-
-            .showcase-btn {
-                font-size: 1.2rem;
-                width: 100%;
-            }
-
-            .showcase-btn .button-inner {
-                padding: 0.85em 1.5em;
-                text-align: center;
-            }
-
-            #canvas-container.showcase-active {
-                /* Pantalla completa optimizada para móvil */
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                height: 100dvh !important;
-                /* Dynamic viewport para Chrome móvil */
-                max-width: 100vw !important;
-                max-height: 100vh !important;
-                max-height: 100dvh !important;
-                min-height: -webkit-fill-available !important;
-                /* Safari iOS */
-            }
-
-            #showcase-logo-container {
-                padding: 20px 0 10px 0;
-                top: env(safe-area-inset-top, 0);
-                /* Respeta notch en iOS */
-            }
-
-            #showcase-logo-container img {
-                height: 20px;
-                max-width: 180px;
-            }
-        }
-
-        /* Botones de redes sociales en showcase */
-        #social-media-buttons {
-            position: fixed;
-            left: 20px;
-            top: 20px;
-            /* Esquina superior izquierda */
-            display: none;
-            /* Oculto por defecto, visible en showcase */
-            flex-direction: column;
-            gap: 12px;
-            z-index: 20;
-            pointer-events: auto;
-        }
-
-        /* En desktop: botones horizontales */
-        @media (min-width: 1025px) {
-            #social-media-buttons {
-                flex-direction: row;
-                gap: 12px;
-            }
-        }
-
-        #social-media-buttons.active {
-            display: flex;
-        }
-
-        .social-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 2px solid rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            text-decoration: none;
-        }
-
-        .social-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-        }
-
-        .social-btn:active {
-            transform: scale(1.02);
-        }
-
-        .social-btn svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        /* Botón de descargar plantilla PDF - Nuevo estilo */
-        #download-pdf-btn {
-            /* Reset de estilos primero */
-            all: unset;
-            /* Posicionamiento y visibilidad */
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1000;
-            display: none;
-            /* Estilos del botón */
-            cursor: pointer;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            border-radius: 999vw;
-            background-color: rgba(0, 0, 0, 0.75);
-            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
-                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
-            font-size: 1.8rem;
-        }
-
-        #download-pdf-btn::after {
-            content: "";
-            position: absolute;
-            z-index: 0;
-            width: calc(100% + 0.3em);
-            height: calc(100% + 0.3em);
-            top: -0.15em;
-            left: -0.15em;
-            border-radius: inherit;
-            background: linear-gradient(-135deg,
-                    rgba(5, 5, 5, 0.5),
-                    transparent 20%,
-                    transparent 100%);
-            filter: blur(0.0125em);
-            opacity: 0.25;
-            mix-blend-mode: multiply;
-        }
-
-        #download-pdf-btn .button-outer {
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            transition: box-shadow 300ms ease;
-            will-change: box-shadow;
-            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
-                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
-                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
-        }
-
-        #download-pdf-btn:hover .button-outer {
-            box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
-                0 0 0 0 rgba(5, 5, 5, 0.25);
-        }
-
-        #download-pdf-btn .button-inner {
-            --inset: 0.035em;
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            padding: 1em 1.5em;
-            background-image: linear-gradient(135deg,
-                    rgba(255, 255, 0, 1),
-                    rgba(255, 215, 0, 1));
-            transition: box-shadow 300ms ease, clip-path 250ms ease,
-                background-image 250ms ease, transform 250ms ease;
-            will-change: box-shadow, clip-path, background-image, transform;
-            overflow: clip;
-            clip-path: inset(0 0 0 0 round 999vw);
-            box-shadow:
-                /* 1 */
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                /* 2 */
-                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
-                /* 3 */
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                /* 4 */
-                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
-                /* 5 */
-                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
-                /* 6 */
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                /* 7 */
-                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        #download-pdf-btn:hover .button-inner {
-            clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 999vw);
-            box-shadow:
-                /* 1 */
-                0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
-                /* 2 */
-                -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
-                /* 3 */
-                0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
-                /* 4 */
-                0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
-                /* 5 */
-                0 0 0 0 inset rgba(255, 255, 255, 1),
-                /* 6 */
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                /* 7 */
-                -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        #download-pdf-btn .button-inner span {
-            position: relative;
-            z-index: 4;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.85em;
-            letter-spacing: 0.05em;
-            font-weight: 700;
-            color: rgba(0, 0, 0, 0);
-            background-image: linear-gradient(135deg,
-                    rgba(25, 25, 25, 1),
-                    rgba(75, 75, 75, 1));
-            -webkit-background-clip: text;
-            background-clip: text;
-            transition: transform 250ms ease;
-            display: block;
-            will-change: transform;
-            text-shadow: rgba(0, 0, 0, 0.1) 0 0 0.1em;
-            white-space: nowrap;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-        #download-pdf-btn:hover .button-inner span {
-            transform: scale(0.975);
-        }
-
-        #download-pdf-btn:active .button-inner {
-            transform: scale(0.975);
-        }
-
-        #download-pdf-btn.active {
-            display: block;
-        }
-
-        /* Colores específicos para cada red social - SIEMPRE visibles */
-        /* TikTok - Negro */
-        .social-btn.tiktok .button-inner {
-            background: #000000 !important;
-            background-image: none !important;
-        }
-
-        .social-btn.tiktok svg {
-            fill: #ffffff !important;
-        }
-
-        .social-btn.tiktok:hover .button-inner {
-            background: #1a1a1a !important;
-        }
-
-        /* YouTube - Rojo */
-        .social-btn.youtube .button-inner {
-            background: #FF0000 !important;
-            background-image: none !important;
-        }
-
-        .social-btn.youtube svg {
-            fill: #ffffff !important;
-        }
-
-        .social-btn.youtube:hover .button-inner {
-            background: #cc0000 !important;
-        }
-
-        /* Instagram - Multicolor Gradient */
-        .social-btn.instagram .button-inner {
-            background: linear-gradient(45deg, #F58529, #DD2A7B, #8134AF, #515BD4) !important;
-            background-image: linear-gradient(45deg, #F58529, #DD2A7B, #8134AF, #515BD4) !important;
-        }
-
-        .social-btn.instagram svg {
-            fill: #ffffff !important;
-        }
-
-        .social-btn.instagram:hover .button-inner {
-            background: linear-gradient(45deg, #DD2A7B, #8134AF, #515BD4, #F58529) !important;
-        }
-
-        /* Página de descarga de PDF */
-        .download-page {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #ffee00 0%, #ff9d00 100%);
-            z-index: 100;
-            opacity: 1;
-            transition: opacity 0.3s ease;
-        }
-
-        .download-page.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Botón de retroceder - mismo estilo que botones de presets */
-        .download-back-btn {
-            position: fixed;
-            left: 20px;
-            top: 20px;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.95);
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            padding: 0;
-            z-index: 101;
-        }
-
-        .download-back-btn:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-        }
-
-        .download-back-btn:active {
-            transform: translateY(-1px) scale(1.02);
-        }
-
-        .download-back-btn svg {
-            width: 24px;
-            height: 24px;
-        }
-
-
-        .pdf-progress-bar-container {
-            width: 100%;
-            height: 40px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            margin-bottom: 1.5rem;
-        }
-
-        .pdf-progress-bar {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, #ffee00, #ff9d00, #ff9d00);
-            transition: width 0.3s ease;
-            box-shadow: 0 0 20px rgba(255, 238, 0, 0.8);
-        }
-
-        .pdf-preparing-text {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-
-        .pdf-progress-text {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2rem;
-            font-weight: 700;
-            color: #ffee00;
-            margin: 0;
-            text-shadow: 0 0 10px rgba(255, 238, 0, 0.8);
-        }
-
-        /* Botón de descarga DENTRO del modal */
-        .final-download-btn-modal {
-            width: 100%;
-            padding: 1.2rem 2rem;
-            background: linear-gradient(135deg, #a4d100 0%, #a4d100 100%);
-            border: none;
-            border-radius: 15px;
-            color: #005580;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .final-download-btn-modal:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 30px rgba(0, 255, 136, 0.7);
-        }
-
-        .final-download-btn-modal svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .pdf-download-message {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.85rem;
-            text-align: center;
-            line-height: 1.4;
-            margin-top: 1rem;
-        }
-
-
-        .payment-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: white;
-            margin: 0 0 1rem;
-            text-shadow: 0 2px 10px rgba(255, 238, 0, 0.5);
-        }
-
-        .payment-subtitle {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.8);
-            margin: 0 0 1.5rem;
-            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Mensaje de pago exitoso - overlay pantalla completa */
-        .payment-success-message {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 2rem;
-            background: #00a1e0;
-            animation: fadeIn 0.5s ease;
-            z-index: 9999;
-        }
-
-        .payment-success-message.hidden {
-            display: none !important;
-        }
-
-        /* Contenedor de progreso PDF - fondo oscuro transparente */
-        .pdf-progress-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 9999;
-        }
-
-        /* Modal interno - ventana flotante pequeña */
-        .pdf-progress-modal {
-            background: rgba(0, 22, 40, 0.98);
-            padding: 3rem;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(255, 238, 0, 0.4);
-            border: 2px solid rgba(255, 238, 0, 0.6);
-            max-width: 500px;
-            width: 90%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .pdf-progress-overlay.hidden {
-            display: none !important;
-        }
-
-        .pdf-progress-modal .pdf-progress-bar-container {
-            width: 100%;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .success-icon-check {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #a4d100 0%, #a4d100 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            animation: scaleIn 0.5s ease;
-            box-shadow: 0 0 30px rgba(164, 209, 0, 0.6);
-        }
-
-        .success-icon-check svg {
-            width: 48px;
-            height: 48px;
-            color: white;
-        }
-
-        .success-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2rem;
-            font-weight: 700;
-            color: #a4d100;
-            margin: 0 0 1rem;
-            text-shadow: 0 0 20px rgba(164, 209, 0, 0.5);
-        }
-
-        .success-text {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.9);
-            margin: 0;
-        }
-
-        /* Botón de descarga - Opción A: centrado, moderno, ancho fijo */
-        .final-download-btn-overlay {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #ffee00 0%, #ff9d00 100%);
-            border: none;
-            color: #005580;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.3rem;
-            font-weight: 700;
-            padding: 1.2rem 3rem;
-            border-radius: 50px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.75rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(255, 238, 0, 0.5), 0 0 40px rgba(255, 238, 0, 0.3);
-            width: 280px;
-            height: 60px;
-            justify-content: center;
-            z-index: 10000;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-        }
-
-        .final-download-btn-overlay.hidden {
-            display: none !important;
-        }
-
-        .final-download-btn-overlay:hover {
-            transform: translate(-50%, calc(-50% - 3px)) scale(1.05);
-            box-shadow: 0 8px 30px rgba(255, 238, 0, 0.7), 0 0 60px rgba(255, 238, 0, 0.5);
-        }
-
-        .final-download-btn-overlay:active {
-            transform: translate(-50%, calc(-50% - 1px)) scale(1.02);
-        }
-
-        .final-download-btn-overlay svg {
-            width: 28px;
-            height: 28px;
-            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
-        }
-
-        @media (max-width: 768px) {
-            .download-back-btn {
-                left: 15px;
-                top: 15px;
-                width: 44px;
-                height: 44px;
-            }
-
-            .download-back-btn svg {
-                width: 22px;
-                height: 22px;
-            }
-
-            .download-content-container {
-                width: 100%;
-                height: 100%;
-            }
-
-
-            .pdf-progress-bar-container {
-                height: 35px;
-            }
-
-            .pdf-progress-text {
-                font-size: 1.5rem;
-            }
-
-            .final-download-btn-overlay {
-                font-size: 1.1rem;
-                padding: 1rem 2rem;
-                width: 240px;
-                height: 56px;
-            }
-
-            .final-download-btn-overlay svg {
-                width: 24px;
-                height: 24px;
-            }
-        }
-
-        /* Botones de acciones en presets (esquina superior izquierda) */
-        #preset-action-buttons {
-            position: fixed;
-            left: 20px;
-            top: 20px;
-            display: none;
-            /* Oculto por defecto, visible en modo presets */
-            flex-direction: column;
-            gap: 12px;
-            z-index: 20;
-            pointer-events: auto;
-        }
-
-        /* En desktop: botones horizontales */
-        @media (min-width: 1025px) {
-            #preset-action-buttons {
-                flex-direction: row;
-                gap: 12px;
-            }
-        }
-
-        #preset-action-buttons.active {
-            display: flex;
-        }
-
-        .preset-action-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: #ffee00;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            padding: 0;
-        }
-
-        /* Legacy hover rules removed to avoid conflict with premium styles */
-
-
-        .preset-action-btn svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .preset-action-btn svg path {
-            fill: #000000;
-        }
-
-        /* Botón de PDF inicialmente oculto */
-        #download-pdf-btn-moved {
-            display: none;
-        }
-
-        #download-pdf-btn-moved.active {
-            display: flex;
-        }
-
-        /* Responsive para móvil */
-        @media (max-width: 768px) {
-            #social-media-buttons {
-                left: 15px;
-                top: 15px;
-                /* Esquina superior izquierda en móvil */
-                gap: 10px;
-            }
-
-            .social-btn {
-                width: 44px;
-                height: 44px;
-            }
-
-            .social-btn svg {
-                width: 22px;
-                height: 22px;
-            }
-
-            #preset-action-buttons {
-                left: 15px;
-                top: 15px;
-                gap: 10px;
-            }
-
-            .preset-action-btn {
-                width: 44px;
-                height: 44px;
-            }
-
-            .preset-action-btn svg {
-                width: 22px;
-                height: 22px;
-            }
-        }
-
-        /* Account button (top-right corner) */
-        #account-button {
-            position: fixed;
-            right: 20px;
-            top: 20px;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.95);
-            border: none;
-            cursor: pointer;
-            display: none;
-            /* Oculto por defecto, visible solo después de login */
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-            z-index: 20;
-            pointer-events: auto;
-        }
-
-        #account-button.visible {
-            display: flex;
-        }
-
-        #account-button:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-        }
-
-        #account-button svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        /* Account modal */
-        #account-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.85);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-            backdrop-filter: blur(4px);
-        }
-
-        #account-modal.active {
-            display: flex;
-        }
-
-        .account-modal-content {
-            background: linear-gradient(135deg, #0078a8 0%, #005580 100%);
-            border-radius: 20px;
-            padding: 2.5rem;
-            max-width: 450px;
-            width: 90%;
-            box-shadow: 0 10px 40px rgba(255, 238, 0, 0.2);
-            border: 1px solid rgba(255, 238, 0, 0.2);
-            position: relative;
-        }
-
-        .modal-close-btn {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .modal-close-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
-        }
-
-        .modal-close-btn svg {
-            width: 20px;
-            height: 20px;
-            color: white;
-        }
-
-        .modal-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
-            color: #ffee00;
-            margin: 0 0 1.5rem;
-            text-align: center;
-            text-shadow: 0 0 10px rgba(255, 238, 0, 0.5);
-        }
-
-        .modal-user-info {
-            text-align: center;
-            margin-bottom: 1.5rem;
-        }
-
-        .modal-user-email {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.8);
-            margin: 0 0 0.5rem;
-        }
-
-        .modal-subscription-status {
-            font-size: 0.9rem;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            display: inline-block;
-            margin-top: 0.5rem;
-        }
-
-        .modal-subscription-status.active {
-            background: rgba(164, 209, 0, 0.2);
-            color: #a4d100;
-            border: 1px solid rgba(164, 209, 0, 0.4);
-        }
-
-        .modal-subscription-status.inactive {
-            background: rgba(255, 77, 0, 0.2);
-            color: #ff4d00;
-            border: 1px solid rgba(255, 77, 0, 0.4);
-        }
-
-        .modal-button {
-            width: 100%;
-            padding: 1rem;
-            border: none;
-            border-radius: 50px;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 0.75rem;
-        }
-
-        .modal-button-primary {
-            background: linear-gradient(135deg, #ffee00 0%, #ff9d00 100%);
-            color: #000;
-            box-shadow: 0 4px 15px rgba(255, 238, 0, 0.3);
-        }
-
-        .modal-button-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 238, 0, 0.4);
-        }
-
-        .modal-button-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .modal-button-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-        }
-
-        .modal-button-logout {
-            background: rgba(255, 77, 0, 0.1);
-            color: #ff4d00;
-            border: 1px solid rgba(255, 77, 0, 0.3);
-        }
-
-        .modal-button-logout:hover {
-            background: rgba(255, 77, 0, 0.2);
-            transform: translateY(-2px);
-        }
-
-        /* --- Language Switcher (Matching Social Buttons Style) --- */
-        #language-switcher {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
-
-        #lang-toggle-btn {
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-        }
-
-        #lang-toggle-btn.premium-round-btn .button-inner span {
-            color: #1a1a1a;
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        @media (max-width: 768px) {
-            #language-switcher {
-                right: 15px;
-                top: 15px;
-            }
-        }
-
-        /* --- Customization UI Redesign --- */
-
-        /* Desktop Layout (Default) */
-        @media (min-width: 1025px) {
-            body.customization-active #editor-panel-wrapper {
-                display: block !important;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 320px;
-                height: 100vh;
-                height: 100dvh;
-                /* Glassmorphism Effect */
-                /* Glassmorphism Effect */
-                background: transparent;
-                backdrop-filter: blur(20px);
-                -webkit-backdrop-filter: blur(20px);
-                border-right: 1px solid rgba(255, 255, 255, 0.15);
-                box-shadow: 4px 0 30px rgba(0, 0, 0, 0.3);
-                z-index: 40;
-                padding: 0;
-            }
-
-            /* Canvas Adjustment Desktop */
-            body.customization-active #canvas-container {
-                width: calc(100vw - 320px);
-                margin-left: 320px;
-                transition: width 0.3s ease, margin-left 0.3s ease;
-            }
-
-            /* Ensure panel content fits */
-            #editor-panel-wrapper .ui-panel {
-                height: 100%;
-                overflow-y: auto;
-                border-radius: 0;
-                background: transparent;
-            }
-        }
-
-        /* Mobile Layout */
-        @media (max-width: 1024px) {
-            body.customization-active #editor-panel-wrapper {
-                display: block !important;
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                height: 50vh;
-                height: 50dvh;
-                /* Glassmorphism Effect */
-                /* Glassmorphism Effect */
-                background: transparent;
-                backdrop-filter: blur(20px);
-                -webkit-backdrop-filter: blur(20px);
-                border-top: 1px solid rgba(255, 255, 255, 0.15);
-                box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.3);
-                z-index: 40;
-                padding: 0;
-            }
-
-            /* Canvas Adjustment Mobile */
-            body.customization-active #canvas-container {
-                height: 50vh !important;
-                height: 50dvh !important;
-                bottom: auto;
-                top: 0;
-                transition: height 0.3s ease;
-            }
-
-            /* Ensure panel content fits */
-            #editor-panel-wrapper .ui-panel {
-                height: 100%;
-                overflow-y: auto;
-                border-radius: 0;
-                background: transparent;
-                padding-bottom: 40px;
-                /* Space for safe area */
-            }
-        }
-
-        /* --- New Customization UI Styles --- */
-        .custom-nav-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-width: 64px;
-            height: 64px;
-            padding: 4px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: rgba(255, 255, 255, 0.6);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .custom-nav-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .custom-nav-btn.active {
-            background: rgba(255, 238, 0, 0.15);
-            border-color: #ffee00;
-            color: #ffee00;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 238, 0, 0.2);
-        }
-
-        .custom-nav-btn .btn-icon {
-            width: 28px;
-            height: 28px;
-        }
-
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        .grid-item-btn {
-            aspect-ratio: 1;
-            border-radius: 16px;
-            background: rgba(30, 30, 50, 0.6);
-            border: 2px solid rgba(255, 255, 255, 0.05);
-            overflow: hidden;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .grid-item-btn:hover {
-            background: rgba(30, 30, 50, 0.8);
-            border-color: rgba(255, 238, 0, 0.3);
-        }
-
-        .grid-item-btn.active {
-            border-color: #ffee00;
-            box-shadow: 0 0 15px rgba(255, 238, 0, 0.2);
-            background: rgba(255, 238, 0, 0.05);
-        }
-
-        .grid-item-btn img {
-            width: 85%;
-            height: 85%;
-            object-fit: contain;
-            filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.3));
-        }
-
-        .color-swatch-circle {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            flex-shrink: 0;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-
-        .color-swatch-circle:hover {
-            transform: scale(1.05);
-        }
-
-        .color-swatch-circle.active {
-            border-color: white;
-            transform: scale(1.15);
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);
-        }
-
-        .custom-options-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            padding: 4px;
-        }
-
-        .part-selection-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .part-btn {
-            padding: 6px 4px;
-            font-size: 10px;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: rgba(255, 255, 255, 0.6);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .part-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .part-btn.active {
-            background: rgba(255, 238, 0, 0.15);
-            border-color: #ffee00;
-            color: #ffee00;
-            box-shadow: 0 0 10px rgba(255, 238, 0, 0.1);
-        }
-
-        .custom-download-btn {
-            margin-top: 20px;
-            padding: 12px;
-            background: linear-gradient(135deg, #ffee00 0%, #ff9d00 100%);
-            border: none;
-            border-radius: 12px;
-            color: #005580;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: bold;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 15px rgba(255, 238, 0, 0.3);
-        }
-
-        .custom-download-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 238, 0, 0.5);
-            filter: brightness(1.1);
-        }
-
-        .custom-download-btn:active {
-            transform: translateY(0);
-        }
-
-        .custom-download-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        @media (max-width: 1024px) {
-            .custom-options-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-
-            .part-selection-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
-        /* Premium Round Button Style from User Request */
-        .premium-round-btn {
-            all: unset;
-            cursor: pointer;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            position: relative;
-            border-radius: 999vw;
-            background-color: transparent;
-            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
-                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
-
-            /* Forced circular dimensions */
-            width: 3.5rem;
-            height: 3.5rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 16px;
-        }
-
-        .premium-round-btn:hover {
-            background-color: transparent !important;
-        }
-
-        .premium-round-btn::after {
-            content: "";
-            position: absolute;
-            z-index: 0;
-            width: calc(100% + 0.3em);
-            height: calc(100% + 0.3em);
-            top: -0.15em;
-            left: -0.15em;
-            border-radius: inherit;
-            background: linear-gradient(-135deg,
-                    rgba(5, 5, 5, 0.5),
-                    transparent 20%,
-                    transparent 100%);
-            filter: blur(0.0125em);
-            opacity: 0.25;
-            mix-blend-mode: multiply;
-        }
-
-        .premium-round-btn .button-outer {
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            transition: box-shadow 300ms ease;
-            will-change: box-shadow;
-            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
-                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
-                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .premium-round-btn:hover .button-outer {
-            box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
-                0 0 0 0 rgba(5, 5, 5, 0.25);
-        }
-
-        .premium-round-btn .button-inner {
-            --inset: 0.035em;
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-image: linear-gradient(135deg,
-                    rgba(255, 255, 0, 1),
-                    rgba(255, 220, 0, 1));
-            transition: box-shadow 300ms ease, clip-path 250ms ease,
-                background-image 250ms ease, transform 250ms ease;
-            will-change: box-shadow, clip-path, background-image, transform;
-            overflow: clip;
-            clip-path: inset(0 0 0 0 round 999vw);
-            box-shadow:
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
-                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        .premium-round-btn:hover .button-inner {
-            clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 999vw);
-            box-shadow:
-                0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
-                -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
-                0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
-                0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
-                0 0 0 0 inset rgba(255, 255, 255, 1),
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        .premium-round-btn .button-inner span {
-            position: relative;
-            z-index: 4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            will-change: transform;
-            transition: transform 250ms ease;
-            color: #1a1a1a;
-        }
-
-        .premium-round-btn:hover .button-inner span {
-            transform: scale(0.975);
-        }
-
-        .premium-round-btn:active .button-inner {
-            transform: scale(0.975);
-        }
-
-        /* Premium Metallic Button Style (for Social Buttons) */
-        .premium-metallic-btn {
-            all: unset;
-            cursor: pointer;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-            position: relative;
-            border-radius: 999vw;
-            background-color: transparent;
-            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
-                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
-
-            /* Dimensions */
-            width: 3.5rem;
-            height: 3.5rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 16px;
-            text-decoration: none;
-        }
-
-        .premium-metallic-btn:hover {
-            background-color: transparent !important;
-        }
-
-        .premium-metallic-btn::after {
-            content: "";
-            position: absolute;
-            z-index: 0;
-            width: calc(100% + 0.3em);
-            height: calc(100% + 0.3em);
-            top: -0.15em;
-            left: -0.15em;
-            border-radius: inherit;
-            background: linear-gradient(-135deg,
-                    rgba(5, 5, 5, 0.5),
-                    transparent 20%,
-                    transparent 100%);
-            filter: blur(0.0125em);
-            opacity: 0.25;
-            mix-blend-mode: multiply;
-        }
-
-        .premium-metallic-btn .button-outer {
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            transition: box-shadow 300ms ease;
-            will-change: box-shadow;
-            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
-                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
-                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .premium-metallic-btn:hover .button-outer {
-            box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
-                0 0 0 0 rgba(5, 5, 5, 0.25);
-        }
-
-        .premium-metallic-btn .button-inner {
-            --inset: 0.035em;
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-image: linear-gradient(135deg,
-                    rgba(230, 230, 230, 1),
-                    rgba(180, 180, 180, 1));
-            transition: box-shadow 300ms ease, clip-path 250ms ease,
-                background-image 250ms ease, transform 250ms ease;
-            will-change: box-shadow, clip-path, background-image, transform;
-            overflow: clip;
-            clip-path: inset(0 0 0 0 round 999vw);
-            box-shadow:
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
-                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        .premium-metallic-btn:hover .button-inner {
-            clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 999vw);
-            box-shadow:
-                0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
-                -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
-                0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
-                0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
-                0 0 0 0 inset rgba(255, 255, 255, 1),
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        .premium-metallic-btn:hover svg {
-            transform: scale(0.975);
-        }
-
-        .premium-metallic-btn:active .button-inner {
-            transform: scale(0.975);
-        }
-
-        #social-media-buttons .social-btn.premium-metallic-btn {
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
-        }
-
-        .premium-round-btn:active .button-inner {
-            transform: scale(0.975);
-        }
-
-        /* Adjust SVG color in premium buttons */
-        .premium-round-btn svg {
-            width: 24px;
-            height: 24px;
-            color: #1a1a1a;
-        }
-    </style>
-
-</head>
-
-<body class="text-white">
-
-    <!-- Background dots pattern REMOVED for clean look -->
-    <!--
-    <svg style="position: absolute; width: 100%; height: 100%; z-index: 0;" width="100%" height="100%"
-        xmlns="http://www.w3.org/2000/svg">
-        <defs>
-            <pattern id="dottedGrid" width="30" height="30" patternUnits="userSpaceOnUse">
-                <circle cx="2" cy="2" r="1" fill="rgba(0,0,0,0.15)" />
-            </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#dottedGrid)" />
-    </svg>
-    -->
-
-    <!-- Fondo degradado azul para showcase -->
-    <div id="showcase-background"></div>
-
-    <!-- Idioma (Switcher) -->
-    <div id="language-switcher">
-        <button type="button" id="lang-toggle-btn" class="social-btn premium-round-btn">
-            <div class="button-outer">
-                <div class="button-inner">
-                    <span id="lang-toggle-text">EN</span>
-                </div>
-            </div>
-        </button>
-    </div>
-
-    <!-- Nombre del personaje seleccionado (centrado arriba) -->
-    <div id="character-name-display">
-        <span id="character-name-text"></span>
-    </div>
-
-    <!-- Barra de progreso (oculta inicialmente) -->
-    <div id="pdf-progress-container" class="pdf-progress-overlay hidden">
-        <div class="pdf-progress-modal">
-            <div id="pdf-preparing-text" class="pdf-preparing-text" data-i18n="preparing-pdf">Preparing PDF...</div>
-            <div id="pdf-progress-bar-container" class="pdf-progress-bar-container">
-                <div id="pdf-progress-bar" class="pdf-progress-bar"></div>
-            </div>
-            <div id="pdf-progress-text" class="pdf-progress-text">0%</div>
-
-            <!-- Botón de descarga DENTRO del modal (oculto inicialmente) -->
-            <button type="button" id="final-download-btn" class="final-download-btn-modal hidden">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z" />
-                </svg>
-                <span data-i18n="download-pdf-btn">DOWNLOAD PDF</span>
-            </button>
-            <div id="pdf-download-message" class="pdf-download-message hidden" data-i18n="download-message">
-                ℹ️ Your download will start through your browser.<br>Please check your downloads folder.
-            </div>
-        </div>
-    </div>
-
-    <div id="canvas-container"></div>
-    <div id="loading-indicator">
-        <img src="logo.svg" alt="Papelcool Logo" class="loading-logo">
-        <div class="loading-spinner"></div>
-    </div>
-
-    <!-- Contenedor del logo del showcase -->
-    <div id="showcase-logo-container" class="hidden">
-        <img src="logo.svg" alt="Papelcool Logo">
-    </div>
-
-    <!-- Botón de descargar plantilla PDF (fuera de la ventana, centrado arriba) -->
-    <button type="button" id="download-pdf-btn" class="pointer-events-auto">
-        <div class="button-outer">
-            <div class="button-inner">
-                <span data-i18n="download-pdf-btn">DOWNLOAD PDF</span>
-            </div>
-        </div>
-    </button>
-
-    <!-- Botones de redes sociales (solo visible en showcase) -->
-    <div id="social-media-buttons">
-        <!-- TikTok -->
-        <a href="https://www.tiktok.com/@papelcool" target="_blank" rel="noopener noreferrer"
-            class="social-btn tiktok premium-metallic-btn" aria-label="TikTok">
-            <div class="button-outer">
-                <div class="button-inner">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff">
-                            <path
-                                d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
-                        </svg>
-                    </span>
-                </div>
-            </div>
-        </a>
-
-        <!-- YouTube -->
-        <a href="https://www.youtube.com/@papelcool" target="_blank" rel="noopener noreferrer"
-            class="social-btn youtube premium-metallic-btn" aria-label="YouTube">
-            <div class="button-outer">
-                <div class="button-inner">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff">
-                            <path
-                                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                        </svg>
-                    </span>
-                </div>
-            </div>
-        </a>
-
-        <!-- Instagram -->
-        <a href="https://www.instagram.com/papelcool" target="_blank" rel="noopener noreferrer"
-            class="social-btn instagram premium-metallic-btn" aria-label="Instagram">
-            <div class="button-outer">
-                <div class="button-inner">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff">
-                            <path
-                                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                        </svg>
-                    </span>
-                </div>
-            </div>
-        </a>
-    </div>
-
-    <!-- Botones de presets (esquina superior izquierda) -->
-    <div id="preset-action-buttons">
-        <!-- Botón 1: Volver al showcase -->
-        <button type="button" id="back-to-showcase-btn" class="preset-action-btn premium-round-btn"
-            aria-label="Volver al showcase">
-            <div class="button-outer">
-                <div class="button-inner">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
-                        </svg>
-                    </span>
-                </div>
-            </div>
-        </button>
-
-        <!-- Botón 2: Modo juego -->
-        <button type="button" id="play-mode-btn-desktop-moved" class="preset-action-btn play-mode-btn premium-round-btn"
-            aria-label="Modo juego">
-            <div class="button-outer">
-                <div class="button-inner">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path fill="currentColor" d="M8 5.14v14l11-7z" />
-                        </svg>
-                    </span>
-                </div>
-            </div>
-        </button>
-
-        <!-- Botón 3: Descargar PDF -->
-        <button type="button" id="download-pdf-btn-moved" class="preset-action-btn premium-round-btn"
-            aria-label="Descargar PDF">
-            <div class="button-outer">
-                <div class="button-inner">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path fill="currentColor" d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z" />
-                        </svg>
-                    </span>
-                </div>
-            </div>
-        </button>
-
-    </div>
-
-    <!-- Botones de showcase inicial (sin overlay) -->
-    <div id="showcase-buttons-container" class="hidden">
-        <div class="showcase-buttons">
-            <div class="button-wrap">
-                <button type="button" id="customize-btn" class="showcase-btn">
-                    <div class="button-outer">
-                        <div class="button-inner">
-                            <span>CUSTOM</span>
-                        </div>
-                    </div>
-                </button>
-            </div>
-            <div class="button-wrap">
-                <button type="button" id="presets-btn" class="showcase-btn">
-                    <div class="button-outer">
-                        <div class="button-inner">
-                            <span>PRESETS</span>
-                        </div>
-                    </div>
-                </button>
-            </div>
-        </div>
-    </div>
-
-
-
-
-    <!-- Coming Soon Modal -->
-    <div id="coming-soon-modal"
-        style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000;">
-        <div
-            style="background: #00a1e0; border: 1px solid rgba(255, 238, 0, 0.18); border-radius: 14px; padding: 24px; width: min(92vw, 420px); color: #fff; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.35);">
-            <button type="button" id="coming-soon-close" aria-label="Close"
-                style="position:absolute; top:10px; right:10px; background:transparent; border:none; color:#00a1e0; cursor:pointer; font-size:20px;">×</button>
-            <h2 style="margin:0 0 10px; font-size:22px; font-weight:700; letter-spacing:0.2px;"
-                data-i18n="coming-soon-title">Coming Soon</h2>
-            <p style="margin:0 0 16px; line-height:1.5; color: rgba(255,255,255,0.85);" data-i18n="coming-soon-body">
-                This feature will be available
-                very soon. We're working to bring you the best experience.</p>
-            <div style="display:flex; gap:10px; justify-content:flex-end;">
-                <button type="button" id="coming-soon-ok"
-                    style="background:#ffee00; color:#005580; border:none; border-radius:10px; padding:10px 16px; font-weight:700; cursor:pointer;"
-                    data-i18n="got-it">Got
-                    it</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Panel de edición móvil optimizado -->
-
-
-    <!-- Controles de juego para móvil -->
-    <div id="mobile-game-controls">
-        <div id="joystick-container">
-            <div id="joystick-base">
-                <div class="joystick-outer">
-                    <div class="joystick-inner">
-                        <div id="joystick-stick"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <button type="button" id="jump-button">
-            <div class="button-outer">
-                <div class="button-inner">
-                    <span>↑</span>
-                </div>
-            </div>
-        </button>
-    </div>
-
-    <!-- Panel del editor (responsivo) -->
-    <div id="editor-panel-wrapper" class="pointer-events-none">
-        <div class="ui-panel p-4 space-y-4" style="padding-top: 8px; padding-bottom: 4px;">
-            <div id="editor-container">
-                <!-- Botones de personajes preestablecidos -->
-                <!-- ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético) -->
-                <!-- Para añadir nuevos personajes: agregar al INICIO de la lista -->
-                <div id="presets-section" class="pt-2 mb-4 hidden" style="padding-top: 4px; padding-bottom: 2px;">
-                    <div class="mb-3 pointer-events-auto">
-                        <input type="text" id="preset-search-input" placeholder="Search presets..."
-                            class="w-full px-4 py-2 text-sm bg-white border text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2"
-                            style="border-radius: 30px; border: 2px solid #FFFF00;" />
-                        <!-- Main Category Carousel moved to customize-section -->
-                    </div>
-                    <div id="presets-container" class="presets-grid pointer-events-auto">
-                        <!-- STEVE - Minecraft (NUEVO) -->
-                        <button type="button" id="preset-steve-btn" class="preset-character-btn">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <img id="steve-icon" src="" alt="Steve" class="character-icon-img">
-                                </div>
-                            </div>
-                        </button>
-                        <!-- ALEX - Minecraft -->
-                        <button type="button" id="preset-alex-btn" class="preset-character-btn">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <img id="alex-icon" src="" alt="Alex" class="character-icon-img">
-                                </div>
-                            </div>
-                        </button>
-                        <!-- ZOMBIE - Minecraft -->
-                        <button type="button" id="preset-zombie-btn" class="preset-character-btn">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <img id="zombie-icon" src="" alt="Zombie" class="character-icon-img">
-                                </div>
-                            </div>
-                        </button>
-                        <!-- CREEPER - Minecraft -->
-                        <button type="button" id="preset-creeper-btn" class="preset-character-btn">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <img id="creeper-icon" src="" alt="Creeper" class="character-icon-img">
-                                </div>
-                            </div>
-                        </button>
-                        <!-- SKELETON - Minecraft -->
-                        <button type="button" id="preset-skeleton-btn" class="preset-character-btn">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <img id="skeleton-icon" src="" alt="Skeleton" class="character-icon-img">
-                                </div>
-                            </div>
-                        </button>
-                        <!-- ENDERMAN - Minecraft -->
-                        <button type="button" id="preset-enderman-btn" class="preset-character-btn">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <img id="enderman-icon" src="" alt="Enderman" class="character-icon-img">
-                                </div>
-                            </div>
-                        </button>
-                        <!-- BABY - Personaje más nuevo (2025) -->
-                        <button type="button" id="preset-baby-btn" class="preset-character-btn">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <img id="baby-icon" src="" alt="Baby" class="character-icon-img">
-                                </div>
-                            </div>
-                        </button>
-                        <!-- MYSTERY - Personaje (2024) -->
-                        <button type="button" id="preset-mystery-btn" class="preset-character-btn">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <img id="mystery-icon" src="" alt="Mystery" class="character-icon-img">
-                                </div>
-                            </div>
-                        </button>
-                        <!-- ROMANCE - Personaje (2024) -->
-                        <button type="button" id="preset-romance-btn" class="preset-character-btn">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <img id="romance-icon" src="" alt="Romance" class="character-icon-img">
-                                </div>
-                            </div>
-                        </button>
-                        <!-- ABBY - Personaje (2024) -->
-                        <button type="button" id="preset-abby-btn" class="preset-character-btn">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <img id="abby-icon" src="" alt="Abby" class="character-icon-img">
-                                </div>
-                            </div>
-                        </button>
-                        <!-- JINU - Personaje (2024) -->
-                        <button type="button" id="preset-jinu-btn" class="preset-character-btn">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <img id="jinu-icon" src="" alt="Jinu" class="character-icon-img">
-                                </div>
-                            </div>
-                        </button>
-                        <!-- ZOEY - Personaje (2024) -->
-                        <button type="button" id="preset-zoey-btn" class="preset-character-btn">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <img id="zoey-icon" src="" alt="Zoey" class="character-icon-img">
-                                </div>
-                            </div>
-                        </button>
-                        <!-- RUMI - Personaje intermedio (2024) -->
-                        <button type="button" id="preset-rumi-btn" class="preset-character-btn">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <img id="rumi-icon" src="" alt="Rumi" class="character-icon-img">
-                                </div>
-                            </div>
-                        </button>
-                        <!-- MIRA - Personaje más antiguo (2024) -->
-                        <button type="button" id="preset-mira-btn" class="preset-character-btn">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <img id="mira-icon" src="" alt="Mira" class="character-icon-img">
-                                </div>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-
-                <div id="customize-section" class="hidden h-full flex flex-col">
-                    <!-- Header Actions (Back, Play, Download) -->
-                    <div id="custom-header-actions" class="flex gap-2 mb-4 pointer-events-auto flex-none justify-start">
-                        <!-- Back Button -->
-                        <button type="button" id="back-to-showcase-custom-btn"
-                            class="preset-action-btn premium-round-btn" aria-label="Volver al showcase">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                                            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-                        </button>
-
-                        <!-- Play Mode Button -->
-                        <button type="button" id="play-mode-custom-btn"
-                            class="preset-action-btn play-mode-btn premium-round-btn" aria-label="Modo juego">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24">
-                                            <path fill="currentColor" d="M8 5.14v14l11-7z" />
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-                        </button>
-
-                        <!-- Download Button -->
-                        <button type="button" id="download-pdf-custom-btn" class="preset-action-btn premium-round-btn"
-                            aria-label="Descargar PDF">
-                            <div class="button-outer">
-                                <div class="button-inner">
-                                    <span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24">
-                                            <path fill="currentColor" d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z" />
-                                        </svg>
-                                    </span>
-                                </div>
-                            </div>
-                        </button>
-                    </div>
-
-                    <!-- Main Category Carousel -->
-                    <div class="flex space-x-3 overflow-x-auto py-2 mb-2 pointer-events-auto flex-none no-scrollbar"
-                        id="main-category-carousel">
-                        <!-- EYES -->
-                        <button class="custom-nav-btn active" data-category="eyes">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
-                                </svg>
-                            </div>
-                            <span class="text-xs mt-1" data-i18n="cat-eyes">Eyes</span>
-                        </button>
-                        <!-- BROWS -->
-                        <button class="custom-nav-btn" data-category="eyebrows">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
-                                </svg>
-                            </div>
-                            <span class="text-xs mt-1" data-i18n="cat-brows">Brows</span>
-                        </button>
-                        <!-- NOSE -->
-                        <button class="custom-nav-btn" data-category="nose">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 15c-2.33 0-4.31-1.46-5.11-3.5h10.22c-.8 2.04-2.78 3.5-5.11 3.5z" />
-                                </svg>
-                            </div>
-                            <span class="text-xs mt-1" data-i18n="cat-nose">Nose</span>
-                        </button>
-                        <!-- EARS -->
-                        <button class="custom-nav-btn" data-category="ears">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M5 9c-2 0-3 3-3 6 0 3 2 4 3 4 1 0 1-1 1-1 0-2-1-3-1-5 0-2 1-3 0-4zm14 0c2 0 3 3 3 6 0 3-2 4-3 4-1 0-1-1-1-1 0-2 1-3 1-5 0-2-1-3 0-4z" />
-                                </svg>
-                            </div>
-                            <span class="text-xs mt-1" data-i18n="cat-ears">Ears</span>
-                        </button>
-                        <!-- HAIR -->
-                        <button class="custom-nav-btn" data-category="hair">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M12 3c-5 0-9 4-9 9 0 3 2 5 2 5s2-2 2-5c0-2.5 2-4 5-4s5 1.5 5 4c0 3 2 5 2 5s2-2 2-5c0-5-4-9-9-9z" />
-                                </svg>
-                            </div>
-                            <span class="text-xs mt-1" data-i18n="cat-hair">Hair</span>
-                        </button>
-                        <!-- TORSO -->
-                        <button class="custom-nav-btn" data-category="torso">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 2L4 5v11h16V5l-8-3zm0 2.5c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2z" />
-                                </svg>
-                            </div>
-                            <span class="text-xs mt-1" data-i18n="cat-torso">Torso</span>
-                        </button>
-                        <!-- ARMS -->
-                        <button class="custom-nav-btn" data-category="arms">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 2L4 5v11h16V5l-8-3zm0 2.5c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2z" />
-                                </svg>
-                            </div>
-                            <span class="text-xs mt-1" data-i18n="cat-arms">Arms</span>
-                        </button>
-                        <!-- LEGS -->
-                        <button class="custom-nav-btn" data-category="legs">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h4v-6h6v6h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
-                                </svg>
-                            </div>
-                            <span class="text-xs mt-1" data-i18n="cat-legs">Legs</span>
-                        </button>
-                    </div>
-
-                    <div class="pt-2 border-t border-[#ffee00]/30 flex-none mb-4">
-                        <h2 class="text-md font-bold text-[#ffee00] mb-2" data-i18n="skin-color-title">SKIN COLOR</h2>
-                        <div id="global-color-palette"
-                            class="flex space-x-2 overflow-x-auto py-2 mb-2 pointer-events-auto no-scrollbar">
-                            <!-- Color swatches will be populated here -->
-                        </div>
-
-                        <!-- Sliders de personalización -->
-                        <div class="mt-2 space-y-3 pointer-events-auto">
-                            <div>
-                                <label class="text-xs text-[#ffee00] mb-1 block" data-i18n="hue-label">Tono</label>
-                                <input type="range" id="hue-slider" min="0" max="360" value="0"
-                                    class="w-full h-2 rounded-lg appearance-none cursor-pointer"
-                                    style="background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);">
-                            </div>
-                            <div>
-                                <label class="text-xs text-[#ffee00] mb-1 block"
-                                    data-i18n="lightness-label">Luminosidad</label>
-                                <input type="range" id="lightness-slider" min="0" max="100" value="50"
-                                    class="w-full h-2 rounded-lg appearance-none cursor-pointer bg-gradient-to-r from-black via-gray-500 to-white">
-                            </div>
-                        </div>
-
-                        <!-- Part Selection Buttons -->
-                        <div class="part-selection-grid pointer-events-auto">
-                            <button type="button" class="part-btn active" data-part="all"
-                                data-i18n="part-all">Total</button>
-                            <button type="button" class="part-btn" data-part="head"
-                                data-i18n="part-head">Cabeza</button>
-                            <button type="button" class="part-btn" data-part="torso"
-                                data-i18n="part-torso">Torso</button>
-                            <button type="button" class="part-btn" data-part="arm-l" data-i18n="part-arm-l">Brazo
-                                Izq</button>
-                            <button type="button" class="part-btn" data-part="arm-r" data-i18n="part-arm-r">Brazo
-                                Der</button>
-                            <button type="button" class="part-btn" data-part="leg-l" data-i18n="part-leg-l">Pierna
-                                Izq</button>
-                            <button type="button" class="part-btn" data-part="leg-r" data-i18n="part-leg-r">Pierna
-                                Der</button>
-                        </div>
-                    </div>
-
-                    <!-- Options Grid -->
-                    <div id="custom-options-grid"
-                        class="custom-options-grid pointer-events-auto flex-grow overflow-y-auto no-scrollbar mb-4">
-                        <!-- Options will be populated here -->
-                    </div>
-
-
-                </div><!-- Cierre de customize-section -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Warning Modal for Skin Color -->
-    <div id="color-warning-modal" class="fixed inset-0 z-[10001] hidden flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" id="color-warning-overlay"></div>
-        <div
-            class="relative bg-[#005580] border-2 border-[#ffee00]/50 rounded-2xl p-6 max-w-sm w-full shadow-[0_0_30px_rgba(255,238,0,0.2)]">
-            <button id="color-warning-close"
-                class="absolute top-3 right-3 text-[#ffee00] hover:text-[#ffee00] transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-            <h3 id="color-warning-title" class="font-orbitron text-xl text-[#ffee00] mb-3"
-                data-i18n="color-warning-title">Color Required</h3>
-            <p id="color-warning-body" class="text-gray-300 text-sm leading-relaxed" data-i18n="color-warning-body">
-                You must select a color to paint the model before downloading.
-            </p>
-        </div>
-    </div>
-
-    <script type="module">
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
@@ -3969,11 +323,11 @@
         backLight.position.set(0, 5, -10);
         scene.add(backLight);
 
-        // Referencia al grid para poder alternar visibilidad (DISABLED - clean background)
-        // const gridHelper = new THREE.GridHelper(200, 200, 0x404040);
-        // gridHelper.material.opacity = 0.4;
-        // gridHelper.material.transparent = true;
-        // scene.add(gridHelper);
+        // Referencia al grid para poder alternar visibilidad
+        const gridHelper = new THREE.GridHelper(200, 200, 0x404040);
+        gridHelper.material.opacity = 0.4;
+        gridHelper.material.transparent = true;
+        scene.add(gridHelper);
 
         // Sombra suave bajo los pies (plano con degradado radial)
         let footShadow = null;
@@ -4034,12 +388,6 @@
         if (document.getElementById('steve-icon')) {
             document.getElementById('steve-icon').src = presetIcons['Steve'] || 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Minecraft/Steve/Steve-icon.svg';
         }
-        if (document.getElementById('alex-icon')) document.getElementById('alex-icon').src = presetIcons['Alex'] || 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/Alex-icon.svg';
-        if (document.getElementById('zombie-icon')) document.getElementById('zombie-icon').src = presetIcons['Zombie'] || 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/Zombie-icon.svg';
-        if (document.getElementById('creeper-icon')) document.getElementById('creeper-icon').src = presetIcons['Creeper'] || 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/Creeper-icon.svg';
-        if (document.getElementById('skeleton-icon')) document.getElementById('skeleton-icon').src = presetIcons['Skeleton'] || 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/Skeleton-icon.svg';
-        if (document.getElementById('enderman-icon')) document.getElementById('enderman-icon').src = presetIcons['Enderman'] || 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/Enderman-icon.svg';
-
         document.getElementById('baby-icon').src = presetIcons['Baby'];
         document.getElementById('mystery-icon').src = presetIcons['Mystery'];
         document.getElementById('romance-icon').src = presetIcons['Romance'];
@@ -4985,7 +1333,7 @@
                         const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         hairFrontMesh = new THREE.Mesh(hairGeometry, hairMaterial);
                         // Posición del cabello frontal
-                        hairFrontMesh.position.set(0, 0.563, 1.1285);
+                        hairFrontMesh.position.set(0, 0.563, 1.130);
                         modelParts.head.add(hairFrontMesh);
                     } else {
                         // Solo actualiza la textura si el mesh ya existe
@@ -5018,7 +1366,7 @@
                         const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         hairBackMesh = new THREE.Mesh(hairGeometry, hairMaterial);
                         // Posición del cabello trasero (detrás de la cabeza)
-                        hairBackMesh.position.set(0, 0.563, -1.1285);
+                        hairBackMesh.position.set(0, 0.563, -1.129);
                         modelParts.head.add(hairBackMesh);
                     } else {
                         // Solo actualiza la textura si el mesh ya existe
@@ -5052,7 +1400,7 @@
                             const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                             hairLeftMesh = new THREE.Mesh(hairGeometry, hairMaterial);
                             // Posición del cabello izquierdo (lado izquierdo de la cabeza)
-                            hairLeftMesh.position.set(-1.1285, 1.029, 0);
+                            hairLeftMesh.position.set(-1.129, 1.029, 0);
                             hairLeftMesh.rotation.y = -Math.PI / 2; // Rotar 90 grados
                             modelParts.head.add(hairLeftMesh);
                         } else {
@@ -5088,7 +1436,7 @@
                             const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                             hairRightMesh = new THREE.Mesh(hairGeometry, hairMaterial);
                             // Posición del cabello derecho (lado derecho de la cabeza)
-                            hairRightMesh.position.set(1.1285, 1.029, 0);
+                            hairRightMesh.position.set(1.129, 1.029, 0);
                             hairRightMesh.rotation.y = Math.PI / 2; // Rotar -90 grados
                             modelParts.head.add(hairRightMesh);
                         } else {
@@ -6736,11 +3084,6 @@
             presetsSection.classList.add('hidden');
             customizeSection.classList.remove('hidden');
 
-            // Reset interaction state
-            hasCustomizationInteracted = false;
-            const downloadPdfCustomBtn = document.getElementById('download-pdf-custom-btn');
-            if (downloadPdfCustomBtn) downloadPdfCustomBtn.style.display = 'none';
-
             // Trigger resize for 3D canvas
             setTimeout(() => {
                 onWindowResize();
@@ -6802,14 +3145,20 @@
         }
 
         // State for skin color selection
-        let isCustomSkinColorSelected = false; // Kept for compatibility but logic removed
-        let hasCustomizationInteracted = false;
+        let isCustomSkinColorSelected = false;
 
         const downloadPdfCustomBtn = document.getElementById('download-pdf-custom-btn');
         if (downloadPdfCustomBtn) {
             downloadPdfCustomBtn.addEventListener('click', () => {
-                // Trigger PDF generation directly
+                if (!isCustomSkinColorSelected) {
+                    document.getElementById('color-warning-modal').classList.remove('hidden');
+                    return;
+                }
+
+                // Set preset character to 'Custom' to allow generation
                 currentPresetCharacter = 'Custom';
+
+                // Trigger PDF generation
                 generatePDF();
             });
         }
@@ -6847,82 +3196,62 @@
             // Aplicar color de piel más claro (#F7D5CF) a todos los personajes preestablecidos
             const lightestSkinColor = new THREE.Color('#F7D5CF');
 
-            // Aplicar color de piel base
-            const skinColor = new THREE.Color('#F7D5CF');
-
-            // Determinar colores específicos basados en el personaje
-            let headColor = skinColor;
-            let torsoColor = skinColor;
-            let armsColor = skinColor;
-            let legsColor = skinColor;
-
+            // Colores especiales para cabeza
+            let headColor = lightestSkinColor;
             if (characterName === 'Baby') {
-                headColor = new THREE.Color('#FFEBE8');
-                torsoColor = new THREE.Color('#6A68E9');
-                legsColor = new THREE.Color('#6A68E9');
+                headColor = new THREE.Color('#FCD5C6'); // Color piel para Baby
             } else if (characterName === 'Mystery') {
-                headColor = new THREE.Color('#91C9FA');
+                headColor = new THREE.Color('#FCD5C6'); // Color piel para Mystery
+            } else if (characterName === 'Romance') {
+                headColor = new THREE.Color('#FCD5C6'); // Color piel para Romance
+            } else if (characterName === 'Abby') {
+                headColor = new THREE.Color('#FCD5C6'); // Color piel para Abby
+            } else if (characterName === 'Jinu') {
+                headColor = new THREE.Color('#FCD5C6'); // Color piel para Jinu
             } else if (characterName === 'Steve') {
-                headColor = new THREE.Color('#AF7E5C');
-                torsoColor = new THREE.Color('#00A9AF');
-                armsColor = new THREE.Color('#AF7E5C');
-                legsColor = new THREE.Color('#4332A0');
-            } else if (characterName === 'Enderman') {
-                headColor = new THREE.Color('#000000');
-                torsoColor = new THREE.Color('#000000');
-                armsColor = new THREE.Color('#000000');
-                legsColor = new THREE.Color('#000000');
-            } else if (characterName === 'Creeper') {
-                headColor = new THREE.Color('#08C21F');
-                torsoColor = new THREE.Color('#08C21F');
-                armsColor = new THREE.Color('#08C21F');
-                legsColor = new THREE.Color('#08C21F');
+                headColor = new THREE.Color('#AF7E5C'); // Color piel para Steve
             }
 
-            // === RESTAURAR ESTADO INICIAL (RESET) ===
-            // 1. Asegurar que todas las partes removibles estén adheridas a la cabeza
-            if (modelParts.head) {
-                [earLeftMesh, earRightMesh, eyebrowsMesh, hairFrontMesh, hairBackMesh, hairLeftMesh, hairRightMesh, hairUpMesh, eyesMesh].forEach(mesh => {
-                    if (mesh && !mesh.parent) {
-                        modelParts.head.add(mesh);
-                    }
-                });
-                // Asegurar visibilidad por defecto (se ajustará abajo si es necesario ocultar)
-                [earLeftMesh, earRightMesh, eyebrowsMesh, hairFrontMesh, hairBackMesh, hairLeftMesh, hairRightMesh, hairUpMesh].forEach(mesh => {
-                    if (mesh) mesh.visible = true;
-                });
-            }
-
-            // 2. (Se resetean texturas dentro de cada personaje donde sea necesario)\n
-            // 3. Asegurar visibilidad de brazos (Creeper los oculta)
-            if (modelParts.arms) {
-                modelParts.arms.forEach(arm => { if (arm) arm.visible = true; });
-            }
-
-            // Aplicar colores a las partes del modelo
+            // Aplicar color a la cabeza
             if (modelParts.head) {
                 modelParts.head.traverse((child) => {
-                    if (child.isMesh && child.material) {
-                        if (child !== earLeftMesh && child !== earRightMesh &&
+                    if (child.isMesh && child.material && child.material.color) {
+                        // Excluir meshes de texturas SVG (incluyendo TODO el cabello)
+                        if (child !== eyesMesh && child !== eyebrowsMesh && child !== noseMesh &&
+                            child !== earLeftMesh && child !== earRightMesh &&
                             child !== hairFrontMesh && child !== hairBackMesh &&
                             child !== hairLeftMesh && child !== hairRightMesh && child !== hairUpMesh) {
                             if (Array.isArray(child.material)) {
-                                child.material.forEach(mat => { if (mat.color) mat.color.copy(headColor); });
+                                child.material.forEach(mat => {
+                                    if (mat.color) mat.color.copy(headColor);
+                                });
                             } else {
                                 child.material.color.copy(headColor);
                             }
                         }
                     }
                 });
+
+                // Aplicar color a la nariz (25% más oscuro que la cabeza)
                 applyNoseColor(headColor.getHex());
             }
 
+            // Aplicar color al torso
             if (modelParts.torso) {
+                // Colores especiales para torso
+                let torsoColor = lightestSkinColor;
+                if (characterName === 'Baby') {
+                    torsoColor = new THREE.Color('#6A68E9');
+                } else if (characterName === 'Steve') {
+                    torsoColor = new THREE.Color('#00A9AF');
+                }
                 modelParts.torso.traverse((child) => {
                     if (child.isMesh && child.material && child.material.color) {
                         if (child !== torsoFrontMesh && child !== torsoBackMesh) {
                             if (Array.isArray(child.material)) {
-                                child.material.forEach(mat => { if (mat.color) mat.color.copy(torsoColor); });
+                                child.material.forEach(mat => {
+                                    if (mat.color) mat.color.copy(torsoColor);
+                                });
                             } else {
                                 child.material.color.copy(torsoColor);
                             }
@@ -6931,14 +3260,19 @@
                 });
             }
 
-            if (modelParts.arms) {
+            if (modelParts.arms || modelParts.legs) {
+                if (characterName === 'Steve') {
+                    armsColor = new THREE.Color('#AF7E5C');
+                }
                 modelParts.arms.forEach(arm => {
                     arm.traverse(child => {
                         if (child.isMesh && child.material) {
                             if (child !== armLeftFrontMesh && child !== armLeftBackMesh &&
                                 child !== armRightFrontMesh && child !== armRightBackMesh) {
                                 if (Array.isArray(child.material)) {
-                                    child.material.forEach(mat => { if (mat.color) mat.color.copy(armsColor); });
+                                    child.material.forEach(mat => {
+                                        if (mat.color) mat.color.copy(armsColor);
+                                    });
                                 } else {
                                     child.material.color.copy(armsColor);
                                 }
@@ -6946,27 +3280,29 @@
                         }
                     });
                 });
-                // Asegurar visibilidad de brazos (podrían haber sido ocultados por Creeper/Enderman)
-                modelParts.arms.forEach(arm => { if (arm) arm.visible = true; });
             }
 
-            if (modelParts.legs) {
-                modelParts.legs.forEach(leg => {
-                    leg.traverse(child => {
-                        if (child.isMesh && child.material) {
-                            if (child !== legLeftFrontMesh && child !== legLeftBackMesh &&
-                                child !== legRightFrontMesh && child !== legRightBackMesh) {
-                                if (Array.isArray(child.material)) {
-                                    child.material.forEach(mat => { if (mat.color) mat.color.copy(legsColor); });
-                                } else {
-                                    child.material.color.copy(legsColor);
-                                }
+            if (characterName === 'Baby') {
+                legsColor = new THREE.Color('#6A68E9');
+            } else if (characterName === 'Steve') {
+                legsColor = new THREE.Color('#4332A0');
+            }
+            modelParts.legs.forEach(leg => {
+                leg.traverse(child => {
+                    if (child.isMesh && child.material) {
+                        if (child !== legLeftFrontMesh && child !== legLeftBackMesh &&
+                            child !== legRightFrontMesh && child !== legRightBackMesh) {
+                            if (Array.isArray(child.material)) {
+                                child.material.forEach(mat => {
+                                    if (mat.color) mat.color.copy(legsColor);
+                                });
+                            } else {
+                                child.material.color.copy(legsColor);
                             }
                         }
-                    });
-                    if (leg) leg.visible = true; // Asegurar visibilidad
+                    }
                 });
-            }
+            });
 
             // Buscar texturas
             let eyeTexture = eyeTextures.find(t => t.name === characterName);
@@ -6976,178 +3312,421 @@
             let torsoTexture = torsoClothingTextures.find(t => t.name === characterName);
             let armTexture = armTextures.find(t => t.name === characterName);
             let legTexture = legTextures.find(t => t.name === characterName);
-            let earTexture = null;
 
-            // Manejo de características especiales y fallbacks
             if (characterName === 'Alex') {
-                eyeTexture = { name: 'Alex', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/eyes/Alex-eyes.svg' };
-                noseTexture = { name: 'Alex', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/nose/Alex-nose.svg' };
-                hairTexture = {
+                if (!eyeTexture) eyeTexture = { name: 'Alex', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/eyes/Alex-eyes.svg' };
+                if (!noseTexture) noseTexture = { name: 'Alex', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/nose/Alex-nose.svg' };
+                if (!hairTexture) hairTexture = {
                     name: 'Alex',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-back.svg',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-right.svg',
-                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-up.svg'
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair.svg',
+                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair.svg',
+                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair.svg',
+                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair.svg'
                 };
-                torsoTexture = {
+                if (!torsoTexture) torsoTexture = {
                     name: 'Alex',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/torso/Alex-torso-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/torso/Alex-torso-back.svg'
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/torso/Alex-torso.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/torso/Alex-torso.svg'
                 };
-                armTexture = {
+                if (!armTexture) armTexture = {
                     name: 'Alex',
                     leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/arms/Alex-arm-left.svg',
                     rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/arms/Alex-arm-right.svg'
                 };
-                legTexture = {
+                if (!legTexture) legTexture = {
                     name: 'Alex',
                     leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/legs/Alex-leg-left.svg',
                     rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/legs/Alex-leg-right.svg'
                 };
-
-                // Remover orejas y cejas
-                [earLeftMesh, earRightMesh, eyebrowsMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
             } else if (characterName === 'Zombie') {
-                eyeTexture = { name: 'Zombie', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/eyes/Zombie-eyes.svg' };
-                noseTexture = { name: 'Zombie', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/nose/Zombie-nose.svg' };
-                hairTexture = {
+                if (!eyeTexture) eyeTexture = { name: 'Zombie', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/eyes/Zombie-eyes.svg' };
+                if (!noseTexture) noseTexture = { name: 'Zombie', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/nose/Zombie-nose.svg' };
+                if (!hairTexture) hairTexture = {
                     name: 'Zombie',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-back.svg',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-right.svg',
-                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-up.svg'
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair.svg',
+                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair.svg',
+                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair.svg',
+                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair.svg'
                 };
-                torsoTexture = {
+                if (!torsoTexture) torsoTexture = {
                     name: 'Zombie',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/torso/Zombie-torso-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/torso/Zombie-torso-back.svg'
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/torso/Zombie-torso.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/torso/Zombie-torso.svg'
                 };
-                armTexture = {
+                if (!armTexture) armTexture = {
                     name: 'Zombie',
                     leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/arms/Zombie-arm-left.svg',
                     rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/arms/Zombie-arm-right.svg'
                 };
-                legTexture = {
+                if (!legTexture) legTexture = {
                     name: 'Zombie',
                     leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/legs/Zombie-leg-left.svg',
                     rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/legs/Zombie-leg-right.svg'
                 };
-                [earLeftMesh, earRightMesh, eyebrowsMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
             } else if (characterName === 'Creeper') {
-                eyeTexture = { name: 'Creeper', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/eyes/Creeper-eyes.svg' };
-                noseTexture = { name: 'Creeper', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/nose/Creeper-nose.svg' };
-                hairTexture = {
+                if (!eyeTexture) eyeTexture = { name: 'Creeper', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/eyes/Creeper-eyes.svg' };
+                if (!noseTexture) noseTexture = { name: 'Creeper', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/nose/Creeper-nose.svg' };
+                if (!hairTexture) hairTexture = {
                     name: 'Creeper',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-back.svg',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-right.svg',
-                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-up.svg'
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair.svg',
+                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair.svg',
+                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair.svg',
+                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair.svg'
                 };
-                torsoTexture = {
+                if (!torsoTexture) torsoTexture = {
                     name: 'Creeper',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/torso/Creeper-torso-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/torso/Creeper-torso-back.svg'
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/torso/Creeper-torso.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/torso/Creeper-torso.svg'
                 };
-                legTexture = {
+                if (!legTexture) legTexture = {
                     name: 'Creeper',
                     leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/legs/Creeper-leg-left.svg',
                     rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/legs/Creeper-leg-right.svg'
                 };
                 armTexture = null;
-
-                // Creeper no tiene brazos
-                modelParts.arms.forEach(arm => { if (arm) arm.visible = false; });
-                [earLeftMesh, earRightMesh, eyebrowsMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
             } else if (characterName === 'Skeleton') {
-                eyeTexture = { name: 'Skeleton', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/eyes/Skeleton-eyes.svg' };
-                noseTexture = { name: 'Skeleton', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/nose/Skeleton-nose.svg' };
-                torsoTexture = {
+                if (!eyeTexture) eyeTexture = { name: 'Skeleton', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/eyes/Skeleton-eyes.svg' };
+                if (!noseTexture) noseTexture = { name: 'Skeleton', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/nose/Skeleton-nose.svg' };
+                if (!torsoTexture) torsoTexture = {
                     name: 'Skeleton',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/torso/Skeleton-torso-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/torso/Skeleton-torso-back.svg'
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/torso/Skeleton-torso.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/torso/Skeleton-torso.svg'
                 };
-                armTexture = {
+                if (!armTexture) armTexture = {
                     name: 'Skeleton',
                     leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/arms/Skeleton-arm-left.svg',
                     rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/arms/Skeleton-arm-right.svg'
                 };
-                legTexture = {
+                if (!legTexture) legTexture = {
                     name: 'Skeleton',
                     leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/legs/Skeleton-leg-left.svg',
                     rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/legs/Skeleton-leg-right.svg'
                 };
-
-                // Asegurar visibilidad de brazos y piernas para Skeleton
-                modelParts.arms.forEach(arm => { if (arm) arm.visible = true; });
-                modelParts.legs.forEach(leg => { if (leg) leg.visible = true; });
-
-                // Skeleton no tiene orejas, cejas ni pelo
-                [earLeftMesh, earRightMesh, eyebrowsMesh, hairFrontMesh, hairBackMesh, hairLeftMesh, hairRightMesh, hairUpMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
+                hairTexture = null;
             } else if (characterName === 'Enderman') {
-                eyeTexture = { name: 'Enderman', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/eyes/Enderman-eyes.svg' };
-                noseTexture = { name: 'Enderman', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/nose/Enderman-nose.svg' };
-                hairTexture = {
+                if (!eyeTexture) eyeTexture = { name: 'Enderman', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/eyes/Enderman-eyes.svg' };
+                if (!noseTexture) noseTexture = { name: 'Enderman', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/nose/Enderman-nose.svg' };
+                if (!hairTexture) hairTexture = {
                     name: 'Enderman',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-back.svg',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-right.svg',
-                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-up.svg'
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair.svg',
+                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair.svg',
+                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair.svg',
+                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair.svg'
                 };
-                torsoTexture = {
+                if (!torsoTexture) torsoTexture = {
                     name: 'Enderman',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/torso/Enderman-torso-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/torso/Enderman-torso-back.svg'
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/torso/Enderman-torso.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/torso/Enderman-torso.svg'
                 };
                 armTexture = null;
                 legTexture = null;
+            }
 
-                // Asegurar visibilidad de brazos y piernas para Enderman
-                modelParts.arms.forEach(arm => { if (arm) arm.visible = true; });
-                modelParts.legs.forEach(leg => { if (leg) leg.visible = true; });
-                [earLeftMesh, earRightMesh, eyebrowsMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
-            } else if (characterName === 'Romance') {
-                [earLeftMesh, earRightMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
+            if (characterName === 'Romance') {
+                currentEarTextureURL = null;
+                if (earLeftMesh && modelParts.head) {
+                    modelParts.head.remove(earLeftMesh);
+                    if (earLeftMesh.material && earLeftMesh.material.map) earLeftMesh.material.map.dispose();
+                    if (earLeftMesh.material) earLeftMesh.material.dispose();
+                    if (earLeftMesh.geometry) earLeftMesh.geometry.dispose();
+                    earLeftMesh = null;
+                }
+                if (earRightMesh && modelParts.head) {
+                    modelParts.head.remove(earRightMesh);
+                    if (earRightMesh.material && earRightMesh.material.map) earRightMesh.material.map.dispose();
+                    if (earRightMesh.material) earRightMesh.material.dispose();
+                    if (earRightMesh.geometry) earRightMesh.geometry.dispose();
+                    earRightMesh = null;
+                }
+                earTexture = null;
             } else if (characterName === 'Mystery') {
-                [eyesMesh, eyebrowsMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
+                currentEyeTextureURL = null;
+                if (eyesMesh && modelParts.head) {
+                    modelParts.head.remove(eyesMesh);
+                    if (eyesMesh.material && eyesMesh.material.map) eyesMesh.material.map.dispose();
+                    if (eyesMesh.material) eyesMesh.material.dispose();
+                    if (eyesMesh.geometry) eyesMesh.geometry.dispose();
+                    eyesMesh = null;
+                }
+
+                currentEyebrowTextureURL = null;
+                if (eyebrowsMesh && modelParts.head) {
+                    modelParts.head.remove(eyebrowsMesh);
+                    if (eyebrowsMesh.material && eyebrowsMesh.material.map) eyebrowsMesh.material.map.dispose();
+                    if (eyebrowsMesh.material) eyebrowsMesh.material.dispose();
+                    if (eyebrowsMesh.geometry) eyebrowsMesh.geometry.dispose();
+                    eyebrowsMesh = null;
+                }
+
                 eyeTexture = null;
                 eyebrowTexture = null;
             } else if (characterName === 'Steve') {
-                [earLeftMesh, earRightMesh, eyebrowsMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
+                // Steve no tiene orejas ni cejas
+                if (earLeftMesh && modelParts.head) {
+                    modelParts.head.remove(earLeftMesh);
+                    if (earLeftMesh.material && earLeftMesh.material.map) earLeftMesh.material.map.dispose();
+                    if (earLeftMesh.material) earLeftMesh.material.dispose();
+                    if (earLeftMesh.geometry) earLeftMesh.geometry.dispose();
+                    earLeftMesh = null;
+                }
+                if (earRightMesh && modelParts.head) {
+                    modelParts.head.remove(earRightMesh);
+                    if (earRightMesh.material && earRightMesh.material.map) earRightMesh.material.map.dispose();
+                    if (earRightMesh.material) earRightMesh.material.dispose();
+                    if (earRightMesh.geometry) earRightMesh.geometry.dispose();
+                    earRightMesh = null;
+                }
+                if (eyebrowsMesh && modelParts.head) {
+                    modelParts.head.remove(eyebrowsMesh);
+                    if (eyebrowsMesh.material && eyebrowsMesh.material.map) eyebrowsMesh.material.map.dispose();
+                    if (eyebrowsMesh.material) eyebrowsMesh.material.dispose();
+                    if (eyebrowsMesh.geometry) eyebrowsMesh.geometry.dispose();
+                    eyebrowsMesh = null;
+                }
+                earTexture = null;
+                eyebrowTexture = null;
+                currentEarTextureURL = null;
+                currentEyebrowTextureURL = null;
+            } else if (characterName === 'Alex') {
+                // Alex no tiene orejas ni cejas
+                if (earLeftMesh && modelParts.head) {
+                    modelParts.head.remove(earLeftMesh);
+                    earLeftMesh = null;
+                }
+                if (earRightMesh && modelParts.head) {
+                    modelParts.head.remove(earRightMesh);
+                    earRightMesh = null;
+                }
+                if (eyebrowsMesh && modelParts.head) {
+                    modelParts.head.remove(eyebrowsMesh);
+                    eyebrowsMesh = null;
+                }
+                earTexture = null;
+                eyebrowTexture = null;
+                currentEarTextureURL = null;
+                currentEyebrowTextureURL = null;
+            } else if (characterName === 'Zombie') {
+                // Zombie no tiene orejas ni cejas
+                if (earLeftMesh && modelParts.head) {
+                    modelParts.head.remove(earLeftMesh);
+                    earLeftMesh = null;
+                }
+                if (earRightMesh && modelParts.head) {
+                    modelParts.head.remove(earRightMesh);
+                    earRightMesh = null;
+                }
+                if (eyebrowsMesh && modelParts.head) {
+                    modelParts.head.remove(eyebrowsMesh);
+                    eyebrowsMesh = null;
+                }
+                earTexture = null;
+                eyebrowTexture = null;
+                currentEarTextureURL = null;
+                currentEyebrowTextureURL = null;
+            } else if (characterName === 'Creeper') {
+                // Creeper no tiene orejas, cejas ni brazos
+                if (earLeftMesh && modelParts.head) {
+                    modelParts.head.remove(earLeftMesh);
+                    earLeftMesh = null;
+                }
+                if (earRightMesh && modelParts.head) {
+                    modelParts.head.remove(earRightMesh);
+                    earRightMesh = null;
+                }
+                if (eyebrowsMesh && modelParts.head) {
+                    modelParts.head.remove(eyebrowsMesh);
+                    eyebrowsMesh = null;
+                }
+
+                // Ocultar brazos
+                modelParts.arms.forEach(arm => {
+                    if (arm) arm.visible = false;
+                });
+
+                earTexture = null;
+                eyebrowTexture = null;
+                currentEarTextureURL = null;
+                currentEyebrowTextureURL = null;
+            } else if (characterName === 'Skeleton') {
+                // Skeleton no tiene orejas, cejas ni pelo
+                if (earLeftMesh && modelParts.head) {
+                    modelParts.head.remove(earLeftMesh);
+                    earLeftMesh = null;
+                }
+                if (earRightMesh && modelParts.head) {
+                    modelParts.head.remove(earRightMesh);
+                    earRightMesh = null;
+                }
+                if (eyebrowsMesh && modelParts.head) {
+                    modelParts.head.remove(eyebrowsMesh);
+                    eyebrowsMesh = null;
+                }
+                if (hairFrontMesh && modelParts.head) {
+                    // Asumiendo que hairFrontMesh etc existen, eliminarlos o ocultarlos
+                    // Mejor usar changeHairTexture(null...) si funciona, pero aquí eliminamos meshes
+                    // El código de abajo maneja las texturas, aquí limpiamos partes extra 3D si existen
+                }
+
+                earTexture = null;
+                eyebrowTexture = null;
+                currentEarTextureURL = null;
+                currentEyebrowTextureURL = null;
+            } else if (characterName === 'Enderman') {
+                // Enderman no tiene orejas, cejas, brazos ni piernas
+                if (earLeftMesh && modelParts.head) {
+                    modelParts.head.remove(earLeftMesh);
+                    earLeftMesh = null;
+                }
+                if (earRightMesh && modelParts.head) {
+                    modelParts.head.remove(earRightMesh);
+                    earRightMesh = null;
+                }
+                if (eyebrowsMesh && modelParts.head) {
+                    modelParts.head.remove(eyebrowsMesh);
+                    eyebrowsMesh = null;
+                }
+
+                // Ocultar brazos
+                modelParts.arms.forEach(arm => {
+                    if (arm) arm.visible = false;
+                });
+
+                // Ocultar piernas
+                modelParts.legs.forEach(leg => {
+                    if (leg) leg.visible = false;
+                });
+
+                earTexture = null;
+                eyebrowTexture = null;
+                currentEarTextureURL = null;
+                currentEyebrowTextureURL = null;
             }
 
-            // APLICACIÓN DE TEXTURAS (SERIALIZADA PARA MÓVIL)
+
+            // OPTIMIZACIÓN MÓVIL: Cargar texturas en secuencia para evitar fallas
+            // En desktop: carga paralela (rápido)
+            // En móvil: carga secuencial con delays (confiable)
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-            const applyTextures = async () => {
-                // Función auxiliar para aplicar texturas
-                const tasks = [];
+            if (isMobile) {
+                // MÓVIL: Carga secuencial con prioridad visual
+                console.log('📱 Carga optimizada para móvil - Secuencial');
 
-                if (eyeTexture) tasks.push(async () => { currentEyeTextureURL = eyeTexture.url; changeEyeTexture(eyeTexture.url); });
-                if (eyebrowTexture) tasks.push(async () => { currentEyebrowTextureURL = eyebrowTexture.url; changeEyebrowTexture(eyebrowTexture.url); });
-                if (noseTexture) tasks.push(async () => { currentNoseTextureURL = noseTexture.url; changeNoseTexture(noseTexture.url); });
-                if (hairTexture) tasks.push(async () => {
-                    currentHairFrontURL = hairTexture.frontUrl; currentHairBackURL = hairTexture.backUrl;
-                    currentHairLeftURL = hairTexture.leftUrl; currentHairRightURL = hairTexture.rightUrl;
+                // Grupo 1: Cara (más visible)
+                if (eyeTexture) {
+                    currentEyeTextureURL = eyeTexture.url;
+                    changeEyeTexture(eyeTexture.url);
+                    await delay(50);
+                }
+                if (eyebrowTexture) {
+                    currentEyebrowTextureURL = eyebrowTexture.url;
+                    changeEyebrowTexture(eyebrowTexture.url);
+                    await delay(50);
+                }
+                if (noseTexture) {
+                    currentNoseTextureURL = noseTexture.url;
+                    changeNoseTexture(noseTexture.url);
+                    await delay(50);
+                }
+                if (earTexture) {
+                    currentEarTextureURL = earTexture.url;
+                    changeEarTexture('left', earTexture.url);
+                    await delay(30);
+                    changeEarTexture('right', earTexture.url);
+                    await delay(50);
+                }
+
+                // Grupo 2: Cabello
+                if (hairTexture) {
+                    currentHairFrontURL = hairTexture.frontUrl;
+                    currentHairBackURL = hairTexture.backUrl;
+                    currentHairLeftURL = hairTexture.leftUrl;
+                    currentHairRightURL = hairTexture.rightUrl;
                     currentHairUpURL = hairTexture.upUrl;
                     changeHairTexture(hairTexture.frontUrl, hairTexture.backUrl, hairTexture.leftUrl, hairTexture.rightUrl, hairTexture.upUrl);
-                });
-                if (torsoTexture) tasks.push(async () => { currentTorsoFrontURL = torsoTexture.frontUrl; currentTorsoBackURL = torsoTexture.backUrl; changeTorsoClothing(torsoTexture.frontUrl, torsoTexture.backUrl); });
-                if (armTexture) tasks.push(async () => { currentArmLeftURL = armTexture.leftUrl; currentArmRightURL = armTexture.rightUrl; changeArmClothing('left', armTexture.leftUrl); changeArmClothing('right', armTexture.rightUrl); });
-                if (legTexture) tasks.push(async () => { currentLegLeftURL = legTexture.leftUrl; currentLegRightURL = legTexture.rightUrl; changeLegClothing('left', legTexture.leftUrl); changeLegClothing('right', legTexture.rightUrl); });
-
-                if (isMobile) {
-                    for (const task of tasks) { await task(); await delay(50); }
-                } else {
-                    await Promise.all(tasks.map(t => t()));
+                    await delay(80);
                 }
-            };
 
-            await applyTextures();
+                // Grupo 3: Torso
+                if (torsoTexture) {
+                    currentTorsoFrontURL = torsoTexture.frontUrl;
+                    currentTorsoBackURL = torsoTexture.backUrl;
+                    changeTorsoClothing(torsoTexture.frontUrl, torsoTexture.backUrl);
+                    await delay(80);
+                }
+
+                // Grupo 4: Brazos (CRÍTICO - a menudo falla)
+                if (armTexture) {
+                    currentArmLeftURL = armTexture.leftUrl;
+                    currentArmRightURL = armTexture.rightUrl;
+                    changeArmClothing('left', armTexture.leftUrl);
+                    await delay(60); // Delay entre brazos
+                    changeArmClothing('right', armTexture.rightUrl);
+                    await delay(60);
+                }
+
+                // Grupo 5: Piernas (CRÍTICO - a menudo falla)
+                if (legTexture) {
+                    currentLegLeftURL = legTexture.leftUrl;
+                    currentLegRightURL = legTexture.rightUrl;
+                    changeLegClothing('left', legTexture.leftUrl);
+                    await delay(60); // Delay entre piernas
+                    changeLegClothing('right', legTexture.rightUrl);
+                }
+
+                console.log('✅ Carga móvil completada');
+            } else {
+                // DESKTOP: Carga paralela (como antes - rápido)
+                console.log('💻 Carga desktop - Paralela');
+
+                if (eyeTexture) {
+                    currentEyeTextureURL = eyeTexture.url;
+                    changeEyeTexture(eyeTexture.url);
+                }
+                if (eyebrowTexture) {
+                    currentEyebrowTextureURL = eyebrowTexture.url;
+                    changeEyebrowTexture(eyebrowTexture.url);
+                }
+                if (noseTexture) {
+                    currentNoseTextureURL = noseTexture.url;
+                    changeNoseTexture(noseTexture.url);
+                }
+                if (earTexture) {
+                    currentEarTextureURL = earTexture.url;
+                    changeEarTexture('left', earTexture.url);
+                    changeEarTexture('right', earTexture.url);
+                }
+                if (hairTexture) {
+                    currentHairFrontURL = hairTexture.frontUrl;
+                    currentHairBackURL = hairTexture.backUrl;
+                    currentHairLeftURL = hairTexture.leftUrl;
+                    currentHairRightURL = hairTexture.rightUrl;
+                    currentHairUpURL = hairTexture.upUrl;
+                    changeHairTexture(hairTexture.frontUrl, hairTexture.backUrl, hairTexture.leftUrl, hairTexture.rightUrl, hairTexture.upUrl);
+                }
+                if (torsoTexture) {
+                    currentTorsoFrontURL = torsoTexture.frontUrl;
+                    currentTorsoBackURL = torsoTexture.backUrl;
+                    changeTorsoClothing(torsoTexture.frontUrl, torsoTexture.backUrl);
+                }
+                if (armTexture) {
+                    currentArmLeftURL = armTexture.leftUrl;
+                    currentArmRightURL = armTexture.rightUrl;
+                    changeArmClothing('left', armTexture.leftUrl);
+                    changeArmClothing('right', armTexture.rightUrl);
+                }
+                if (legTexture) {
+                    currentLegLeftURL = legTexture.leftUrl;
+                    currentLegRightURL = legTexture.rightUrl;
+                    changeLegClothing('left', legTexture.leftUrl);
+                    changeLegClothing('right', legTexture.rightUrl);
+                }
+            }
         }
 
         // Variables globales para almacenar el personaje actual seleccionado
@@ -7178,6 +3757,9 @@
             showCharacterName('Mira');
             // Mostrar botón pequeño de PDF en la esquina superior izquierda
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            // Mostrar botón provisional de descarga rápida
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
         });
 
         document.getElementById('preset-rumi-btn').addEventListener('click', () => {
@@ -7194,6 +3776,9 @@
             showCharacterName('Zoey');
             // Mostrar botón pequeño de PDF en la esquina superior izquierda
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            // Mostrar botón provisional de descarga rápida
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
         });
 
         document.getElementById('preset-steve-btn').addEventListener('click', () => {
@@ -7202,6 +3787,9 @@
             showCharacterName('Steve');
             // Mostrar botón pequeño de PDF en la esquina superior izquierda
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            // Mostrar botón provisional de descarga rápida
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
         });
 
         // Event Listeners para nuevos personajes de Minecraft
@@ -7211,6 +3799,8 @@
             applyPresetCharacter('Alex');
             showCharacterName('Alex');
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
         });
 
         document.getElementById('preset-zombie-btn').addEventListener('click', () => {
@@ -7218,6 +3808,8 @@
             applyPresetCharacter('Zombie');
             showCharacterName('Zombie');
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
         });
 
         document.getElementById('preset-creeper-btn').addEventListener('click', () => {
@@ -7225,6 +3817,8 @@
             applyPresetCharacter('Creeper');
             showCharacterName('Creeper');
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
         });
 
         document.getElementById('preset-skeleton-btn').addEventListener('click', () => {
@@ -7232,6 +3826,8 @@
             applyPresetCharacter('Skeleton');
             showCharacterName('Skeleton');
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
         });
 
         document.getElementById('preset-enderman-btn').addEventListener('click', () => {
@@ -7239,6 +3835,8 @@
             applyPresetCharacter('Enderman');
             showCharacterName('Enderman');
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
         });
 
         document.getElementById('preset-baby-btn').addEventListener('click', () => {
@@ -7247,6 +3845,9 @@
             showCharacterName('Baby');
             // Mostrar botón pequeño de PDF en la esquina superior izquierda
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            // Mostrar botón provisional de descarga rápida
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
         });
 
         document.getElementById('preset-mystery-btn').addEventListener('click', () => {
@@ -7255,6 +3856,9 @@
             showCharacterName('Mystery');
             // Mostrar botón pequeño de PDF en la esquina superior izquierda
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            // Mostrar botón provisional de descarga rápida
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
         });
 
         document.getElementById('preset-romance-btn').addEventListener('click', () => {
@@ -7263,6 +3867,9 @@
             showCharacterName('Romance');
             // Mostrar botón pequeño de PDF en la esquina superior izquierda
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            // Mostrar botón provisional de descarga rápida
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
         });
 
         document.getElementById('preset-abby-btn').addEventListener('click', () => {
@@ -7271,6 +3878,9 @@
             showCharacterName('Abby');
             // Mostrar botón pequeño de PDF en la esquina superior izquierda
             if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.add('active');
+            // Mostrar botón provisional de descarga rápida
+            const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+            if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'flex';
         });
 
         document.getElementById('preset-jinu-btn').addEventListener('click', () => {
@@ -7304,6 +3914,8 @@
                 // Resetear personaje seleccionado y botones de descarga
                 currentPresetCharacter = null;
                 if (downloadPdfBtnMoved) downloadPdfBtnMoved.classList.remove('active');
+                const quickDownloadBtnTest = document.getElementById('quick-download-btn-test');
+                if (quickDownloadBtnTest) quickDownloadBtnTest.style.display = 'none';
 
                 // Restaurar showcase original (misma cámara, fondo, grid y controles)
                 startShowcase();
@@ -7317,7 +3929,7 @@
             });
         }
 
-        // Botón 3: Abrir página de descarga (UPDATED: Direct download)
+        // Botón 3: Abrir página de descarga
         if (downloadPdfBtnMoved) {
             downloadPdfBtnMoved.addEventListener('click', () => {
                 if (!currentPresetCharacter) {
@@ -7325,8 +3937,8 @@
                     return;
                 }
 
-                // Generate PDF directly (triggers save dialog)
-                generatePDF();
+                // Abrir página de descarga
+                openDownloadPage();
             });
         }
 
@@ -7435,22 +4047,12 @@
                 if (progressText) progressText.classList.add('hidden');
 
                 // Mostrar botón de descarga DENTRO del modal
-                if (downloadBtn) {
-                    downloadBtn.classList.remove('hidden');
-                    // Force UI update to ensure button text is translated
-                    if (langManager) {
-                        langManager.currentLang = localStorage.getItem('papelcool_lang') || 'en';
-                        langManager.updateUI();
-                    }
-                }
+                if (downloadBtn) downloadBtn.classList.remove('hidden');
                 if (downloadMessage) {
                     downloadMessage.classList.remove('hidden');
                     // Actualizar mensaje con el tamaño en MB
-                    let baseMessage = 'ℹ️ Your download will start through your browser.';
-                    if (langManager) {
-                        baseMessage = langManager.get('download-message');
-                    }
-                    downloadMessage.innerHTML = `${baseMessage}<br><span style="color:#ffee00;font-weight:bold;font-size:1rem;">Size: ${fileSizeMB}</span>`;
+                    const baseMessage = translations[langManager.currentLang]['download-message'] || 'ℹ️ Your download will start through your browser.';
+                    downloadMessage.innerHTML = `${baseMessage}<br><span style="color:#00ffff;font-weight:bold;font-size:1rem;">Size: ${fileSizeMB}</span>`;
                 }
 
                 // Lanzar confetti
@@ -7863,37 +4465,14 @@
                 downloadBtn.style.transform = 'scale(1)';
                 downloadBtn.style.boxShadow = '0 4px 20px rgba(0,255,136,0.5)';
             };
-            downloadBtn.onclick = async () => {
-                try {
-                    // Usar File System Access API para elegir ubicación
-                    if (window.showSaveFilePicker) {
-                        const handle = await window.showSaveFilePicker({
-                            suggestedName: filename,
-                            types: [{
-                                description: 'PDF Document',
-                                accept: { 'application/pdf': ['.pdf'] }
-                            }]
-                        });
-                        const writable = await handle.createWritable();
-                        const pdfBlob = pdf.output('blob');
-                        await writable.write(pdfBlob);
-                        await writable.close();
-                    } else {
-                        // Fallback para navegadores que no soportan la API
-                        pdf.save(filename);
-                    }
-                    // Cerrar modal después de descargar
-                    setTimeout(() => {
-                        const overlay = document.getElementById('pdf-generation-overlay');
-                        if (overlay) overlay.remove();
-                        isGeneratingPDF = false;
-                    }, 500);
-                } catch (error) {
-                    // El usuario canceló el diálogo o hubo un error
-                    if (error.name !== 'AbortError') {
-                        console.error('Error saving file:', error);
-                    }
-                }
+            downloadBtn.onclick = () => {
+                pdf.save(filename);
+                // Cerrar modal después de descargar
+                setTimeout(() => {
+                    const overlay = document.getElementById('pdf-generation-overlay');
+                    if (overlay) overlay.remove();
+                    isGeneratingPDF = false;
+                }, 500);
             };
 
             // Crear mensaje informativo
@@ -7964,6 +4543,7 @@
 
             // Establecer flag para evitar múltiples ejecuciones
             isGeneratingPDF = true;
+            console.log('🔄 Iniciando generación de PDF para:', currentPresetCharacter);
 
             // Variables para la barra de progreso
             let progressContainer, progressBar, percentText;
@@ -7981,19 +4561,19 @@
 
                 // Crear ventana flotante (mismo tamaño que modal de PayPal)
                 progressContainer = document.createElement('div');
-                progressContainer.style.cssText = 'position:relative;background:rgba(0,22,40,0.98);padding:3rem;border-radius:20px;z-index:9999;font-family:\'Montserrat\', sans-serif;width:90%;max-width:500px;box-shadow:0 20px 60px rgba(255,238,0,0.4);border:2px solid rgba(255,238,0,0.6);';
+                progressContainer.style.cssText = 'position:relative;background:rgba(0,22,40,0.98);padding:3rem;border-radius:20px;z-index:9999;font-family:\'Montserrat\', sans-serif;width:90%;max-width:500px;box-shadow:0 20px 60px rgba(0,255,255,0.4);border:2px solid rgba(0,255,255,0.6);';
 
                 // Botón de cierre (X)
                 const closeBtn = document.createElement('button');
                 closeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>';
-                closeBtn.style.cssText = 'position:absolute;top:15px;right:15px;color:#ffee00;cursor:pointer;background:none;border:none;padding:5px;transition:all 0.3s ease;border-radius:50%;display:flex;align-items:center;justify-content:center;';
+                closeBtn.style.cssText = 'position:absolute;top:15px;right:15px;color:#00ffff;cursor:pointer;background:none;border:none;padding:5px;transition:all 0.3s ease;border-radius:50%;display:flex;align-items:center;justify-content:center;';
                 closeBtn.onmouseover = () => {
-                    closeBtn.style.color = '#ffee00';
-                    closeBtn.style.background = 'rgba(255,238,0,0.1)';
+                    closeBtn.style.color = '#ffffff';
+                    closeBtn.style.background = 'rgba(0,255,255,0.1)';
                     closeBtn.style.transform = 'rotate(90deg)';
                 };
                 closeBtn.onmouseout = () => {
-                    closeBtn.style.color = '#ffee00';
+                    closeBtn.style.color = '#00ffff';
                     closeBtn.style.background = 'none';
                     closeBtn.style.transform = 'rotate(0deg)';
                 };
@@ -8025,17 +4605,17 @@
                 // Contenedor de la barra
                 const barContainer = document.createElement('div');
                 barContainer.id = 'pdf-generation-bar-container';
-                barContainer.style.cssText = 'width:100%;height:40px;background:rgba(0,0,0,0.5);border-radius:20px;overflow:hidden;border:2px solid rgba(255,238,0,0.4);margin-bottom:1.5rem;';
+                barContainer.style.cssText = 'width:100%;height:40px;background:rgba(0,0,0,0.5);border-radius:20px;overflow:hidden;border:2px solid rgba(0,255,255,0.4);margin-bottom:1.5rem;';
 
                 // Barra de progreso
                 progressBar = document.createElement('div');
-                progressBar.style.cssText = 'width:0%;height:100%;background:linear-gradient(90deg,#ffee00,#ff9d00,#ff4d00);transition:width 0.3s ease;box-shadow:0 0 20px rgba(255,238,0,0.8);';
+                progressBar.style.cssText = 'width:0%;height:100%;background:linear-gradient(90deg,#00ffff,#00ccff,#0099ff);transition:width 0.3s ease;box-shadow:0 0 20px rgba(0,255,255,0.8);';
                 barContainer.appendChild(progressBar);
                 progressContainer.appendChild(barContainer);
 
                 // Texto de porcentaje
                 percentText = document.createElement('div');
-                percentText.style.cssText = 'color:#ffee00;font-size:2rem;font-weight:bold;text-align:center;text-shadow:0 0 10px rgba(255,238,0,0.8);';
+                percentText.style.cssText = 'color:#00ffff;font-size:2rem;font-weight:bold;text-align:center;text-shadow:0 0 10px rgba(0,255,255,0.8);';
                 percentText.textContent = '0%';
                 progressContainer.appendChild(percentText);
 
@@ -8074,6 +4654,8 @@
                 // Inicializar progreso
                 updateProgress(5);
 
+                console.log('=== OBTENIENDO COLORES DEL MODELO 3D ===');
+
                 // Verificar que loadedModel existe
                 if (!loadedModel) {
                     console.error('❌ ERROR: loadedModel es null. El modelo 3D no está cargado.');
@@ -8099,6 +4681,11 @@
                 const armRightColor = armRight ? getPartColor(armRight) : (modelParts.arms[0] ? getPartColor(modelParts.arms[0]) : '#FFFFFF');
                 const legLeftColor = legLeft ? getPartColor(legLeft) : (modelParts.legs[0] ? getPartColor(modelParts.legs[0]) : '#FFFFFF');
                 const legRightColor = legRight ? getPartColor(legRight) : (modelParts.legs[0] ? getPartColor(modelParts.legs[0]) : '#FFFFFF');
+
+                console.log('=== COLORES OBTENIDOS ===');
+                console.log('Head Color:', headColor);
+                console.log('Torso Color:', torsoColor);
+                console.log('Arm Left:', armLeftColor, 'Arm Right:', armRightColor);
 
                 // ============================================
                 // CONFIGURACIÓN DE TEMPLATES (Plantillas base)
@@ -8290,12 +4877,14 @@
                 }
             } catch (error) {
                 console.error('❌ Error generating PDF:', error);
+                console.log('❌ Error generating PDF:', error);
                 alert('Error generating PDF: ' + error.message);
                 throw error;
             }
         }
 
         const triggerGeneratePDF = () => {
+            console.log('🖱️ Click en botón DOWNLOAD PDF detectado');
             generatePDF();
         };
 
@@ -8310,6 +4899,7 @@
         // --- NEW CUSTOMIZATION UI LOGIC ---
 
         function initNewCustomizationUI() {
+            console.log('Initializing New Customization UI...');
             const navButtons = document.querySelectorAll('.custom-nav-btn');
 
             navButtons.forEach(btn => {
@@ -8351,14 +4941,6 @@
                     clickHandler = (item) => {
                         currentEyebrowTextureURL = item.url;
                         changeEyebrowTexture(item.url);
-                    };
-                    break;
-                case 'ears':
-                    items = earTextures || [];
-                    clickHandler = (item) => {
-                        // Apply to both ears
-                        changeEarTexture('left', item.url);
-                        changeEarTexture('right', item.url);
                     };
                     break;
                 case 'nose':
@@ -8441,11 +5023,6 @@
                     grid.querySelectorAll('.grid-item-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     if (clickHandler) clickHandler(item);
-
-                    // Enable download button
-                    hasCustomizationInteracted = true;
-                    const downloadPdfCustomBtn = document.getElementById('download-pdf-custom-btn');
-                    if (downloadPdfCustomBtn) downloadPdfCustomBtn.style.display = '';
                 });
 
                 grid.appendChild(btn);
@@ -8471,11 +5048,6 @@
                     container.querySelectorAll('.color-swatch-circle').forEach(s => s.classList.remove('active'));
                     swatch.classList.add('active');
                     changeSkinColor(color);
-
-                    // Enable download button
-                    hasCustomizationInteracted = true;
-                    const downloadPdfCustomBtn = document.getElementById('download-pdf-custom-btn');
-                    if (downloadPdfCustomBtn) downloadPdfCustomBtn.style.display = ''; // or 'flex' depending on CSS
                 });
 
                 container.appendChild(swatch);
@@ -8524,7 +5096,3 @@
 
         // Initialize after a short delay to ensure DOM is ready
         setTimeout(initNewCustomizationUI, 500);
-    </script>
-</body>
-
-</html>
