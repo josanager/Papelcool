@@ -38,11 +38,78 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;600&family=Montserrat:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;600&family=Montserrat:wght@400;500&family=Fredoka:wght@400;600;700&display=swap"
         rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+
+    <script>
+        // ============================================
+        // PROTOCOL CHECK (CORS Prevention)
+        // ============================================
+        if (window.location.protocol === 'file:') {
+            window.addEventListener('DOMContentLoaded', () => {
+                const overlay = document.createElement('div');
+                overlay.style.cssText = `
+                    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+                    display: flex; align-items: center; justify-content: center;
+                    z-index: 1000000; backdrop-filter: blur(8px); padding: 20px;
+                `;
+                overlay.innerHTML = `
+                    <div style="background: white; border: 6px solid black; padding: 40px; border-radius: 32px; 
+                                box-shadow: 20px 20px 0px rgba(255, 77, 148, 0.5); text-align: center; max-width: 500px;
+                                font-family: 'Fredoka', sans-serif; transform: rotate(-1deg);">
+                        <div style="font-size: 80px; margin-bottom: 20px;">🚧</div>
+                        <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 15px; text-transform: uppercase;">Protocol Error!</h1>
+                        <p style="font-size: 1.2rem; font-weight: 600; color: #4B5563; margin-bottom: 25px;">
+                            You are visiting via <span style="color: #EF4444;">file://</span>. 
+                            Security rules block 3D models and assets here.
+                        </p>
+                        <div style="background: #F3F4F6; padding: 20px; border-radius: 16px; border: 3px dashed #D1D5DB; margin-bottom: 30px;">
+                            <p style="font-size: 0.9rem; font-weight: 700; color: #6B7280; margin-bottom: 5px;">PLEASE USE LOCAL SERVER:</p>
+                            <a href="http://localhost:8000" style="font-size: 1.5rem; color: #407BFF; font-weight: 900; text-decoration: underline;">
+                                http://localhost:8000
+                            </a>
+                        </div>
+                        <p style="font-size: 0.8rem; font-weight: 600; color: #9CA3AF;">
+                            (Your python server is already running on port 8000!)
+                        </p>
+                    </div>
+                `;
+                document.body.appendChild(overlay);
+            });
+        }
+
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "sticker-yellow": "#FFE600",
+                        "sticker-pink": "#FF4D94",
+                        "sticker-blue": "#407BFF",
+                        "sticker-green": "#2ECC71",
+                        "sticker-orange": "#FF9F43",
+                        "paper-white": "#FFFFFF",
+                        "grid-blue": "#D1E9FF",
+                    },
+                    fontFamily: {
+                        "display": ["Fredoka", "sans-serif"],
+                        "handwritten": ["Caveat", "cursive"]
+                    },
+                    boxShadow: {
+                        'sticker': '8px 8px 0px 0px rgba(0, 0, 0, 1)',
+                        'sticker-sm': '4px 4px 0px 0px rgba(0, 0, 0, 1)',
+                        'card-stack': '12px 12px 0px 0px rgba(0, 0, 0, 0.15)',
+                    }
+                },
+            },
+        }
+    </script>
     <noscript>
         <link
-            href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;600&family=Montserrat:wght@400;500&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Rajdhani:wght@400;600&family=Montserrat:wght@400;500&family=Fredoka:wght@400;600;700&display=swap"
             rel="stylesheet">
     </noscript>
     <!-- Import map para three.js -->
@@ -57,6 +124,129 @@
     <!-- Legacy scripts removed to fix ReferenceError -->
 
 
+    <style>
+        /* Custom Navigation Buttons (Eyes, Mouth, etc.) */
+        .custom-nav-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 64px;
+            height: 64px;
+            background: white;
+            border: 3px solid black;
+            border-radius: 50%;
+            margin-right: 12px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+
+        .custom-nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 3px 5px 0px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-nav-btn.active {
+            background: #FFE600;
+            transform: scale(1.1);
+            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+            border-width: 4px;
+        }
+
+        .custom-nav-btn .btn-icon svg {
+            width: 28px;
+            height: 28px;
+            color: black;
+        }
+
+        .custom-nav-btn span {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 0.7rem;
+            color: black;
+            text-transform: uppercase;
+        }
+
+        /* Part Selection Buttons (Head, Torso, etc.) */
+        .part-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 3px solid black;
+            border-radius: 20px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: black;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        .part-btn:hover {
+            background: #f0f0f0;
+            transform: translateY(-1px);
+        }
+
+        .part-btn.active {
+            background: #FFE600;
+            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+            transform: scale(1.05);
+        }
+
+        /* Preset Character Buttons overrides */
+        .preset-character-btn {
+            background: transparent;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .preset-character-btn img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+            border: 4px solid black;
+            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+            background: white;
+            transition: all 0.2s;
+        }
+
+        .preset-character-btn:hover {
+            transform: scale(1.05) rotate(-2deg);
+        }
+
+        .preset-character-btn:hover img {
+            box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+            background: #FFE600;
+        }
+
+        /* Custom Options Grid Items */
+        .custom-option-card {
+            background: white;
+            border: 3px solid black;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-option-card:hover {
+            transform: scale(1.03);
+            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-option-card.selected {
+            border-color: black;
+            box-shadow: 0 0 0 2px #FFE600, 5px 5px 0px 0px black;
+            transform: scale(1.05);
+        }
+    </style>
     <!-- jsPDF para generación de PDFs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
     <!-- Canvas Confetti para animación de celebración -->
@@ -64,6 +254,12 @@
 
     <!-- Character & Texture Data - Archivo separado para organización -->
     <script src="character-data.js?v=1.1"></script>
+
+    <!-- Supabase for Authentication & Database -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="character-storage.js"></script>
 
     <style>
         * {
@@ -93,6 +289,68 @@
             user-select: none;
             overscroll-behavior: none;
             -webkit-overflow-scrolling: touch;
+        }
+
+        /* Profile View Styles */
+        .shadow-sticker-giant {
+            filter: drop-shadow(20px 20px 0px rgba(0, 0, 0, 0.15));
+        }
+
+        #creator-search-results {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        #creator-search-results::-webkit-scrollbar {
+            display: none;
+        }
+
+        .search-result-item:hover {
+            background-color: #f3f4f6;
+            transform: translateX(4px);
+        }
+
+        #user-profile-view {
+            --bg-color: #E0F2FE;
+            --grid-blue: #D1E9FF;
+        }
+
+        #user-profile-view .paper-card {
+            border: 4px solid #000;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+
+        #user-profile-view .pin-head {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            position: absolute;
+            z-index: 50;
+            box-shadow: inset -2px -2px 4px rgba(0, 0, 0, 0.4), 1px 2px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        #user-profile-view .lightning-bolt {
+            clip-path: polygon(45% 0%, 100% 0%, 60% 45%, 90% 45%, 35% 100%, 55% 55%, 20% 55%);
+        }
+
+        #user-profile-view .collage-sticker {
+            border: 3px solid #000;
+            transition: transform 0.2s;
+        }
+
+        #user-profile-view .collage-sticker:hover {
+            transform: scale(1.05) rotate(0deg) !important;
+            z-index: 40 !important;
+        }
+
+        #user-profile-view .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        #user-profile-view .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
         /* Fondo con degradado azul para el showcase */
@@ -286,109 +544,13 @@
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
             position: relative;
             border-radius: 16px;
-            background-color: rgba(0, 0, 0, 0.75);
-            box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
-                0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
+            background-color: transparent;
             font-size: 1rem;
             width: 90px;
-            /* Ancho base */
             aspect-ratio: 3 / 4;
-            /* Aspect ratio 3:4 (vertical) */
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        .preset-character-btn::after {
-            content: "";
-            position: absolute;
-            z-index: 0;
-            width: calc(100% + 0.3em);
-            height: calc(100% + 0.3em);
-            top: -0.15em;
-            left: -0.15em;
-            border-radius: inherit;
-            background: linear-gradient(-135deg,
-                    rgba(5, 5, 5, 0.5),
-                    transparent 20%,
-                    transparent 100%);
-            filter: blur(0.0125em);
-            opacity: 0.25;
-            mix-blend-mode: multiply;
-        }
-
-        .preset-character-btn .button-outer {
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            transition: box-shadow 300ms ease;
-            will-change: box-shadow;
-            box-shadow: 0 0.05em 0.05em -0.01em rgba(5, 5, 5, 1),
-                0 0.01em 0.01em -0.01em rgba(5, 5, 5, 0.5),
-                0.15em 0.3em 0.1em -0.01em rgba(5, 5, 5, 0.25);
-            width: 100%;
-            height: 100%;
-        }
-
-        .preset-character-btn:hover .button-outer {
-            box-shadow: 0 0 0 0 rgba(5, 5, 5, 1), 0 0 0 0 rgba(5, 5, 5, 0.5),
-                0 0 0 0 rgba(5, 5, 5, 0.25);
-        }
-
-        .preset-character-btn .button-inner {
-            --inset: 0.035em;
-            position: relative;
-            z-index: 1;
-            border-radius: inherit;
-            padding: 0px;
-            /* Added padding to prevent image from covering shadows */
-            background-image: linear-gradient(135deg,
-                    rgba(230, 230, 230, 1),
-                    rgba(180, 180, 180, 1));
-            transition: box-shadow 300ms ease, clip-path 250ms ease,
-                background-image 250ms ease, transform 250ms ease;
-            will-change: box-shadow, clip-path, background-image, transform;
-            overflow: clip;
-            /* Changed from hidden to clip for consistent styling */
-            clip-path: inset(0 0 0 0 round 16px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            box-sizing: border-box;
-            box-shadow:
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                -0.05em -0.05em 0.05em 0 inset rgba(5, 5, 5, 0.25),
-                0 0 0 0 inset rgba(5, 5, 5, 0.1),
-                0 0 0.05em 0.2em inset rgba(255, 255, 255, 0.25),
-                0.025em 0.05em 0.1em 0 inset rgba(255, 255, 255, 1),
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                -0.075em -0.25em 0.25em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        .preset-character-btn:hover .button-inner {
-            clip-path: inset(clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) clamp(1px, 0.0625em, 2px) round 16px);
-            box-shadow:
-                0.1em 0.15em 0.05em 0 inset rgba(5, 5, 5, 0.75),
-                -0.025em -0.03em 0.05em 0.025em inset rgba(5, 5, 5, 0.5),
-                0.25em 0.25em 0.2em 0 inset rgba(5, 5, 5, 0.5),
-                0 0 0.05em 0.5em inset rgba(255, 255, 255, 0.15),
-                0 0 0 0 inset rgba(255, 255, 255, 1),
-                0.12em 0.12em 0.12em inset rgba(255, 255, 255, 0.25),
-                -0.075em -0.12em 0.2em 0.1em inset rgba(5, 5, 5, 0.25);
-        }
-
-        .preset-character-btn:active .button-inner {
-            transform: scale(0.975);
-        }
-
-        .preset-character-btn:hover .character-icon-img {
-            transform: scale(1.45);
-        }
-
-        .preset-character-btn:active .character-icon-img {
-            transform: scale(1.4);
         }
 
         .preset-character-btn .character-icon-img {
@@ -2529,17 +2691,9 @@
             z-index: 1000;
         }
 
+        /* Language toggle now uses Tailwind classes in HTML */
         #lang-toggle-btn {
-            background: transparent !important;
-            border: none !important;
-            box-shadow: none !important;
-        }
-
-        #lang-toggle-btn.premium-round-btn .button-inner span {
-            color: #1a1a1a;
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 700;
-            font-size: 16px;
+            /* Sticker style is applied via classes */
         }
 
         @media (max-width: 768px) {
@@ -3087,13 +3241,460 @@
 
     <!-- Idioma (Switcher) -->
     <div id="language-switcher">
-        <button type="button" id="lang-toggle-btn" class="social-btn premium-round-btn">
-            <div class="button-outer">
-                <div class="button-inner">
-                    <span id="lang-toggle-text">EN</span>
+        <button type="button" id="lang-toggle-btn"
+            class="social-btn w-12 h-12 bg-white border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-yellow transition-colors group"
+            aria-label="Cambiar idioma">
+            <span id="lang-toggle-text" class="font-bold font-display text-black">EN</span>
+        </button>
+    </div>
+
+    <!-- Auth Button (Login/User Menu) -->
+    <div id="auth-container" style="position: fixed; top: 20px; right: 80px; z-index: 9999;">
+        <!-- Login Button (shown when logged out) -->
+        <button type="button" id="auth-login-btn"
+            class="px-4 py-2 bg-white border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-green transition-colors cursor-pointer"
+            onclick="showAuthModal()" aria-label="Login">
+            <span style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 0.9rem; color: black;"
+                data-i18n="auth-login-link">Login</span>
+
+        </button>
+
+
+
+        <!-- User Menu (shown when logged in) -->
+        <div id="auth-user-menu" style="display: none; align-items: center; gap: 12px;">
+            <!-- User Avatar Button -->
+            <button id="auth-user-avatar"
+                class="w-11 h-11 rounded-xl bg-sticker-yellow border-4 border-black shadow-sticker-sm cursor-pointer hover:scale-105 transition-transform flex items-center justify-center"
+                style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.1rem; color: black;"
+                onclick="toggleUserDropdown()">J</button>
+        </div>
+    </div>
+
+    <!-- Dropdown Menu - Global Fixed - Sticker Style -->
+    <div id="auth-user-dropdown"
+        style="display: none; position: fixed; top: 75px; right: 20px; min-width: 200px; z-index: 10000;"
+        class="bg-white border-4 border-black rounded-xl shadow-sticker-md p-3">
+
+        <!-- User Email -->
+        <div id="auth-user-email" class="px-3 py-2 mb-2 text-sm font-bold text-black border-b-2 border-black"
+            style="word-break: break-all; font-family: 'Fredoka', sans-serif;">
+        </div>
+
+        <!-- Menu Items -->
+        <button onclick="toggleUserProfile(true); hideUserDropdown();"
+            class="w-full px-3 py-2 text-left rounded-lg font-bold text-black hover:bg-sticker-yellow transition-colors"
+            style="font-family: 'Fredoka', sans-serif; border: none; background: transparent; cursor: pointer;"
+            data-i18n="auth-view-profile">
+            View Profile
+        </button>
+
+        <button onclick="openMyCharacters(); hideUserDropdown();"
+            class="w-full px-3 py-2 text-left rounded-lg font-bold text-black hover:bg-sticker-pink transition-colors"
+            style="font-family: 'Fredoka', sans-serif; border: none; background: transparent; cursor: pointer;"
+            data-i18n="auth-my-characters">
+            My Characters
+        </button>
+
+        <div class="border-t-2 border-black mt-2 pt-2">
+            <button onclick="handleSignOut(); hideUserDropdown();"
+                class="w-full px-3 py-2 text-left rounded-lg font-bold text-red-600 hover:bg-red-500 hover:text-white transition-colors"
+                style="font-family: 'Fredoka', sans-serif; border: none; background: transparent; cursor: pointer;"
+                data-i18n="auth-sign-out">
+                Sign Out
+            </button>
+        </div>
+    </div>
+
+    <!-- Authentication Modal - Sticker Style -->
+    <div id="auth-modal" style="display: none; position: fixed; inset: 0; z-index: 10000; overflow-y: auto;">
+        <!-- Background with decorative shapes -->
+        <div style="position: fixed; inset: 0; background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%);"
+            onclick="hideAuthModal()"></div>
+        <div
+            style="position: fixed; top: -50px; right: -50px; width: 500px; height: 500px; background: #FFE600; opacity: 0.2; clip-path: polygon(10% 0%, 100% 5%, 90% 95%, 5% 100%); transform: rotate(12deg); pointer-events: none;">
+        </div>
+        <div
+            style="position: fixed; bottom: -100px; left: -50px; width: 600px; height: 600px; background: #407BFF; opacity: 0.1; clip-path: polygon(5% 15%, 95% 0%, 100% 85%, 15% 100%); transform: rotate(-12deg); pointer-events: none;">
+        </div>
+        <div
+            style="position: fixed; top: 25%; left: -100px; width: 384px; height: 384px; background: #FF4D94; opacity: 0.15; clip-path: polygon(0% 5%, 100% 15%, 85% 100%, 10% 90%); transform: rotate(45deg); pointer-events: none;">
+        </div>
+
+        <!-- Close Button -->
+        <button onclick="hideAuthModal()"
+            style="position: fixed; top: 24px; left: 24px; z-index: 50; background: #407BFF; color: white; width: 56px; height: 56px; border-radius: 50%; border: 5px solid white; box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s;"
+            onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+            <span class="material-symbols-outlined" style="font-size: 30px;">close</span>
+        </button>
+
+        <!-- Main Content Container -->
+        <div style="position: relative; display: flex; min-height: 100vh; width: 100%; flex-direction: column; align-items: center; justify-content: center; padding: 24px 48px; max-width: 1280px; margin: 0 auto; z-index: 10;"
+            class="lg:flex-row">
+
+            <!-- Left Side - Form -->
+            <div
+                style="width: 100%; max-width: 500px; display: flex; flex-direction: column; align-items: center; gap: 24px;">
+
+                <!-- JOIN US Badge -->
+                <div
+                    style="background: #FF4D94; border: 5px solid white; padding: 16px 32px; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); transform: rotate(-3deg); display: inline-block;">
+                    <h1 style="color: white; font-family: 'Fredoka', sans-serif; font-size: 2.5rem; font-weight: 700; letter-spacing: -0.05em; text-transform: uppercase; margin: 0;"
+                        data-i18n="auth-join-us">
+                        Join Us!</h1>
+                </div>
+
+                <!-- Form Card -->
+                <div style="position: relative; width: 100%; max-width: 420px;">
+                    <div id="auth-form-container"
+                        style="background: white; border: 5px solid black; border-radius: 24px; padding: 32px; box-shadow: 8px 8px 0px 0px rgba(0,0,0,1); transform: rotate(1deg); position: relative; z-index: 20;">
+
+                        <!-- LOGIN FORM -->
+                        <div id="auth-login-form">
+                            <!-- Header -->
+                            <div style="margin-bottom: 24px;">
+                                <h2 style="font-family: 'Fredoka', sans-serif; font-size: 1.8rem; font-weight: 700; color: black; margin: 0; text-transform: uppercase;"
+                                    data-i18n="auth-who-are-you">
+                                    Who are you?</h2>
+                                <div style="width: 80px; height: 4px; background: #FFE600; margin-top: 8px;"></div>
+                            </div>
+
+                            <form id="auth-form" onsubmit="handleAuthSubmit(event)"
+                                style="display: flex; flex-direction: column; gap: 20px;">
+                                <div>
+                                    <label
+                                        style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;"
+                                        data-i18n="auth-email-label">Email
+                                        / Username</label>
+                                    <div style="position: relative;">
+                                        <input type="email" id="auth-email" placeholder="hello@papel.cool" required
+                                            style="width: 100%; height: 56px; padding: 0 50px 0 20px; border-radius: 16px; background: #F9FAFB; border: 3px solid #E5E7EB; font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: black; outline: none; transition: all 0.2s;"
+                                            onfocus="this.style.borderColor='black'"
+                                            onblur="this.style.borderColor='#E5E7EB'"
+                                            data-i18n="auth-email-placeholder">
+                                        <span class="material-symbols-outlined"
+                                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 22px;">mail</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label
+                                        style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">Password</label>
+                                    <div style="position: relative;">
+                                        <input type="password" id="auth-password" placeholder="••••••••" required
+                                            minlength="6"
+                                            style="width: 100%; height: 56px; padding: 0 50px 0 20px; border-radius: 16px; background: #F9FAFB; border: 3px solid #E5E7EB; font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: black; outline: none; transition: all 0.2s;"
+                                            onfocus="this.style.borderColor='black'"
+                                            onblur="this.style.borderColor='#E5E7EB'"
+                                            data-i18n="auth-password-placeholder">
+                                        <span class="material-symbols-outlined"
+                                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 22px;">lock</span>
+                                    </div>
+                                </div>
+                                <div style="padding-top: 8px;">
+                                    <button type="submit" id="auth-submit-btn"
+                                        style="width: 100%; background: #FFE600; border: 4px solid black; padding: 18px; border-radius: 16px; box-shadow: 5px 5px 0px 0px rgba(0,0,0,1); cursor: pointer; transition: all 0.2s;"
+                                        onmouseover="this.style.transform='scale(1.02)'"
+                                        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='5px 5px 0px 0px rgba(0,0,0,1)'"
+                                        onmousedown="this.style.boxShadow='none'; this.style.transform='translateY(4px)'"
+                                        onmouseup="this.style.boxShadow='5px 5px 0px 0px rgba(0,0,0,1)'; this.style.transform='scale(1.02)'">
+                                        <span
+                                            style="color: black; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.3rem; text-transform: uppercase; letter-spacing: -0.02em;"
+                                            data-i18n="auth-enter-btn">Enter
+                                            World</span>
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Social Badges -->
+                            <div style="margin-top: 28px;">
+                                <p style="text-align: center; color: #6B7280; font-family: 'Fredoka', sans-serif; font-weight: 600; margin-bottom: 16px; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em;"
+                                    data-i18n="auth-social-label">
+                                    Or sign in with</p>
+                                <div style="display: flex; justify-content: center; gap: 20px;">
+                                    <button onclick="handleGoogleSignIn()"
+                                        style="background: white; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(-8deg);"
+                                        onmouseover="this.style.transform='scale(1.1) rotate(-8deg)'"
+                                        onmouseout="this.style.transform='rotate(-8deg)'">
+                                        <svg width="28" height="28" viewBox="0 0 24 24">
+                                            <path
+                                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                                fill="#4285F4" />
+                                            <path
+                                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                                fill="#34A853" />
+                                            <path
+                                                d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z"
+                                                fill="#FBBC05" />
+                                            <path
+                                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z"
+                                                fill="#EA4335" />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        style="background: black; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(5deg);"
+                                        onmouseover="this.style.transform='scale(1.1) rotate(5deg)'"
+                                        onmouseout="this.style.transform='rotate(5deg)'">
+                                        <span class="material-symbols-outlined"
+                                            style="color: white; font-size: 26px;">phone_iphone</span>
+                                    </button>
+                                    <button
+                                        style="background: #1877F2; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(-4deg);"
+                                        onmouseover="this.style.transform='scale(1.1) rotate(-4deg)'"
+                                        onmouseout="this.style.transform='rotate(-4deg)'">
+                                        <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+                                            <path
+                                                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- REGISTER FORM -->
+                        <div id="auth-register-form" style="display: none;">
+                            <!-- Header with Step Indicator -->
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+                                <div>
+                                    <h2 style="font-family: 'Fredoka', sans-serif; font-size: 1.8rem; font-weight: 700; color: black; margin: 0; text-transform: uppercase;"
+                                        data-i18n="auth-who-are-you">
+                                        Who are you?</h2>
+                                    <div style="width: 80px; height: 4px; background: #FFE600; margin-top: 8px;"></div>
+                                </div>
+                                <div
+                                    style="background: #F3F4F6; padding: 6px 14px; border-radius: 8px; border: 2px solid #E5E7EB;">
+                                    <span
+                                        style="font-family: 'Fredoka', sans-serif; font-size: 0.8rem; font-weight: 700; color: #6B7280; text-transform: uppercase;"
+                                        data-i18n="auth-step-1">Step
+                                        01/02</span>
+                                </div>
+                            </div>
+
+                            <form id="auth-register-form-element" onsubmit="handleAuthSubmit(event)"
+                                style="display: flex; flex-direction: column; gap: 18px;">
+                                <!-- Nickname -->
+                                <div>
+                                    <label
+                                        style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;"
+                                        data-i18n="auth-nickname-label">Nickname</label>
+                                    <div style="position: relative;">
+                                        <input type="text" id="auth-nickname" placeholder="Papel_Cool_99" required
+                                            minlength="3"
+                                            style="width: 100%; height: 52px; padding: 0 50px 0 20px; border-radius: 14px; background: #F9FAFB; border: 3px solid #E5E7EB; font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: black; outline: none; transition: all 0.2s;"
+                                            onfocus="this.style.borderColor='black'"
+                                            onblur="this.style.borderColor='#E5E7EB'"
+                                            data-i18n="auth-nickname-placeholder">
+                                        <span class="material-symbols-outlined"
+                                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 22px;">mood</span>
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div>
+                                    <label
+                                        style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;"
+                                        data-i18n="auth-register-email-label">Email
+                                        Address</label>
+                                    <div style="position: relative;">
+                                        <input type="email" id="auth-register-email" placeholder="hello@papel.cool"
+                                            required
+                                            style="width: 100%; height: 52px; padding: 0 50px 0 20px; border-radius: 14px; background: #F9FAFB; border: 3px solid #E5E7EB; font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: black; outline: none; transition: all 0.2s;"
+                                            onfocus="this.style.borderColor='black'"
+                                            onblur="this.style.borderColor='#E5E7EB'"
+                                            data-i18n="auth-email-placeholder">
+                                        <span class="material-symbols-outlined"
+                                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 22px;">mail</span>
+                                    </div>
+                                </div>
+
+                                <!-- Password -->
+                                <div>
+                                    <label
+                                        style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">Password</label>
+                                    <div style="position: relative;">
+                                        <input type="password" id="auth-register-password" placeholder="••••••••"
+                                            required minlength="6"
+                                            style="width: 100%; height: 52px; padding: 0 50px 0 20px; border-radius: 14px; background: #F9FAFB; border: 3px solid #E5E7EB; font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: black; outline: none; transition: all 0.2s;"
+                                            onfocus="this.style.borderColor='black'"
+                                            onblur="this.style.borderColor='#E5E7EB'"
+                                            data-i18n="auth-password-placeholder">
+                                        <span class="material-symbols-outlined"
+                                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 22px;">lock</span>
+                                    </div>
+                                </div>
+
+                                <!-- Terms Checkbox -->
+                                <div style="display: flex; align-items: flex-start; gap: 12px; margin-top: 8px;">
+                                    <input type="checkbox" id="auth-terms" required
+                                        style="width: 22px; height: 22px; margin-top: 2px; cursor: pointer; accent-color: black;">
+                                    <label for="auth-terms"
+                                        style="font-family: 'Fredoka', sans-serif; font-size: 0.85rem; font-weight: 600; color: #374151; cursor: pointer;"
+                                        data-i18n="auth-terms-label-html">
+                                        I agree to the <a href="#"
+                                            style="color: #407BFF; text-decoration: underline; font-weight: 700;">Sticker
+                                            Rules</a> & <a href="#"
+                                            style="color: #407BFF; text-decoration: underline; font-weight: 700;">Privacy</a>
+                                    </label>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div style="padding-top: 12px;">
+                                    <button type="submit" id="auth-register-submit-btn"
+                                        style="width: 100%; background: #2ECC71; border: 4px solid black; padding: 18px; border-radius: 16px; box-shadow: 5px 5px 0px 0px rgba(0,0,0,1); cursor: pointer; transition: all 0.2s;"
+                                        onmouseover="this.style.transform='scale(1.02)'"
+                                        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='5px 5px 0px 0px rgba(0,0,0,1)'"
+                                        onmousedown="this.style.boxShadow='none'; this.style.transform='translateY(4px)'"
+                                        onmouseup="this.style.boxShadow='5px 5px 0px 0px rgba(0,0,0,1)'; this.style.transform='scale(1.02)'">
+                                        <span
+                                            style="color: white; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.3rem; text-transform: uppercase; letter-spacing: -0.02em;"
+                                            data-i18n="auth-create-btn">Create
+                                            Account</span>
+                                    </button>
+                                </div>
+                            </form>
+
+                            <!-- Social Badges (Register) -->
+                            <div style="margin-top: 28px;">
+                                <p style="text-align: center; color: #6B7280; font-family: 'Fredoka', sans-serif; font-weight: 600; margin-bottom: 16px; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em;"
+                                    data-i18n="auth-social-label">
+                                    Or sign in with</p>
+                                <div style="display: flex; justify-content: center; gap: 20px;">
+                                    <button onclick="handleGoogleSignIn()"
+                                        style="background: white; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(-8deg);"
+                                        onmouseover="this.style.transform='scale(1.1) rotate(-8deg)'"
+                                        onmouseout="this.style.transform='rotate(-8deg)'">
+                                        <svg width="28" height="28" viewBox="0 0 24 24">
+                                            <path
+                                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                                fill="#4285F4" />
+                                            <path
+                                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                                fill="#34A853" />
+                                            <path
+                                                d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z"
+                                                fill="#FBBC05" />
+                                            <path
+                                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z"
+                                                fill="#EA4335" />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        style="background: black; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(5deg);"
+                                        onmouseover="this.style.transform='scale(1.1) rotate(5deg)'"
+                                        onmouseout="this.style.transform='rotate(5deg)'">
+                                        <span class="material-symbols-outlined"
+                                            style="color: white; font-size: 26px;">phone_iphone</span>
+                                    </button>
+                                    <button
+                                        style="background: #1877F2; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(-4deg);"
+                                        onmouseover="this.style.transform='scale(1.1) rotate(-4deg)'"
+                                        onmouseout="this.style.transform='rotate(-4deg)'">
+                                        <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+                                            <path
+                                                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Error/Success Messages -->
+                        <div id="auth-error"
+                            style="display: none; margin-top: 16px; padding: 12px; background: #FEE2E2; border: 3px solid #EF4444; border-radius: 12px; color: #DC2626; font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.9rem; text-align: center;">
+                        </div>
+                        <div id="auth-success"
+                            style="display: none; margin-top: 16px; padding: 12px; background: #D1FAE5; border: 3px solid #10B981; border-radius: 12px; color: #059669; font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.9rem; text-align: center;">
+                        </div>
+                    </div>
+
+                    <!-- Black background accent -->
+                    <div
+                        style="position: absolute; bottom: -10px; left: -10px; width: 100%; height: 100%; background: black; z-index: 10; border-radius: 24px;">
+                    </div>
+                </div>
+
+                <!-- LOGIN FOOTER -->
+                <div id="auth-login-footer"
+                    style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: center; padding-top: 8px;">
+                    <a href="#"
+                        style="background: white; border: 4px solid black; padding: 4px 16px; color: black; font-family: 'Fredoka', sans-serif; font-weight: 700; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); transform: rotate(-2deg); text-decoration: none; transition: transform 0.2s;"
+                        onmouseover="this.style.transform='scale(1.05) rotate(-2deg)'"
+                        onmouseout="this.style.transform='rotate(-2deg)'" data-i18n="auth-forgot-link">Forgot?</a>
+                    <div
+                        style="background: #2ECC71; border: 4px solid black; padding: 4px 24px; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); transform: rotate(2deg);">
+                        <p style="color: white; font-family: 'Fredoka', sans-serif; font-weight: 700; margin: 0;">
+                            <span data-i18n="auth-new-text">New?</span>
+                            <a href="#" onclick="switchAuthTab('register'); return false;"
+                                style="color: white; text-decoration: underline;" data-i18n="auth-signup-link">Sign
+                                Up!</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- REGISTER FOOTER (No Forgot button, Login link instead) -->
+                <div id="auth-register-footer"
+                    style="display: none; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: center; padding-top: 8px;">
+                    <div
+                        style="background: #407BFF; border: 4px solid black; padding: 4px 24px; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); transform: rotate(-2deg);">
+                        <p style="color: white; font-family: 'Fredoka', sans-serif; font-weight: 700; margin: 0;">
+                            <span data-i18n="auth-have-account-text">Have account?</span>
+                            <a href="#" onclick="switchAuthTab('login'); return false;"
+                                style="color: white; text-decoration: underline;" data-i18n="auth-login-link">Login!</a>
+                        </p>
+                    </div>
                 </div>
             </div>
-        </button>
+
+            <!-- Right Side - 3D Character (hidden on mobile) -->
+            <div style="display: none; width: 50%; margin-top: 48px; position: relative; align-items: center; justify-content: center;"
+                class="lg:flex lg:mt-0">
+                <div
+                    style="position: absolute; top: 0; right: 40px; z-index: 30; background: white; border: 4px solid black; padding: 12px 24px; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); transform: rotate(12deg);">
+                    <p
+                        style="color: black; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.25rem; text-transform: uppercase; font-style: italic; margin: 0;">
+                        Customize me!</p>
+                </div>
+                <div style="position: relative; width: 100%; max-width: 500px; aspect-ratio: 1;">
+                    <div
+                        style="position: absolute; inset: 16px; background: #FFE600; opacity: 0.4; border-radius: 50%; border: 4px solid black; filter: blur(4px);">
+                    </div>
+                    <div
+                        style="position: absolute; inset: 40px; background: #407BFF; opacity: 0.3; clip-path: polygon(10% 0%, 100% 5%, 90% 95%, 5% 100%); transform: rotate(45deg);">
+                    </div>
+                    <div id="auth-modal-3d-container"
+                        style="position: relative; width: 100%; height: 100%; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 16px;">
+                        <!-- 3D character will be rendered here -->
+                    </div>
+                    <div
+                        style="position: absolute; top: 25%; right: 0; width: 96px; height: 96px; background: #FF9F43; border: 4px solid black; border-radius: 50%; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); z-index: 30; display: flex; align-items: center; justify-content: center; transform: rotate(-15deg);">
+                        <span class="material-symbols-outlined" style="color: white; font-size: 48px;">star</span>
+                    </div>
+                    <div
+                        style="position: absolute; bottom: 25%; left: 0; width: 80px; height: 80px; background: #2ECC71; border: 4px solid black; clip-path: polygon(0% 5%, 100% 15%, 85% 100%, 10% 90%); box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); z-index: 30; display: flex; align-items: center; justify-content: center; transform: rotate(25deg);">
+                        <span class="material-symbols-outlined" style="color: white; font-size: 36px;">favorite</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Characters Modal -->
+    <div id="my-characters-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; align-items: center; justify-content: center; overflow-y: auto; padding: 20px;">
+        <div
+            style="background: linear-gradient(135deg, rgba(0,22,40,0.98), rgba(0,40,60,0.98)); padding: 2rem; border-radius: 20px; max-width: 600px; width: 90%; box-shadow: 0 20px 60px rgba(255,238,0,0.3); border: 2px solid rgba(255,238,0,0.4); max-height: 80vh; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="color: #ffee00; font-family: 'Orbitron', sans-serif; font-size: 1.3rem; margin: 0;">My
+                    Characters</h2>
+                <button onclick="hideMyCharactersModal()"
+                    style="background: none; border: none; color: #ffee00; font-size: 1.5rem; cursor: pointer;">✕</button>
+            </div>
+            <div id="my-characters-list"
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;">
+                <!-- Characters will be loaded here -->
+                <div style="text-align: center; color: rgba(255,255,255,0.5); padding: 2rem;">Loading...</div>
+            </div>
+        </div>
     </div>
 
     <!-- Nombre del personaje seleccionado (centrado arriba) -->
@@ -3118,7 +3719,7 @@
                 <span data-i18n="download-pdf-btn">DOWNLOAD PDF</span>
             </button>
             <div id="pdf-download-message" class="pdf-download-message hidden" data-i18n="download-message">
-                ℹ️ Your download will start through your browser.<br>Please check your downloads folder.
+                Your download will start through your browser.<br>Please check your downloads folder.
             </div>
         </div>
     </div>
@@ -3135,127 +3736,109 @@
     </div>
 
     <!-- Botón de descargar plantilla PDF (fuera de la ventana, centrado arriba) -->
-    <button type="button" id="download-pdf-btn" class="pointer-events-auto">
-        <div class="button-outer">
-            <div class="button-inner">
-                <span data-i18n="download-pdf-btn">DOWNLOAD PDF</span>
-            </div>
-        </div>
+    <button type="button" id="download-pdf-btn" class="pointer-events-auto"
+        style="background: #FFE600; border: 4px solid black; padding: 12px 24px; border-radius: 12px; box-shadow: 4px 4px 0px 0px rgba(0,0,0,1); transition: all 0.2s; cursor: pointer;"
+        onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+        <span data-i18n="download-template-btn"
+            style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1rem; color: black;">DOWNLOAD
+            TEMPLATE</span>
     </button>
 
     <!-- Botones de redes sociales (solo visible en showcase) -->
-    <div id="social-media-buttons">
+    <div id="social-media-buttons" class="flex gap-4 justify-center">
         <!-- TikTok -->
         <a href="https://www.tiktok.com/@papelcool" target="_blank" rel="noopener noreferrer"
-            class="social-btn tiktok premium-metallic-btn" aria-label="TikTok">
-            <div class="button-outer">
-                <div class="button-inner">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff">
-                            <path
-                                d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
-                        </svg>
-                    </span>
-                </div>
-            </div>
+            class="social-btn tiktok w-12 h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-pink transition-colors group"
+            aria-label="TikTok">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"
+                class="w-6 h-6 group-hover:scale-110 transition-transform">
+                <path
+                    d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+            </svg>
         </a>
 
         <!-- YouTube -->
         <a href="https://www.youtube.com/@papelcool" target="_blank" rel="noopener noreferrer"
-            class="social-btn youtube premium-metallic-btn" aria-label="YouTube">
-            <div class="button-outer">
-                <div class="button-inner">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff">
-                            <path
-                                d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                        </svg>
-                    </span>
-                </div>
-            </div>
+            class="social-btn youtube w-12 h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-yellow transition-colors group"
+            aria-label="YouTube">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"
+                class="w-6 h-6 group-hover:scale-110 transition-transform">
+                <path
+                    d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+            </svg>
         </a>
 
         <!-- Instagram -->
         <a href="https://www.instagram.com/papelcool" target="_blank" rel="noopener noreferrer"
-            class="social-btn instagram premium-metallic-btn" aria-label="Instagram">
-            <div class="button-outer">
-                <div class="button-inner">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ffffff">
-                            <path
-                                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                        </svg>
-                    </span>
-                </div>
-            </div>
+            class="social-btn instagram w-12 h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-blue transition-colors group"
+            aria-label="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"
+                class="w-6 h-6 group-hover:scale-110 transition-transform">
+                <path
+                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+            </svg>
         </a>
     </div>
 
     <!-- Botones de presets (esquina superior izquierda) -->
-    <div id="preset-action-buttons">
+    <div id="preset-action-buttons" class="absolute top-4 left-4 flex gap-3 pointer-events-auto">
         <!-- Botón 1: Volver al showcase -->
-        <button type="button" id="back-to-showcase-btn" class="preset-action-btn premium-round-btn"
+        <button type="button" id="back-to-showcase-btn"
+            class="preset-action-btn w-12 h-12 bg-white border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-yellow transition-colors group"
             aria-label="Volver al showcase">
-            <div class="button-outer">
-                <div class="button-inner">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
-                        </svg>
-                    </span>
-                </div>
-            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                class="w-6 h-6 group-hover:scale-110 transition-transform">
+                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+            </svg>
         </button>
 
         <!-- Botón 2: Modo juego -->
-        <button type="button" id="play-mode-btn-desktop-moved" class="preset-action-btn play-mode-btn premium-round-btn"
+        <button type="button" id="play-mode-btn-desktop-moved"
+            class="preset-action-btn play-mode-btn w-12 h-12 bg-white border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-pink transition-colors group"
             aria-label="Modo juego">
-            <div class="button-outer">
-                <div class="button-inner">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path fill="currentColor" d="M8 5.14v14l11-7z" />
-                        </svg>
-                    </span>
-                </div>
-            </div>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
+                class="w-6 h-6 group-hover:scale-110 transition-transform">
+                <path d="M8 5.14v14l11-7z" />
+            </svg>
         </button>
 
         <!-- Botón 3: Descargar PDF -->
-        <button type="button" id="download-pdf-btn-moved" class="preset-action-btn premium-round-btn"
+        <button type="button" id="download-pdf-btn-moved"
+            class="preset-action-btn w-12 h-12 bg-white border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-blue transition-colors group"
             aria-label="Descargar PDF">
-            <div class="button-outer">
-                <div class="button-inner">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                            <path fill="currentColor" d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z" />
-                        </svg>
-                    </span>
-                </div>
-            </div>
-        </button>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path fill="currentColor" d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z" />
+            </svg>
+            </span>
+    </div>
+    </div>
+    </button>
 
     </div>
 
     <!-- Botones de showcase inicial (sin overlay) -->
     <div id="showcase-buttons-container" class="hidden">
-        <div class="showcase-buttons">
+        <div class="showcase-buttons" style="display: flex; gap: 24px; pointer-events: auto;">
             <div class="button-wrap">
-                <button type="button" id="customize-btn" class="showcase-btn">
-                    <div class="button-outer">
-                        <div class="button-inner">
-                            <span>CUSTOM</span>
-                        </div>
-                    </div>
+                <button type="button" id="customize-btn" class="showcase-btn"
+                    style="background: #FF4D94; border: 4px solid black; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); border-radius: 20px; padding: 16px 32px; transition: all 0.2s; transform: rotate(-2deg); cursor: pointer;"
+                    onmouseover="this.style.transform='scale(1.05) rotate(-2deg)'"
+                    onmouseout="this.style.transform='scale(1) rotate(-2deg)'"
+                    onmousedown="this.style.transform='scale(0.98) rotate(-2deg)'; this.style.boxShadow='3px 3px 0px 0px rgba(0,0,0,1)'"
+                    onmouseup="this.style.transform='scale(1.05) rotate(-2deg)'; this.style.boxShadow='6px 6px 0px 0px rgba(0,0,0,1)'">
+                    <span
+                        style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.5rem; color: black; text-transform: uppercase; letter-spacing: 1px;">CUSTOM</span>
                 </button>
             </div>
             <div class="button-wrap">
-                <button type="button" id="presets-btn" class="showcase-btn">
-                    <div class="button-outer">
-                        <div class="button-inner">
-                            <span>PRESETS</span>
-                        </div>
-                    </div>
+                <button type="button" id="presets-btn" class="showcase-btn"
+                    style="background: #FFE600; border: 4px solid black; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); border-radius: 20px; padding: 16px 32px; transition: all 0.2s; transform: rotate(2deg); cursor: pointer;"
+                    onmouseover="this.style.transform='scale(1.05) rotate(2deg)'"
+                    onmouseout="this.style.transform='scale(1) rotate(2deg)'"
+                    onmousedown="this.style.transform='scale(0.98) rotate(2deg)'; this.style.boxShadow='3px 3px 0px 0px rgba(0,0,0,1)'"
+                    onmouseup="this.style.transform='scale(1.05) rotate(2deg)'; this.style.boxShadow='6px 6px 0px 0px rgba(0,0,0,1)'">
+                    <span
+                        style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.5rem; color: black; text-transform: uppercase; letter-spacing: 1px;">PRESETS</span>
                 </button>
             </div>
         </div>
@@ -3318,8 +3901,8 @@
                 <div id="presets-section" class="pt-2 mb-4 hidden" style="padding-top: 4px; padding-bottom: 2px;">
                     <div class="mb-3 pointer-events-auto">
                         <input type="text" id="preset-search-input" placeholder="Search presets..."
-                            class="w-full px-4 py-2 text-sm bg-white border text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2"
-                            style="border-radius: 30px; border: 2px solid #FFFF00;" />
+                            class="w-full px-4 py-3 text-sm bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-0"
+                            style="border-radius: 16px; border: 4px solid black; font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1rem; box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.1);" />
                         <!-- Main Category Carousel moved to customize-section -->
                     </div>
                     <div id="presets-container" class="presets-grid pointer-events-auto">
@@ -3440,14 +4023,19 @@
 
                 <div id="customize-section" class="hidden h-full flex flex-col">
                     <!-- Header Actions (Back, Play, Download) -->
-                    <div id="custom-header-actions" class="flex gap-2 mb-4 pointer-events-auto flex-none justify-start">
+                    <div id="custom-header-actions"
+                        class="flex gap-3 mb-4 pointer-events-auto flex-none justify-start items-center">
                         <!-- Back Button -->
                         <button type="button" id="back-to-showcase-custom-btn"
-                            class="preset-action-btn premium-round-btn" aria-label="Volver al showcase">
+                            class="preset-action-btn premium-round-btn" aria-label="Volver al showcase"
+                            style="width: 48px; height: 48px; background: #FF4D94; border: 3px solid black; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,1); transition: transform 0.2s;"
+                            onmouseover="this.style.transform='scale(1.1)'"
+                            onmouseout="this.style.transform='scale(1)'">
                             <div class="button-outer">
                                 <div class="button-inner">
                                     <span>
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"
+                                            width="24" height="24">
                                             <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
                                         </svg>
                                     </span>
@@ -3457,13 +4045,16 @@
 
                         <!-- Play Mode Button -->
                         <button type="button" id="play-mode-custom-btn"
-                            class="preset-action-btn play-mode-btn premium-round-btn" aria-label="Modo juego">
+                            class="preset-action-btn play-mode-btn premium-round-btn" aria-label="Modo juego"
+                            style="width: 48px; height: 48px; background: #2ECC71; border: 3px solid black; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,1); transition: transform 0.2s;"
+                            onmouseover="this.style.transform='scale(1.1)'"
+                            onmouseout="this.style.transform='scale(1)'">
                             <div class="button-outer">
                                 <div class="button-inner">
                                     <span>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24">
-                                            <path fill="currentColor" d="M8 5.14v14l11-7z" />
+                                            viewBox="0 0 24 24" fill="white">
+                                            <path d="M8 5.14v14l11-7z" />
                                         </svg>
                                     </span>
                                 </div>
@@ -3472,13 +4063,35 @@
 
                         <!-- Download Button -->
                         <button type="button" id="download-pdf-custom-btn" class="preset-action-btn premium-round-btn"
-                            aria-label="Descargar PDF">
+                            aria-label="Descargar PDF"
+                            style="width: 48px; height: 48px; background: #407BFF; border: 3px solid black; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,1); transition: transform 0.2s;"
+                            onmouseover="this.style.transform='scale(1.1)'"
+                            onmouseout="this.style.transform='scale(1)'">
                             <div class="button-outer">
                                 <div class="button-inner">
                                     <span>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24">
-                                            <path fill="currentColor" d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z" />
+                                            viewBox="0 0 24 24" fill="white">
+                                            <path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z" />
+                                        </svg>
+                                    </span>
+                                </div>
+                            </div>
+                        </button>
+
+                        <!-- Save Character Button (Cloud) -->
+                        <button type="button" id="save-character-btn" class="preset-action-btn premium-round-btn"
+                            aria-label="Save Character" onclick="promptSaveCharacter()" title="Save to Cloud"
+                            style="width: 48px; height: 48px; background: #FFE600; border: 3px solid black; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,1); transition: transform 0.2s;"
+                            onmouseover="this.style.transform='scale(1.1)'"
+                            onmouseout="this.style.transform='scale(1)'">
+                            <div class="button-outer">
+                                <div class="button-inner">
+                                    <span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="black">
+                                            <path
+                                                d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z" />
                                         </svg>
                                     </span>
                                 </div>
@@ -3569,8 +4182,10 @@
                         </button>
                     </div>
 
-                    <div class="pt-2 border-t border-[#ffee00]/30 flex-none mb-4">
-                        <h2 class="text-md font-bold text-[#ffee00] mb-2" data-i18n="skin-color-title">SKIN COLOR</h2>
+                    <div class="pt-2 border-t border-black/20 flex-none mb-4">
+                        <h2 class="text-md font-bold text-[#FFE600] mb-2"
+                            style="font-family: 'Fredoka', sans-serif; -webkit-text-stroke: 1px black; text-shadow: 2px 2px 0px rgba(0,0,0,0.5);"
+                            data-i18n="skin-color-title">SKIN COLOR</h2>
                         <div id="global-color-palette"
                             class="flex space-x-2 overflow-x-auto py-2 mb-2 pointer-events-auto no-scrollbar">
                             <!-- Color swatches will be populated here -->
@@ -3579,16 +4194,20 @@
                         <!-- Sliders de personalización -->
                         <div class="mt-2 space-y-3 pointer-events-auto">
                             <div>
-                                <label class="text-xs text-[#ffee00] mb-1 block" data-i18n="hue-label">Tono</label>
+                                <label class="text-xs text-[#FFE600] mb-1 block"
+                                    style="font-family: 'Fredoka', sans-serif; font-weight: 700; -webkit-text-stroke: 0.5px black;"
+                                    data-i18n="hue-label">Tono</label>
                                 <input type="range" id="hue-slider" min="0" max="360" value="0"
-                                    class="w-full h-2 rounded-lg appearance-none cursor-pointer"
-                                    style="background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);">
+                                    class="w-full h-4 rounded-lg appearance-none cursor-pointer"
+                                    style="background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); border: 3px solid black;">
                             </div>
                             <div>
-                                <label class="text-xs text-[#ffee00] mb-1 block"
+                                <label class="text-xs text-[#FFE600] mb-1 block"
+                                    style="font-family: 'Fredoka', sans-serif; font-weight: 700; -webkit-text-stroke: 0.5px black;"
                                     data-i18n="lightness-label">Luminosidad</label>
                                 <input type="range" id="lightness-slider" min="0" max="100" value="50"
-                                    class="w-full h-2 rounded-lg appearance-none cursor-pointer bg-gradient-to-r from-black via-gray-500 to-white">
+                                    class="w-full h-4 rounded-lg appearance-none cursor-pointer"
+                                    style="background: linear-gradient(to right, #000000, #888888, #ffffff); border: 3px solid black;">
                             </div>
                         </div>
 
@@ -3655,7 +4274,7 @@
                 name: 'English',
                 'preparing-pdf': 'Preparing PDF...',
                 'download-pdf-btn': 'DOWNLOAD PDF',
-                'download-message': 'ℹ️ Your download will start through your browser.<br>Please check your downloads folder.',
+                'download-message': 'Your download will start through your browser.<br>Please check your downloads folder.',
                 'coming-soon-title': 'Coming Soon',
                 'coming-soon-body': "This feature will be available very soon. We're working to bring you the best experience.",
                 'got-it': 'Got it',
@@ -3687,14 +4306,68 @@
                 'name-basic': 'Basic',
                 'name-default': 'Default',
                 'name-male': 'Male',
-                'name-female': 'Female'
+                'cat-joined': 'Joined',
+                'cat-rarity-rare': 'Rare',
+                'cat-rarity-gen': 'Gen',
+                'cat-rarity-legendary': 'Legendary',
+                'cat-rarity-epic': 'Epic',
+                'cat-rarity-foil': 'Foil',
+                'cat-follow': 'Follow',
+                'cat-view-all': 'View All',
+                'cat-recent-creations': 'Recent Creations',
+                'cat-pro-builder': 'Pro Builder',
+                'auth-join-us': 'Join Us!',
+                'auth-sign-up': 'Sign Up!',
+                'auth-who-are-you': 'Who are you?',
+                'auth-email-label': 'Email / Username',
+                'auth-password-label': 'Password',
+                'auth-enter-btn': 'Enter World',
+                'auth-social-label': 'Or sign in with',
+                'auth-nickname-label': 'Nickname',
+                'auth-register-email-label': 'Email Address',
+                'auth-step': 'Step',
+                'auth-agree-text': 'I agree to the',
+                'auth-rules-link': 'Sticker Rules',
+                'auth-privacy-link': 'Privacy',
+                'auth-create-btn': 'Create Account',
+                'auth-forgot-link': 'Forgot?',
+                'auth-new-text': 'New?',
+                'auth-signup-link': 'Sign Up!',
+                'auth-have-account-text': 'Have account?',
+                'auth-login-link': 'Login!',
+                'auth-view-profile': 'View Profile',
+                'auth-my-characters': 'My Characters',
+                'auth-sign-out': 'Sign Out',
+                'auth-error-nickname-taken': 'This nickname is already taken. Please choose another one.',
+                'auth-error-nickname-short': 'Nickname must be at least 3 characters',
+                'auth-success-welcome': 'Account created! Welcome ',
+                'auth-email-placeholder': 'hello@papel.cool',
+                'auth-password-placeholder': '••••••••',
+                'auth-nickname-placeholder': 'Papel_Cool_99',
+                'cat-verified-title': 'Verified Creator',
+                'prof-share-title': 'Share Profile',
+                'prof-message-title': 'Send Message',
+                'prof-new-badge': 'New!',
+                'cat-search-placeholder': 'Search Creators...',
+                'search-presets': 'Search Presets...',
+                'auth-step-1': 'Step 01/02',
+                'auth-step-2': 'Step 02/02',
+                'auth-terms-label-html': 'I agree to the <a href="#" style="color: #407BFF; text-decoration: underline; font-weight: 700;">Sticker Rules</a> & <a href="#" style="color: #407BFF; text-decoration: underline; font-weight: 700;">Privacy</a>',
+                'prof-level-prefix': 'Level',
+                'prof-joined-prefix': 'Joined',
+                'cat-load-btn': 'Load',
+                'msg-loading': 'Loading...',
+                'msg-no-characters': 'No saved characters yet. Customize a character and save it!',
+                'msg-confirm-delete': 'Are you sure you want to delete this character?',
+                'msg-save-success': 'Character saved successfully!',
+                'msg-enter-name': 'Enter a name for your character:'
             },
             es: {
                 flag: '🇪🇸',
                 name: 'Español',
                 'preparing-pdf': 'Preparando PDF...',
                 'download-pdf-btn': 'DESCARGAR PDF',
-                'download-message': 'ℹ️ Tu descarga comenzará en el navegador.<br>Por favor, revisa tu carpeta de descargas.',
+                'download-message': 'Tu descarga comenzará en el navegador.<br>Por favor, revisa tu carpeta de descargas.',
                 'coming-soon-title': 'Próximamente',
                 'coming-soon-body': 'Esta función estará disponible muy pronto. Estamos trabajando para brindarte la mejor experiencia.',
                 'got-it': 'Entendido',
@@ -3726,14 +4399,85 @@
                 'name-basic': 'Básico',
                 'name-default': 'Predeterminado',
                 'name-male': 'Masculino',
-                'name-female': 'Femenino'
+                'cat-joined': 'Se unió',
+                'cat-rarity-rare': 'Raro',
+                'cat-rarity-gen': 'Gen',
+                'cat-rarity-legendary': 'Legendario',
+                'cat-rarity-epic': 'Épico',
+                'cat-rarity-foil': 'Metálico',
+                'cat-follow': 'Seguir',
+                'cat-view-all': 'Ver Todo',
+                'cat-recent-creations': 'Creaciones Recientes',
+                'cat-pro-builder': 'Constructor Pro',
+                'auth-join-us': '¡Únete!',
+                'auth-sign-up': '¡Regístrate!',
+                'auth-who-are-you': '¿Quién eres?',
+                'auth-email-label': 'Email / Usuario',
+                'auth-password-label': 'Contraseña',
+                'auth-enter-btn': 'Entrar al Mundo',
+                'auth-social-label': 'O entra con',
+                'auth-nickname-label': 'Apodo',
+                'auth-register-email-label': 'Correo Electrónico',
+                'auth-step': 'Paso',
+                'auth-agree-text': 'Acepto las',
+                'auth-rules-link': 'Reglas de Stickers',
+                'auth-privacy-link': 'Privacidad',
+                'auth-create-btn': 'Crear Cuenta',
+                'auth-forgot-link': '¿Olvidaste?',
+                'auth-new-text': '¿Nuevo?',
+                'auth-signup-link': '¡Regístrate!',
+                'auth-have-account-text': '¿Tienes cuenta?',
+                'auth-login-link': '¡Entra!',
+                'auth-view-profile': 'Ver Perfil',
+                'auth-my-characters': 'Mis Personajes',
+                'auth-sign-out': 'Cerrar Sesión',
+                'auth-error-nickname-taken': 'Este apodo ya está en uso. Por favor elige otro.',
+                'auth-error-nickname-short': 'El apodo debe tener al menos 3 caracteres',
+                'auth-success-welcome': '¡Cuenta creada! Bienvenido ',
+                'auth-email-placeholder': 'hola@papel.cool',
+                'auth-password-placeholder': '••••••••',
+                'auth-nickname-placeholder': 'Papel_Cool_99',
+                'cat-verified-title': 'Creador Verificado',
+                'prof-share-title': 'Compartir Perfil',
+                'prof-message-title': 'Enviar Mensaje',
+                'prof-new-badge': '¡Nuevo!',
+                'cat-search-placeholder': 'Buscar Creadores...',
+                'search-presets': 'Buscar Ajustes...',
+                'auth-step-1': 'Paso 01/02',
+                'auth-step-2': 'Paso 02/02',
+                'auth-terms-label-html': 'Acepto las <a href="#" style="color: #407BFF; text-decoration: underline; font-weight: 700;">Reglas de Stickers</a> y la <a href="#" style="color: #407BFF; text-decoration: underline; font-weight: 700;">Privacidad</a>',
+                'prof-level-prefix': 'Nivel',
+                'prof-joined-prefix': 'Se unió en',
+                'cat-load-btn': 'Cargar',
+                'msg-loading': 'Cargando...',
+                'msg-no-characters': 'Aún no tienes personajes guardados. ¡Personaliza uno y guárdalo!',
+                'msg-confirm-delete': '¿Estás seguro de que quieres eliminar este personaje?',
+                'msg-save-success': '¡Personaje guardado con éxito!',
+                'msg-enter-name': 'Introduce un nombre para tu personaje:'
             }
         };
 
+        // Global Authentication State
+        let currentAuthMode = 'login';
+
         class LanguageManager {
             constructor() {
-                this.currentLang = localStorage.getItem('papelcool_lang') || 'en';
+                this.currentLang = localStorage.getItem('papelcool_lang') || this.detectLanguage();
                 this.init();
+            }
+
+            detectLanguage() {
+                const navLang = (navigator.language || navigator.userLanguage).toLowerCase();
+                const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+                // Spanish speaking countries logic
+                const isSpanishSpeakingRegion =
+                    navLang.startsWith('es') ||
+                    // List of Spanish speaking regions as fallback
+                    ['Madrid', 'Spain', 'Mexico', 'Argentina', 'Chile', 'Colombia', 'Peru', 'Ecuador', 'Guatemala', 'Cuba', 'Bolivia', 'Dominican', 'Honduras', 'Paraguay', 'El_Salvador', 'Nicaragua', 'Costa_Rica', 'Panama', 'Uruguay', 'Puerto_Rico']
+                        .some(region => tz.includes(region));
+
+                return isSpanishSpeakingRegion ? 'es' : 'en';
             }
 
             init() {
@@ -3763,8 +4507,12 @@
                     const key = el.getAttribute('data-i18n');
                     const translation = translations[this.currentLang][key];
                     if (translation) {
-                        if (el.tagName === 'INPUT' && el.type === 'text') {
+                        if (el.tagName === 'INPUT' && ['text', 'email', 'password'].includes(el.type)) {
                             el.placeholder = translation;
+                        } else if (el.hasAttribute('title') && key.includes('-title')) {
+                            el.title = translation;
+                        } else if (key.endsWith('-html')) {
+                            el.innerHTML = translation;
                         } else {
                             el.innerHTML = translation;
                         }
@@ -3782,6 +4530,18 @@
                 if (toggleText) {
                     toggleText.textContent = this.currentLang.toUpperCase();
                 }
+
+                // Update Auth Modal Banner if open
+                if (typeof currentAuthMode !== 'undefined') {
+                    const headerBadge = document.querySelector('#auth-modal h1');
+                    if (headerBadge) {
+                        headerBadge.textContent = this.getTranslation(currentAuthMode === 'login' ? 'auth-join-us' : 'auth-sign-up');
+                    }
+                }
+            }
+
+            getTranslation(key) {
+                return translations[this.currentLang][key] || translations['en'][key] || key;
             }
 
             setupSwitcher() {
@@ -7446,7 +8206,7 @@
                 if (downloadMessage) {
                     downloadMessage.classList.remove('hidden');
                     // Actualizar mensaje con el tamaño en MB
-                    let baseMessage = 'ℹ️ Your download will start through your browser.';
+                    let baseMessage = 'Your download will start through your browser.';
                     if (langManager) {
                         baseMessage = langManager.get('download-message');
                     }
@@ -7899,7 +8659,7 @@
             // Crear mensaje informativo
             const message = document.createElement('div');
             message.style.cssText = 'color:rgba(255,255,255,0.8);font-size:0.85rem;text-align:center;line-height:1.4;';
-            message.innerHTML = 'ℹ️ Your download will start through your browser.<br>Please check your downloads folder.';
+            message.innerHTML = 'Your download will start through your browser.<br>Please check your downloads folder.';
 
             // Agregar botón y mensaje al contenedor
             progressContainer.appendChild(downloadBtn);
@@ -8486,7 +9246,6 @@
             isCustomSkinColorSelected = true;
             const color = new THREE.Color(hexColor);
 
-            // Helper to apply color excluding textures
             const applyToMesh = (mesh, excludeList) => {
                 if (!mesh) return;
                 mesh.traverse((child) => {
@@ -8524,7 +9283,772 @@
 
         // Initialize after a short delay to ensure DOM is ready
         setTimeout(initNewCustomizationUI, 500);
+
+        // ============================================
+        // AUTHENTICATION UI HANDLERS
+        // ============================================
+
+        // currentAuthMode is now defined at the top of the script
+
+        function showAuthModal() {
+            const modal = document.getElementById('auth-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                // Reset form
+                document.getElementById('auth-email').value = '';
+                document.getElementById('auth-password').value = '';
+                hideAuthError();
+                hideAuthSuccess();
+            }
+        }
+
+        function hideAuthModal() {
+            const modal = document.getElementById('auth-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function switchAuthTab(mode) {
+            currentAuthMode = mode;
+            const loginForm = document.getElementById('auth-login-form');
+            const registerForm = document.getElementById('auth-register-form');
+            const loginFooter = document.getElementById('auth-login-footer');
+            const registerFooter = document.getElementById('auth-register-footer');
+            const headerBadge = document.querySelector('#auth-modal h1');
+
+            if (mode === 'login') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+                loginFooter.style.display = 'flex';
+                registerFooter.style.display = 'none';
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+                loginFooter.style.display = 'none';
+                registerFooter.style.display = 'flex';
+            }
+
+            if (headerBadge) {
+                headerBadge.textContent = languageManager.getTranslation(mode === 'login' ? 'auth-join-us' : 'auth-sign-up');
+            }
+
+            // Update Step indicator
+            const stepIndicator = document.querySelector('#auth-register-form span[data-i18n^="auth-step"]');
+            if (stepIndicator) {
+                stepIndicator.setAttribute('data-i18n', 'auth-step-1');
+                languageManager.updateUI();
+            }
+
+            hideAuthError();
+            hideAuthSuccess();
+        }
+
+        function toggleUserProfile(show, targetUserId) {
+            const profileView = document.getElementById('user-profile-view');
+            const authContainer = document.getElementById('auth-container');
+            const isShowing = show !== undefined ? show : profileView.style.display === 'none';
+
+            if (isShowing) {
+                profileView.style.display = 'block';
+                if (authContainer) authContainer.style.display = 'none';
+
+                // If no target ID provided, load current user's profile
+                if (!targetUserId) {
+                    setupOwnerProfile();
+                } else {
+                    loadOtherUserProfile(targetUserId);
+                }
+            } else {
+                profileView.style.display = 'none';
+                if (authContainer) {
+                    authContainer.style.display = 'block';
+                }
+            }
+        }
+
+        async function setupOwnerProfile() {
+            const user = await getCurrentUser();
+            if (user) {
+                const nickname = user.user_metadata?.nickname || user.email.split('@')[0];
+                document.getElementById('profile-username').textContent = nickname;
+                updateProfileUI(true); // true = owner
+                loadUserCharacters(); // Load own characters
+            }
+        }
+
+        async function loadOtherUserProfile(userId) {
+            const client = getSupabaseClient();
+            if (!client) return;
+
+            try {
+                // Fetch profile info
+                const { data: profile, error } = await client
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', userId)
+                    .single();
+
+                if (error) throw error;
+
+                // Update UI
+                document.getElementById('profile-username').textContent = profile.nickname;
+                updateProfileUI(false); // false = not owner
+
+                // Load that user's characters
+                loadUserCharacters(userId);
+            } catch (err) {
+                console.error('Error loading other profile:', err);
+            }
+        }
+
+        function updateProfileUI(isOwner) {
+            // Find the Add Button specifically in the profile main section
+            const addBtn = document.querySelector('#user-profile-view main button span.material-symbols-outlined:contains("add")')?.parentElement ||
+                document.querySelector('#user-profile-view main button:has(span:contains("add"))');
+
+            // Finding Follow button by ID
+            const followBtn = document.getElementById('profile-follow-btn');
+
+            // Sticker admin buttons (Edit/Delete)
+            const stickerAdminBtns = document.querySelectorAll('.paper-card button');
+            // Better to hide the specific admin UI container if possible, but for now filtering by text
+
+            if (addBtn) addBtn.style.display = isOwner ? 'flex' : 'none';
+            if (followBtn) followBtn.style.display = isOwner ? 'none' : 'flex';
+
+            // Note: Sticker grid rendering should handle isOwner check inside loadUserCharacters 
+            // but we can also hide buttons here as a fallback
+            stickerAdminBtns.forEach(btn => {
+                if (btn.textContent.includes('EDIT') || btn.textContent.includes('DELETE')) {
+                    btn.style.display = isOwner ? 'flex' : 'none';
+                }
+            });
+        }
+
+        // Search Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.getElementById('creator-search-input');
+            const resultsContainer = document.getElementById('creator-search-results');
+            const resultsList = document.getElementById('results-list');
+            let debounceTimer;
+
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    clearTimeout(debounceTimer);
+                    const query = e.target.value.trim();
+
+                    if (query.length < 2) {
+                        resultsContainer.classList.add('hidden');
+                        return;
+                    }
+
+                    debounceTimer = setTimeout(async () => {
+                        const results = await searchCreators(query);
+                        renderSearchResults(results);
+                    }, 300);
+                });
+
+                // Hide search results on click outside
+                document.addEventListener('click', (e) => {
+                    if (!searchInput.contains(e.target) && !resultsContainer.contains(e.target)) {
+                        resultsContainer.classList.add('hidden');
+                    }
+                });
+            }
+
+            function renderSearchResults(results) {
+                resultsList.innerHTML = '';
+                if (results.length === 0) {
+                    resultsList.innerHTML = '<div class="p-3 text-xs font-bold text-gray-400 italic text-center">No creators found</div>';
+                } else {
+                    results.forEach(user => {
+                        const item = document.createElement('div');
+                        item.className = 'search-result-item p-3 flex items-center gap-3 cursor-pointer transition-all border-b border-black/5 last:border-0';
+                        item.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-sticker-yellow border-2 border-black flex items-center justify-center text-[10px] font-black uppercase">
+                        ${user.nickname.charAt(0)}
+                    </div>
+                    <div class="flex-grow">
+                        <div class="text-sm font-black text-black">${user.nickname}</div>
+                        <div class="text-[10px] text-gray-400 font-bold uppercase">Sticker Creator</div>
+                    </div>
+                `;
+                        item.onclick = () => {
+                            toggleUserProfile(true, user.id);
+                            resultsContainer.classList.add('hidden');
+                            searchInput.value = '';
+                        };
+                        resultsList.appendChild(item);
+                    });
+                }
+                resultsContainer.classList.remove('hidden');
+            }
+        });
+        window.toggleUserProfile = toggleUserProfile;
+
+        async function handleAuthSubmit(event) {
+            event.preventDefault();
+
+            if (!isSupabaseConfigured()) {
+                showAuthError('Supabase is not configured. Please update supabase-config.js');
+                return;
+            }
+
+            hideAuthError();
+            hideAuthSuccess();
+
+            if (currentAuthMode === 'login') {
+                const email = document.getElementById('auth-email').value;
+                const password = document.getElementById('auth-password').value;
+
+                const { user, error } = await signInWithEmail(email, password);
+                if (error) {
+                    showAuthError(error.message);
+                } else {
+                    showAuthSuccess('Signed in successfully!');
+                    setTimeout(() => {
+                        hideAuthModal();
+                        updateAuthUI(user);
+                        toggleUserProfile(true);
+                        const profileName = document.getElementById('profile-username');
+                        if (profileName && user.email) {
+                            profileName.textContent = user.user_metadata?.nickname || user.email.split('@')[0];
+                        }
+                    }, 1000);
+                }
+            } else {
+                // Register mode - get values from register form
+                const nickname = document.getElementById('auth-nickname').value;
+                const email = document.getElementById('auth-register-email').value;
+                const password = document.getElementById('auth-register-password').value;
+                const termsAccepted = document.getElementById('auth-terms').checked;
+
+                if (!termsAccepted) {
+                    showAuthError('Please accept the Sticker Rules & Privacy policy');
+                    return;
+                }
+
+                if (nickname.length < 3) {
+                    showAuthError('Nickname must be at least 3 characters');
+                    return;
+                }
+
+                // Check if nickname is available
+                const isAvailable = await isNicknameAvailable(nickname);
+                if (!isAvailable) {
+                    showAuthError('This nickname is already taken. Please choose another one.');
+                    return;
+                }
+
+                const { user, error } = await signUpWithEmail(email, password);
+                if (error) {
+                    showAuthError(error.message);
+                } else {
+                    const client = getSupabaseClient();
+                    if (client && user) {
+                        try {
+                            await client.auth.updateUser({ data: { nickname: nickname } });
+                        } catch (e) { console.error('Error updating profile:', e); }
+                    }
+                    showAuthSuccess('Account created! Welcome ' + nickname);
+                    setTimeout(() => {
+                        hideAuthModal();
+                        updateAuthUI(user);
+                        toggleUserProfile(true);
+                        const profileName = document.getElementById('profile-username');
+                        if (profileName) { profileName.textContent = nickname; }
+                    }, 1500);
+                }
+            }
+        }
+
+        async function handleGoogleSignIn() {
+            if (!isSupabaseConfigured()) {
+                showAuthError('Supabase is not configured. Please update supabase-config.js');
+                return;
+            }
+
+            const { error } = await signInWithGoogle();
+            if (error) {
+                showAuthError(error.message);
+            }
+            // Note: Successful OAuth will redirect, so no success handling needed here
+        }
+
+        async function handleSignOut() {
+            const { error } = await signOut();
+            if (!error) {
+                updateAuthUI(null);
+                hideUserDropdown();
+            }
+        }
+
+        function showAuthError(message) {
+            const errorDiv = document.getElementById('auth-error');
+            if (errorDiv) {
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function hideAuthError() {
+            const errorDiv = document.getElementById('auth-error');
+            if (errorDiv) errorDiv.style.display = 'none';
+        }
+
+        function showAuthSuccess(message) {
+            const successDiv = document.getElementById('auth-success');
+            if (successDiv) {
+                successDiv.textContent = message;
+                successDiv.style.display = 'block';
+            }
+        }
+
+        function hideAuthSuccess() {
+            const successDiv = document.getElementById('auth-success');
+            if (successDiv) successDiv.style.display = 'none';
+        }
+
+        function toggleUserDropdown() {
+            const dropdown = document.getElementById('auth-user-dropdown');
+            if (dropdown) {
+                dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+
+        function hideUserDropdown() {
+            const dropdown = document.getElementById('auth-user-dropdown');
+            if (dropdown) dropdown.style.display = 'none';
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const container = document.getElementById('auth-container');
+            const dropdown = document.getElementById('auth-user-dropdown');
+            if (container && dropdown && !container.contains(e.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // ============================================
+        // MY CHARACTERS UI
+        // ============================================
+
+        async function openMyCharacters() {
+            hideUserDropdown();
+            const modal = document.getElementById('my-characters-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+                await loadMyCharactersList();
+            }
+        }
+
+        function hideMyCharactersModal() {
+            const modal = document.getElementById('my-characters-modal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        async function loadMyCharactersList() {
+            const listContainer = document.getElementById('my-characters-list');
+            if (!listContainer) return;
+
+            listContainer.innerHTML = `<div style="text-align: center; color: rgba(255,255,255,0.5); padding: 2rem; grid-column: 1/-1;">${languageManager.getTranslation('msg-loading')}</div>`;
+
+            const { data: characters, error } = await loadUserCharacters();
+
+            if (error) {
+                listContainer.innerHTML = `<div style="text-align: center; color: #ff6b6b; padding: 2rem; grid-column: 1/-1;">Error: ${error.message}</div>`;
+                return;
+            }
+
+            if (!characters || characters.length === 0) {
+                listContainer.innerHTML = `<div style="text-align: center; color: rgba(255,255,255,0.5); padding: 2rem; grid-column: 1/-1;">${languageManager.getTranslation('msg-no-characters')}</div>`;
+                return;
+            }
+
+            listContainer.innerHTML = '';
+
+            characters.forEach(char => {
+                const card = document.createElement('div');
+                card.style.cssText = 'background: rgba(0,0,0,0.3); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: all 0.3s; border: 2px solid transparent;';
+                card.onmouseover = () => { card.style.borderColor = '#ffee00'; card.style.transform = 'scale(1.05)'; };
+                card.onmouseout = () => { card.style.borderColor = 'transparent'; card.style.transform = 'scale(1)'; };
+
+                const thumbnail = char.thumbnail || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23334" width="100" height="100"/><text x="50" y="55" text-anchor="middle" fill="%23ffee00" font-size="40">?</text></svg>';
+
+                card.innerHTML = `
+                    <img src="${thumbnail}" alt="${char.name}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; margin-bottom: 8px;">
+                    <div style="color: white; font-weight: 600; font-size: 0.9rem; margin-bottom: 4px;">${char.name}</div>
+                    <div style="color: rgba(255,255,255,0.5); font-size: 0.75rem;">${new Date(char.created_at).toLocaleDateString()}</div>
+                    <div style="display: flex; gap: 5px; margin-top: 8px;">
+                        <button onclick="event.stopPropagation(); loadSavedCharacter('${char.id}')" style="flex: 1; padding: 6px; background: #ffee00; border: none; border-radius: 6px; color: #001628; font-weight: 600; font-size: 0.75rem; cursor: pointer;" data-i18n="cat-load-btn">Load</button>
+                        <button onclick="event.stopPropagation(); deleteSavedCharacter('${char.id}')" style="padding: 6px 10px; background: rgba(255,107,107,0.3); border: none; border-radius: 6px; color: #ff6b6b; font-size: 0.75rem; cursor: pointer;">🗑</button>
+                    </div>
+                `;
+
+                listContainer.appendChild(card);
+            });
+        }
+
+        async function loadSavedCharacter(id) {
+            const { data: character, error } = await loadCharacterById(id);
+            if (error) {
+                alert('Error loading character: ' + error.message);
+                return;
+            }
+
+            await applyCharacterToModel(character);
+            hideMyCharactersModal();
+
+            // Show character name
+            if (typeof showCharacterName === 'function') {
+                showCharacterName(character.name);
+            }
+        }
+
+        async function deleteSavedCharacter(id) {
+            if (!confirm(languageManager.getTranslation('msg-confirm-delete'))) return;
+
+            const { error } = await deleteCharacter(id);
+            if (error) {
+                alert('Error deleting character: ' + error.message);
+                return;
+            }
+
+            // Refresh the list
+            await loadMyCharactersList();
+        }
+
+        // ============================================
+        // SAVE CHARACTER UI
+        // ============================================
+
+        async function promptSaveCharacter() {
+            const user = await getCurrentUser();
+            if (!user) {
+                showAuthModal();
+                return;
+            }
+
+            const name = prompt(languageManager.getTranslation('msg-enter-name'));
+            if (!name || name.trim() === '') return;
+
+            // Capture thumbnail
+            const thumbnail = captureCharacterThumbnail();
+
+            const { data, error } = await saveCharacter(name.trim(), thumbnail);
+            if (error) {
+                alert('Error saving character: ' + error.message);
+            } else {
+                alert(languageManager.getTranslation('msg-save-success'));
+            }
+        }
+
+        // Add save button click handler after DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add click handler for save character button if it exists
+            const saveBtn = document.getElementById('save-character-btn');
+            if (saveBtn) {
+                saveBtn.addEventListener('click', promptSaveCharacter);
+            }
+        });
+
+        // ============================================
+        // EXPOSE FUNCTIONS TO GLOBAL SCOPE
+        // (Required for inline onclick handlers)
+        // ============================================
+        window.showAuthModal = showAuthModal;
+        window.hideAuthModal = hideAuthModal;
+        window.switchAuthTab = switchAuthTab;
+        window.handleAuthSubmit = handleAuthSubmit;
+        window.handleGoogleSignIn = handleGoogleSignIn;
+        window.handleSignOut = handleSignOut;
+        window.toggleUserDropdown = toggleUserDropdown;
+        window.openMyCharacters = openMyCharacters;
+        window.hideMyCharactersModal = hideMyCharactersModal;
+        window.loadSavedCharacter = loadSavedCharacter;
+        window.deleteSavedCharacter = deleteSavedCharacter;
+        window.promptSaveCharacter = promptSaveCharacter;
     </script>
+    <!-- USER PROFILE VIEW (Hidden by default) -->
+    <div id="user-profile-view"
+        style="display: none; position: fixed; inset: 0; z-index: 9000; overflow-y: auto; background-color: #E0F2FE; background-image: linear-gradient(#D1E9FF 2px, transparent 2px), linear-gradient(90deg, #D1E9FF 2px, transparent 2px); background-size: 30px 30px;">
+
+        <!-- Desktop Header -->
+        <header
+            class="sticky top-0 z-50 px-4 md:px-8 py-4 flex justify-between items-center bg-transparent backdrop-blur-sm">
+            <div class="flex items-center gap-4 md:gap-6">
+                <div
+                    class="bg-sticker-yellow border-4 border-black px-4 md:px-6 py-2 -rotate-2 shadow-sticker-sm hover:rotate-0 transition-transform cursor-pointer">
+                    <span class="text-black font-black text-xl md:text-2xl uppercase tracking-wider">Papelcool</span>
+                </div>
+                <nav
+                    class="hidden md:flex items-center gap-2 ml-8 bg-white/80 border-2 border-black/10 rounded-full px-2 py-2 backdrop-blur-md shadow-sm">
+                    <a onclick="toggleUserProfile()" class="sidebar-link active text-black cursor-pointer" href="#">
+                        <span class="material-symbols-outlined font-bold">home</span>
+                    </a>
+                    <a class="sidebar-link text-gray-500 hover:text-black cursor-pointer" href="#">
+                        <span class="material-symbols-outlined font-bold">explore</span>
+                    </a>
+                    <a class="sidebar-link text-gray-500 hover:text-black cursor-pointer" href="#">
+                        <span class="material-symbols-outlined font-bold">group</span>
+                    </a>
+                    <a class="sidebar-link text-gray-500 hover:text-black cursor-pointer" href="#">
+                        <span class="material-symbols-outlined font-bold">storefront</span>
+                    </a>
+                </nav>
+            </div>
+            <div class="flex items-center gap-2 md:gap-3">
+                <!-- Creator Search -->
+                <div class="relative hidden md:block">
+                    <div
+                        class="flex items-center gap-2 bg-white border-4 border-black rounded-xl px-3 py-1.5 shadow-sticker-sm transition-all focus-within:shadow-none focus-within:translate-y-0.5 min-w-[200px] lg:min-w-[280px]">
+                        <span class="material-symbols-outlined text-black font-black text-xl">search</span>
+                        <input type="text" id="creator-search-input" placeholder="Find creators..."
+                            class="w-full bg-transparent border-none outline-none font-bold text-black text-xs md:text-sm placeholder-black/40"
+                            data-i18n="cat-search-placeholder" style="font-family: 'Fredoka', sans-serif;">
+                    </div>
+                    <!-- Search Results -->
+                    <div id="creator-search-results"
+                        class="absolute top-full left-0 right-0 mt-2 bg-white border-4 border-black rounded-xl shadow-sticker-md overflow-hidden z-[100] hidden">
+                        <div class="p-2 border-b-2 border-black/10 bg-gray-50">
+                            <span class="text-[10px] font-black uppercase text-gray-400 tracking-widest">Matching
+                                Creators</span>
+                        </div>
+                        <div id="results-list" class="max-h-[240px] overflow-y-auto">
+                            <!-- Results inject here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Button -->
+                <button
+                    class="w-10 h-10 md:w-11 md:h-11 bg-sticker-pink border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center text-white hover:scale-105 active:scale-95 transition-transform cursor-pointer">
+                    <span class="material-symbols-outlined font-black">add</span>
+                </button>
+
+                <!-- Profile/User Button (Square now as requested) -->
+                <button onclick="toggleUserDropdown()"
+                    class="w-10 h-10 md:w-11 md:h-11 bg-sticker-yellow border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:scale-105 active:scale-95 transition-transform cursor-pointer">
+                    <span class="font-black text-black text-lg" style="font-family: 'Fredoka', sans-serif;">J</span>
+                </button>
+
+                <!-- Secondary Profile Avatar (Square as requested for consistency) -->
+                <div
+                    class="w-10 h-10 md:w-11 md:h-11 bg-sticker-blue border-4 border-black rounded-xl overflow-hidden shadow-sticker-sm">
+                    <img alt="Profile" class="w-full h-full object-cover"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSSDWpGe4h08WcYL5dAVPdd17QUJ0nwCl4z_cscJ6G-dD9eszEE87b8jT0WngxN5uqqixLsGlYSj8B0JAVHwNoBgCmwix8fayeWVNbB5xdS4gaYUMsMj-kfbhw0MTMBUIKjuMsvh1rCxtZpP-9NMGFoJokVUrSAKtqqOK5UTDpHc5DoM1FvzuFdj2pBOUt5qpK35ZKvHBx_sIh5qhC6fWT_osvFT7ecn2w8iqG8CyK74IUR2CV7ZwYwi9WY2q6QyZTSo7xLtc7rwc" />
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content: Optimized Full Width Layout -->
+        <main class="flex-grow flex flex-col w-full px-4 md:px-12 py-8 gap-12 relative">
+
+
+
+            <!-- MAIN: Profile Info & Showcase -->
+            <section class="relative w-full flex flex-col justify-center z-30 pb-12">
+                <!-- Profile Card -->
+                <div class="relative mb-8 md:mb-12 transform hover:-translate-y-1 transition-transform duration-300">
+                    <div class="absolute -top-3 -left-3 z-50">
+                        <div class="pin-head bg-sticker-pink w-5 h-5 md:w-6 md:h-6 border-2 border-black"></div>
+                    </div>
+                    <div class="absolute -top-3 -right-3 z-50">
+                        <div class="pin-head bg-sticker-yellow w-5 h-5 md:w-6 md:h-6 border-2 border-black"></div>
+                    </div>
+
+                    <div class="paper-card rounded-3xl p-6 md:p-8 shadow-sticker rotate-1 bg-white relative">
+                        <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12 mb-8 md:mb-12">
+                            <!-- Circular Profile Photo with Giant Shadow -->
+                            <div class="relative flex-shrink-0">
+                                <div
+                                    class="w-40 h-40 md:w-56 md:h-56 rounded-full border-[6px] border-black overflow-hidden bg-white shadow-sticker-giant transform -rotate-1 flex items-center justify-center">
+                                    <img id="profile-avatar-img-circle" alt="Profile" class="w-full h-full object-cover"
+                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSSDWpGe4h08WcYL5dAVPdd17QUJ0nwCl4z_cscJ6G-dD9eszEE87b8jT0WngxN5uqqixLsGlYSj8B0JAVHwNoBgCmwix8fayeWVNbB5xdS4gaYUMsMj-kfbhw0MTMBUIKjuMsvh1rCxtZpP-9NMGFoJokVUrSAKtqqOK5UTDpHc5DoM1FvzuFdj2pBOUt5qpK35ZKvHBx_sIh5qhC6fWT_osvFT7ecn2w8iqG8CyK74IUR2CV7ZwYwi9WY2q6QyZTSo7xLtc7rwc" />
+                                </div>
+                                <!-- Pro Builder Badge -->
+                                <div
+                                    class="absolute -top-3 -right-3 bg-sticker-blue border-4 border-black px-4 py-2 rounded-full rotate-12 shadow-sticker">
+                                    <span class="text-white text-xs md:text-sm font-black uppercase tracking-wider"
+                                        data-i18n="cat-pro-builder">Pro
+                                        Builder</span>
+                                </div>
+                            </div>
+
+                            <div class="flex-grow">
+                                <div class="flex items-center gap-2 md:gap-3 mb-1 flex-wrap">
+                                    <h1 id="profile-username"
+                                        class="text-3xl md:text-5xl font-black uppercase tracking-tight leading-none">
+                                        StickerKing_99</h1>
+                                    <span class="material-symbols-outlined text-sticker-blue text-2xl md:text-3xl"
+                                        title="Verified Creator" data-i18n="cat-verified-title">verified</span>
+                                </div>
+                                <p
+                                    class="text-gray-400 text-xs md:text-sm font-bold uppercase tracking-[0.15em] md:tracking-[0.2em]">
+                                    <span data-i18n="prof-level-prefix">Level</span> 42 Creator • <span
+                                        data-i18n="prof-joined-prefix">Joined</span> 2023
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
+                            <div class="flex-1">
+                                <div class="relative">
+                                    <span
+                                        class="absolute -top-4 -left-2 text-4xl md:text-6xl text-sticker-blue/20 font-serif">"</span>
+                                    <p
+                                        class="font-handwritten text-xl md:text-3xl text-gray-800 leading-tight py-2 pl-4">
+                                        Just a paper soul living in a digital scrapbook. Catch me building 3D stickers
+                                        at 3AM!
+                                    </p>
+                                    <span
+                                        class="absolute -bottom-6 md:-bottom-8 right-0 text-4xl md:text-6xl text-sticker-blue/20 font-serif rotate-180">"</span>
+                                </div>
+                            </div>
+                            <div class="flex flex-row md:flex-col gap-3 w-full md:min-w-[180px] md:w-auto">
+                                <button id="profile-follow-btn"
+                                    class="bg-sticker-green border-4 border-black h-12 md:h-14 flex-1 md:w-full rounded-xl shadow-sticker-sm flex items-center justify-center gap-2 md:gap-3 active:translate-y-1 active:shadow-none transition-all group hover:bg-[#25a25a] cursor-pointer">
+                                    <div
+                                        class="w-5 h-6 md:w-6 md:h-8 bg-white lightning-bolt border-2 border-black flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    </div>
+                                    <span
+                                        class="text-white font-black text-base md:text-xl uppercase italic tracking-wider"
+                                        data-i18n="cat-follow">Follow</span>
+                                </button>
+                                <div class="flex gap-2 md:gap-3">
+                                    <button
+                                        class="flex-1 h-10 md:h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-yellow transition-colors group cursor-pointer">
+                                        <span
+                                            class="material-symbols-outlined font-bold group-hover:scale-110 transition-transform"
+                                            title="Share Profile" data-i18n="prof-share-title">share</span>
+                                    </button>
+                                    <button
+                                        class="flex-1 h-10 md:h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-pink hover:text-white transition-colors group cursor-pointer">
+                                        <span
+                                            class="material-symbols-outlined font-bold group-hover:scale-110 transition-transform"
+                                            title="Send Message" data-i18n="prof-message-title">mail</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tape element -->
+                    <div
+                        class="absolute -top-5 md:-top-6 left-1/2 -translate-x-1/2 w-24 md:w-32 h-8 md:h-10 bg-sticker-orange/40 border-l-2 border-r-2 border-white/30 backdrop-blur-sm -rotate-2 z-40 pointer-events-none">
+                    </div>
+                </div>
+
+                <!-- Recent Creations -->
+                <div class="relative">
+                    <div class="flex items-center justify-between mb-4 md:mb-6 flex-wrap gap-2">
+                        <div class="flex items-center gap-2 md:gap-3">
+                            <h2 class="text-lg md:text-2xl font-black uppercase bg-white border-4 border-black px-3 md:px-4 py-1 -rotate-1 shadow-sticker-sm inline-block transform origin-left hover:rotate-0 transition-transform"
+                                data-i18n="cat-recent-creations">
+                                Recent Creations</h2>
+                            <span
+                                class="bg-sticker-pink text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded border-2 border-black -rotate-6"
+                                data-i18n="prof-new-badge">New!</span>
+                        </div>
+                        <button
+                            class="text-xs md:text-sm font-bold uppercase hover:underline flex items-center gap-1 group"
+                            data-i18n="cat-view-all">
+                            View All
+                            <span
+                                class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                        </button>
+                    </div>
+
+                    <div class="flex gap-4 md:gap-6 pb-8 pt-4 px-2 overflow-x-auto hide-scrollbar snap-x w-full">
+                        <!-- Sticker 1 -->
+                        <div
+                            class="min-w-[160px] md:min-w-[200px] w-44 md:w-56 h-56 md:h-72 bg-sticker-pink border-4 border-black rounded-2xl rotate-[-2deg] shadow-sticker hover:rotate-0 transition-all cursor-pointer relative group overflow-hidden snap-center collage-sticker">
+                            <div class="absolute top-0 left-0 w-full h-4 bg-black/10"></div>
+                            <div class="absolute inset-0 flex items-center justify-center p-4 md:p-6">
+                                <span class="font-display text-white/30 font-bold text-5xl md:text-6xl">?</span>
+                            </div>
+                            <div
+                                class="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4 bg-white border-4 border-black px-2 py-1 md:py-2 shadow-sm transform group-hover:-translate-y-1 transition-transform">
+                                <div class="text-[10px] md:text-xs font-black uppercase text-center tracking-wider">Neon
+                                    Bot</div>
+                                <div class="text-[8px] md:text-[10px] text-gray-500 text-center font-bold">Rare • Gen 1
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sticker 2 -->
+                        <div
+                            class="min-w-[160px] md:min-w-[200px] w-44 md:w-56 h-56 md:h-72 bg-sticker-yellow border-4 border-black rounded-2xl rotate-[1deg] shadow-sticker hover:rotate-0 transition-all cursor-pointer relative group overflow-hidden snap-center collage-sticker">
+                            <div class="absolute top-0 left-0 w-full h-4 bg-black/10"></div>
+                            <div class="absolute inset-0 flex items-center justify-center p-4 md:p-6">
+                                <span class="font-display text-black/20 font-bold text-5xl md:text-6xl">?</span>
+                            </div>
+                            <div
+                                class="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4 bg-white border-4 border-black px-2 py-1 md:py-2 shadow-sm transform group-hover:-translate-y-1 transition-transform">
+                                <div class="text-[10px] md:text-xs font-black uppercase text-center tracking-wider">
+                                    Goldie V1</div>
+                                <div class="text-[8px] md:text-[10px] text-gray-500 text-center font-bold">Legendary
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sticker 3 -->
+                        <div
+                            class="min-w-[160px] md:min-w-[200px] w-44 md:w-56 h-56 md:h-72 bg-sticker-blue border-4 border-black rounded-2xl rotate-[-1deg] shadow-sticker hover:rotate-0 transition-all cursor-pointer relative group overflow-hidden snap-center collage-sticker">
+                            <div class="absolute top-0 left-0 w-full h-4 bg-black/10"></div>
+                            <div class="absolute inset-0 flex items-center justify-center p-4 md:p-6">
+                                <span class="font-display text-white/30 font-bold text-5xl md:text-6xl">?</span>
+                            </div>
+                            <div
+                                class="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4 bg-white border-4 border-black px-2 py-1 md:py-2 shadow-sm transform group-hover:-translate-y-1 transition-transform">
+                                <div class="text-[10px] md:text-xs font-black uppercase text-center tracking-wider">Blue
+                                    Ace</div>
+                                <div class="text-[8px] md:text-[10px] text-gray-500 text-center font-bold">Epic • Foil
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Add New Sticker -->
+                        <div
+                            class="min-w-[120px] md:min-w-[160px] w-32 md:w-44 h-56 md:h-72 bg-white/20 border-4 border-dashed border-black/30 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-white/40 transition-colors snap-center">
+                            <span class="material-symbols-outlined text-black/40 text-4xl md:text-5xl">add</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Decorative Background Elements -->
+        <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+            <div class="absolute top-20 left-10 opacity-50 rotate-12">
+                <div class="w-4 h-4 bg-sticker-pink rounded-full"></div>
+            </div>
+            <div class="absolute bottom-10 left-1/4 opacity-50 -rotate-12">
+                <div class="w-6 h-6 border-4 border-sticker-blue rotate-45"></div>
+            </div>
+            <div class="absolute top-1/3 right-10 opacity-30 hidden md:block">
+                <svg fill="none" height="100" stroke="black" stroke-dasharray="4 4" stroke-width="2"
+                    viewBox="0 0 100 100" width="100">
+                    <circle cx="50" cy="50" r="40"></circle>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Mobile Bottom Navigation (hidden on desktop) -->
+        <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex md:hidden items-end gap-4">
+            <button onclick="toggleUserProfile()"
+                class="w-12 h-12 bg-sticker-yellow border-4 border-black rounded-2xl shadow-sticker flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer">
+                <span class="material-symbols-outlined text-2xl text-black font-bold">home</span>
+            </button>
+            <button onclick="toggleUserProfile()"
+                class="w-16 h-16 bg-sticker-pink border-4 border-black rounded-2xl shadow-sticker flex items-center justify-center hover:scale-105 active:scale-95 transition-all -mb-1 cursor-pointer z-10">
+                <span class="material-symbols-outlined text-white text-4xl font-bold">add</span>
+            </button>
+            <button
+                class="w-12 h-12 bg-white border-4 border-black rounded-2xl shadow-sticker flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer">
+                <span class="material-symbols-outlined text-2xl text-black font-bold">person</span>
+            </button>
+        </div>
+    </div>
 </body>
 
 </html>
