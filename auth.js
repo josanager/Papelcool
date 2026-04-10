@@ -285,6 +285,7 @@ window.searchCreators = searchCreators;
  */
 function updateAuthUI(user) {
     const loginBtn = document.getElementById('auth-login-btn');
+    const registerBtn = document.getElementById('auth-register-btn');
     const userMenu = document.getElementById('auth-user-menu');
     const userEmail = document.getElementById('auth-user-email');
     const userAvatar = document.getElementById('auth-user-avatar');
@@ -292,6 +293,7 @@ function updateAuthUI(user) {
     if (user) {
         // User is logged in
         if (loginBtn) loginBtn.style.display = 'none';
+        if (registerBtn) registerBtn.style.display = 'none';
         if (userMenu) userMenu.style.display = 'flex';
         if (userEmail) userEmail.textContent = user.email;
         if (userAvatar) {
@@ -306,6 +308,7 @@ function updateAuthUI(user) {
     } else {
         // User is logged out
         if (loginBtn) loginBtn.style.display = 'flex';
+        if (registerBtn) registerBtn.style.display = 'flex';
         if (userMenu) userMenu.style.display = 'none';
 
         // Disable save character button
