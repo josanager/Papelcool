@@ -330,3 +330,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         updateAuthUI(session?.user || null);
     });
 });
+
+// ============================================
+// EXPOSE FUNCTIONS TO GLOBAL SCOPE
+// (Required for main page interaction)
+// ============================================
+window.signUpWithEmail = signUpWithEmail;
+window.signInWithEmail = signInWithEmail;
+window.signInWithGoogle = signInWithGoogle;
+window.signOut = signOut;
+window.getCurrentUser = getCurrentUser;
+window.getCurrentSession = getCurrentSession;
+window.onAuthStateChange = onAuthStateChange;
+window.upsertUserProfile = upsertUserProfile;
+window.searchCreators = searchCreators;
+window.isNicknameAvailable = isNicknameAvailable;
+window.updateAuthUI = updateAuthUI;
