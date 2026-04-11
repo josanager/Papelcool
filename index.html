@@ -8402,9 +8402,6 @@
             const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
             const svgElement = svgDoc.documentElement;
 
-            // Contador para debug
-            let elementsColored = 0;
-
             // Buscar TODOS los elementos con atributo fill (incluyendo blancos, grises, etc.)
             const elementsWithFill = svgElement.querySelectorAll('[fill]');
             elementsWithFill.forEach(el => {
@@ -8413,7 +8410,6 @@
                 // Colorear TODO excepto 'none' y 'transparent'
                 if (currentFill && currentFill !== 'none' && currentFill !== 'transparent') {
                     el.setAttribute('fill', color);
-                    elementsColored++;
                 }
             });
 
@@ -8433,7 +8429,6 @@
                             return `fill:${color}`;
                         });
                     el.setAttribute('style', newStyle);
-                    elementsColored++;
                 }
             });
 
@@ -9149,10 +9144,10 @@
         };
 
         // Event listener para el botón de descargar PDF
-        if (downloadPdfBtn) {
+        if (typeof downloadPdfBtn !== 'undefined' && downloadPdfBtn) {
             downloadPdfBtn.addEventListener('click', triggerGeneratePDF);
         }
-        if (downloadPdfBtnMoved) {
+        if (typeof downloadPdfBtnMoved !== 'undefined' && downloadPdfBtnMoved) {
             downloadPdfBtnMoved.addEventListener('click', triggerGeneratePDF);
         } animate();
 
