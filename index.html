@@ -3500,7 +3500,8 @@
                                             onblur="this.style.borderColor='#E5E7EB'"
                                             data-i18n="auth-password-placeholder">
                                         <span class="material-symbols-outlined"
-                                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 22px;">lock</span>
+                                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 22px; cursor: pointer;"
+                                            onclick="const input = document.getElementById('auth-password'); if (input.type === 'password') { input.type = 'text'; this.textContent = 'visibility_off'; } else { input.type = 'password'; this.textContent = 'visibility'; }">visibility</span>
                                     </div>
                                 </div>
                                 <div style="padding-top: 8px;">
@@ -3632,7 +3633,8 @@
                                             onblur="this.style.borderColor='#E5E7EB'"
                                             data-i18n="auth-password-placeholder">
                                         <span class="material-symbols-outlined"
-                                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 22px;">lock</span>
+                                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 22px; cursor: pointer;"
+                                            onclick="const input = document.getElementById('auth-register-password'); if (input.type === 'password') { input.type = 'text'; this.textContent = 'visibility_off'; } else { input.type = 'password'; this.textContent = 'visibility'; }">visibility</span>
                                     </div>
                                 </div>
 
