@@ -2053,27 +2053,25 @@
         .social-btn {
             width: 48px;
             height: 48px;
-            border-radius: 50%;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 2px solid rgba(0, 0, 0, 0.1);
+            background: #fff;
+            border: 4px solid #000;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 1);
             text-decoration: none;
         }
 
         .social-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+            transform: translateY(-2px);
         }
 
         .social-btn:active {
-            transform: scale(1.02);
+            transform: translateY(2px);
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 1);
         }
 
         .social-btn svg {
@@ -3422,6 +3420,858 @@
                 flex-direction: row !important;
             }
         }
+
+        :root {
+            --pc-ink: #111111;
+            --pc-cream: #fff7ec;
+            --pc-shell: #f3f8ff;
+            --pc-panel: #fffef8;
+            --pc-shadow: 6px 6px 0 rgba(0, 0, 0, 1);
+            --pc-shadow-pressed: 2px 2px 0 rgba(0, 0, 0, 1);
+        }
+
+        .pc-auth-motion {
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, color 0.18s ease !important;
+            transform: translateY(0);
+        }
+
+        .pc-auth-motion:hover {
+            transform: translateY(-2px);
+        }
+
+        .pc-auth-motion:active {
+            transform: translateY(2px);
+            box-shadow: var(--pc-shadow-pressed) !important;
+        }
+
+        #social-media-buttons .social-btn,
+        #preset-action-buttons .preset-action-btn,
+        #download-pdf-btn,
+        #showcase-filter-cta,
+        #authenticated-home-view .pc-home-btn,
+        #authenticated-home-view .pc-home-icon,
+        #authenticated-home-view .pc-home-chip {
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, color 0.18s ease !important;
+        }
+
+        #social-media-buttons .social-btn:hover,
+        #preset-action-buttons .preset-action-btn:hover,
+        #download-pdf-btn:hover,
+        #showcase-filter-cta:hover,
+        #authenticated-home-view .pc-home-btn:hover,
+        #authenticated-home-view .pc-home-icon:hover,
+        #authenticated-home-view .pc-home-chip:hover {
+            transform: translateY(-2px) !important;
+        }
+
+        #social-media-buttons .social-btn:active,
+        #preset-action-buttons .preset-action-btn:active,
+        #download-pdf-btn:active,
+        #showcase-filter-cta:active,
+        #authenticated-home-view .pc-home-btn:active,
+        #authenticated-home-view .pc-home-icon:active,
+        #authenticated-home-view .pc-home-chip:active {
+            transform: translateY(2px) !important;
+            box-shadow: var(--pc-shadow-pressed) !important;
+        }
+
+        #social-media-buttons .social-btn svg,
+        #preset-action-buttons .preset-action-btn svg {
+            transform: none !important;
+            transition: none !important;
+        }
+
+        #social-media-buttons .social-btn:hover svg,
+        #preset-action-buttons .preset-action-btn:hover svg {
+            transform: none !important;
+        }
+
+        #showcase-filter-cta {
+            position: fixed;
+            right: 24px;
+            bottom: 120px;
+            z-index: 26;
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #FFE600 0%, #FFB800 100%);
+            color: var(--pc-ink);
+            border: 4px solid #000;
+            border-radius: 999px;
+            box-shadow: var(--pc-shadow);
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            text-decoration: none;
+            max-width: min(320px, calc(100vw - 32px));
+        }
+
+        #showcase-filter-cta.active {
+            display: inline-flex;
+        }
+
+        #showcase-filter-cta .cta-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            height: 42px;
+            flex-shrink: 0;
+            border: 3px solid #000;
+            border-radius: 14px;
+            background: #FF4D94;
+            color: #fff;
+            box-shadow: 3px 3px 0 rgba(0, 0, 0, 1);
+        }
+
+        #showcase-filter-cta .cta-copy {
+            display: flex;
+            flex-direction: column;
+            line-height: 1;
+        }
+
+        #showcase-filter-cta .cta-copy small {
+            font-size: 0.72rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            opacity: 0.8;
+            margin-bottom: 0.3rem;
+        }
+
+        #showcase-filter-cta .cta-copy strong {
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+
+        @keyframes pc-tiktok-nudge {
+            0%, 84%, 100% {
+                transform: translate3d(0, 0, 0) rotate(0deg);
+            }
+
+            86% {
+                transform: translate3d(-2px, 0, 0) rotate(-1deg);
+            }
+
+            88% {
+                transform: translate3d(2px, 0, 0) rotate(1deg);
+            }
+
+            90% {
+                transform: translate3d(-2px, 0, 0) rotate(-1deg);
+            }
+
+            92% {
+                transform: translate3d(0, 0, 0) rotate(0deg);
+            }
+        }
+
+        #showcase-filter-cta.active {
+            animation: pc-tiktok-nudge 6.5s ease-in-out infinite;
+        }
+
+        #authenticated-home-view {
+            position: fixed;
+            inset: 0;
+            z-index: 8500;
+            display: none;
+            overflow-y: auto;
+            background:
+                radial-gradient(circle at top left, rgba(255, 230, 0, 0.26), transparent 30%),
+                radial-gradient(circle at bottom right, rgba(64, 123, 255, 0.18), transparent 32%),
+                linear-gradient(180deg, #fffef8 0%, #edf5ff 100%);
+            color: var(--pc-ink);
+        }
+
+        #authenticated-home-view.active {
+            display: block;
+        }
+
+        .pc-home-shell {
+            min-height: 100%;
+            padding-bottom: 6rem;
+        }
+
+        .pc-home-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 1.25rem;
+            background: rgba(17, 17, 17, 0.95);
+            border-bottom: 3px solid #000;
+            backdrop-filter: blur(10px);
+        }
+
+        .pc-home-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #fff;
+            text-decoration: none;
+            flex-shrink: 0;
+        }
+
+        .pc-home-brand-badge {
+            padding: 0.8rem 1rem;
+            border: 3px solid #000;
+            border-radius: 18px;
+            background: #FFE600;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 1);
+            color: var(--pc-ink);
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 1rem;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .pc-home-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex: 1;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .pc-home-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            padding: 0.8rem 1rem;
+            border: 3px solid #000;
+            border-radius: 999px;
+            background: #fff;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 1);
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--pc-ink);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .pc-home-search {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            min-width: 240px;
+            padding: 0.85rem 1rem;
+            border: 3px solid #000;
+            border-radius: 999px;
+            background: #fff;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 1);
+            color: var(--pc-ink);
+        }
+
+        .pc-home-search input {
+            width: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: var(--pc-ink);
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+
+        .pc-home-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .pc-home-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
+            border: 3px solid #000;
+            border-radius: 18px;
+            background: #fff;
+            color: var(--pc-ink);
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 1);
+            cursor: pointer;
+        }
+
+        .pc-home-avatar {
+            background: #FFE600;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .pc-home-content {
+            width: min(1360px, calc(100% - 32px));
+            margin: 0 auto;
+            padding: 2rem 0 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .pc-home-hero {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+            gap: 1.25rem;
+        }
+
+        .pc-home-panel {
+            position: relative;
+            border: 4px solid #000;
+            border-radius: 36px;
+            background: rgba(255, 255, 255, 0.92);
+            box-shadow: 10px 10px 0 rgba(0, 0, 0, 1);
+            overflow: hidden;
+        }
+
+        .pc-home-hero-copy {
+            padding: clamp(1.5rem, 3vw, 3rem);
+            background:
+                linear-gradient(135deg, rgba(255, 230, 0, 0.55), rgba(255, 255, 255, 0) 55%),
+                linear-gradient(180deg, #fff8e8 0%, #fff 100%);
+        }
+
+        .pc-home-kicker {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.45rem 0.9rem;
+            border: 3px solid #000;
+            border-radius: 999px;
+            background: #fff;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .pc-home-hero-copy h1 {
+            margin: 0;
+            font-family: 'Fredoka', sans-serif;
+            font-size: clamp(2.4rem, 4vw, 4.6rem);
+            font-weight: 700;
+            line-height: 0.94;
+            letter-spacing: -0.04em;
+            max-width: 11ch;
+        }
+
+        .pc-home-hero-copy p {
+            margin: 1rem 0 0;
+            max-width: 56ch;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: rgba(17, 17, 17, 0.78);
+        }
+
+        .pc-home-cta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.85rem;
+            margin-top: 1.5rem;
+        }
+
+        .pc-home-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            padding: 1rem 1.3rem;
+            border: 4px solid #000;
+            border-radius: 999px;
+            background: #FF4D94;
+            color: #fff;
+            box-shadow: 6px 6px 0 rgba(0, 0, 0, 1);
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .pc-home-btn--light {
+            background: #fff;
+            color: var(--pc-ink);
+        }
+
+        .pc-home-btn--blue {
+            background: #407BFF;
+            color: #fff;
+        }
+
+        .pc-home-stat-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1.25rem;
+        }
+
+        .pc-home-stat {
+            min-width: 140px;
+            padding: 0.9rem 1rem;
+            border: 3px solid #000;
+            border-radius: 20px;
+            background: #fff;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 1);
+        }
+
+        .pc-home-stat strong {
+            display: block;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.45rem;
+            line-height: 1;
+        }
+
+        .pc-home-stat span {
+            display: block;
+            margin-top: 0.35rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: rgba(17, 17, 17, 0.6);
+        }
+
+        .pc-home-hero-stack {
+            min-height: 100%;
+            padding: 1.25rem;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(64, 123, 255, 0.18), transparent 34%),
+                linear-gradient(145deg, #111 0%, #222 100%);
+            display: grid;
+            gap: 1rem;
+        }
+
+        .pc-home-hero-card {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 1rem;
+            padding: 1rem;
+            border: 3px solid #000;
+            border-radius: 26px;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--pc-ink);
+            box-shadow: 5px 5px 0 rgba(0, 0, 0, 1);
+        }
+
+        .pc-home-hero-card h3,
+        .pc-home-section-head h2 {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+        }
+
+        .pc-home-hero-card h3 {
+            margin: 0 0 0.35rem;
+            font-size: 1.35rem;
+        }
+
+        .pc-home-hero-card p {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.45;
+            color: rgba(17, 17, 17, 0.7);
+        }
+
+        .pc-home-art-cluster {
+            display: flex;
+            align-items: end;
+            justify-content: end;
+            gap: 0.25rem;
+        }
+
+        .pc-home-art-cluster img {
+            width: 78px;
+            height: 78px;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.18));
+        }
+
+        .pc-home-category-strip,
+        .pc-home-section {
+            padding: 1.2rem;
+        }
+
+        .pc-home-category-strip {
+            display: flex;
+            gap: 0.85rem;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pc-home-category-pill {
+            padding: 0.85rem 1rem;
+            border: 3px solid #000;
+            border-radius: 999px;
+            background: #fff;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 1);
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: default;
+        }
+
+        .pc-home-section {
+            background: rgba(255, 255, 255, 0.82);
+        }
+
+        .pc-home-section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .pc-home-section-head h2 {
+            margin: 0;
+            font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+        }
+
+        .pc-home-section-head p {
+            margin: 0.35rem 0 0;
+            color: rgba(17, 17, 17, 0.66);
+            font-size: 0.95rem;
+        }
+
+        .pc-home-banner-grid,
+        .pc-home-collection-grid,
+        .pc-home-group-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .pc-home-banner-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .pc-home-banner {
+            min-height: 260px;
+            padding: 1.35rem;
+            border: 4px solid #000;
+            border-radius: 30px;
+            box-shadow: 8px 8px 0 rgba(0, 0, 0, 1);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .pc-home-banner::before {
+            content: "";
+            position: absolute;
+            inset: auto -15% -35% auto;
+            width: 220px;
+            height: 220px;
+            background: rgba(255, 255, 255, 0.26);
+            border-radius: 999px;
+            filter: blur(10px);
+        }
+
+        .pc-home-banner[data-tone="pink"] {
+            background: linear-gradient(135deg, #ff5ea8 0%, #ffca63 100%);
+        }
+
+        .pc-home-banner[data-tone="blue"] {
+            background: linear-gradient(135deg, #4b7dff 0%, #96d7ff 100%);
+        }
+
+        .pc-home-banner[data-tone="cream"] {
+            background: linear-gradient(135deg, #fff2c9 0%, #ffd8d8 100%);
+        }
+
+        .pc-home-banner-top {
+            position: relative;
+            z-index: 1;
+        }
+
+        .pc-home-banner-top span {
+            display: inline-flex;
+            padding: 0.42rem 0.7rem;
+            border: 3px solid #000;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.92);
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .pc-home-banner h3 {
+            position: relative;
+            z-index: 1;
+            margin: 0.8rem 0 0.35rem;
+            max-width: 12ch;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.9rem;
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+        }
+
+        .pc-home-banner p {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            max-width: 24ch;
+            font-size: 0.95rem;
+            line-height: 1.45;
+        }
+
+        .pc-home-banner-art {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: end;
+            align-items: end;
+            gap: 0.2rem;
+        }
+
+        .pc-home-banner-art img {
+            width: 96px;
+            height: 96px;
+            object-fit: contain;
+            filter: drop-shadow(0 16px 12px rgba(0, 0, 0, 0.18));
+        }
+
+        .pc-home-collection-grid {
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+        }
+
+        .pc-home-collection-card {
+            padding: 1rem;
+            border: 4px solid #000;
+            border-radius: 24px;
+            background: #fff;
+            box-shadow: 6px 6px 0 rgba(0, 0, 0, 1);
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .pc-home-collection-thumb {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 140px;
+            border: 3px dashed rgba(0, 0, 0, 0.18);
+            border-radius: 20px;
+            background: linear-gradient(180deg, #f4f8ff 0%, #fff7ea 100%);
+        }
+
+        .pc-home-collection-thumb img {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+        }
+
+        .pc-home-collection-card h3,
+        .pc-home-group-card h3 {
+            margin: 0;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.08rem;
+        }
+
+        .pc-home-collection-card p,
+        .pc-home-group-card p {
+            margin: 0;
+            font-size: 0.92rem;
+            line-height: 1.45;
+            color: rgba(17, 17, 17, 0.68);
+        }
+
+        .pc-home-group-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .pc-home-group-card {
+            padding: 1.1rem;
+            border: 4px solid #000;
+            border-radius: 28px;
+            background: #fff;
+            box-shadow: 7px 7px 0 rgba(0, 0, 0, 1);
+        }
+
+        .pc-home-group-top {
+            display: flex;
+            align-items: start;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .pc-home-group-tag {
+            display: inline-flex;
+            padding: 0.35rem 0.65rem;
+            border: 2px solid #000;
+            border-radius: 999px;
+            background: #FFE600;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .pc-home-group-cast {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .pc-home-group-cast img {
+            width: 68px;
+            height: 68px;
+            object-fit: contain;
+            border: 3px solid #000;
+            border-radius: 18px;
+            background: #f7fbff;
+            padding: 0.35rem;
+        }
+
+        .pc-home-footer-note {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .pc-home-note {
+            padding: 1rem;
+            border: 4px solid #000;
+            border-radius: 24px;
+            background: #fff;
+            box-shadow: 6px 6px 0 rgba(0, 0, 0, 1);
+        }
+
+        .pc-home-note strong {
+            display: block;
+            margin-bottom: 0.4rem;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.05rem;
+        }
+
+        .pc-home-mobile-nav {
+            display: none;
+        }
+
+        @media (max-width: 1180px) {
+            .pc-home-topbar {
+                flex-wrap: wrap;
+            }
+
+            .pc-home-nav {
+                order: 3;
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .pc-home-hero {
+                grid-template-columns: 1fr;
+            }
+
+            .pc-home-banner-grid,
+            .pc-home-group-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pc-home-collection-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            #showcase-filter-cta {
+                right: 16px;
+                left: 16px;
+                bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
+                justify-content: center;
+            }
+
+            .pc-home-shell {
+                padding-bottom: 7.5rem;
+            }
+
+            .pc-home-topbar {
+                padding: 0.9rem 0.85rem;
+            }
+
+            .pc-home-brand-badge,
+            .pc-home-chip,
+            .pc-home-icon {
+                box-shadow: 3px 3px 0 rgba(0, 0, 0, 1);
+            }
+
+            .pc-home-search {
+                min-width: 100%;
+                order: 4;
+            }
+
+            .pc-home-nav {
+                gap: 0.55rem;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 0.2rem;
+            }
+
+            .pc-home-content {
+                width: calc(100% - 20px);
+                padding-top: 1rem;
+            }
+
+            .pc-home-panel,
+            .pc-home-banner,
+            .pc-home-collection-card,
+            .pc-home-group-card,
+            .pc-home-note {
+                border-radius: 24px;
+                box-shadow: 5px 5px 0 rgba(0, 0, 0, 1);
+            }
+
+            .pc-home-hero-copy h1 {
+                max-width: none;
+            }
+
+            .pc-home-category-strip {
+                justify-content: flex-start;
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+
+            .pc-home-collection-grid,
+            .pc-home-footer-note {
+                grid-template-columns: 1fr;
+            }
+
+            .pc-home-mobile-nav {
+                position: fixed;
+                left: 12px;
+                right: 12px;
+                bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+                z-index: 7;
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 0.65rem;
+                padding: 0.75rem;
+                border: 4px solid #000;
+                border-radius: 24px;
+                background: rgba(255, 255, 255, 0.97);
+                box-shadow: 8px 8px 0 rgba(0, 0, 0, 1);
+            }
+
+            .pc-home-mobile-nav .pc-home-chip {
+                padding: 0.8rem 0.6rem;
+                font-size: 0.72rem;
+            }
+        }
     </style>
 
 </head>
@@ -3453,7 +4303,7 @@
     <!-- Auth Button (Login/User Menu) -->
     <div id="auth-container" class="auth-container-responsive">
         <button type="button" id="auth-register-btn" onclick="navigateToView('register')"
-            class="px-4 py-2 bg-sticker-yellow border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-pink transition-colors cursor-pointer"
+            class="pc-auth-motion px-4 py-2 bg-sticker-yellow border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-pink cursor-pointer"
             aria-label="Register">
             <span style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 0.9rem; color: black;"
                 data-i18n="auth-signup-link">Sign Up!</span>
@@ -3461,7 +4311,7 @@
 
         <!-- Login Button (shown when logged out) -->
         <button type="button" id="auth-login-btn" onclick="navigateToView('login')"
-            class="px-4 py-2 bg-white border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-green transition-colors cursor-pointer"
+            class="pc-auth-motion px-4 py-2 bg-white border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-green cursor-pointer"
             aria-label="Login">
             <span style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 0.9rem; color: black;"
                 data-i18n="auth-login-link">Login</span>
@@ -3958,10 +4808,9 @@
     <div id="social-media-buttons" class="flex gap-4 justify-center">
         <!-- TikTok -->
         <a href="https://www.tiktok.com/@papelcool" target="_blank" rel="noopener noreferrer"
-            class="social-btn tiktok w-12 h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-pink transition-colors group"
+            class="social-btn tiktok w-12 h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-pink group"
             aria-label="TikTok">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"
-                class="w-6 h-6 group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" class="w-6 h-6">
                 <path
                     d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
             </svg>
@@ -3969,10 +4818,9 @@
 
         <!-- YouTube -->
         <a href="https://www.youtube.com/@papelcool" target="_blank" rel="noopener noreferrer"
-            class="social-btn youtube w-12 h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-yellow transition-colors group"
+            class="social-btn youtube w-12 h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-yellow group"
             aria-label="YouTube">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"
-                class="w-6 h-6 group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" class="w-6 h-6">
                 <path
                     d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
             </svg>
@@ -3980,15 +4828,28 @@
 
         <!-- Instagram -->
         <a href="https://www.instagram.com/papelcool" target="_blank" rel="noopener noreferrer"
-            class="social-btn instagram w-12 h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-blue transition-colors group"
+            class="social-btn instagram w-12 h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-blue group"
             aria-label="Instagram">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black"
-                class="w-6 h-6 group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" class="w-6 h-6">
                 <path
                     d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
             </svg>
         </a>
     </div>
+
+    <a id="showcase-filter-cta" href="https://www.tiktok.com/@papelcool" target="_blank" rel="noopener noreferrer"
+        aria-label="Prueba nuestros filtros en TikTok">
+        <span class="cta-badge">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
+                <path
+                    d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+            </svg>
+        </span>
+        <span class="cta-copy">
+            <small>Papelcool Lab</small>
+            <strong>Prueba nuestros filtros en TikTok</strong>
+        </span>
+    </a>
 
     <!-- Botones de presets (esquina superior izquierda) -->
     <div id="preset-action-buttons" class="absolute top-4 left-4 flex gap-3 pointer-events-auto">
@@ -4030,23 +4891,15 @@
     <div id="showcase-buttons-container" class="hidden" style="display: none;">
         <div class="showcase-buttons" style="display: flex; gap: 24px; pointer-events: auto;">
             <div class="button-wrap">
-                <button type="button" id="customize-btn" class="showcase-btn"
-                    style="background: #FF4D94; border: 4px solid black; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); border-radius: 20px; padding: 16px 32px; transition: all 0.2s; transform: rotate(-2deg); cursor: pointer;"
-                    onmouseover="this.style.transform='scale(1.05) rotate(-2deg)'"
-                    onmouseout="this.style.transform='scale(1) rotate(-2deg)'"
-                    onmousedown="this.style.transform='scale(0.98) rotate(-2deg)'; this.style.boxShadow='3px 3px 0px 0px rgba(0,0,0,1)'"
-                    onmouseup="this.style.transform='scale(1.05) rotate(-2deg)'; this.style.boxShadow='6px 6px 0px 0px rgba(0,0,0,1)'">
+                <button type="button" id="customize-btn" class="showcase-btn pc-auth-motion"
+                    style="background: #FF4D94; border: 4px solid black; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); border-radius: 20px; padding: 16px 32px; cursor: pointer;">
                     <span
                         style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.5rem; color: black; text-transform: uppercase; letter-spacing: 1px;">CUSTOM</span>
                 </button>
             </div>
             <div class="button-wrap">
-                <button type="button" id="presets-btn" class="showcase-btn"
-                    style="background: #FFE600; border: 4px solid black; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); border-radius: 20px; padding: 16px 32px; transition: all 0.2s; transform: rotate(2deg); cursor: pointer;"
-                    onmouseover="this.style.transform='scale(1.05) rotate(2deg)'"
-                    onmouseout="this.style.transform='scale(1) rotate(2deg)'"
-                    onmousedown="this.style.transform='scale(0.98) rotate(2deg)'; this.style.boxShadow='3px 3px 0px 0px rgba(0,0,0,1)'"
-                    onmouseup="this.style.transform='scale(1.05) rotate(2deg)'; this.style.boxShadow='6px 6px 0px 0px rgba(0,0,0,1)'">
+                <button type="button" id="presets-btn" class="showcase-btn pc-auth-motion"
+                    style="background: #FFE600; border: 4px solid black; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); border-radius: 20px; padding: 16px 32px; cursor: pointer;">
                     <span
                         style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.5rem; color: black; text-transform: uppercase; letter-spacing: 1px;">PRESETS</span>
                 </button>
@@ -4707,6 +5560,8 @@
         const editorPanelWrapper = document.getElementById('editor-panel-wrapper');
         const presetsSection = document.getElementById('presets-section');
         const customizeSection = document.getElementById('customize-section');
+        let authenticatedHomeView = null;
+        let userProfileView = null;
 
         // Variables para showcase inicial
         let isShowcaseActive = false;
@@ -4759,6 +5614,16 @@
             leftLeg: 2700,    // Cambiar cada 2.7 segundos
             rightLeg: 3100    // Cambiar cada 3.1 segundos
         };
+
+        if ((/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) || window.innerWidth <= 768) {
+            Object.keys(showcaseColorIntervals).forEach(key => {
+                showcaseColorIntervals[key] *= 2.4;
+            });
+            Object.keys(showcaseTextureIntervals).forEach(key => {
+                showcaseTextureIntervals[key] *= 3.2;
+            });
+            showcaseRotationSpeed = 0.18;
+        }
         let yVelocity = 0;
         let isJumping = false;
         let groundY = 0;
@@ -4813,7 +5678,11 @@
 
         // Detectar si es móvil para reducir calidad y memoria
         const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        const pixelRatio = isMobileDevice ? Math.min(window.devicePixelRatio, 2) : window.devicePixelRatio;
+        const isLowPowerMobile = isMobileDevice || window.innerWidth <= 768;
+        const pixelRatio = isLowPowerMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(window.devicePixelRatio || 1, 2);
+        const showcaseTextureUpdateMode = isLowPowerMobile ? 'lite' : 'full';
+        let shouldRenderScene = true;
+        let lastFrameTimestamp = 0;
 
         const renderer = new THREE.WebGLRenderer({
             antialias: !isMobileDevice, // Desactivar antialiasing en móvil para ahorrar memoria
@@ -4988,7 +5857,7 @@
 
         // Cache de texturas con Map para acceso O(1)
         const textureCache = new Map();
-        const MAX_CACHED_TEXTURES = isMobileDevice ? 15 : 30;
+        const MAX_CACHED_TEXTURES = isLowPowerMobile ? 8 : 24;
 
         function registerTexture(texture, url) {
             if (!url) return;
@@ -5031,7 +5900,7 @@
 
             img.onload = function () {
                 // Resolución dinámica según dispositivo
-                const resolution = isMobileDevice ? 1024 : 2048;
+                const resolution = isLowPowerMobile ? 768 : 1600;
 
                 // Crear canvas de alta resolución
                 const canvas = document.createElement('canvas');
@@ -5055,7 +5924,7 @@
                 texture.minFilter = THREE.LinearFilter;
                 texture.magFilter = THREE.LinearFilter;
                 texture.generateMipmaps = false;
-                texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                texture.anisotropy = isLowPowerMobile ? 2 : renderer.capabilities.getMaxAnisotropy();
                 texture.needsUpdate = true;
 
                 // Registrar en cache
@@ -5225,8 +6094,6 @@
                     scene.add(footShadow);
                 }
 
-                // Iniciar showcase primero (sin texturas iniciales)
-                startShowcase();
                 applyInitialViewFromRoute();
 
                 // Ocultar loading después de que showcase esté listo
@@ -6819,7 +7686,19 @@
 
         function animate() {
             requestAnimationFrame(animate);
+            const nowMs = performance.now();
+
+            if (isLowPowerMobile && nowMs - lastFrameTimestamp < 1000 / 30) {
+                return;
+            }
+
+            lastFrameTimestamp = nowMs;
+
             const dt = Math.min(clock.getDelta(), 0.1); // Limitar dt para evitar grandes saltos
+
+            if (!shouldRenderScene && !isCircularCameraAnimation && !isAnimatingCamera) {
+                return;
+            }
 
             // Actualizar showcase si está activo
             updateShowcaseRotation();
@@ -6923,6 +7802,14 @@
             controls.update();
             renderer.render(scene, camera);
         }
+
+        document.addEventListener('visibilitychange', () => {
+            ensureDeferredViews();
+            shouldRenderScene = !document.hidden && !authenticatedHomeView?.classList.contains('active');
+            if (!document.hidden && canvasContainer && canvasContainer.style.display !== 'none') {
+                shouldRenderScene = true;
+            }
+        });
 
 
         // --- DYNAMIC PRESET BUTTON COLORING ---
@@ -7221,11 +8108,16 @@
             if (rightLeg) applyRandomColorToPart(rightLeg);
 
             applyRandomEyeTexture();
+            applyRandomHairTexture();
+            applyRandomTorsoTexture();
+
+            if (showcaseTextureUpdateMode === 'lite') {
+                return;
+            }
+
             applyRandomEyebrowTexture();
             applyRandomNoseTexture();
             applyRandomEarTexture();
-            applyRandomHairTexture();
-            applyRandomTorsoTexture();
             applyRandomArmTexture('left');
             applyRandomArmTexture('right');
             applyRandomLegTexture('left');
@@ -7234,6 +8126,7 @@
 
         function startShowcase() {
             isShowcaseActive = true;
+            shouldRenderScene = true;
 
             // Activar fondo degradado azul
             const showcaseBackground = document.getElementById('showcase-background');
@@ -7250,6 +8143,9 @@
             // Mostrar botones de redes sociales
             const socialMediaButtons = document.getElementById('social-media-buttons');
             if (socialMediaButtons) socialMediaButtons.classList.add('active');
+
+            const showcaseFilterCta = document.getElementById('showcase-filter-cta');
+            if (showcaseFilterCta) showcaseFilterCta.classList.add('active');
 
             // Ocultar grid y mostrar sombra
             if (typeof gridHelper !== 'undefined') gridHelper.visible = false;
@@ -7312,6 +8208,9 @@
             // Ocultar botones de redes sociales
             const socialMediaButtons = document.getElementById('social-media-buttons');
             if (socialMediaButtons) socialMediaButtons.classList.remove('active');
+
+            const showcaseFilterCta = document.getElementById('showcase-filter-cta');
+            if (showcaseFilterCta) showcaseFilterCta.classList.remove('active');
 
             // Ocultar botones de acciones de presets
             const presetActionButtons = document.getElementById('preset-action-buttons');
@@ -7526,6 +8425,20 @@
                     showcaseTextureTimers.eyes = now;
                 }
 
+                if (showcaseTextureUpdateMode === 'lite') {
+                    if (now - showcaseTextureTimers.hair > showcaseTextureIntervals.hair) {
+                        applyRandomHairTexture();
+                        showcaseTextureTimers.hair = now;
+                    }
+
+                    if (now - showcaseTextureTimers.torso > showcaseTextureIntervals.torso) {
+                        applyRandomTorsoTexture();
+                        showcaseTextureTimers.torso = now;
+                    }
+
+                    return;
+                }
+
                 // Cejas
                 if (now - showcaseTextureTimers.eyebrows > showcaseTextureIntervals.eyebrows) {
                     applyRandomEyebrowTexture();
@@ -7631,7 +8544,215 @@
 
         let currentPartIndex = 0;
 
+        const authenticatedHomeHeroCards = [
+            {
+                title: 'Tus ediciones del momento',
+                description: 'Accede rápido a custom, presets y lanzamientos con una portada más tipo catálogo.',
+                art: ['Mira', 'Romance']
+            },
+            {
+                title: 'Papelcool Originals',
+                description: 'La mezcla de showcase, banners y galerías ya vive en un solo sitio después del login.',
+                art: ['Zoey', 'Jinu']
+            }
+        ];
+
+        const authenticatedHomeBanners = [
+            {
+                tone: 'pink',
+                tag: 'Novedad',
+                title: 'K-pop Demon Hunters',
+                description: 'Banners armados con tus SVG actuales para empujar universo, moda y poses.',
+                art: ['Baby', 'Romance', 'Abby']
+            },
+            {
+                tone: 'blue',
+                tag: 'Gaming',
+                title: 'Minecraft Crew',
+                description: 'Una entrada directa a personajes listos para elegir, remixar o llevar al modo play.',
+                art: ['Steve', 'Alex', 'Creeper']
+            },
+            {
+                tone: 'cream',
+                tag: 'Regalos',
+                title: 'Presents que sí venden',
+                description: 'Un hueco claro para packs, campañas especiales y personajes listos para regalar.',
+                art: ['Mira', 'Zoey']
+            }
+        ];
+
+        const authenticatedHomeCollections = [
+            { name: 'Mira', subtitle: 'Glow stage edit' },
+            { name: 'Rumi', subtitle: 'Collector spotlight' },
+            { name: 'Romance', subtitle: 'Limited mood' },
+            { name: 'Steve', subtitle: 'Gaming icon' },
+            { name: 'Abby', subtitle: 'Fan favorite' }
+        ];
+
+        const authenticatedHomeGroups = [
+            {
+                title: 'BLACKPINK',
+                tag: 'Top title',
+                description: 'Fila preparada para activaciones musicales, looks de tour y colecciones por comeback.',
+                art: ['Mira', 'Rumi', 'Zoey']
+            },
+            {
+                title: 'Morat',
+                tag: 'Latino pop',
+                description: 'Perfecto para ediciones acústicas, portadas con textura papel y campañas por gira.',
+                art: ['Jinu', 'Mira', 'Zoey']
+            },
+            {
+                title: 'One Direction',
+                tag: 'Throwback',
+                description: 'Pensado para nostalgia, drops de aniversario y personajes listos para compartir.',
+                art: ['Romance', 'Abby', 'Baby']
+            }
+        ];
+
+        function getPresetIconSource(name) {
+            return (typeof presetIcons !== 'undefined' && presetIcons[name]) ? presetIcons[name] : 'logo.svg';
+        }
+
+        function ensureDeferredViews() {
+            if (!authenticatedHomeView) authenticatedHomeView = document.getElementById('authenticated-home-view');
+            if (!userProfileView) userProfileView = document.getElementById('user-profile-view');
+        }
+
+        function createPresetArtCluster(names, imageClass = '') {
+            return `
+                <div class="pc-home-art-cluster">
+                    ${names.map(name => `<img class="${imageClass}" src="${getPresetIconSource(name)}" alt="${name}" loading="lazy">`).join('')}
+                </div>
+            `;
+        }
+
+        function renderAuthenticatedHome() {
+            ensureDeferredViews();
+            const heroStack = document.getElementById('home-hero-stack');
+            const bannerGrid = document.getElementById('home-banner-grid');
+            const collectionGrid = document.getElementById('home-collection-grid');
+            const groupGrid = document.getElementById('home-group-grid');
+
+            if (heroStack) {
+                heroStack.innerHTML = authenticatedHomeHeroCards.map(card => `
+                    <article class="pc-home-hero-card">
+                        <div>
+                            <h3>${card.title}</h3>
+                            <p>${card.description}</p>
+                        </div>
+                        ${createPresetArtCluster(card.art)}
+                    </article>
+                `).join('');
+            }
+
+            if (bannerGrid) {
+                bannerGrid.innerHTML = authenticatedHomeBanners.map(card => `
+                    <article class="pc-home-banner" data-tone="${card.tone}">
+                        <div class="pc-home-banner-top">
+                            <span>${card.tag}</span>
+                            <h3>${card.title}</h3>
+                            <p>${card.description}</p>
+                        </div>
+                        <div class="pc-home-banner-art">
+                            ${card.art.map(name => `<img src="${getPresetIconSource(name)}" alt="${name}" loading="lazy">`).join('')}
+                        </div>
+                    </article>
+                `).join('');
+            }
+
+            if (collectionGrid) {
+                collectionGrid.innerHTML = authenticatedHomeCollections.map(card => `
+                    <article class="pc-home-collection-card">
+                        <div class="pc-home-collection-thumb">
+                            <img src="${getPresetIconSource(card.name)}" alt="${card.name}" loading="lazy">
+                        </div>
+                        <div>
+                            <h3>${card.name}</h3>
+                            <p>${card.subtitle}</p>
+                        </div>
+                    </article>
+                `).join('');
+            }
+
+            if (groupGrid) {
+                groupGrid.innerHTML = authenticatedHomeGroups.map(card => `
+                    <article class="pc-home-group-card">
+                        <div class="pc-home-group-top">
+                            <div>
+                                <div class="pc-home-group-tag">${card.tag}</div>
+                                <h3>${card.title}</h3>
+                            </div>
+                            <button type="button" class="pc-home-btn pc-home-btn--light" onclick="navigateToView('presets')">Abrir</button>
+                        </div>
+                        <p>${card.description}</p>
+                        <div class="pc-home-group-cast">
+                            ${card.art.map(name => `<img src="${getPresetIconSource(name)}" alt="${name}" loading="lazy">`).join('')}
+                        </div>
+                    </article>
+                `).join('');
+            }
+        }
+
+        async function syncAuthenticatedHomeUser(userArg) {
+            const user = userArg || (typeof getCurrentUser === 'function' ? await getCurrentUser() : null);
+            if (!user) return;
+
+            const nickname = user.user_metadata?.nickname || user.email?.split('@')[0] || 'Creator';
+            const initial = nickname.charAt(0).toUpperCase();
+            const greetingName = document.getElementById('home-greeting-name');
+            const homeProfileInitial = document.getElementById('home-profile-initial');
+
+            if (greetingName) greetingName.textContent = nickname;
+            if (homeProfileInitial) homeProfileInitial.textContent = initial;
+        }
+
+        function scrollAuthenticatedHomeTo(id) {
+            const target = document.getElementById(id);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function openAuthenticatedHome(show = true) {
+            ensureDeferredViews();
+            const authContainer = document.getElementById('auth-container');
+
+            if (!authenticatedHomeView) {
+                setTimeout(() => openAuthenticatedHome(show), 0);
+                return;
+            }
+
+            if (show) {
+                stopShowcase();
+                document.body.classList.remove('customization-active');
+                if (editorPanelWrapper) editorPanelWrapper.style.display = 'none';
+                if (presetsSection) presetsSection.classList.add('hidden');
+                if (customizeSection) customizeSection.classList.add('hidden');
+                if (fandomsOverlay) fandomsOverlay.classList.remove('active');
+                hideCharacterName();
+
+                if (canvasContainer) {
+                    canvasContainer.style.display = 'none';
+                    canvasContainer.classList.remove('showcase-active');
+                }
+
+                shouldRenderScene = false;
+                forceMemoryCleanup();
+                authenticatedHomeView.classList.add('active');
+                if (authContainer) authContainer.style.display = 'none';
+                if (userProfileView) userProfileView.style.display = 'none';
+                syncAuthenticatedHomeUser();
+                return;
+            }
+
+            authenticatedHomeView.classList.remove('active');
+            if (canvasContainer) canvasContainer.style.display = '';
+            shouldRenderScene = true;
+            if (authContainer) authContainer.style.display = '';
+        }
+
         function openShowcaseView() {
+            openAuthenticatedHome(false);
+            if (userProfileView) userProfileView.style.display = 'none';
             document.body.classList.remove('customization-active');
             editorPanelWrapper.style.display = 'none';
             presetsSection.classList.add('hidden');
@@ -7652,6 +8773,8 @@
         }
 
         function openCustomizationView() {
+            openAuthenticatedHome(false);
+            if (userProfileView) userProfileView.style.display = 'none';
             stopShowcase();
             document.body.classList.add('customization-active');
             editorPanelWrapper.style.display = 'block';
@@ -7669,12 +8792,14 @@
         }
 
         function openPresetsView() {
+            openAuthenticatedHome(false);
+            if (userProfileView) userProfileView.style.display = 'none';
             stopShowcase();
             renderFandomsGrid();
             fandomsOverlay.classList.add('active');
         }
 
-        function applyInitialViewFromRoute() {
+        async function applyInitialViewFromRoute() {
             if (initialViewApplied) return;
             initialViewApplied = true;
 
@@ -7697,6 +8822,17 @@
 
             if (requestedView === 'register') {
                 showAuthModal('register');
+                return;
+            }
+
+            const authenticatedUser = typeof getCurrentUser === 'function'
+                ? await getCurrentUser().catch(() => null)
+                : null;
+
+            if (authenticatedUser) {
+                if (typeof updateAuthUI === 'function') updateAuthUI(authenticatedUser);
+                await syncAuthenticatedHomeUser(authenticatedUser);
+                openAuthenticatedHome(true);
                 return;
             }
 
@@ -9523,6 +10659,7 @@
         }
 
         function toggleUserProfile(show, targetUserId) {
+            ensureDeferredViews();
             const profileView = document.getElementById('user-profile-view');
             const authContainer = document.getElementById('auth-container');
             const isShowing = show !== undefined ? show : profileView.style.display === 'none';
@@ -9530,6 +10667,7 @@
             if (isShowing) {
                 profileView.style.display = 'block';
                 if (authContainer) authContainer.style.display = 'none';
+                if (authenticatedHomeView) authenticatedHomeView.classList.remove('active');
 
                 // If no target ID provided, load current user's profile
                 if (!targetUserId) {
@@ -9539,7 +10677,11 @@
                 }
             } else {
                 profileView.style.display = 'none';
-                if (authContainer) {
+                const isLoggedIn = document.getElementById('auth-user-menu')?.style.display === 'flex';
+                if (isLoggedIn && authenticatedHomeView) {
+                    authenticatedHomeView.classList.add('active');
+                    if (authContainer) authContainer.style.display = 'none';
+                } else if (authContainer) {
                     authContainer.style.display = 'block';
                 }
             }
@@ -9699,7 +10841,8 @@
                     setTimeout(() => {
                         hideAuthModal();
                         updateAuthUI(user);
-                        toggleUserProfile(true);
+                        syncAuthenticatedHomeUser(user);
+                        openAuthenticatedHome(true);
                         const profileName = document.getElementById('profile-username');
                         if (profileName && user.email) {
                             profileName.textContent = user.user_metadata?.nickname || user.email.split('@')[0];
@@ -9744,7 +10887,8 @@
                     setTimeout(() => {
                         hideAuthModal();
                         updateAuthUI(user);
-                        toggleUserProfile(true);
+                        syncAuthenticatedHomeUser(user);
+                        openAuthenticatedHome(true);
                         const profileName = document.getElementById('profile-username');
                         if (profileName) { profileName.textContent = nickname; }
                     }, 1500);
@@ -9770,6 +10914,9 @@
             if (!error) {
                 updateAuthUI(null);
                 hideUserDropdown();
+                if (userProfileView) userProfileView.style.display = 'none';
+                openAuthenticatedHome(false);
+                openShowcaseView();
             }
         }
 
@@ -9816,9 +10963,13 @@
 
         // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
+            ensureDeferredViews();
             const container = document.getElementById('auth-container');
             const dropdown = document.getElementById('auth-user-dropdown');
-            if (container && dropdown && !container.contains(e.target)) {
+            const dropdownTriggers = Array.from(document.querySelectorAll('[onclick="toggleUserDropdown()"]'));
+            const clickedHomeProfile = dropdownTriggers.some(trigger => trigger.contains(e.target));
+            const clickedDropdown = dropdown ? dropdown.contains(e.target) : false;
+            if (container && dropdown && !container.contains(e.target) && !clickedHomeProfile && !clickedDropdown) {
                 dropdown.style.display = 'none';
             }
         });
@@ -9946,6 +11097,23 @@
             }
         });
 
+        document.addEventListener('DOMContentLoaded', () => {
+            authenticatedHomeView = document.getElementById('authenticated-home-view');
+            userProfileView = document.getElementById('user-profile-view');
+            renderAuthenticatedHome();
+
+            const homeSearchInput = document.getElementById('home-search-input');
+            if (homeSearchInput) {
+                homeSearchInput.addEventListener('input', (event) => {
+                    const query = event.target.value.trim().toLowerCase();
+                    document.querySelectorAll('#authenticated-home-view .pc-home-banner, #authenticated-home-view .pc-home-collection-card, #authenticated-home-view .pc-home-group-card').forEach(card => {
+                        const matches = !query || card.textContent.toLowerCase().includes(query);
+                        card.style.display = matches ? '' : 'none';
+                    });
+                });
+            }
+        });
+
         // ============================================
         // EXPOSE FUNCTIONS TO GLOBAL SCOPE
         // (Required for inline onclick handlers)
@@ -9966,8 +11134,140 @@
         window.promptSaveCharacter = promptSaveCharacter;
         window.startShowcase = startShowcase;
         window.stopShowcase = stopShowcase;
+        window.openAuthenticatedHome = openAuthenticatedHome;
+        window.scrollAuthenticatedHomeTo = scrollAuthenticatedHomeTo;
         window.navigateToView = navigateToView;
     </script>
+    <div id="authenticated-home-view">
+        <div class="pc-home-shell">
+            <header class="pc-home-topbar">
+                <button type="button" class="pc-home-brand pc-home-chip" onclick="openAuthenticatedHome(true)">
+                    <span class="pc-home-brand-badge">Papelcool</span>
+                </button>
+
+                <nav class="pc-home-nav" aria-label="Navegación principal">
+                    <button type="button" class="pc-home-chip" onclick="navigateToView('custom')">Crea el tuyo</button>
+                    <button type="button" class="pc-home-chip" onclick="navigateToView('presets')">Colecciones</button>
+                    <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-banner-grid')">Novedades</button>
+                    <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-groups')">Fan Clubs</button>
+                    <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-community-notes')">Club Papel</button>
+                </nav>
+
+                <label class="pc-home-search" aria-label="Buscar">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="text" id="home-search-input" placeholder="Busca artistas, fandoms o ideas..." />
+                </label>
+
+                <div class="pc-home-actions">
+                    <button type="button" class="pc-home-icon" aria-label="Favoritos">
+                        <span class="material-symbols-outlined">favorite</span>
+                    </button>
+                    <button type="button" class="pc-home-icon pc-home-avatar" onclick="toggleUserDropdown()"
+                        aria-label="Perfil">
+                        <span id="home-profile-initial">P</span>
+                    </button>
+                </div>
+            </header>
+
+            <main class="pc-home-content">
+                <section class="pc-home-hero">
+                    <article class="pc-home-panel pc-home-hero-copy" id="home-top">
+                        <span class="pc-home-kicker">
+                            <span class="material-symbols-outlined" style="font-size: 1rem;">bolt</span>
+                            Home Papelcool
+                        </span>
+                        <h1>Hola <span id="home-greeting-name">Creator</span>, hoy toca estrenar vitrina.</h1>
+                        <p>
+                            La sesión ahora abre una home tipo catálogo con navegación superior, banners grandes,
+                            categorías claras y un preview directo de colecciones, manteniendo el lenguaje visual
+                            sticker/papel que ya tiene la marca.
+                        </p>
+                        <div class="pc-home-cta-row">
+                            <button type="button" class="pc-home-btn" onclick="navigateToView('custom')">Crea el tuyo</button>
+                            <button type="button" class="pc-home-btn pc-home-btn--light"
+                                onclick="navigateToView('presets')">Ver colecciones</button>
+                            <button type="button" class="pc-home-btn pc-home-btn--blue"
+                                onclick="scrollAuthenticatedHomeTo('home-community-notes')">Explora el club</button>
+                        </div>
+                        <div class="pc-home-stat-row">
+                            <div class="pc-home-stat">
+                                <strong>14</strong>
+                                <span>Presets listos</span>
+                            </div>
+                            <div class="pc-home-stat">
+                                <strong>2</strong>
+                                <span>Universos activos</span>
+                            </div>
+                            <div class="pc-home-stat">
+                                <strong>24/7</strong>
+                                <span>Showcase creativo</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <aside class="pc-home-panel pc-home-hero-stack" id="home-hero-stack"></aside>
+                </section>
+
+                <section class="pc-home-panel pc-home-category-strip" id="home-category-strip">
+                    <div class="pc-home-category-pill">Música</div>
+                    <div class="pc-home-category-pill">Videojuegos</div>
+                    <div class="pc-home-category-pill">Películas</div>
+                    <div class="pc-home-category-pill">Series</div>
+                    <div class="pc-home-category-pill">Anime</div>
+                    <div class="pc-home-category-pill">Originales</div>
+                    <div class="pc-home-category-pill">Regalos</div>
+                </section>
+
+                <section class="pc-home-banner-grid" id="home-banner-grid"></section>
+
+                <section class="pc-home-panel pc-home-section">
+                    <div class="pc-home-section-head">
+                        <div>
+                            <h2>Vista rápida de colecciones</h2>
+                            <p>La home enseña una galería real de presets y manda al usuario a la pestaña completa.</p>
+                        </div>
+                        <button type="button" class="pc-home-btn pc-home-btn--light"
+                            onclick="navigateToView('presets')">Ver más</button>
+                    </div>
+                    <div class="pc-home-collection-grid" id="home-collection-grid"></div>
+                </section>
+
+                <section class="pc-home-panel pc-home-section" id="home-groups">
+                    <div class="pc-home-section-head">
+                        <div>
+                            <h2>Bandas, crews y fandoms</h2>
+                            <p>Una fila temática para navegar por nombres fuertes, igual que en la lógica de Funko.</p>
+                        </div>
+                        <button type="button" class="pc-home-btn pc-home-btn--light"
+                            onclick="scrollAuthenticatedHomeTo('home-top')">Volver arriba</button>
+                    </div>
+                    <div class="pc-home-group-grid" id="home-group-grid"></div>
+                </section>
+
+                <section class="pc-home-footer-note" id="home-community-notes">
+                    <article class="pc-home-note">
+                        <strong>Mi vitrina</strong>
+                        <p>Espacio natural para favoritos, guardados y piezas que el usuario ya abrió o compartió.</p>
+                    </article>
+                    <article class="pc-home-note">
+                        <strong>Fan Rewards</strong>
+                        <p>Preparado para sumar puntos, retos y drops semanales sin romper el flujo principal.</p>
+                    </article>
+                    <article class="pc-home-note">
+                        <strong>Regalos y packs</strong>
+                        <p>Pensado para bundles, campañas de temporada y ediciones especiales para regalar.</p>
+                    </article>
+                </section>
+            </main>
+
+            <nav class="pc-home-mobile-nav" aria-label="Navegación móvil">
+                <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-top')">Home</button>
+                <button type="button" class="pc-home-chip" onclick="navigateToView('custom')">Custom</button>
+                <button type="button" class="pc-home-chip" onclick="navigateToView('presets')">Colección</button>
+                <button type="button" class="pc-home-chip" onclick="toggleUserDropdown()">Perfil</button>
+            </nav>
+        </div>
+    </div>
     <!-- USER PROFILE VIEW (Hidden by default) -->
     <div id="user-profile-view"
         style="display: none; position: fixed; inset: 0; z-index: 9000; overflow-y: auto; background-color: #E0F2FE; background-image: linear-gradient(#D1E9FF 2px, transparent 2px), linear-gradient(90deg, #D1E9FF 2px, transparent 2px); background-size: 30px 30px;">

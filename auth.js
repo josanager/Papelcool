@@ -289,6 +289,8 @@ function updateAuthUI(user) {
     const userMenu = document.getElementById('auth-user-menu');
     const userEmail = document.getElementById('auth-user-email');
     const userAvatar = document.getElementById('auth-user-avatar');
+    const homeGreetingName = document.getElementById('home-greeting-name');
+    const homeProfileInitial = document.getElementById('home-profile-initial');
 
     if (user) {
         // User is logged in
@@ -298,8 +300,11 @@ function updateAuthUI(user) {
         if (userEmail) userEmail.textContent = user.email;
         if (userAvatar) {
             // Use Gravatar or first letter of email
-            const initial = user.email?.charAt(0).toUpperCase() || '?';
+            const nickname = user.user_metadata?.nickname || user.email?.split('@')[0] || '';
+            const initial = nickname.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || '?';
             userAvatar.textContent = initial;
+            if (homeProfileInitial) homeProfileInitial.textContent = initial;
+            if (homeGreetingName && nickname) homeGreetingName.textContent = nickname;
         }
 
         // Enable save character button
@@ -310,6 +315,8 @@ function updateAuthUI(user) {
         if (loginBtn) loginBtn.style.display = 'flex';
         if (registerBtn) registerBtn.style.display = 'flex';
         if (userMenu) userMenu.style.display = 'none';
+        if (homeGreetingName) homeGreetingName.textContent = 'Creator';
+        if (homeProfileInitial) homeProfileInitial.textContent = 'P';
 
         // Disable save character button
         const saveCharBtn = document.getElementById('save-character-btn');
