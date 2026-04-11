@@ -2794,25 +2794,10 @@
             transform: translateY(-2px);
         }
 
-        /* --- Language Switcher (Matching Social Buttons Style) --- */
-        #language-switcher {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-        }
 
-        /* Language toggle now uses Tailwind classes in HTML */
-        #lang-toggle-btn {
-            /* Sticker style is applied via classes */
-        }
 
-        @media (max-width: 768px) {
-            #language-switcher {
-                right: 15px;
-                top: 15px;
-            }
-        }
+
+
 
         /* --- Customization UI Redesign --- */
 
@@ -3330,6 +3315,31 @@
         }
     </style>
 
+
+    <style>
+        /* --- Responsive Auth Container --- */
+        .auth-container-responsive {
+            position: fixed;
+            top: 20px;
+            right: 80px;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .auth-container-responsive {
+                top: auto !important;
+                bottom: 20px !important;
+                right: 0 !important;
+                left: 0 !important;
+                justify-content: center !important;
+                flex-direction: row !important;
+            }
+        }
+    </style>
+
 </head>
 
 <body class="text-white">
@@ -3354,17 +3364,10 @@
     <!-- Fondo degradado azul para showcase -->
     <div id="showcase-background"></div>
 
-    <!-- Idioma (Switcher) -->
-    <div id="language-switcher">
-        <button type="button" id="lang-toggle-btn"
-            class="social-btn w-12 h-12 bg-white border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-yellow transition-colors group"
-            aria-label="Cambiar idioma">
-            <span id="lang-toggle-text" class="font-bold font-display text-black">EN</span>
-        </button>
-    </div>
+
 
     <!-- Auth Button (Login/User Menu) -->
-    <div id="auth-container" style="position: fixed; top: 20px; right: 80px; z-index: 9999; display: flex; align-items: center; gap: 12px;">
+    <div id="auth-container" class="auth-container-responsive">
         <button type="button" id="auth-register-btn" onclick="navigateToView('register')"
             class="px-4 py-2 bg-sticker-yellow border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-pink transition-colors cursor-pointer"
             aria-label="Register">
@@ -4480,7 +4483,7 @@
 
         class LanguageManager {
             constructor() {
-                this.currentLang = localStorage.getItem('papelcool_lang') || this.detectLanguage();
+                this.currentLang = 'es';
                 this.init();
             }
 
@@ -4500,7 +4503,7 @@
 
             init() {
                 this.updateUI();
-                this.setupSwitcher();
+
             }
 
             setLanguage(lang) {
@@ -4523,7 +4526,7 @@
                 const elements = document.querySelectorAll('[data-i18n]');
                 elements.forEach(el => {
                     const key = el.getAttribute('data-i18n');
-                    const translation = translations[this.currentLang][key];
+                    const translation = this.getTranslation(key);
                     if (translation) {
                         if (el.tagName === 'INPUT' && ['text', 'email', 'password'].includes(el.type)) {
                             el.placeholder = translation;
@@ -4540,7 +4543,7 @@
                 // Update search placeholder manually if not tagged
                 const searchInput = document.getElementById('preset-search-input');
                 if (searchInput) {
-                    searchInput.placeholder = translations[this.currentLang]['search-presets'];
+                    searchInput.placeholder = this.getTranslation('search-presets');
                 }
 
                 // Update toggle button text
@@ -4562,15 +4565,7 @@
                 return translations[this.currentLang][key] || translations['en'][key] || key;
             }
 
-            setupSwitcher() {
-                const btn = document.getElementById('lang-toggle-btn');
-                if (btn) {
-                    btn.addEventListener('click', () => {
-                        const newLang = this.currentLang === 'en' ? 'es' : 'en';
-                        this.setLanguage(newLang);
-                    });
-                }
-            }
+
 
             get(key) {
                 return translations[this.currentLang][key] || key;
