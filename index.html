@@ -9561,15 +9561,26 @@
                     results.forEach(user => {
                         const item = document.createElement('div');
                         item.className = 'search-result-item p-3 flex items-center gap-3 cursor-pointer transition-all border-b border-black/5 last:border-0';
-                        item.innerHTML = `
-                    <div class="w-8 h-8 rounded-full bg-sticker-yellow border-2 border-black flex items-center justify-center text-[10px] font-black uppercase">
-                        ${user.nickname.charAt(0)}
-                    </div>
-                    <div class="flex-grow">
-                        <div class="text-sm font-black text-black">${user.nickname}</div>
-                        <div class="text-[10px] text-gray-400 font-bold uppercase">Sticker Creator</div>
-                    </div>
-                `;
+                        const avatarDiv = document.createElement('div');
+                        avatarDiv.className = 'w-8 h-8 rounded-full bg-sticker-yellow border-2 border-black flex items-center justify-center text-[10px] font-black uppercase';
+                        avatarDiv.textContent = user.nickname.charAt(0);
+
+                        const infoDiv = document.createElement('div');
+                        infoDiv.className = 'flex-grow';
+
+                        const nameDiv = document.createElement('div');
+                        nameDiv.className = 'text-sm font-black text-black';
+                        nameDiv.textContent = user.nickname;
+
+                        const roleDiv = document.createElement('div');
+                        roleDiv.className = 'text-[10px] text-gray-400 font-bold uppercase';
+                        roleDiv.textContent = 'Sticker Creator';
+
+                        infoDiv.appendChild(nameDiv);
+                        infoDiv.appendChild(roleDiv);
+
+                        item.appendChild(avatarDiv);
+                        item.appendChild(infoDiv);
                         item.onclick = () => {
                             toggleUserProfile(true, user.id);
                             resultsContainer.classList.add('hidden');
