@@ -4000,27 +4000,6 @@
         </div>
     </div>
 
-    <!-- Coming Soon Modal -->
-    <div id="coming-soon-modal"
-        style="position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000;">
-        <div
-            style="background: #00a1e0; border: 1px solid rgba(255, 238, 0, 0.18); border-radius: 14px; padding: 24px; width: min(92vw, 420px); color: #fff; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.35);">
-            <button type="button" id="coming-soon-close" aria-label="Close"
-                style="position:absolute; top:10px; right:10px; background:transparent; border:none; color:#00a1e0; cursor:pointer; font-size:20px;">×</button>
-            <h2 style="margin:0 0 10px; font-size:22px; font-weight:700; letter-spacing:0.2px;"
-                data-i18n="coming-soon-title">Coming Soon</h2>
-            <p style="margin:0 0 16px; line-height:1.5; color: rgba(255,255,255,0.85);" data-i18n="coming-soon-body">
-                This feature will be available
-                very soon. We're working to bring you the best experience.</p>
-            <div style="display:flex; gap:10px; justify-content:flex-end;">
-                <button type="button" id="coming-soon-ok"
-                    style="background:#ffee00; color:#005580; border:none; border-radius:10px; padding:10px 16px; font-weight:700; cursor:pointer;"
-                    data-i18n="got-it">Got
-                    it</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Panel de edición móvil optimizado -->
 
 
@@ -4317,8 +4296,6 @@
                 'preparing-pdf': 'Preparing PDF...',
                 'download-pdf-btn': 'DOWNLOAD PDF',
                 'download-message': 'Your download will start through your browser.<br>Please check your downloads folder.',
-                'coming-soon-title': 'Coming Soon',
-                'coming-soon-body': "This feature will be available very soon. We're working to bring you the best experience.",
                 'got-it': 'Got it',
                 'back-btn': 'BACK',
                 'color-warning-title': 'Color Required',
@@ -4410,8 +4387,6 @@
                 'preparing-pdf': 'Preparando PDF...',
                 'download-pdf-btn': 'DESCARGAR PDF',
                 'download-message': 'Tu descarga comenzará en el navegador.<br>Por favor, revisa tu carpeta de descargas.',
-                'coming-soon-title': 'Próximamente',
-                'coming-soon-body': 'Esta función estará disponible muy pronto. Estamos trabajando para brindarte la mejor experiencia.',
                 'got-it': 'Entendido',
                 'back-btn': 'VOLVER',
                 'color-warning-title': 'Color Requerido',
@@ -8183,8 +8158,6 @@
 
         // Variables para la página de descarga
         let generatedPdfBlob = null;
-        // Flag para activar POPUP "Coming Soon" en el botón Descargar (DESACTIVADO - Sistema de pago con PayPal activo)
-        let comingSoonMode = false;
 
         // Payment Modal Management
         const accountModal = document.getElementById('account-modal');
@@ -8193,30 +8166,8 @@
 
 
 
-        // Coming Soon modal handlers
-        const comingSoonModal = document.getElementById('coming-soon-modal');
-        const comingSoonClose = document.getElementById('coming-soon-close');
-        const comingSoonOk = document.getElementById('coming-soon-ok');
-        function showComingSoon() {
-            if (comingSoonModal) comingSoonModal.style.display = 'flex';
-        }
-        function hideComingSoon() {
-            if (comingSoonModal) comingSoonModal.style.display = 'none';
-        }
-        if (comingSoonClose) comingSoonClose.addEventListener('click', hideComingSoon);
-        if (comingSoonOk) comingSoonOk.addEventListener('click', hideComingSoon);
-
-
-
-
         // Función para abrir descarga directa
         async function openDownloadPage() {
-            // Fallback temporal: mostrar popup "Próximamente" cuando el flag esté activo
-            if (comingSoonMode) {
-                showComingSoon();
-                return;
-            }
-
             // Iniciar generación automática directamente sin modal intermedio
             await generatePDFAfterPayment('automatic-download');
         }
