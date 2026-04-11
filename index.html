@@ -8142,7 +8142,7 @@
         }
 
         // Botón 3: Abrir página de descarga (UPDATED: Direct download)
-        if (downloadPdfBtnMoved) {
+        if (typeof downloadPdfBtnMoved !== "undefined" && downloadPdfBtnMoved) {
             downloadPdfBtnMoved.addEventListener('click', () => {
                 if (!currentPresetCharacter) {
                     alert(langManager.get('alert-select-preset'));
@@ -9100,10 +9100,10 @@
         };
 
         // Event listener para el botón de descargar PDF
-        if (downloadPdfBtn) {
+        if (typeof downloadPdfBtn !== "undefined" && downloadPdfBtn) {
             downloadPdfBtn.addEventListener('click', triggerGeneratePDF);
         }
-        if (downloadPdfBtnMoved) {
+        if (typeof downloadPdfBtnMoved !== "undefined" && downloadPdfBtnMoved) {
             downloadPdfBtnMoved.addEventListener('click', triggerGeneratePDF);
         } animate();
 
