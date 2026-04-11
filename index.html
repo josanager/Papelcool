@@ -8090,7 +8090,6 @@
 
             // APLICACIÓN DE TEXTURAS (SERIALIZADA PARA MÓVIL)
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
             const applyTextures = async () => {
                 // Función auxiliar para aplicar texturas
@@ -8109,11 +8108,7 @@
                 if (armTexture) tasks.push(async () => { currentArmLeftURL = armTexture.leftUrl; currentArmRightURL = armTexture.rightUrl; changeArmClothing('left', armTexture.leftUrl); changeArmClothing('right', armTexture.rightUrl); });
                 if (legTexture) tasks.push(async () => { currentLegLeftURL = legTexture.leftUrl; currentLegRightURL = legTexture.rightUrl; changeLegClothing('left', legTexture.leftUrl); changeLegClothing('right', legTexture.rightUrl); });
 
-                if (isMobile) {
-                    for (const task of tasks) { await task(); await delay(50); }
-                } else {
-                    await Promise.all(tasks.map(t => t()));
-                }
+                await Promise.all(tasks.map(t => t()));
             };
 
             await applyTextures();
