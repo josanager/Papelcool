@@ -7373,8 +7373,8 @@
 
         function updateShowcaseRotation() {
             if (isShowcaseActive && loadedModel) {
-                // Rotación automática suave
-                loadedModel.rotation.y += showcaseRotationSpeed * 0.01;
+                // Rotación automática suave y continua (normalizada para evitar overflow)
+                loadedModel.rotation.y = (loadedModel.rotation.y + (showcaseRotationSpeed * 0.01)) % (Math.PI * 2);
 
                 // Cambio de colores aleatorios en diferentes partes
                 const now = Date.now();
@@ -7393,26 +7393,26 @@
 
                 // Brazos
                 if (now - showcaseColorTimers.leftArm > showcaseColorIntervals.leftArm) {
-                    const leftArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('l'));
+                    const leftArm = (modelParts.arms || []).find(arm => arm.name.toLowerCase().includes('l'));
                     if (leftArm) applyRandomColorToPart(leftArm);
                     showcaseColorTimers.leftArm = now;
                 }
 
                 if (now - showcaseColorTimers.rightArm > showcaseColorIntervals.rightArm) {
-                    const rightArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('r'));
+                    const rightArm = (modelParts.arms || []).find(arm => arm.name.toLowerCase().includes('r'));
                     if (rightArm) applyRandomColorToPart(rightArm);
                     showcaseColorTimers.rightArm = now;
                 }
 
                 // Piernas
                 if (now - showcaseColorTimers.leftLeg > showcaseColorIntervals.leftLeg) {
-                    const leftLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('l'));
+                    const leftLeg = (modelParts.legs || []).find(leg => leg.name.toLowerCase().includes('l'));
                     if (leftLeg) applyRandomColorToPart(leftLeg);
                     showcaseColorTimers.leftLeg = now;
                 }
 
                 if (now - showcaseColorTimers.rightLeg > showcaseColorIntervals.rightLeg) {
-                    const rightLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('r'));
+                    const rightLeg = (modelParts.legs || []).find(leg => leg.name.toLowerCase().includes('r'));
                     if (rightLeg) applyRandomColorToPart(rightLeg);
                     showcaseColorTimers.rightLeg = now;
                 }
