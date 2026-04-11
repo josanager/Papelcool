@@ -3431,14 +3431,13 @@
     <!-- Authentication Modal - Sticker Style -->
     <div id="auth-modal" style="display: none; position: fixed; inset: 0; z-index: 10000; overflow-y: auto;">
         <!-- Background with decorative shapes -->
-        <div style="position: fixed; inset: 0; background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(8px);"
-            onclick="hideAuthModal()"></div>
+        <div style="position: fixed; inset: 0; background: #e0f2fe;"></div>
 
         <!-- Close Button -->
-        <button onclick="hideAuthModal()"
+        <button onclick="hideAuthModal(); navigateToView('showcase');"
             style="position: fixed; top: 24px; left: 24px; z-index: 50; background: #407BFF; color: white; width: 56px; height: 56px; border-radius: 50%; border: 5px solid white; box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s;"
             onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-            <span class="material-symbols-outlined" style="font-size: 30px;">close</span>
+            <span class="material-symbols-outlined" style="font-size: 30px;">arrow_back</span>
         </button>
 
         <!-- Main Content Container -->
@@ -6682,7 +6681,8 @@
             if (!isShowcaseActive) return;
             if (e.target.closest('button') || e.target.closest('a') || e.target.closest('input')) return;
             isShowcaseDragging = true;
-            if (canvasContainer) canvasContainer.style.cursor = 'grabbing';
+            const _container = document.getElementById('canvas-container');
+            if (_container) _container.style.cursor = 'grabbing';
             previousShowcasePointerX = e.clientX;
         });
 
@@ -6695,12 +6695,14 @@
 
         window.addEventListener('pointerup', () => {
             isShowcaseDragging = false;
-            if (isShowcaseActive && canvasContainer) canvasContainer.style.cursor = 'grab';
+            const _container = document.getElementById('canvas-container');
+            if (isShowcaseActive && _container) _container.style.cursor = 'grab';
         });
 
         window.addEventListener('pointercancel', () => {
             isShowcaseDragging = false;
-            if (isShowcaseActive && canvasContainer) canvasContainer.style.cursor = 'grab';
+            const _container = document.getElementById('canvas-container');
+            if (isShowcaseActive && _container) _container.style.cursor = 'grab';
         });
 
         window.addEventListener('resize', () => {
@@ -7872,7 +7874,8 @@
                 });
             }
 
-            // 2. (Se resetean texturas dentro de cada personaje donde sea necesario)\n
+            // 2. (Se resetean texturas dentro de cada personaje donde sea necesario)
+
             // 3. Asegurar visibilidad de brazos (Creeper los oculta)
             if (modelParts.arms) {
                 modelParts.arms.forEach(arm => { if (arm) arm.visible = true; });
