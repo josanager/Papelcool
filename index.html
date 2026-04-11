@@ -654,21 +654,6 @@
             }
         }
 
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top-color: #ffee00;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
         .preset-character-btn {
             all: unset;
             cursor: pointer;
@@ -3844,7 +3829,7 @@
     <div id="canvas-container"></div>
     <div id="loading-indicator">
         <img src="logo.svg" alt="Papelcool Logo" class="loading-logo">
-        <div class="loading-spinner"></div>
+
     </div>
 
     <!-- Contenedor del logo del showcase -->
@@ -5146,7 +5131,7 @@
                 cacheLimbReferences();
             },
             (xhr) => {
-                // Progreso de carga - solo mantener logo y spinner
+                // Progreso de carga - solo mantener logo
             },
             (error) => {
                 console.error('Error al cargar modelo:', error);
@@ -9138,7 +9123,8 @@
         }
         if (typeof downloadPdfBtnMoved !== "undefined" && downloadPdfBtnMoved) {
             downloadPdfBtnMoved.addEventListener('click', triggerGeneratePDF);
-        } animate();
+        }
+        animate();
 
         // --- NEW CUSTOMIZATION UI LOGIC ---
 
