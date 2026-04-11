@@ -6673,6 +6673,36 @@
             }
         }
 
+
+        // --- SHOWCASE MANUAL DRAG ---
+        let isShowcaseDragging = false;
+        let previousShowcasePointerX = 0;
+
+        window.addEventListener('pointerdown', (e) => {
+            if (!isShowcaseActive) return;
+            if (e.target.closest('button') || e.target.closest('a') || e.target.closest('input')) return;
+            isShowcaseDragging = true;
+            if (canvasContainer) canvasContainer.style.cursor = 'grabbing';
+            previousShowcasePointerX = e.clientX;
+        });
+
+        window.addEventListener('pointermove', (e) => {
+            if (!isShowcaseActive || !isShowcaseDragging || !loadedModel) return;
+            const deltaX = e.clientX - previousShowcasePointerX;
+            loadedModel.rotation.y += deltaX * 0.01;
+            previousShowcasePointerX = e.clientX;
+        });
+
+        window.addEventListener('pointerup', () => {
+            isShowcaseDragging = false;
+            if (isShowcaseActive && canvasContainer) canvasContainer.style.cursor = 'grab';
+        });
+
+        window.addEventListener('pointercancel', () => {
+            isShowcaseDragging = false;
+            if (isShowcaseActive && canvasContainer) canvasContainer.style.cursor = 'grab';
+        });
+
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(onWindowResize, 150);
@@ -7119,7 +7149,7 @@
 
             // Agregar clase al canvas para ajustar su altura
             const canvasContainer = document.getElementById('canvas-container');
-            if (canvasContainer) canvasContainer.classList.add('showcase-active');
+            if (canvasContainer) { canvasContainer.classList.add('showcase-active'); canvasContainer.style.cursor = 'grab'; }
 
             // Mostrar logo del showcase
             const showcaseLogoContainer = document.getElementById('showcase-logo-container');
@@ -7178,7 +7208,7 @@
 
             // Remover clase del canvas para restaurar altura completa
             const canvasContainer = document.getElementById('canvas-container');
-            if (canvasContainer) canvasContainer.classList.remove('showcase-active');
+            if (canvasContainer) { canvasContainer.classList.remove('showcase-active'); canvasContainer.style.cursor = 'default'; }
 
             // Mostrar sombra bajo los pies cuando se sale del showcase
             if (footShadow) footShadow.visible = true;
@@ -7351,7 +7381,10 @@
         function updateShowcaseRotation() {
             if (isShowcaseActive && loadedModel) {
                 // Rotación automática suave y continua (normalizada para evitar overflow)
-                loadedModel.rotation.y = (loadedModel.rotation.y + (showcaseRotationSpeed * 0.01)) % (Math.PI * 2);
+                // Solo rotar automáticamente si no se está arrastrando manualmente
+                if (!isShowcaseDragging) {
+                    loadedModel.rotation.y = (loadedModel.rotation.y + (showcaseRotationSpeed * 0.01)) % (Math.PI * 2);
+                }
 
                 // Cambio de colores aleatorios en diferentes partes
                 const now = Date.now();

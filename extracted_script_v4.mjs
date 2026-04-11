@@ -4944,7 +4944,7 @@
         };
 
         // Event listener para el botón de descargar PDF
-        if (typeof downloadPdfBtn !== "undefined" && downloadPdfBtn) {
+        if (downloadPdfBtn) {
             downloadPdfBtn.addEventListener('click', triggerGeneratePDF);
         }
         if (downloadPdfBtnMoved) {
