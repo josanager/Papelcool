@@ -5,6 +5,7 @@
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-F1L79TX6D6"></script>
     <script>
+
         window.dataLayer = window.dataLayer || [];
         function gtag() { dataLayer.push(arguments); }
         gtag('js', new Date());
@@ -11237,7 +11238,7 @@
             return favorites.includes(characterName);
         }
 
-        function openFavoritesView() {
+        function showFavoritesView() {
             // Hide home view and profile view if open
             const homeView = document.getElementById('authenticated-home-view');
             if (homeView) homeView.classList.remove('active');
@@ -11318,6 +11319,75 @@
         // Expose functions globally
         window.toggleFavorite = toggleFavorite;
         window.openFavoritesView = openFavoritesView;
+
+        function switchProfileTab(tabId) {
+            // Update active styling
+            const favTab = document.getElementById('tab-favorites');
+            const custTab = document.getElementById('tab-customs');
+
+            if (tabId === 'favorites') {
+                favTab.style.backgroundColor = '#FFE600';
+                custTab.style.backgroundColor = 'transparent';
+                if(window.renderProfileFavorites) window.renderProfileFavorites();
+            } else {
+                custTab.style.backgroundColor = '#FFE600';
+                favTab.style.backgroundColor = 'transparent';
+                if(window.renderProfileCustoms) window.renderProfileCustoms();
+            }
+        }
+
+        window.renderProfileFavorites = function renderProfileFavorites() {
+            const contentArea = document.getElementById('profile-content-area');
+            const favorites = JSON.parse(localStorage.getItem('papelcool_favorites') || '[]');
+
+            if (favorites.length === 0) {
+                contentArea.innerHTML = `
+                    <div style="text-align: center; padding: 3rem 1rem; color: #666; font-family: 'Fredoka', sans-serif;">
+                        <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: #FF4D94;">favorite_border</span>
+                        <p>No tienes favoritos todavía.</p>
+                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">¡Explora las colecciones y guarda tus Papelcools preferidos!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '<div class="pc-home-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem;">';
+
+            favorites.forEach(name => {
+                const iconSrc = (typeof presetIcons !== 'undefined' && presetIcons[name]) ? presetIcons[name] : 'logo.svg';
+                html += `
+                    <div class="pc-home-collection-card" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; background: #fff; border: 3px solid #000; border-radius: 16px; box-shadow: 4px 4px 0px rgba(0,0,0,1); cursor: pointer;" onclick="document.getElementById('user-profile-view').style.display='none'; window.isOpeningFromFavorites = true; if(window.openPresetCharacter) window.openPresetCharacter('${name}', true);">
+                        <button class="fandom-heart material-symbols-outlined active" onclick="event.stopPropagation(); toggleFavorite('${name}', this); setTimeout(window.renderProfileFavorites, 50)" style="color: #FF4D94; position: absolute; top: 10px; right: 10px; z-index: 10; font-variation-settings: 'FILL' 1;">favorite</button>
+                        <img src="${iconSrc}" alt="${name}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; margin-bottom: 0.5rem; border: 2px solid #000;">
+                        <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 700; margin: 0; text-align: center;">${name}</h3>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            contentArea.innerHTML = html;
+        }
+
+        window.renderProfileCustoms = function renderProfileCustoms() {
+            const contentArea = document.getElementById('profile-content-area');
+            // Empty state for customs since we don't have customs saving logic fully implemented yet, or if we do, it's not well-defined.
+            // We just provide the empty state for the UI placeholder.
+            contentArea.innerHTML = `
+                <div style="text-align: center; padding: 3rem 1rem; color: #666; font-family: 'Fredoka', sans-serif;">
+                    <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block;">brush</span>
+                    <p>Todavía no has creado ningún Papelcool.</p>
+                    <button type="button" class="pc-home-chip" onclick="document.getElementById('user-profile-view').style.display='none'; navigateToView('custom');" style="margin-top: 1rem; border: 2px solid #000; box-shadow: 2px 2px 0px rgba(0,0,0,1);">
+                        Crear ahora
+                    </button>
+                </div>
+            `;
+        }
+
+        window.switchProfileTab = switchProfileTab;
+        console.log('switchProfileTab exposed globally');
+        window.renderProfileFavorites = renderProfileFavorites;
+        window.renderProfileCustoms = renderProfileCustoms;
+
         window.isFavorite = isFavorite;
 
     </script>
@@ -11359,7 +11429,7 @@
                 </label>
 
                 <div class="pc-home-actions">
-                    <button type="button" class="pc-home-icon" aria-label="Favoritos" onclick="openFavoritesView()">
+                    <button type="button" class="pc-home-icon" aria-label="Favoritos" onclick="document.getElementById('user-profile-view').style.display='block'; document.getElementById('auth-container').style.display='none'; switchProfileTab('favorites');">
                         <span class="material-symbols-outlined">favorite</span>
                     </button>
                     <button type="button" class="pc-home-icon pc-home-avatar" onclick="toggleUserDropdown()"
@@ -11468,286 +11538,93 @@
             </nav>
         </div>
     </div>
+
+
     <!-- USER PROFILE VIEW (Hidden by default) -->
-    <div id="user-profile-view"
-        style="display: none; position: fixed; inset: 0; z-index: 9000; overflow-y: auto; background-color: #E0F2FE; background-image: linear-gradient(#D1E9FF 2px, transparent 2px), linear-gradient(90deg, #D1E9FF 2px, transparent 2px); background-size: 30px 30px;">
-
-        <!-- Desktop Header -->
-        <header
-            class="sticky top-0 z-50 px-4 md:px-8 py-4 flex justify-between items-center bg-transparent backdrop-blur-sm">
-            <div class="flex items-center gap-4 md:gap-6">
-                <div
-                    class="bg-sticker-yellow border-4 border-black px-4 md:px-6 py-2 -rotate-2 shadow-sticker-sm hover:rotate-0 transition-transform cursor-pointer">
-                    <span class="text-black font-black text-xl md:text-2xl uppercase tracking-wider">Papelcool</span>
-                </div>
-                <nav
-                    class="hidden md:flex items-center gap-2 ml-8 bg-white/80 border-2 border-black/10 rounded-full px-2 py-2 backdrop-blur-md shadow-sm">
-                    <a onclick="toggleUserProfile()" class="sidebar-link active text-black cursor-pointer" href="#">
-                        <span class="material-symbols-outlined font-bold">home</span>
-                    </a>
-                    <a class="sidebar-link text-gray-500 hover:text-black cursor-pointer" href="#">
-                        <span class="material-symbols-outlined font-bold">explore</span>
-                    </a>
-                    <a class="sidebar-link text-gray-500 hover:text-black cursor-pointer" href="#">
-                        <span class="material-symbols-outlined font-bold">group</span>
-                    </a>
-                    <a class="sidebar-link text-gray-500 hover:text-black cursor-pointer" href="#">
-                        <span class="material-symbols-outlined font-bold">storefront</span>
-                    </a>
-                </nav>
-            </div>
-            <div class="flex items-center gap-2 md:gap-3">
-                <!-- Creator Search -->
-                <div class="relative hidden md:block">
-                    <div
-                        class="flex items-center gap-2 bg-white border-4 border-black rounded-xl px-3 py-1.5 shadow-sticker-sm transition-all focus-within:shadow-none focus-within:translate-y-0.5 min-w-[200px] lg:min-w-[280px]">
-                        <span class="material-symbols-outlined text-black font-black text-xl">search</span>
-                        <input type="text" id="creator-search-input" placeholder="Find creators..."
-                            class="w-full bg-transparent border-none outline-none font-bold text-black text-xs md:text-sm placeholder-black/40"
-                            data-i18n="cat-search-placeholder" style="font-family: 'Fredoka', sans-serif;">
-                    </div>
-                    <!-- Search Results -->
-                    <div id="creator-search-results"
-                        class="absolute top-full left-0 right-0 mt-2 bg-white border-4 border-black rounded-xl shadow-sticker-md overflow-hidden z-[100] hidden">
-                        <div class="p-2 border-b-2 border-black/10 bg-gray-50">
-                            <span class="text-[10px] font-black uppercase text-gray-400 tracking-widest">Matching
-                                Creators</span>
-                        </div>
-                        <div id="results-list" class="max-h-[240px] overflow-y-auto">
-                            <!-- Results inject here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Add Button -->
-                <button
-                    class="w-10 h-10 md:w-11 md:h-11 bg-sticker-pink border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center text-white hover:scale-105 active:scale-95 transition-transform cursor-pointer">
-                    <span class="material-symbols-outlined font-black">add</span>
+    <div id="user-profile-view" style="display: none; position: fixed; inset: 0; z-index: 9000; overflow-y: auto; background: radial-gradient(circle at top left, rgba(255, 230, 0, 0.26), transparent 30%), radial-gradient(circle at bottom right, rgba(64, 123, 255, 0.18), transparent 32%), linear-gradient(180deg, #fffef8 0%, #edf5ff 100%); color: var(--pc-ink);">
+        <div class="pc-home-shell" style="min-height: 100vh; padding-bottom: 2rem;">
+            <!-- Topbar (Back/Close) -->
+            <header class="pc-home-topbar" style="justify-content: space-between;">
+                <button type="button" class="pc-home-icon" onclick="document.getElementById('user-profile-view').style.display='none'; openAuthenticatedHome(true);" style="color: #fff;">
+                    <span class="material-symbols-outlined">arrow_back</span>
                 </button>
+            </header>
 
-                <!-- Profile/User Button (Square now as requested) -->
-                <button onclick="toggleUserDropdown()"
-                    class="w-10 h-10 md:w-11 md:h-11 bg-sticker-yellow border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:scale-105 active:scale-95 transition-transform cursor-pointer">
-                    <span class="font-black text-black text-lg" style="font-family: 'Fredoka', sans-serif;">J</span>
+            <!-- Profile Info Section -->
+            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1rem; text-align: center;">
+                <div style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid #000; overflow: hidden; box-shadow: 4px 4px 0px rgba(0,0,0,1); background-color: #FFE600; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                    <span style="font-family: 'Fredoka', sans-serif; font-size: 3rem; font-weight: 700;">U</span>
+                </div>
+                <h2 style="font-family: 'Fredoka', sans-serif; font-size: 1.5rem; font-weight: 700; margin: 0;">Username</h2>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div style="display: flex; justify-content: center; gap: 1rem; padding: 0 1rem; margin-bottom: 2rem;">
+                <button id="tab-favorites" class="pc-home-chip active" style="flex: 1; text-align: center; justify-content: center; border: 2px solid #000; background-color: #FFE600; color: #000; box-shadow: 2px 2px 0px rgba(0,0,0,1);" onclick="switchProfileTab('favorites')">
+                    Favoritos
                 </button>
-
-                <!-- Secondary Profile Avatar (Square as requested for consistency) -->
-                <div
-                    class="w-10 h-10 md:w-11 md:h-11 bg-sticker-blue border-4 border-black rounded-xl overflow-hidden shadow-sticker-sm">
-                    <img alt="Profile" class="w-full h-full object-cover"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSSDWpGe4h08WcYL5dAVPdd17QUJ0nwCl4z_cscJ6G-dD9eszEE87b8jT0WngxN5uqqixLsGlYSj8B0JAVHwNoBgCmwix8fayeWVNbB5xdS4gaYUMsMj-kfbhw0MTMBUIKjuMsvh1rCxtZpP-9NMGFoJokVUrSAKtqqOK5UTDpHc5DoM1FvzuFdj2pBOUt5qpK35ZKvHBx_sIh5qhC6fWT_osvFT7ecn2w8iqG8CyK74IUR2CV7ZwYwi9WY2q6QyZTSo7xLtc7rwc" />
-                </div>
+                <button id="tab-customs" class="pc-home-chip" style="flex: 1; text-align: center; justify-content: center; border: 2px solid #000; background-color: transparent; color: #000; box-shadow: 2px 2px 0px rgba(0,0,0,1);" onclick="switchProfileTab('customs')">
+                    Customs
+                </button>
             </div>
-        </header>
 
-        <!-- Main Content: Optimized Full Width Layout -->
-        <main class="flex-grow flex flex-col w-full px-4 md:px-12 py-8 gap-12 relative">
-
-
-
-            <!-- MAIN: Profile Info & Showcase -->
-            <section class="relative w-full flex flex-col justify-center z-30 pb-12">
-                <!-- Profile Card -->
-                <div class="relative mb-8 md:mb-12 transform hover:-translate-y-1 transition-transform duration-300">
-                    <div class="absolute -top-3 -left-3 z-50">
-                        <div class="pin-head bg-sticker-pink w-5 h-5 md:w-6 md:h-6 border-2 border-black"></div>
-                    </div>
-                    <div class="absolute -top-3 -right-3 z-50">
-                        <div class="pin-head bg-sticker-yellow w-5 h-5 md:w-6 md:h-6 border-2 border-black"></div>
-                    </div>
-
-                    <div class="paper-card rounded-3xl p-6 md:p-8 shadow-sticker rotate-1 bg-white relative">
-                        <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12 mb-8 md:mb-12">
-                            <!-- Circular Profile Photo with Giant Shadow -->
-                            <div class="relative flex-shrink-0">
-                                <div
-                                    class="w-40 h-40 md:w-56 md:h-56 rounded-full border-[6px] border-black overflow-hidden bg-white shadow-sticker-giant transform -rotate-1 flex items-center justify-center">
-                                    <img id="profile-avatar-img-circle" alt="Profile" class="w-full h-full object-cover"
-                                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSSDWpGe4h08WcYL5dAVPdd17QUJ0nwCl4z_cscJ6G-dD9eszEE87b8jT0WngxN5uqqixLsGlYSj8B0JAVHwNoBgCmwix8fayeWVNbB5xdS4gaYUMsMj-kfbhw0MTMBUIKjuMsvh1rCxtZpP-9NMGFoJokVUrSAKtqqOK5UTDpHc5DoM1FvzuFdj2pBOUt5qpK35ZKvHBx_sIh5qhC6fWT_osvFT7ecn2w8iqG8CyK74IUR2CV7ZwYwi9WY2q6QyZTSo7xLtc7rwc" />
-                                </div>
-                                <!-- Pro Builder Badge -->
-                                <div
-                                    class="absolute -top-3 -right-3 bg-sticker-blue border-4 border-black px-4 py-2 rounded-full rotate-12 shadow-sticker">
-                                    <span class="text-white text-xs md:text-sm font-black uppercase tracking-wider"
-                                        data-i18n="cat-pro-builder">Pro
-                                        Builder</span>
-                                </div>
-                            </div>
-
-                            <div class="flex-grow">
-                                <div class="flex items-center gap-2 md:gap-3 mb-1 flex-wrap">
-                                    <h1 id="profile-username"
-                                        class="text-3xl md:text-5xl font-black uppercase tracking-tight leading-none">
-                                        StickerKing_99</h1>
-                                    <span class="material-symbols-outlined text-sticker-blue text-2xl md:text-3xl"
-                                        title="Verified Creator" data-i18n="cat-verified-title">verified</span>
-                                </div>
-                                <p
-                                    class="text-gray-400 text-xs md:text-sm font-bold uppercase tracking-[0.15em] md:tracking-[0.2em]">
-                                    <span data-i18n="prof-level-prefix">Level</span> 42 Creator • <span
-                                        data-i18n="prof-joined-prefix">Joined</span> 2023
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
-                            <div class="flex-1">
-                                <div class="relative">
-                                    <span
-                                        class="absolute -top-4 -left-2 text-4xl md:text-6xl text-sticker-blue/20 font-serif">"</span>
-                                    <p
-                                        class="font-handwritten text-xl md:text-3xl text-gray-800 leading-tight py-2 pl-4">
-                                        Just a paper soul living in a digital scrapbook. Catch me building 3D stickers
-                                        at 3AM!
-                                    </p>
-                                    <span
-                                        class="absolute -bottom-6 md:-bottom-8 right-0 text-4xl md:text-6xl text-sticker-blue/20 font-serif rotate-180">"</span>
-                                </div>
-                            </div>
-                            <div class="flex flex-row md:flex-col gap-3 w-full md:min-w-[180px] md:w-auto">
-                                <button id="profile-follow-btn"
-                                    class="bg-sticker-green border-4 border-black h-12 md:h-14 flex-1 md:w-full rounded-xl shadow-sticker-sm flex items-center justify-center gap-2 md:gap-3 active:translate-y-1 active:shadow-none transition-all group hover:bg-[#25a25a] cursor-pointer">
-                                    <div
-                                        class="w-5 h-6 md:w-6 md:h-8 bg-white lightning-bolt border-2 border-black flex items-center justify-center group-hover:scale-110 transition-transform">
-                                    </div>
-                                    <span
-                                        class="text-white font-black text-base md:text-xl uppercase italic tracking-wider"
-                                        data-i18n="cat-follow">Follow</span>
-                                </button>
-                                <div class="flex gap-2 md:gap-3">
-                                    <button
-                                        class="flex-1 h-10 md:h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-yellow transition-colors group cursor-pointer">
-                                        <span
-                                            class="material-symbols-outlined font-bold group-hover:scale-110 transition-transform"
-                                            title="Share Profile" data-i18n="prof-share-title">share</span>
-                                    </button>
-                                    <button
-                                        class="flex-1 h-10 md:h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-pink hover:text-white transition-colors group cursor-pointer">
-                                        <span
-                                            class="material-symbols-outlined font-bold group-hover:scale-110 transition-transform"
-                                            title="Send Message" data-i18n="prof-message-title">mail</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Tape element -->
-                    <div
-                        class="absolute -top-5 md:-top-6 left-1/2 -translate-x-1/2 w-24 md:w-32 h-8 md:h-10 bg-sticker-orange/40 border-l-2 border-r-2 border-white/30 backdrop-blur-sm -rotate-2 z-40 pointer-events-none">
-                    </div>
-                </div>
-
-                <!-- Recent Creations -->
-                <div class="relative">
-                    <div class="flex items-center justify-between mb-4 md:mb-6 flex-wrap gap-2">
-                        <div class="flex items-center gap-2 md:gap-3">
-                            <h2 class="text-lg md:text-2xl font-black uppercase bg-white border-4 border-black px-3 md:px-4 py-1 -rotate-1 shadow-sticker-sm inline-block transform origin-left hover:rotate-0 transition-transform"
-                                data-i18n="cat-recent-creations">
-                                Recent Creations</h2>
-                            <span
-                                class="bg-sticker-pink text-white text-[10px] md:text-xs font-bold px-2 py-1 rounded border-2 border-black -rotate-6"
-                                data-i18n="prof-new-badge">New!</span>
-                        </div>
-                        <button
-                            class="text-xs md:text-sm font-bold uppercase hover:underline flex items-center gap-1 group"
-                            data-i18n="cat-view-all">
-                            View All
-                            <span
-                                class="material-symbols-outlined text-lg group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                        </button>
-                    </div>
-
-                    <div class="flex gap-4 md:gap-6 pb-8 pt-4 px-2 overflow-x-auto hide-scrollbar snap-x w-full">
-                        <!-- Sticker 1 -->
-                        <div
-                            class="min-w-[160px] md:min-w-[200px] w-44 md:w-56 h-56 md:h-72 bg-sticker-pink border-4 border-black rounded-2xl rotate-[-2deg] shadow-sticker hover:rotate-0 transition-all cursor-pointer relative group overflow-hidden snap-center collage-sticker">
-                            <div class="absolute top-0 left-0 w-full h-4 bg-black/10"></div>
-                            <div class="absolute inset-0 flex items-center justify-center p-4 md:p-6">
-                                <span class="font-display text-white/30 font-bold text-5xl md:text-6xl">?</span>
-                            </div>
-                            <div
-                                class="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4 bg-white border-4 border-black px-2 py-1 md:py-2 shadow-sm transform group-hover:-translate-y-1 transition-transform">
-                                <div class="text-[10px] md:text-xs font-black uppercase text-center tracking-wider">Neon
-                                    Bot</div>
-                                <div class="text-[8px] md:text-[10px] text-gray-500 text-center font-bold">Rare • Gen 1
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Sticker 2 -->
-                        <div
-                            class="min-w-[160px] md:min-w-[200px] w-44 md:w-56 h-56 md:h-72 bg-sticker-yellow border-4 border-black rounded-2xl rotate-[1deg] shadow-sticker hover:rotate-0 transition-all cursor-pointer relative group overflow-hidden snap-center collage-sticker">
-                            <div class="absolute top-0 left-0 w-full h-4 bg-black/10"></div>
-                            <div class="absolute inset-0 flex items-center justify-center p-4 md:p-6">
-                                <span class="font-display text-black/20 font-bold text-5xl md:text-6xl">?</span>
-                            </div>
-                            <div
-                                class="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4 bg-white border-4 border-black px-2 py-1 md:py-2 shadow-sm transform group-hover:-translate-y-1 transition-transform">
-                                <div class="text-[10px] md:text-xs font-black uppercase text-center tracking-wider">
-                                    Goldie V1</div>
-                                <div class="text-[8px] md:text-[10px] text-gray-500 text-center font-bold">Legendary
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Sticker 3 -->
-                        <div
-                            class="min-w-[160px] md:min-w-[200px] w-44 md:w-56 h-56 md:h-72 bg-sticker-blue border-4 border-black rounded-2xl rotate-[-1deg] shadow-sticker hover:rotate-0 transition-all cursor-pointer relative group overflow-hidden snap-center collage-sticker">
-                            <div class="absolute top-0 left-0 w-full h-4 bg-black/10"></div>
-                            <div class="absolute inset-0 flex items-center justify-center p-4 md:p-6">
-                                <span class="font-display text-white/30 font-bold text-5xl md:text-6xl">?</span>
-                            </div>
-                            <div
-                                class="absolute bottom-3 md:bottom-4 left-3 md:left-4 right-3 md:right-4 bg-white border-4 border-black px-2 py-1 md:py-2 shadow-sm transform group-hover:-translate-y-1 transition-transform">
-                                <div class="text-[10px] md:text-xs font-black uppercase text-center tracking-wider">Blue
-                                    Ace</div>
-                                <div class="text-[8px] md:text-[10px] text-gray-500 text-center font-bold">Epic • Foil
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Add New Sticker -->
-                        <div
-                            class="min-w-[120px] md:min-w-[160px] w-32 md:w-44 h-56 md:h-72 bg-white/20 border-4 border-dashed border-black/30 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-white/40 transition-colors snap-center">
-                            <span class="material-symbols-outlined text-black/40 text-4xl md:text-5xl">add</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-
-        <!-- Decorative Background Elements -->
-        <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-            <div class="absolute top-20 left-10 opacity-50 rotate-12">
-                <div class="w-4 h-4 bg-sticker-pink rounded-full"></div>
-            </div>
-            <div class="absolute bottom-10 left-1/4 opacity-50 -rotate-12">
-                <div class="w-6 h-6 border-4 border-sticker-blue rotate-45"></div>
-            </div>
-            <div class="absolute top-1/3 right-10 opacity-30 hidden md:block">
-                <svg fill="none" height="100" stroke="black" stroke-dasharray="4 4" stroke-width="2"
-                    viewBox="0 0 100 100" width="100">
-                    <circle cx="50" cy="50" r="40"></circle>
-                </svg>
-            </div>
-        </div>
-
-        <!-- Mobile Bottom Navigation (hidden on desktop) -->
-        <div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex md:hidden items-end gap-4">
-            <button onclick="toggleUserProfile()"
-                class="w-12 h-12 bg-sticker-yellow border-4 border-black rounded-2xl shadow-sticker flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer">
-                <span class="material-symbols-outlined text-2xl text-black font-bold">home</span>
-            </button>
-            <button onclick="toggleUserProfile()"
-                class="w-16 h-16 bg-sticker-pink border-4 border-black rounded-2xl shadow-sticker flex items-center justify-center hover:scale-105 active:scale-95 transition-all -mb-1 cursor-pointer z-10">
-                <span class="material-symbols-outlined text-white text-4xl font-bold">add</span>
-            </button>
-            <button
-                class="w-12 h-12 bg-white border-4 border-black rounded-2xl shadow-sticker flex items-center justify-center hover:scale-105 active:scale-95 transition-all cursor-pointer">
-                <span class="material-symbols-outlined text-2xl text-black font-bold">person</span>
-            </button>
+            <!-- Tab Content -->
+            <main id="profile-content-area" style="padding: 0 1rem;">
+                <!-- Content injected via JS -->
+            </main>
         </div>
     </div>
-</body>
 
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    window.renderProfileFavorites = function() {
+        const contentArea = document.getElementById('profile-content-area');
+        if(!contentArea) return;
+        const favorites = JSON.parse(localStorage.getItem('papelcool_favorites') || '[]');
+
+        if (favorites.length === 0) {
+            contentArea.innerHTML = `
+                <div style="text-align: center; padding: 3rem 1rem; color: #666; font-family: 'Fredoka', sans-serif;">
+                    <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: #FF4D94;">favorite_border</span>
+                    <p>No tienes favoritos todavía.</p>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">¡Explora las colecciones y guarda tus Papelcools preferidos!</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '<div class="pc-home-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem;">';
+
+        favorites.forEach(name => {
+            const iconSrc = (typeof presetIcons !== 'undefined' && presetIcons[name]) ? presetIcons[name] : 'logo.svg';
+            html += `
+                <div class="pc-home-collection-card" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; background: #fff; border: 3px solid #000; border-radius: 16px; box-shadow: 4px 4px 0px rgba(0,0,0,1); cursor: pointer;" onclick="document.getElementById('user-profile-view').style.display='none'; window.isOpeningFromFavorites = true; if(window.openPresetCharacter) window.openPresetCharacter('${name}', true);">
+                    <button class="fandom-heart material-symbols-outlined active" onclick="event.stopPropagation(); toggleFavorite('${name}', this); setTimeout(window.renderProfileFavorites, 50)" style="color: #FF4D94; position: absolute; top: 10px; right: 10px; z-index: 10; font-variation-settings: 'FILL' 1;">favorite</button>
+                    <img src="${iconSrc}" alt="${name}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; margin-bottom: 0.5rem; border: 2px solid #000;">
+                    <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 700; margin: 0; text-align: center;">${name}</h3>
+                </div>
+            `;
+        });
+
+        html += '</div>';
+        contentArea.innerHTML = html;
+    };
+
+    window.renderProfileCustoms = function() {
+        const contentArea = document.getElementById('profile-content-area');
+        if(!contentArea) return;
+        contentArea.innerHTML = `
+            <div style="text-align: center; padding: 3rem 1rem; color: #666; font-family: 'Fredoka', sans-serif;">
+                <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block;">brush</span>
+                <p>Todavía no has creado ningún Papelcool.</p>
+                <button type="button" class="pc-home-chip" onclick="document.getElementById('user-profile-view').style.display='none'; if(window.navigateToView) navigateToView('custom');" style="margin-top: 1rem; border: 2px solid #000; box-shadow: 2px 2px 0px rgba(0,0,0,1);">
+                    Crear ahora
+                </button>
+            </div>
+        `;
+    };
+});
+</script>
+
+</body>
 </html>
