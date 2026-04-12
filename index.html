@@ -248,7 +248,7 @@
             transform: scale(1.05);
         }
 
-        /* Fandoms Grid Overlay */
+        /* Fandoms / Collections View */
         #fandoms-overlay {
             position: fixed;
             inset: 0;
@@ -258,16 +258,92 @@
             flex-direction: column;
             overflow-y: auto;
             padding: 2rem;
-            animation: slideInUp 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            color: #111827;
         }
 
         #fandoms-overlay.active {
             display: flex;
         }
 
-        @keyframes slideInUp {
-            from { transform: translateY(100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .fandoms-shell {
+            width: min(1280px, 100%);
+            margin: 0 auto;
+        }
+
+        .fandoms-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.25rem;
+            margin-bottom: 2rem;
+        }
+
+        .fandoms-header-main {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            min-width: 0;
+        }
+
+        .fandoms-header-copy h1 {
+            margin: 0 0 0.35rem;
+            font-family: 'Fredoka', sans-serif;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 700;
+            line-height: 1;
+            text-transform: uppercase;
+            color: #111827;
+        }
+
+        .fandoms-header-copy p {
+            margin: 0;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #334155;
+        }
+
+        .fandoms-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .fandoms-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 4px solid #000;
+        }
+
+        .fandoms-filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .fandoms-filter-group span {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #111827;
+        }
+
+        .fandoms-filter-group select {
+            border: 3px solid #000;
+            border-radius: 12px;
+            padding: 0.55rem 0.75rem;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #111827;
+            background: #fff;
+            box-shadow: 3px 3px 0 rgba(0, 0, 0, 1);
         }
 
         .fandom-card {
@@ -325,7 +401,7 @@
         .fandom-image-container {
             background-color: #D1E9FF;
             width: 100%;
-            height: 200px;
+            height: 240px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -334,8 +410,8 @@
         }
 
         .fandom-image-container img {
-            width: 80%;
-            height: 80%;
+            width: 90%;
+            height: 90%;
             object-fit: contain;
             transition: transform 0.3s;
         }
@@ -352,10 +428,16 @@
         }
 
         .fandom-tag {
+            display: inline-flex;
+            align-items: center;
+            width: fit-content;
+            padding: 0.25rem 0.55rem;
+            border-radius: 999px;
+            background: #DBEAFE;
             font-family: 'Fredoka', sans-serif;
-            font-weight: 600;
-            font-size: 0.65rem;
-            color: #6B7280;
+            font-weight: 700;
+            font-size: 0.7rem;
+            color: #1E3A8A;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
@@ -370,13 +452,13 @@
 
         .fandom-select-btn {
             margin-top: 12px;
-            background: white;
+            background: #FFE600;
             border: 3px solid black;
             border-radius: 12px;
             padding: 8px;
             font-family: 'Fredoka', sans-serif;
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: black;
             text-transform: uppercase;
             box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
@@ -384,9 +466,33 @@
         }
 
         .fandom-card:hover .fandom-select-btn {
-            background: #FFE600;
+            background: #FFD400;
             transform: translate(-1px, -1px);
             box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+        }
+
+        @media (max-width: 768px) {
+            #fandoms-overlay {
+                padding: 1rem;
+            }
+
+            .fandoms-header {
+                flex-direction: column;
+                align-items: stretch;
+                margin-bottom: 1.5rem;
+            }
+
+            .fandoms-header-main {
+                align-items: flex-start;
+            }
+
+            .fandoms-header-actions {
+                justify-content: flex-start;
+            }
+
+            .fandom-image-container {
+                height: 210px;
+            }
         }
 
         .pc-mobile-menu-btn {
@@ -420,6 +526,18 @@
             .pc-home-topbar {
                 flex-wrap: wrap;
                 position: relative;
+            }
+
+            .pc-home-topbar-left,
+            .pc-home-topbar-right {
+                display: contents;
+            }
+
+            .pc-home-topbar .pc-home-brand {
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                z-index: 10;
             }
 
             .pc-mobile-menu-btn {
@@ -646,6 +764,117 @@
         #user-profile-view .hide-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
+        }
+
+        .pc-favorites-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .pc-favorite-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0.9rem;
+            background: #fff;
+            border: 3px solid #000;
+            border-radius: 18px;
+            box-shadow: 4px 4px 0 rgba(0, 0, 0, 1);
+            cursor: pointer;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+            min-height: 100%;
+        }
+
+        .pc-favorite-card:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 6px 6px 0 rgba(0, 0, 0, 1);
+        }
+
+        .pc-favorite-card-thumb {
+            width: 100%;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #D1E9FF;
+            border: 2px solid #000;
+            border-radius: 12px;
+            margin-bottom: 0.7rem;
+            overflow: hidden;
+        }
+
+        .pc-favorite-card-thumb img {
+            width: 88%;
+            height: 88%;
+            object-fit: contain;
+        }
+
+        .pc-favorite-card-title {
+            margin: 0;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.98rem;
+            font-weight: 700;
+            line-height: 1.1;
+            text-align: center;
+            color: #111827;
+            text-transform: uppercase;
+        }
+
+        .pc-favorite-heart {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 12;
+            width: 40px;
+            height: 40px;
+            border-width: 2px;
+            border-radius: 14px;
+            color: #94A3B8;
+            font-variation-settings: 'FILL' 0;
+        }
+
+        .pc-favorite-heart.active {
+            color: #FF4D94;
+            font-variation-settings: 'FILL' 1;
+        }
+
+        .pc-favorites-empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #666;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .pc-profile-hero {
+            display: grid;
+            grid-template-columns: 120px minmax(0, 1fr);
+            gap: 1.25rem;
+            align-items: start;
+            margin: 0 1rem 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .pc-favorites-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 0.8rem;
+            }
+
+            .pc-favorite-card {
+                padding: 0.7rem;
+            }
+
+            .pc-favorite-card-title {
+                font-size: 0.88rem;
+            }
+
+            .pc-profile-hero {
+                grid-template-columns: 1fr;
+                justify-items: center;
+                text-align: center;
+            }
         }
 
         /* Fondo con degradado azul para el showcase */
@@ -3646,6 +3875,30 @@
             padding-bottom: 6rem;
         }
 
+        #app-global-topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9500;
+            display: none;
+        }
+
+        #app-global-topbar.active {
+            display: block;
+        }
+
+        .pc-global-topbar-inner {
+            width: min(1280px, calc(100% - 24px));
+            margin: 0 auto;
+        }
+
+        #authenticated-home-view .pc-home-shell,
+        #fandoms-overlay .fandoms-shell,
+        #user-profile-view .pc-home-shell {
+            padding-top: 5.85rem;
+        }
+
         .pc-home-topbar {
             position: sticky;
             top: 0;
@@ -3660,16 +3913,29 @@
             backdrop-filter: blur(10px);
         }
 
-                .pc-home-brand {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
+        .pc-home-topbar-left {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .pc-home-topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: auto;
+            min-width: 0;
+        }
+
+        .pc-home-brand {
+            position: static;
             display: flex;
             align-items: center;
             background: transparent;
             border: none;
             padding: 0;
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         .pc-home-brand-badge {
@@ -3690,9 +3956,9 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            flex: 1;
-            justify-content: center;
-            flex-wrap: wrap;
+            flex: 0 1 auto;
+            justify-content: flex-end;
+            flex-wrap: nowrap;
         }
 
         .pc-home-chip {
@@ -3719,6 +3985,7 @@
             align-items: center;
             gap: 0.65rem;
             min-width: 240px;
+            width: 320px;
             padding: 0.85rem 1rem;
             border: 3px solid #000;
             border-radius: 999px;
@@ -4258,6 +4525,12 @@
                 padding-bottom: 7.5rem;
             }
 
+            #authenticated-home-view .pc-home-shell,
+            #fandoms-overlay .fandoms-shell,
+            #user-profile-view .pc-home-shell {
+                padding-top: 5.35rem;
+            }
+
             .pc-home-topbar {
                 padding: 0.9rem 0.85rem;
             }
@@ -4420,6 +4693,51 @@
                 data-i18n="auth-sign-out">
                 Sign Out
             </button>
+        </div>
+    </div>
+
+    <div id="app-global-topbar">
+        <div class="pc-global-topbar-inner">
+            <header class="pc-home-topbar">
+                <button type="button" id="app-mobile-menu-btn" class="pc-home-icon pc-mobile-menu-btn" aria-label="Menú" onclick="document.getElementById('app-mobile-dropdown-menu').classList.toggle('active')">
+                    <span class="material-symbols-outlined">menu</span>
+                </button>
+
+                <div class="pc-home-topbar-left">
+                    <button type="button" class="pc-home-brand" onclick="navigateToView('home')">
+                        <img src="logo.svg" alt="Papelcool Logo" style="height: 32px; filter: drop-shadow(2px 2px 0px rgba(0,0,0,1)); display: block;">
+                    </button>
+                </div>
+
+                <div class="pc-home-topbar-right">
+                    <nav class="pc-home-nav" aria-label="Navegación principal">
+                        <button type="button" class="pc-home-chip" onclick="navigateToView('custom')">Crea el tuyo</button>
+                        <button type="button" class="pc-home-chip" onclick="navigateToView('presets')">Colecciones</button>
+                        <button type="button" class="pc-home-chip" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-banner-grid'), 0)">Novedades</button>
+                        <button type="button" class="pc-home-chip" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-groups'), 0)">Fan Clubs</button>
+                        <button type="button" class="pc-home-chip" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-community-notes'), 0)">Club Papel</button>
+                    </nav>
+
+                    <label class="pc-home-search" aria-label="Buscar">
+                        <span class="material-symbols-outlined">search</span>
+                        <input type="text" id="global-search-input" placeholder="Busca artistas, fandoms o ideas..." />
+                    </label>
+
+                    <div class="pc-home-actions">
+                        <button type="button" class="pc-home-icon pc-home-avatar" onclick="toggleUserDropdown()" aria-label="Perfil">
+                            <span id="global-profile-initial">P</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="app-mobile-dropdown-menu" class="pc-home-mobile-dropdown">
+                    <button type="button" class="pc-home-chip" onclick="navigateToView('custom'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')">Crea el tuyo</button>
+                    <button type="button" class="pc-home-chip" onclick="navigateToView('presets'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')">Colecciones</button>
+                    <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-banner-grid'), 0)">Novedades</button>
+                    <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-groups'), 0)">Fan Clubs</button>
+                    <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-community-notes'), 0)">Club Papel</button>
+                </div>
+            </header>
         </div>
     </div>
 
@@ -4970,40 +5288,36 @@
 
     <!-- Fandoms Selection Overlay (Funko Style) -->
     <div id="fandoms-overlay">
-        <div class="max-w-7xl mx-auto w-full">
-            <!-- Header Section -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
-                <div>
-                    <h1 class="text-4xl md:text-6xl font-black text-black uppercase mb-2" style="font-family: 'Fredoka', sans-serif;">Fandoms</h1>
-                    <p class="text-gray-600 font-bold">Explore our latest selection of Papelcool POPS! Discover your favorite characters.</p>
+        <div class="fandoms-shell">
+            <div class="fandoms-header">
+                <div class="fandoms-header-main">
+                    <div class="fandoms-header-copy">
+                        <h1>Colecciones</h1>
+                        <p>Explora los Papelcool disponibles, elige uno y entra directo al editor sin pantallas de carga.</p>
+                    </div>
                 </div>
-                <button type="button" id="fandoms-close-btn" class="icon-btn" style="width: 64px; height: 64px; background: white; border: 4px solid black; border-radius: 50%; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1);">
-                    <span class="material-symbols-outlined text-4xl" style="font-weight: 900;">close</span>
-                </button>
             </div>
 
-            <!-- Filters Bar (Mock) -->
-            <div class="flex flex-wrap gap-4 mb-8 border-b-4 border-black pb-4">
-                <div class="flex items-center gap-2">
-                    <span class="font-black uppercase text-sm">Sort By:</span>
-                    <select class="border-2 border-black rounded-lg px-2 py-1 font-bold text-sm bg-white">
-                        <option>Recommended</option>
-                        <option>Newest</option>
+            <div class="fandoms-filters">
+                <div class="fandoms-filter-group">
+                    <span>Orden</span>
+                    <select>
+                        <option>Recomendados</option>
+                        <option>Nuevos</option>
                     </select>
                 </div>
-                <div class="flex items-center gap-2">
-                    <span class="font-black uppercase text-sm">Fandom:</span>
-                    <select id="fandom-filter" class="border-2 border-black rounded-lg px-2 py-1 font-bold text-sm bg-white">
-                        <option value="all">All Fandoms</option>
+                <div class="fandoms-filter-group">
+                    <span>Fandom</span>
+                    <select id="fandom-filter">
+                        <option value="all">Todos</option>
                         <option value="minecraft">Minecraft</option>
                         <option value="kpop">Kpop Demon Hunters</option>
                     </select>
                 </div>
             </div>
 
-            <!-- Grid Container -->
             <div id="fandoms-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 md:gap-8 pb-20">
-                <!-- Cards will be injected here by JS -->
+                <!-- Cards injected by JS -->
             </div>
         </div>
     </div>
@@ -5582,33 +5896,76 @@
         window.langManager = langManager; // Make it globally accessible
         window.languageManager = langManager; // Aliasing for legacy/stray references
 
-        const VIEW_PATHS = {
-            showcase: '/showcase/',
-            custom: '/studio/custom/',
-            presets: '/studio/presets/',
-            login: '/auth/login/',
-            register: '/auth/register/'
-        };
         let initialViewApplied = false;
+
+        function getViewFromPathname() {
+            const path = window.location.pathname.toLowerCase();
+            if (path.includes('/studio/custom')) return 'custom';
+            if (path.includes('/studio/presets')) return 'presets';
+            if (path.includes('/auth/login')) return 'login';
+            if (path.includes('/auth/register')) return 'register';
+            if (path.includes('/showcase')) return 'showcase';
+            return null;
+        }
 
         function getRequestedView() {
             const params = new URLSearchParams(window.location.search);
-            return params.get('view') || 'showcase';
+            return params.get('view') || getViewFromPathname() || 'showcase';
         }
 
-        function navigateToView(view) {
-            const target = VIEW_PATHS[view] || VIEW_PATHS.showcase;
-            if (window.top && window.top !== window) {
-                window.top.location.href = target;
+        function syncViewInUrl(view, replaceHistory = false) {
+            const url = new URL(window.location.href);
+            if (view === 'showcase') {
+                url.searchParams.delete('view');
             } else {
-                window.location.href = target;
+                url.searchParams.set('view', view);
             }
+
+            const method = replaceHistory ? 'replaceState' : 'pushState';
+            window.history[method]({ view }, '', `${url.pathname}${url.search}${url.hash}`);
+        }
+
+        function navigateToView(view, options = {}) {
+            const { updateHistory = true, replaceHistory = false } = options;
+
+            if (updateHistory) {
+                syncViewInUrl(view, replaceHistory);
+            }
+
+            if (view === 'home') {
+                openAuthenticatedHome(true);
+                return;
+            }
+
+            if (view === 'custom') {
+                openCustomizationView();
+                return;
+            }
+
+            if (view === 'presets') {
+                openPresetsView();
+                return;
+            }
+
+            if (view === 'login') {
+                showAuthModal('login');
+                return;
+            }
+
+            if (view === 'register') {
+                showAuthModal('register');
+                return;
+            }
+
+            openShowcaseView();
         }
         window.navigateToView = navigateToView;
 
 
 
         let appMode = 'edit';
+        let activeAppView = 'showcase';
+        let currentProfileUserId = null;
         let currentMainPart = 'torso';
         let currentHeadPart = null;
         const keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false, ' ': false };
@@ -8761,15 +9118,23 @@
             const nickname = user.user_metadata?.nickname || user.email?.split('@')[0] || 'Creator';
             const initial = nickname.charAt(0).toUpperCase();
             const greetingName = document.getElementById('home-greeting-name');
-            const homeProfileInitial = document.getElementById('home-profile-initial');
+            const globalProfileInitial = document.getElementById('global-profile-initial');
+            const authUserAvatar = document.getElementById('auth-user-avatar');
 
             if (greetingName) greetingName.textContent = nickname;
-            if (homeProfileInitial) homeProfileInitial.textContent = initial;
+            if (globalProfileInitial) globalProfileInitial.textContent = initial;
+            if (authUserAvatar) authUserAvatar.textContent = initial;
         }
 
         function scrollAuthenticatedHomeTo(id) {
             const target = document.getElementById(id);
             if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function setGlobalTopbarVisible(visible) {
+            const topbar = document.getElementById('app-global-topbar');
+            if (!topbar) return;
+            topbar.classList.toggle('active', visible);
         }
 
         function openAuthenticatedHome(show = true) {
@@ -8797,7 +9162,9 @@
 
                 shouldRenderScene = false;
                 forceMemoryCleanup();
+                activeAppView = 'home';
                 authenticatedHomeView.classList.add('active');
+                setGlobalTopbarVisible(true);
                 if (authContainer) authContainer.style.display = 'none';
                 if (userProfileView) userProfileView.style.display = 'none';
                 syncAuthenticatedHomeUser();
@@ -8805,6 +9172,8 @@
             }
 
             authenticatedHomeView.classList.remove('active');
+            setGlobalTopbarVisible(false);
+            if (fandomsOverlay) fandomsOverlay.classList.remove('active');
             if (canvasContainer) canvasContainer.style.display = '';
             shouldRenderScene = true;
             if (authContainer) authContainer.style.display = '';
@@ -8812,6 +9181,7 @@
 
         function openShowcaseView() {
             openAuthenticatedHome(false);
+            setGlobalTopbarVisible(false);
             if (userProfileView) userProfileView.style.display = 'none';
             document.body.classList.remove('customization-active');
             editorPanelWrapper.style.display = 'none';
@@ -8829,13 +9199,18 @@
             if (pdfBtn) pdfBtn.classList.remove('active');
 
             startShowcase();
+            activeAppView = 'showcase';
             setTimeout(() => { onWindowResize(); }, 100);
         }
 
         function openCustomizationView() {
             openAuthenticatedHome(false);
+            setGlobalTopbarVisible(false);
             if (userProfileView) userProfileView.style.display = 'none';
             stopShowcase();
+            if (fandomsOverlay) fandomsOverlay.classList.remove('active');
+            const authContainer = document.getElementById('auth-container');
+            if (authContainer) authContainer.style.display = 'none';
             document.body.classList.add('customization-active');
             editorPanelWrapper.style.display = 'block';
             presetsSection.classList.add('hidden');
@@ -8845,6 +9220,7 @@
             hasCustomizationInteracted = false;
             const downloadPdfCustomBtn = document.getElementById('download-pdf-custom-btn');
             if (downloadPdfCustomBtn) downloadPdfCustomBtn.style.display = 'none';
+            activeAppView = 'custom';
 
             setTimeout(() => {
                 onWindowResize();
@@ -8852,9 +9228,25 @@
         }
 
         function openPresetsView() {
-            openAuthenticatedHome(false);
+            ensureDeferredViews();
             if (userProfileView) userProfileView.style.display = 'none';
             stopShowcase();
+            document.body.classList.remove('customization-active');
+            if (editorPanelWrapper) editorPanelWrapper.style.display = 'none';
+            if (presetsSection) presetsSection.classList.add('hidden');
+            if (customizeSection) customizeSection.classList.add('hidden');
+            hideCharacterName();
+            if (authenticatedHomeView) authenticatedHomeView.classList.remove('active');
+            const authContainer = document.getElementById('auth-container');
+            if (authContainer) authContainer.style.display = 'none';
+            if (canvasContainer) {
+                canvasContainer.style.display = 'none';
+                canvasContainer.classList.remove('showcase-active');
+            }
+            shouldRenderScene = false;
+            forceMemoryCleanup();
+            setGlobalTopbarVisible(true);
+            activeAppView = 'presets';
             renderFandomsGrid();
             fandomsOverlay.classList.add('active');
         }
@@ -8865,23 +9257,28 @@
 
             const requestedView = getRequestedView();
 
+            if (requestedView === 'home') {
+                navigateToView('home', { updateHistory: false, replaceHistory: true });
+                return;
+            }
+
             if (requestedView === 'custom') {
-                openCustomizationView();
+                navigateToView('custom', { updateHistory: false, replaceHistory: true });
                 return;
             }
 
             if (requestedView === 'presets') {
-                openPresetsView();
+                navigateToView('presets', { updateHistory: false, replaceHistory: true });
                 return;
             }
 
             if (requestedView === 'login') {
-                showAuthModal('login');
+                navigateToView('login', { updateHistory: false, replaceHistory: true });
                 return;
             }
 
             if (requestedView === 'register') {
-                showAuthModal('register');
+                navigateToView('register', { updateHistory: false, replaceHistory: true });
                 return;
             }
 
@@ -8892,12 +9289,16 @@
             if (authenticatedUser) {
                 if (typeof updateAuthUI === 'function') updateAuthUI(authenticatedUser);
                 await syncAuthenticatedHomeUser(authenticatedUser);
-                openAuthenticatedHome(true);
+                navigateToView('home', { updateHistory: false, replaceHistory: true });
                 return;
             }
 
-            openShowcaseView();
+            navigateToView('showcase', { updateHistory: false, replaceHistory: true });
         }
+
+        window.addEventListener('popstate', () => {
+            navigateToView(getRequestedView(), { updateHistory: false });
+        });
 
         // Función simplificada para limpiar grid (SVG son ligeros)
         function clearMobileGrid() {
@@ -8982,7 +9383,6 @@
 
         const fandomsOverlay = document.getElementById('fandoms-overlay');
         const fandomsGrid = document.getElementById('fandoms-grid');
-        const fandomsCloseBtn = document.getElementById('fandoms-close-btn');
         const fandomFilter = document.getElementById('fandom-filter');
 
         const characterFandoms = {
@@ -9014,7 +9414,7 @@
 
                 card.innerHTML = `
                     <div class="fandom-badge">New</div>
-                    <button class="fandom-heart material-symbols-outlined ${heartClass}" onclick="event.stopPropagation(); toggleFavorite('${name}', this)" style="${heartColor}">favorite</button>
+                    <button class="fandom-heart material-symbols-outlined ${heartClass}" data-favorite-name="${name}" onclick="event.stopPropagation(); toggleFavorite('${name}', this)" style="${heartColor}">favorite</button>
                     <div class="fandom-image-container">
                         <img src="${presetIcons[name]}" alt="${name}">
                     </div>
@@ -9026,21 +9426,16 @@
                 `;
 
                 card.addEventListener('click', () => {
-                    console.log(`Setting preset for ${name}`);
                     if (window.setPresetCharacter) {
                         window.setPresetCharacter(name);
-                        fandomsOverlay.classList.remove('active');
+                        navigateToView('custom');
                     }
                 });
 
                 fandomsGrid.appendChild(card);
             });
-        }
 
-        if (fandomsCloseBtn) {
-            fandomsCloseBtn.addEventListener('click', () => {
-                fandomsOverlay.classList.remove('active');
-            });
+            syncFavoriteButtons();
         }
 
         if (fandomFilter) {
@@ -9057,7 +9452,7 @@
         const backToShowcaseCustomBtn = document.getElementById('back-to-showcase-custom-btn');
         if (backToShowcaseCustomBtn) {
             backToShowcaseCustomBtn.addEventListener('click', () => {
-                navigateToView('showcase');
+                navigateToView('home');
             });
         }
 
@@ -9458,7 +9853,7 @@
         // Botón 1: Volver al showcase
         if (backToShowcaseBtn) {
             backToShowcaseBtn.addEventListener('click', () => {
-                navigateToView('showcase');
+                navigateToView('home');
             });
         }
 
@@ -10730,23 +11125,32 @@
 
             if (isShowing) {
                 profileView.style.display = 'block';
+                setGlobalTopbarVisible(true);
                 if (authContainer) authContainer.style.display = 'none';
                 if (authenticatedHomeView) authenticatedHomeView.classList.remove('active');
+                if (fandomsOverlay) fandomsOverlay.classList.remove('active');
+                if (canvasContainer) canvasContainer.style.display = 'none';
+                shouldRenderScene = false;
 
                 // If no target ID provided, load current user's profile
                 if (!targetUserId) {
+                    currentProfileUserId = null;
                     setupOwnerProfile();
                 } else {
+                    currentProfileUserId = targetUserId;
                     loadOtherUserProfile(targetUserId);
                 }
             } else {
                 profileView.style.display = 'none';
-                const isLoggedIn = document.getElementById('auth-user-menu')?.style.display === 'flex';
-                if (isLoggedIn && authenticatedHomeView) {
-                    authenticatedHomeView.classList.add('active');
-                    if (authContainer) authContainer.style.display = 'none';
-                } else if (authContainer) {
-                    authContainer.style.display = 'block';
+                if (activeAppView === 'presets') {
+                    openPresetsView();
+                } else if (activeAppView === 'custom') {
+                    openCustomizationView();
+                } else if (activeAppView === 'home') {
+                    openAuthenticatedHome(true);
+                } else {
+                    setGlobalTopbarVisible(false);
+                    if (authContainer) authContainer.style.display = 'block';
                 }
             }
         }
@@ -10754,10 +11158,35 @@
         async function setupOwnerProfile() {
             const user = await getCurrentUser();
             if (user) {
+                currentProfileUserId = user.id;
                 const nickname = user.user_metadata?.nickname || user.email.split('@')[0];
-                document.getElementById('profile-username').textContent = nickname;
+                const email = user.email || '';
+                const initial = nickname.charAt(0).toUpperCase();
+                const joined = user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Ahora';
+                const favoritesCount = getFavorites().length;
+
+                const profileUsername = document.getElementById('profile-username');
+                const profileHandle = document.getElementById('profile-handle');
+                const profileEmail = document.getElementById('profile-email');
+                const profileInitial = document.getElementById('profile-avatar-initial');
+                const profileJoined = document.getElementById('profile-joined');
+                const profileFavoritesCount = document.getElementById('profile-favorites-count');
+                const profileCustomsCount = document.getElementById('profile-customs-count');
+                const profileStatus = document.getElementById('profile-status');
+
+                if (profileUsername) profileUsername.textContent = nickname;
+                if (profileHandle) profileHandle.textContent = `@${nickname.toLowerCase().replace(/\s+/g, '')}`;
+                if (profileEmail) profileEmail.textContent = email;
+                if (profileInitial) profileInitial.textContent = initial;
+                if (profileJoined) profileJoined.textContent = `Miembro desde ${joined}`;
+                if (profileFavoritesCount) profileFavoritesCount.textContent = String(favoritesCount);
+                if (profileCustomsCount) profileCustomsCount.textContent = '...';
+                if (profileStatus) profileStatus.textContent = 'Coleccionando favoritos y creando nuevos Papelcool.';
+
                 updateProfileUI(true); // true = owner
-                loadUserCharacters(); // Load own characters
+                switchProfileTab('favorites');
+                const result = await loadUserCharacters();
+                if (profileCustomsCount) profileCustomsCount.textContent = String(result?.data?.length || 0);
             }
         }
 
@@ -10776,11 +11205,30 @@
                 if (error) throw error;
 
                 // Update UI
-                document.getElementById('profile-username').textContent = profile.nickname;
+                const profileUsername = document.getElementById('profile-username');
+                const profileHandle = document.getElementById('profile-handle');
+                const profileEmail = document.getElementById('profile-email');
+                const profileInitial = document.getElementById('profile-avatar-initial');
+                const profileJoined = document.getElementById('profile-joined');
+                const profileFavoritesCount = document.getElementById('profile-favorites-count');
+                const profileCustomsCount = document.getElementById('profile-customs-count');
+                const profileStatus = document.getElementById('profile-status');
+                const nickname = profile.nickname || 'Creator';
+
+                if (profileUsername) profileUsername.textContent = nickname;
+                if (profileHandle) profileHandle.textContent = `@${nickname.toLowerCase().replace(/\s+/g, '')}`;
+                if (profileEmail) profileEmail.textContent = profile.email || '';
+                if (profileInitial) profileInitial.textContent = nickname.charAt(0).toUpperCase();
+                if (profileJoined) profileJoined.textContent = profile.created_at ? `Miembro desde ${new Date(profile.created_at).toLocaleDateString()}` : 'Perfil público';
+                if (profileFavoritesCount) profileFavoritesCount.textContent = String(getFavorites().length);
+                if (profileCustomsCount) profileCustomsCount.textContent = '...';
+                if (profileStatus) profileStatus.textContent = 'Perfil público de la comunidad Papelcool.';
                 updateProfileUI(false); // false = not owner
+                switchProfileTab('favorites');
 
                 // Load that user's characters
-                loadUserCharacters(userId);
+                const result = await loadUserCharacters(userId);
+                if (profileCustomsCount) profileCustomsCount.textContent = String(result?.data?.length || 0);
             } catch (err) {
                 console.error('Error loading other profile:', err);
             }
@@ -11166,10 +11614,19 @@
             userProfileView = document.getElementById('user-profile-view');
             renderAuthenticatedHome();
 
-            const homeSearchInput = document.getElementById('home-search-input');
-            if (homeSearchInput) {
-                homeSearchInput.addEventListener('input', (event) => {
+            const globalSearchInput = document.getElementById('global-search-input');
+            if (globalSearchInput) {
+                globalSearchInput.addEventListener('input', (event) => {
                     const query = event.target.value.trim().toLowerCase();
+
+                    if (fandomsOverlay && fandomsOverlay.classList.contains('active')) {
+                        document.querySelectorAll('#fandoms-grid .fandom-card').forEach(card => {
+                            const matches = !query || card.textContent.toLowerCase().includes(query);
+                            card.style.display = matches ? '' : 'none';
+                        });
+                        return;
+                    }
+
                     document.querySelectorAll('#authenticated-home-view .pc-home-banner, #authenticated-home-view .pc-home-collection-card, #authenticated-home-view .pc-home-group-card').forEach(card => {
                         const matches = !query || card.textContent.toLowerCase().includes(query);
                         card.style.display = matches ? '' : 'none';
@@ -11207,35 +11664,96 @@
         // ============================================
         // FAVORITES FUNCTIONALITY
         // ============================================
-        function toggleFavorite(characterName, btnElement) {
-            let favorites = JSON.parse(localStorage.getItem('papelcool_favorites') || '[]');
-
-            if (favorites.includes(characterName)) {
-                favorites = favorites.filter(name => name !== characterName);
-                if (btnElement) {
-                    btnElement.style.color = ''; // Reset color
-                    btnElement.classList.remove('active');
-                }
-            } else {
-                favorites.push(characterName);
-                if (btnElement) {
-                    btnElement.style.color = '#FF4D94'; // Red color for favorite
-                    btnElement.classList.add('active');
-                }
+        function getFavorites() {
+            try {
+                const raw = JSON.parse(localStorage.getItem('papelcool_favorites') || '[]');
+                return Array.isArray(raw) ? [...new Set(raw.filter(Boolean))] : [];
+            } catch {
+                return [];
             }
+        }
 
-            localStorage.setItem('papelcool_favorites', JSON.stringify(favorites));
+        function saveFavorites(favorites) {
+            localStorage.setItem('papelcool_favorites', JSON.stringify([...new Set(favorites)]));
+        }
 
-            // Refresh favorites view if it's currently open
+        function isFavorite(characterName) {
+            return getFavorites().includes(characterName);
+        }
+
+        function syncFavoriteButtons() {
+            document.querySelectorAll('[data-favorite-name]').forEach((button) => {
+                const active = isFavorite(button.dataset.favoriteName);
+                button.classList.toggle('active', active);
+                button.style.color = active ? '#FF4D94' : '';
+            });
+        }
+
+        function getFavoriteCardMarkup(name, context = 'profile') {
+            const iconSrc = (typeof presetIcons !== 'undefined' && presetIcons[name]) ? presetIcons[name] : 'logo.svg';
+            return `
+                <article class="pc-favorite-card" onclick="openFavoriteCharacter('${name}', '${context}')">
+                    <button type="button" class="pc-home-icon pc-favorite-heart ${isFavorite(name) ? 'active' : ''}" data-favorite-name="${name}" aria-label="Favorito" onclick="event.stopPropagation(); toggleFavorite('${name}', this)">
+                        <span class="material-symbols-outlined">favorite</span>
+                    </button>
+                    <div class="pc-favorite-card-thumb">
+                        <img src="${iconSrc}" alt="${name}" loading="lazy">
+                    </div>
+                    <h3 class="pc-favorite-card-title">${name}</h3>
+                </article>
+            `;
+        }
+
+        function getFavoritesEmptyMarkup() {
+            return `
+                <div class="pc-favorites-empty">
+                    <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: #FF4D94;">favorite_border</span>
+                    <p>No tienes favoritos todavía.</p>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Guarda tus Papelcools desde Colecciones y aparecerán aquí automáticamente.</p>
+                </div>
+            `;
+        }
+
+        function renderFavoritesGridMarkup() {
+            const favorites = getFavorites();
+            if (!favorites.length) return getFavoritesEmptyMarkup();
+            return `<div class="pc-favorites-grid">${favorites.map(name => getFavoriteCardMarkup(name)).join('')}</div>`;
+        }
+
+        function refreshFavoritesUI() {
             const favoritesView = document.getElementById('favorites-view');
             if (favoritesView && favoritesView.style.display !== 'none') {
                 renderFavorites();
             }
+            if (window.renderProfileFavorites) {
+                window.renderProfileFavorites();
+            }
+            syncFavoriteButtons();
         }
 
-        function isFavorite(characterName) {
-            const favorites = JSON.parse(localStorage.getItem('papelcool_favorites') || '[]');
-            return favorites.includes(characterName);
+        function toggleFavorite(characterName, btnElement) {
+            const favorites = getFavorites();
+            const nextFavorites = favorites.includes(characterName)
+                ? favorites.filter(name => name !== characterName)
+                : [...favorites, characterName];
+
+            saveFavorites(nextFavorites);
+
+            if (btnElement) {
+                const active = nextFavorites.includes(characterName);
+                btnElement.classList.toggle('active', active);
+                btnElement.style.color = active ? '#FF4D94' : '';
+            }
+
+            refreshFavoritesUI();
+        }
+
+        function openFavoriteCharacter(name, context = 'profile') {
+            const favoritesView = document.getElementById('favorites-view');
+            if (favoritesView) favoritesView.style.display = 'none';
+            if (userProfileView) userProfileView.style.display = 'none';
+            if (window.setPresetCharacter) window.setPresetCharacter(name);
+            navigateToView('custom');
         }
 
         function showFavoritesView() {
@@ -11265,8 +11783,6 @@
             const favoritesView = document.getElementById('favorites-view');
             if (!favoritesView) return;
 
-            const favorites = JSON.parse(localStorage.getItem('papelcool_favorites') || '[]');
-
             let html = `
                 <div class="pc-home-shell">
                     <header class="pc-home-topbar" style="justify-content: flex-start;">
@@ -11278,35 +11794,7 @@
                     <main class="pc-home-content" style="padding-top: 2rem;">
             `;
 
-            if (favorites.length === 0) {
-                html += `
-                    <div style="text-align: center; padding: 3rem;">
-                        <span class="material-symbols-outlined" style="font-size: 4rem; color: #ccc;">favorite_border</span>
-                        <h2 style="font-family: 'Fredoka', sans-serif; margin-top: 1rem;">Aún no tienes favoritos</h2>
-                        <p style="color: #666;">Guarda tus Paper Cool favoritos haciendo clic en el ícono del corazón.</p>
-                        <button class="pc-home-btn" onclick="document.getElementById('favorites-view').style.display='none'; openAuthenticatedHome(true);" style="margin-top: 1rem;">Explorar Colecciones</button>
-                    </div>
-                `;
-            } else {
-                html += `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;">`;
-
-                favorites.forEach(name => {
-                    const iconUrl = (typeof presetIcons !== 'undefined' && presetIcons[name]) ? presetIcons[name] : 'logo.svg';
-                    html += `
-                        <div class="fandom-card" style="position: relative;">
-                            <button class="fandom-heart material-symbols-outlined active" onclick="toggleFavorite('${name}', this); setTimeout(renderFavorites, 50)" style="color: #FF4D94; position: absolute; top: 10px; right: 10px; z-index: 10;">favorite</button>
-                            <div class="fandom-image-container" onclick="setPresetCharacter('${name}'); document.getElementById('favorites-view').style.display='none'; navigateToView('presets');">
-                                <img src="${iconUrl}" alt="${name}" style="width: 80%; height: 80%; object-fit: contain;">
-                            </div>
-                            <div class="fandom-info" style="padding: 0.5rem; text-align: center;">
-                                <h3 class="fandom-name" style="font-size: 1rem;">${name}</h3>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                html += `</div>`;
-            }
+            html += renderFavoritesGridMarkup();
 
             html += `
                     </main>
@@ -11314,11 +11802,12 @@
             `;
 
             favoritesView.innerHTML = html;
+            syncFavoriteButtons();
         }
 
         // Expose functions globally
         window.toggleFavorite = toggleFavorite;
-        window.openFavoritesView = openFavoritesView;
+        window.openFavoritesView = showFavoritesView;
 
         function switchProfileTab(tabId) {
             // Update active styling
@@ -11338,47 +11827,47 @@
 
         window.renderProfileFavorites = function renderProfileFavorites() {
             const contentArea = document.getElementById('profile-content-area');
-            const favorites = JSON.parse(localStorage.getItem('papelcool_favorites') || '[]');
-
-            if (favorites.length === 0) {
-                contentArea.innerHTML = `
-                    <div style="text-align: center; padding: 3rem 1rem; color: #666; font-family: 'Fredoka', sans-serif;">
-                        <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: #FF4D94;">favorite_border</span>
-                        <p>No tienes favoritos todavía.</p>
-                        <p style="font-size: 0.9rem; margin-top: 0.5rem;">¡Explora las colecciones y guarda tus Papelcools preferidos!</p>
-                    </div>
-                `;
-                return;
-            }
-
-            let html = '<div class="pc-home-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem;">';
-
-            favorites.forEach(name => {
-                const iconSrc = (typeof presetIcons !== 'undefined' && presetIcons[name]) ? presetIcons[name] : 'logo.svg';
-                html += `
-                    <div class="pc-home-collection-card" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; background: #fff; border: 3px solid #000; border-radius: 16px; box-shadow: 4px 4px 0px rgba(0,0,0,1); cursor: pointer;" onclick="document.getElementById('user-profile-view').style.display='none'; window.isOpeningFromFavorites = true; if(window.openPresetCharacter) window.openPresetCharacter('${name}', true);">
-                        <button class="fandom-heart material-symbols-outlined active" onclick="event.stopPropagation(); toggleFavorite('${name}', this); setTimeout(window.renderProfileFavorites, 50)" style="color: #FF4D94; position: absolute; top: 10px; right: 10px; z-index: 10; font-variation-settings: 'FILL' 1;">favorite</button>
-                        <img src="${iconSrc}" alt="${name}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; margin-bottom: 0.5rem; border: 2px solid #000;">
-                        <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 700; margin: 0; text-align: center;">${name}</h3>
-                    </div>
-                `;
-            });
-
-            html += '</div>';
-            contentArea.innerHTML = html;
+            if (!contentArea) return;
+            contentArea.innerHTML = renderFavoritesGridMarkup();
+            syncFavoriteButtons();
         }
 
-        window.renderProfileCustoms = function renderProfileCustoms() {
+        window.renderProfileCustoms = async function renderProfileCustoms() {
             const contentArea = document.getElementById('profile-content-area');
-            // Empty state for customs since we don't have customs saving logic fully implemented yet, or if we do, it's not well-defined.
-            // We just provide the empty state for the UI placeholder.
+            if (!contentArea) return;
             contentArea.innerHTML = `
+                <div class="pc-favorites-empty">
+                    <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block;">apps</span>
+                    <p>Cargando tus customs...</p>
+                </div>
+            `;
+
+            const result = await loadUserCharacters(currentProfileUserId || undefined).catch(() => ({ data: [] }));
+            const customs = Array.isArray(result?.data) ? result.data : [];
+
+            if (!customs.length) {
+                contentArea.innerHTML = `
                 <div style="text-align: center; padding: 3rem 1rem; color: #666; font-family: 'Fredoka', sans-serif;">
                     <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block;">brush</span>
                     <p>Todavía no has creado ningún Papelcool.</p>
                     <button type="button" class="pc-home-chip" onclick="document.getElementById('user-profile-view').style.display='none'; navigateToView('custom');" style="margin-top: 1rem; border: 2px solid #000; box-shadow: 2px 2px 0px rgba(0,0,0,1);">
                         Crear ahora
                     </button>
+                </div>
+            `;
+                return;
+            }
+
+            contentArea.innerHTML = `
+                <div class="pc-favorites-grid">
+                    ${customs.map(char => `
+                        <article class="pc-favorite-card" onclick="loadSavedCharacter('${char.id}'); document.getElementById('user-profile-view').style.display='none';">
+                            <div class="pc-favorite-card-thumb">
+                                <img src="${char.thumbnail || 'logo.svg'}" alt="${char.name}" loading="lazy">
+                            </div>
+                            <h3 class="pc-favorite-card-title">${char.name}</h3>
+                        </article>
+                    `).join('')}
                 </div>
             `;
         }
@@ -11393,52 +11882,6 @@
     </script>
     <div id="authenticated-home-view">
         <div class="pc-home-shell">
-            <header class="pc-home-topbar">
-                <!-- Botón de hamburguesa para móvil -->
-                <button type="button" id="mobile-menu-btn" class="pc-home-icon pc-mobile-menu-btn" aria-label="Menú" onclick="document.getElementById('mobile-dropdown-menu').classList.toggle('active')">
-                    <span class="material-symbols-outlined">menu</span>
-                </button>
-
-                <!-- Logo centrado -->
-                <nav class="pc-home-nav" aria-label="Navegación principal" style="margin-right: auto;">
-                    <button type="button" class="pc-home-chip" onclick="navigateToView('custom')">Crea el tuyo</button>
-                    <button type="button" class="pc-home-chip" onclick="navigateToView('presets')">Colecciones</button>
-                </nav>
-
-                <button type="button" class="pc-home-brand" onclick="openAuthenticatedHome(true)" style="position: absolute; left: 50%; transform: translateX(-50%); background: transparent; border: none; padding: 0; box-shadow: none; z-index: 10; display: flex; justify-content: center; align-items: center;">
-                    <img src="logo.svg" alt="Papelcool Logo" style="height: 32px; filter: drop-shadow(2px 2px 0px rgba(0,0,0,1)); margin: 0 auto; display: block;">
-                </button>
-
-                <nav class="pc-home-nav" aria-label="Navegación principal" style="margin-left: auto;">
-                    <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-banner-grid')">Novedades</button>
-                    <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-groups')">Fan Clubs</button>
-                    <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-community-notes')">Club Papel</button>
-                </nav>
-
-                <div id="mobile-dropdown-menu" class="pc-home-mobile-dropdown">
-                    <button type="button" class="pc-home-chip" onclick="navigateToView('custom'); document.getElementById('mobile-dropdown-menu').classList.remove('active')">Crea el tuyo</button>
-                    <button type="button" class="pc-home-chip" onclick="navigateToView('presets'); document.getElementById('mobile-dropdown-menu').classList.remove('active')">Colecciones</button>
-                    <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-banner-grid'); document.getElementById('mobile-dropdown-menu').classList.remove('active')">Novedades</button>
-                    <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-groups'); document.getElementById('mobile-dropdown-menu').classList.remove('active')">Fan Clubs</button>
-                    <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-community-notes'); document.getElementById('mobile-dropdown-menu').classList.remove('active')">Club Papel</button>
-                </div>
-
-                <label class="pc-home-search" aria-label="Buscar">
-                    <span class="material-symbols-outlined">search</span>
-                    <input type="text" id="home-search-input" placeholder="Busca artistas, fandoms o ideas..." />
-                </label>
-
-                <div class="pc-home-actions">
-                    <button type="button" class="pc-home-icon" aria-label="Favoritos" onclick="document.getElementById('user-profile-view').style.display='block'; document.getElementById('auth-container').style.display='none'; switchProfileTab('favorites');">
-                        <span class="material-symbols-outlined">favorite</span>
-                    </button>
-                    <button type="button" class="pc-home-icon pc-home-avatar" onclick="toggleUserDropdown()"
-                        aria-label="Perfil">
-                        <span id="home-profile-initial">P</span>
-                    </button>
-                </div>
-            </header>
-
             <main class="pc-home-content">
                 <section class="pc-home-hero">
                     <article class="pc-home-panel pc-home-hero-copy" id="home-top">
@@ -11543,22 +11986,33 @@
     <!-- USER PROFILE VIEW (Hidden by default) -->
     <div id="user-profile-view" style="display: none; position: fixed; inset: 0; z-index: 9000; overflow-y: auto; background: radial-gradient(circle at top left, rgba(255, 230, 0, 0.26), transparent 30%), radial-gradient(circle at bottom right, rgba(64, 123, 255, 0.18), transparent 32%), linear-gradient(180deg, #fffef8 0%, #edf5ff 100%); color: var(--pc-ink);">
         <div class="pc-home-shell" style="min-height: 100vh; padding-bottom: 2rem;">
-            <!-- Topbar (Back/Close) -->
-            <header class="pc-home-topbar" style="justify-content: space-between;">
-                <button type="button" class="pc-home-icon" onclick="document.getElementById('user-profile-view').style.display='none'; openAuthenticatedHome(true);" style="color: #fff;">
-                    <span class="material-symbols-outlined">arrow_back</span>
-                </button>
-            </header>
-
-            <!-- Profile Info Section -->
-            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 2rem 1rem; text-align: center;">
-                <div style="width: 100px; height: 100px; border-radius: 50%; border: 3px solid #000; overflow: hidden; box-shadow: 4px 4px 0px rgba(0,0,0,1); background-color: #FFE600; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
-                    <span style="font-family: 'Fredoka', sans-serif; font-size: 3rem; font-weight: 700;">U</span>
+            <section class="pc-home-panel pc-profile-hero">
+                <div style="width: 120px; height: 120px; border-radius: 999px; border: 4px solid #000; overflow: hidden; box-shadow: 6px 6px 0 rgba(0,0,0,1); background: #FFE600; display: flex; align-items: center; justify-content: center;">
+                    <span id="profile-avatar-initial" style="font-family: 'Fredoka', sans-serif; font-size: 3.5rem; font-weight: 700; color: #111827;">U</span>
                 </div>
-                <h2 style="font-family: 'Fredoka', sans-serif; font-size: 1.5rem; font-weight: 700; margin: 0;">Username</h2>
-            </div>
+                <div style="min-width: 0;">
+                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
+                        <h2 id="profile-username" style="font-family: 'Fredoka', sans-serif; font-size: 2rem; font-weight: 700; margin: 0; color: #111827;">Username</h2>
+                        <span id="profile-handle" style="font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: #475569;">@username</span>
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 1.25rem; margin-bottom: 0.85rem;">
+                        <div>
+                            <strong id="profile-favorites-count" style="display: block; font-family: 'Fredoka', sans-serif; font-size: 1.2rem; color: #111827;">0</strong>
+                            <span style="font-family: 'Fredoka', sans-serif; font-size: 0.9rem; color: #475569;">Favoritos</span>
+                        </div>
+                        <div>
+                            <strong id="profile-customs-count" style="display: block; font-family: 'Fredoka', sans-serif; font-size: 1.2rem; color: #111827;">0</strong>
+                            <span style="font-family: 'Fredoka', sans-serif; font-size: 0.9rem; color: #475569;">Customs</span>
+                        </div>
+                    </div>
+                    <p id="profile-status" style="font-family: 'Fredoka', sans-serif; font-size: 1rem; line-height: 1.45; margin: 0 0 0.55rem; color: #1E293B;">Coleccionando favoritos y creando nuevos Papelcool.</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+                        <span id="profile-email" style="font-family: 'Fredoka', sans-serif; font-size: 0.92rem; font-weight: 600; color: #334155;"></span>
+                        <span id="profile-joined" style="font-family: 'Fredoka', sans-serif; font-size: 0.92rem; font-weight: 600; color: #334155;"></span>
+                    </div>
+                </div>
+            </section>
 
-            <!-- Tab Navigation -->
             <div style="display: flex; justify-content: center; gap: 1rem; padding: 0 1rem; margin-bottom: 2rem;">
                 <button id="tab-favorites" class="pc-home-chip active" style="flex: 1; text-align: center; justify-content: center; border: 2px solid #000; background-color: #FFE600; color: #000; box-shadow: 2px 2px 0px rgba(0,0,0,1);" onclick="switchProfileTab('favorites')">
                     Favoritos
@@ -11568,63 +12022,11 @@
                 </button>
             </div>
 
-            <!-- Tab Content -->
             <main id="profile-content-area" style="padding: 0 1rem;">
                 <!-- Content injected via JS -->
             </main>
         </div>
     </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    window.renderProfileFavorites = function() {
-        const contentArea = document.getElementById('profile-content-area');
-        if(!contentArea) return;
-        const favorites = JSON.parse(localStorage.getItem('papelcool_favorites') || '[]');
-
-        if (favorites.length === 0) {
-            contentArea.innerHTML = `
-                <div style="text-align: center; padding: 3rem 1rem; color: #666; font-family: 'Fredoka', sans-serif;">
-                    <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: #FF4D94;">favorite_border</span>
-                    <p>No tienes favoritos todavía.</p>
-                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">¡Explora las colecciones y guarda tus Papelcools preferidos!</p>
-                </div>
-            `;
-            return;
-        }
-
-        let html = '<div class="pc-home-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 1rem;">';
-
-        favorites.forEach(name => {
-            const iconSrc = (typeof presetIcons !== 'undefined' && presetIcons[name]) ? presetIcons[name] : 'logo.svg';
-            html += `
-                <div class="pc-home-collection-card" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; background: #fff; border: 3px solid #000; border-radius: 16px; box-shadow: 4px 4px 0px rgba(0,0,0,1); cursor: pointer;" onclick="document.getElementById('user-profile-view').style.display='none'; window.isOpeningFromFavorites = true; if(window.openPresetCharacter) window.openPresetCharacter('${name}', true);">
-                    <button class="fandom-heart material-symbols-outlined active" onclick="event.stopPropagation(); toggleFavorite('${name}', this); setTimeout(window.renderProfileFavorites, 50)" style="color: #FF4D94; position: absolute; top: 10px; right: 10px; z-index: 10; font-variation-settings: 'FILL' 1;">favorite</button>
-                    <img src="${iconSrc}" alt="${name}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; margin-bottom: 0.5rem; border: 2px solid #000;">
-                    <h3 style="font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 700; margin: 0; text-align: center;">${name}</h3>
-                </div>
-            `;
-        });
-
-        html += '</div>';
-        contentArea.innerHTML = html;
-    };
-
-    window.renderProfileCustoms = function() {
-        const contentArea = document.getElementById('profile-content-area');
-        if(!contentArea) return;
-        contentArea.innerHTML = `
-            <div style="text-align: center; padding: 3rem 1rem; color: #666; font-family: 'Fredoka', sans-serif;">
-                <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block;">brush</span>
-                <p>Todavía no has creado ningún Papelcool.</p>
-                <button type="button" class="pc-home-chip" onclick="document.getElementById('user-profile-view').style.display='none'; if(window.navigateToView) navigateToView('custom');" style="margin-top: 1rem; border: 2px solid #000; box-shadow: 2px 2px 0px rgba(0,0,0,1);">
-                    Crear ahora
-                </button>
-            </div>
-        `;
-    };
-});
-</script>
 
 </body>
 </html>
