@@ -387,6 +387,60 @@
             transform: translate(-1px, -1px);
             box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
         }
+
+        .pc-mobile-menu-btn {
+            display: none !important;
+        }
+
+        .pc-home-mobile-dropdown {
+            display: none !important;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(17, 17, 17, 0.98);
+            border-bottom: 3px solid #000;
+            padding: 1rem;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .pc-home-mobile-dropdown.active {
+            display: flex;
+        }
+
+        .pc-home-mobile-dropdown .pc-home-chip {
+            width: 100%;
+            justify-content: flex-start;
+        }
+
+        @media (max-width: 1180px) {
+            .pc-home-topbar {
+                flex-wrap: wrap;
+                position: relative;
+            }
+
+            .pc-mobile-menu-btn {
+                display: inline-flex !important;
+            }
+
+            .pc-home-mobile-dropdown.active {
+                display: flex !important;
+            }
+
+
+            .pc-home-nav {
+                display: none !important;
+            }
+
+            .pc-home-search {
+                order: 4;
+                width: 100%;
+                margin-top: 1rem;
+            }
+        }
+
     </style>
 <script>
         // Custom Alert & Confirm functions
@@ -5548,6 +5602,8 @@
         }
         window.navigateToView = navigateToView;
 
+
+
         let appMode = 'edit';
         let currentMainPart = 'torso';
         let currentHeadPart = null;
@@ -8948,9 +9004,13 @@
 
                 const card = document.createElement('div');
                 card.className = 'fandom-card';
+                const isFav = isFavorite(name);
+                const heartColor = isFav ? 'color: #FF4D94;' : '';
+                const heartClass = isFav ? 'active' : '';
+
                 card.innerHTML = `
                     <div class="fandom-badge">New</div>
-                    <button class="fandom-heart material-symbols-outlined">favorite</button>
+                    <button class="fandom-heart material-symbols-outlined ${heartClass}" onclick="event.stopPropagation(); toggleFavorite('${name}', this)" style="${heartColor}">favorite</button>
                     <div class="fandom-image-container">
                         <img src="${presetIcons[name]}" alt="${name}">
                     </div>
@@ -11137,21 +11197,158 @@
         window.openAuthenticatedHome = openAuthenticatedHome;
         window.scrollAuthenticatedHomeTo = scrollAuthenticatedHomeTo;
         window.navigateToView = navigateToView;
+
+
+
+        // ============================================
+        // FAVORITES FUNCTIONALITY
+        // ============================================
+        function toggleFavorite(characterName, btnElement) {
+            let favorites = JSON.parse(localStorage.getItem('papelcool_favorites') || '[]');
+
+            if (favorites.includes(characterName)) {
+                favorites = favorites.filter(name => name !== characterName);
+                if (btnElement) {
+                    btnElement.style.color = ''; // Reset color
+                    btnElement.classList.remove('active');
+                }
+            } else {
+                favorites.push(characterName);
+                if (btnElement) {
+                    btnElement.style.color = '#FF4D94'; // Red color for favorite
+                    btnElement.classList.add('active');
+                }
+            }
+
+            localStorage.setItem('papelcool_favorites', JSON.stringify(favorites));
+
+            // Refresh favorites view if it's currently open
+            const favoritesView = document.getElementById('favorites-view');
+            if (favoritesView && favoritesView.style.display !== 'none') {
+                renderFavorites();
+            }
+        }
+
+        function isFavorite(characterName) {
+            const favorites = JSON.parse(localStorage.getItem('papelcool_favorites') || '[]');
+            return favorites.includes(characterName);
+        }
+
+        function openFavoritesView() {
+            // Hide home view and profile view if open
+            const homeView = document.getElementById('authenticated-home-view');
+            if (homeView) homeView.classList.remove('active');
+
+            const profileView = document.getElementById('user-profile-view');
+            if (profileView) profileView.style.display = 'none';
+
+            // Show favorites view
+            let favoritesView = document.getElementById('favorites-view');
+            if (!favoritesView) {
+                // Create if it doesn't exist
+                favoritesView = document.createElement('div');
+                favoritesView.id = 'favorites-view';
+                favoritesView.style.cssText = 'position: fixed; inset: 0; z-index: 8500; overflow-y: auto; background: radial-gradient(circle at top left, rgba(255, 230, 0, 0.26), transparent 30%), radial-gradient(circle at bottom right, rgba(64, 123, 255, 0.18), transparent 32%), linear-gradient(180deg, #fffef8 0%, #edf5ff 100%); color: var(--pc-ink);';
+
+                document.body.appendChild(favoritesView);
+            }
+
+            favoritesView.style.display = 'block';
+            renderFavorites();
+        }
+
+        function renderFavorites() {
+            const favoritesView = document.getElementById('favorites-view');
+            if (!favoritesView) return;
+
+            const favorites = JSON.parse(localStorage.getItem('papelcool_favorites') || '[]');
+
+            let html = `
+                <div class="pc-home-shell">
+                    <header class="pc-home-topbar" style="justify-content: flex-start;">
+                        <button type="button" class="pc-home-icon" onclick="document.getElementById('favorites-view').style.display='none'; openAuthenticatedHome(true);" style="margin-right: 1rem; color: #fff;">
+                            <span class="material-symbols-outlined">arrow_back</span>
+                        </button>
+                        <h1 style="font-family: 'Fredoka', sans-serif; font-weight: 700; margin: 0; font-size: 1.5rem; color: #fff;">Mis Favoritos</h1>
+                    </header>
+                    <main class="pc-home-content" style="padding-top: 2rem;">
+            `;
+
+            if (favorites.length === 0) {
+                html += `
+                    <div style="text-align: center; padding: 3rem;">
+                        <span class="material-symbols-outlined" style="font-size: 4rem; color: #ccc;">favorite_border</span>
+                        <h2 style="font-family: 'Fredoka', sans-serif; margin-top: 1rem;">Aún no tienes favoritos</h2>
+                        <p style="color: #666;">Guarda tus Paper Cool favoritos haciendo clic en el ícono del corazón.</p>
+                        <button class="pc-home-btn" onclick="document.getElementById('favorites-view').style.display='none'; openAuthenticatedHome(true);" style="margin-top: 1rem;">Explorar Colecciones</button>
+                    </div>
+                `;
+            } else {
+                html += `<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem;">`;
+
+                favorites.forEach(name => {
+                    const iconUrl = (typeof presetIcons !== 'undefined' && presetIcons[name]) ? presetIcons[name] : 'logo.svg';
+                    html += `
+                        <div class="fandom-card" style="position: relative;">
+                            <button class="fandom-heart material-symbols-outlined active" onclick="toggleFavorite('${name}', this); setTimeout(renderFavorites, 50)" style="color: #FF4D94; position: absolute; top: 10px; right: 10px; z-index: 10;">favorite</button>
+                            <div class="fandom-image-container" onclick="setPresetCharacter('${name}'); document.getElementById('favorites-view').style.display='none'; navigateToView('presets');">
+                                <img src="${iconUrl}" alt="${name}" style="width: 80%; height: 80%; object-fit: contain;">
+                            </div>
+                            <div class="fandom-info" style="padding: 0.5rem; text-align: center;">
+                                <h3 class="fandom-name" style="font-size: 1rem;">${name}</h3>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+            }
+
+            html += `
+                    </main>
+                </div>
+            `;
+
+            favoritesView.innerHTML = html;
+        }
+
+        // Expose functions globally
+        window.toggleFavorite = toggleFavorite;
+        window.openFavoritesView = openFavoritesView;
+        window.isFavorite = isFavorite;
+
     </script>
     <div id="authenticated-home-view">
         <div class="pc-home-shell">
             <header class="pc-home-topbar">
-                <button type="button" class="pc-home-brand pc-home-chip" onclick="openAuthenticatedHome(true)">
-                    <span class="pc-home-brand-badge">Papelcool</span>
+                <!-- Botón de hamburguesa para móvil -->
+                <button type="button" id="mobile-menu-btn" class="pc-home-icon pc-mobile-menu-btn" aria-label="Menú" onclick="document.getElementById('mobile-dropdown-menu').classList.toggle('active')">
+                    <span class="material-symbols-outlined">menu</span>
                 </button>
 
-                <nav class="pc-home-nav" aria-label="Navegación principal">
+                <!-- Logo centrado -->
+                <nav class="pc-home-nav" aria-label="Navegación principal" style="margin-right: auto;">
                     <button type="button" class="pc-home-chip" onclick="navigateToView('custom')">Crea el tuyo</button>
                     <button type="button" class="pc-home-chip" onclick="navigateToView('presets')">Colecciones</button>
+                </nav>
+
+                <button type="button" class="pc-home-brand" onclick="openAuthenticatedHome(true)" style="position: absolute; left: 50%; transform: translateX(-50%); background: transparent; border: none; padding: 0; box-shadow: none; z-index: 10; display: flex; justify-content: center; align-items: center;">
+                    <img src="logo.svg" alt="Papelcool Logo" style="height: 32px; filter: drop-shadow(2px 2px 0px rgba(0,0,0,1)); margin: 0 auto; display: block;">
+                </button>
+
+                <nav class="pc-home-nav" aria-label="Navegación principal" style="margin-left: auto;">
                     <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-banner-grid')">Novedades</button>
                     <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-groups')">Fan Clubs</button>
                     <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-community-notes')">Club Papel</button>
                 </nav>
+
+                <div id="mobile-dropdown-menu" class="pc-home-mobile-dropdown">
+                    <button type="button" class="pc-home-chip" onclick="navigateToView('custom'); document.getElementById('mobile-dropdown-menu').classList.remove('active')">Crea el tuyo</button>
+                    <button type="button" class="pc-home-chip" onclick="navigateToView('presets'); document.getElementById('mobile-dropdown-menu').classList.remove('active')">Colecciones</button>
+                    <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-banner-grid'); document.getElementById('mobile-dropdown-menu').classList.remove('active')">Novedades</button>
+                    <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-groups'); document.getElementById('mobile-dropdown-menu').classList.remove('active')">Fan Clubs</button>
+                    <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-community-notes'); document.getElementById('mobile-dropdown-menu').classList.remove('active')">Club Papel</button>
+                </div>
 
                 <label class="pc-home-search" aria-label="Buscar">
                     <span class="material-symbols-outlined">search</span>
@@ -11159,7 +11356,7 @@
                 </label>
 
                 <div class="pc-home-actions">
-                    <button type="button" class="pc-home-icon" aria-label="Favoritos">
+                    <button type="button" class="pc-home-icon" aria-label="Favoritos" onclick="openFavoritesView()">
                         <span class="material-symbols-outlined">favorite</span>
                     </button>
                     <button type="button" class="pc-home-icon pc-home-avatar" onclick="toggleUserDropdown()"
