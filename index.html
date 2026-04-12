@@ -3659,13 +3659,16 @@
             backdrop-filter: blur(10px);
         }
 
-        .pc-home-brand {
-            display: inline-flex;
+                .pc-home-brand {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
             align-items: center;
-            gap: 0.75rem;
-            color: #fff;
-            text-decoration: none;
-            flex-shrink: 0;
+            background: transparent;
+            border: none;
+            padding: 0;
+            cursor: pointer;
         }
 
         .pc-home-brand-badge {
