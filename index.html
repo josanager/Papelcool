@@ -69,12 +69,12 @@
                         </p>
                         <div style="background: #F3F4F6; padding: 20px; border-radius: 16px; border: 3px dashed #D1D5DB; margin-bottom: 30px;">
                             <p style="font-size: 0.9rem; font-weight: 700; color: #6B7280; margin-bottom: 5px;">PLEASE USE LOCAL SERVER:</p>
-                            <a href="http://localhost:8000" style="font-size: 1.5rem; color: #407BFF; font-weight: 900; text-decoration: underline;">
-                                http://localhost:8000
+                            <a href="http://localhost:8001" style="font-size: 1.5rem; color: #407BFF; font-weight: 900; text-decoration: underline;">
+                                http://localhost:8001
                             </a>
                         </div>
                         <p style="font-size: 0.8rem; font-weight: 600; color: #9CA3AF;">
-                            (Your python server is already running on port 8000!)
+                            (Your python server is already running on port 8001!)
                         </p>
                     </div>
                 `;
@@ -914,10 +914,11 @@
             position: fixed;
             top: 0;
             left: 0;
-            cursor: grab;
+            cursor: default;
             z-index: 2;
             overflow: hidden;
             overscroll-behavior: none;
+            pointer-events: none; /* Allow scroll and clicks to pass through to the page */
         }
 
         #canvas-container:active {
@@ -1772,25 +1773,17 @@
 
         /* Contenedor del espacio 3D en showcase - Pantalla completa centrado */
         #canvas-container.showcase-active {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            height: 100dvh !important;
-            /* Dynamic viewport height para móviles */
-            max-width: 100vw !important;
-            max-height: 100vh !important;
-            max-height: 100dvh !important;
+            width: 100% !important;
+            height: 80vh !important;
+            max-height: 80vh !important;
             align-items: center !important;
             justify-content: center !important;
-            z-index: 100 !important;
-            background: transparent !important;
-            pointer-events: none;
-        }
-            /* Debajo del logo y botón */
+            z-index: 2 !important;
+            background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%) !important;
+            pointer-events: none !important;
             overflow: hidden !important;
             overscroll-behavior: none !important;
+            position: relative !important;
         }
 
         .showcase-buttons {
@@ -2278,22 +2271,6 @@
             .showcase-btn .button-inner {
                 padding: 0.85em 1.5em;
                 text-align: center;
-            }
-
-            #canvas-container.showcase-active {
-                /* Pantalla completa optimizada para móvil */
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100vw !important;
-                height: 100vh !important;
-                height: 100dvh !important;
-                /* Dynamic viewport para Chrome móvil */
-                max-width: 100vw !important;
-                max-height: 100vh !important;
-                max-height: 100dvh !important;
-                min-height: -webkit-fill-available !important;
-                /* Safari iOS */
             }
 
             #showcase-logo-container {
@@ -3859,15 +3836,14 @@
             z-index: 8500;
             display: none;
             overflow-y: auto;
-            background:
-                radial-gradient(circle at top left, rgba(255, 230, 0, 0.26), transparent 30%),
-                radial-gradient(circle at bottom right, rgba(64, 123, 255, 0.18), transparent 32%),
-                linear-gradient(180deg, #fffef8 0%, #edf5ff 100%);
+            background: transparent;
+            pointer-events: none;
             color: var(--pc-ink);
         }
 
         #authenticated-home-view.active {
             display: block;
+            pointer-events: auto;
         }
 
         .pc-home-shell {
@@ -4605,9 +4581,193 @@
         }
     </style>
 
+
+    <!-- FUNKO STYLE REDESIGN OVERRIDES -->
+    <style>
+        /* TOPBAR FULL WIDTH FUNKO STYLE */
+        #app-global-topbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 9500; display: none;
+        }
+        #app-global-topbar.active { display: block; }
+        
+        .funko-style-nav {
+            display: flex; align-items: center; justify-content: space-between;
+            width: 100vw; max-width: 100%; padding: 0.8rem 2rem;
+            background-color: #111827;
+            border-bottom: 4px solid #000;
+        }
+        
+        .funko-nav-left, .funko-nav-right { flex: 1; display: flex; align-items: center; }
+        .funko-nav-right { justify-content: flex-end; gap: 1rem; }
+        .funko-nav-center { flex: 2; display: flex; justify-content: center; gap: 1.5rem; }
+        
+        .funko-nav-link {
+            background: transparent; border: none; font-family: 'Fredoka', sans-serif;
+            font-weight: 700; font-size: 1rem; color: #fff; text-transform: uppercase; cursor: pointer;
+            transition: color 0.15s; letter-spacing: 0.05em;
+        }
+        .funko-nav-link:hover { color: #FFE600; }
+        
+        .funko-search {
+            display: flex; align-items: center; background: #fff; border: 3px solid #000;
+            border-radius: 99px; padding: 0.4rem 1rem; width: 260px; box-shadow: 3px 3px 0 #fff;
+        }
+        .funko-search input {
+            border: none; outline: none; background: transparent; font-family: 'Fredoka', sans-serif;
+            font-weight: 600; font-size: 0.9rem; color: #000; width: 100%; margin-left: 0.5rem;
+        }
+        .funko-avatar-btn {
+            width: 44px; height: 44px; border-radius: 50%; border: 3px solid #000;
+            background: #FFE600; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0 #fff; cursor: pointer;
+            margin-right: 0.5rem;
+        }
+        .funko-avatar-btn span { color: #000 !important; }
+
+        /* HERO IMMERSIVE (FULL BLEED) */
+        #authenticated-home-view { padding-top: 5rem; width: 100%; overflow-x: hidden; }
+        .funko-hero-wrapper {
+            width: 100vw; margin-left: calc(-50vw + 50%);
+            background: linear-gradient(135deg, #FF4D94 0%, #FFE600 100%);
+            border-bottom: 5px solid #000; position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .funko-hero-inner {
+            width: min(1400px, 100%); display: flex; min-height: 480px; align-items: center; padding: 3rem 2rem;
+        }
+        .funko-hero-content {
+            flex: 1; max-width: 600px; z-index: 2; position: relative;
+        }
+        .funko-hero-label {
+            font-family: 'Fredoka', sans-serif; font-size: 1.2rem; font-weight: 700; color: #000; text-transform: uppercase;
+            background: #fff; border: 3px solid #000; padding: 0.4rem 1rem; border-radius: 99px; display: inline-block; margin-bottom: 1.5rem;
+            box-shadow: 4px 4px 0 #000;
+        }
+        .funko-hero-content h1 {
+            font-family: 'Fredoka', sans-serif; font-size: 3.5rem; font-weight: 900; line-height: 1.1; color: #000; text-transform: uppercase; margin-bottom: 1.5rem;
+            text-shadow: 3px 3px 0 #fff;
+        }
+        .funko-hero-content p {
+            font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 600; color: #000; line-height: 1.5; margin-bottom: 2.5rem;
+            background: rgba(255,255,255,0.7); padding: 1rem; border-radius: 12px; border: 3px solid #000;
+        }
+        .funko-hero-cta {
+            background: #fff; border: 4px solid #000; padding: 1rem 2rem; border-radius: 99px; cursor: pointer;
+            font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.2rem; text-transform: uppercase; color: #000;
+            box-shadow: 6px 6px 0 #000; transition: transform 0.1s, box-shadow 0.1s; display: inline-block;
+        }
+        .funko-hero-cta:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 #000; }
+        .funko-hero-art {
+            flex: 1; display: flex; justify-content: flex-end; align-items: flex-end; position: relative; z-index: 1; height: 100%; padding-top: 2rem;
+        }
+        .funko-hero-art img {
+            height: 480px; width: auto; filter: drop-shadow(15px 15px 0 rgba(0,0,0,0.8)); margin-left: -50px;
+        }
+
+        /* NEW PICKS FOR YOU SECTION */
+        .funko-section { width: min(1400px, 100%); margin: 4rem auto 2rem; padding: 0 2rem; }
+        .funko-section h2 {
+            text-align: center; font-family: 'Fredoka', sans-serif; font-size: 2.8rem; font-weight: 900; color: #111827; text-transform: uppercase; margin-bottom: 3rem;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+        .funko-new-picks-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 2rem;
+        }
+        .funko-card {
+            background: #fff; border: 4px solid #000; border-radius: 16px; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s; box-shadow: 0 0 0 #000;
+        }
+        .funko-card:hover { transform: translateY(-5px); box-shadow: 8px 8px 0 #000; }
+        .funko-card-ribbon {
+            position: absolute; top: 18px; left: -32px; background: #FF4D94; border: 2px solid #000; color: #fff;
+            padding: 4px 35px; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; transform: rotate(-45deg); z-index: 10;
+        }
+        .funko-card-ribbon.exclusive { background: #FFE600; color: #000; }
+        .funko-card-heart {
+            position: absolute; top: 12px; right: 12px; z-index: 10; color: #000; opacity: 0.3; transition: opacity 0.2s;
+        }
+        .funko-card-heart .material-symbols-outlined { font-size: 32px; font-variation-settings: 'FILL' 0; }
+        .funko-card:hover .funko-card-heart { opacity: 1; color: #FF4D94; font-variation-settings: 'FILL' 1;}
+        .funko-card-img-container {
+            background: #f8fafc; width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+            border-bottom: 4px solid #000;
+        }
+        .funko-card-img-container img { width: 85%; object-fit: contain; filter: drop-shadow(5px 5px 0 rgba(0,0,0,0.5)); transition: transform 0.3s; }
+        .funko-card:hover .funko-card-img-container img { transform: scale(1.1); }
+        .funko-card-info { padding: 1.25rem; }
+        .funko-card-info h3 { font-family: 'Fredoka', sans-serif; font-size: 1.3rem; font-weight: 800; color: #000; margin: 0 0 0.3rem; text-transform: uppercase; }
+        .funko-card-info p { font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 600; color: #475569; margin: 0; }
+
+        /* FANDOMS 4-COL GRID */
+        .funko-banners-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;
+        }
+        .funko-banner-card {
+            border: 4px solid #000; border-radius: 16px; overflow: hidden; position: relative; height: 500px;
+            display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s;
+        }
+        .funko-banner-card:hover { transform: translateY(-5px); box-shadow: 10px 10px 0 #000; }
+        .funko-banner-card-top { flex: 1; padding: 2.5rem 1.5rem; position: relative; z-index: 2; display: flex; flex-direction: column; }
+        .funko-banner-tag {
+            font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 700; text-transform: uppercase; color: rgba(255,255,255,0.9); margin-bottom: 0.5rem; letter-spacing: 0.05em; text-shadow: 2px 2px 0 #000;
+        }
+        .funko-banner-card h3 {
+            font-family: 'Fredoka', sans-serif; font-size: 2.5rem; font-weight: 900; color: #fff; line-height: 1.1; margin-bottom: 1rem; text-shadow: 3px 3px 0 #000; text-transform: uppercase;
+        }
+        .funko-banner-card p {
+            font-family: 'Montserrat', sans-serif; font-size: 1.1rem; font-weight: 600; color: #f8fafc; line-height: 1.4; flex-grow: 1; text-shadow: 2px 2px 0 #000;
+        }
+        .funko-banner-shop-btn {
+            align-self: flex-start; background: #fff; border: 4px solid #000; padding: 0.8rem 1.8rem; border-radius: 99px;
+            font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1rem; color: #000; text-transform: uppercase; box-shadow: 4px 4px 0 #000;
+            transition: transform 0.1s; margin-top: auto;
+        }
+        .funko-banner-card:hover .funko-banner-shop-btn { transform: scale(1.05); }
+        .funko-banner-card-art {
+            position: absolute; bottom: -20px; left: 0; width: 100%; display: flex; justify-content: center; z-index: 1;
+        }
+        .funko-banner-card-art img { height: 280px; filter: drop-shadow(8px 8px 0 rgba(0,0,0,0.8)); margin: 0 -15px; }
+
+        @media (max-width: 1180px) {
+            .funko-nav-center { display: none !important; }
+            .funko-banners-grid { grid-template-columns: repeat(2, 1fr); }
+            .funko-hero-inner { flex-direction: column; text-align: center; padding: 2rem; }
+            .funko-hero-art { margin-top: 2rem; justify-content: center; }
+            .funko-hero-art img { margin: 0; height: 350px; }
+            .funko-hero-content { margin-top: 2rem; }
+        }
+        @media (max-width: 768px) {
+            /* Navbar Mobile Adaptations */
+            .funko-nav-right .funko-search,
+            #auth-container { display: none !important; }
+            .funko-nav-right { flex: none !important; }
+            .funko-nav-left { flex: none !important; }
+            
+            /* Responsive Hero & 3D Canvas */
+            .funko-banners-grid { grid-template-columns: 1fr; }
+            .funko-hero-content h1 { font-size: 2.2rem; margin-bottom: 1rem; text-shadow: 2px 2px 0 #fff; line-height: 1.2; }
+            .funko-hero-content p { font-size: 0.95rem; padding: 0.8rem; margin-bottom: 1.5rem; }
+            .funko-hero-label { font-size: 0.9rem; margin-bottom: 1rem; padding: 0.3rem 0.8rem; }
+            .funko-hero-art img { height: 280px; margin-left: 0; }
+            .funko-hero-inner { flex-direction: column; text-align: center; padding: 1.5rem 1rem; min-height: auto; }
+            .funko-hero-content { margin-top: 1rem; }
+            .funko-hero-art { margin-top: 1.5rem; justify-content: center; width: 100%; padding-top: 0; }
+            #canvas-container.showcase-active { height: 50vh !important; max-height: 50vh !important; }
+            
+            /* Section Paddings & Grid */
+            .funko-section { padding: 0 1rem; margin-top: 2rem; margin-bottom: 1rem; }
+            .funko-section h2 { font-size: 2rem; margin-bottom: 1.5rem; }
+            .funko-new-picks-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        }
+    
+        /* SHOWCASE MODE NAVBAR - Eliminado para mantener la nav visible */
+    </style>
 </head>
 
+
 <body class="text-white">
+
+
     <!-- Pop-art global background floating shapes -->
     <div style="position: fixed; top: -50px; right: -50px; width: 500px; height: 500px; background: #FFE600; opacity: 0.2; clip-path: polygon(10% 0%, 100% 5%, 90% 95%, 5% 100%); transform: rotate(12deg); pointer-events: none; z-index: 0;"></div>
     <div style="position: fixed; bottom: -100px; left: -50px; width: 600px; height: 600px; background: #407BFF; opacity: 0.1; clip-path: polygon(5% 15%, 95% 0%, 100% 85%, 15% 100%); transform: rotate(-12deg); pointer-events: none; z-index: 0;"></div>
@@ -4631,35 +4791,7 @@
 
 
 
-    <!-- Auth Button (Login/User Menu) -->
-    <div id="auth-container" class="auth-container-responsive">
-        <button type="button" id="auth-register-btn" onclick="navigateToView('register')"
-            class="pc-auth-motion px-4 py-2 bg-sticker-yellow border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-pink cursor-pointer"
-            aria-label="Register">
-            <span style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 0.9rem; color: black;"
-                data-i18n="auth-signup-link">Sign Up!</span>
-        </button>
-
-        <!-- Login Button (shown when logged out) -->
-        <button type="button" id="auth-login-btn" onclick="navigateToView('login')"
-            class="pc-auth-motion px-4 py-2 bg-white border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-green cursor-pointer"
-            aria-label="Login">
-            <span style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 0.9rem; color: black;"
-                data-i18n="auth-login-link">Login</span>
-
-        </button>
-
-
-
-        <!-- User Menu (shown when logged in) -->
-        <div id="auth-user-menu" style="display: none; align-items: center; gap: 12px;">
-            <!-- User Avatar Button -->
-            <button id="auth-user-avatar"
-                class="w-11 h-11 rounded-xl bg-sticker-yellow border-4 border-black shadow-sticker-sm cursor-pointer hover:scale-105 transition-transform flex items-center justify-center"
-                style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.1rem; color: black;"
-                onclick="toggleUserDropdown()">J</button>
-        </div>
-    </div>
+    
 
     <!-- Dropdown Menu - Global Fixed - Sticker Style -->
     <div id="auth-user-dropdown"
@@ -4697,48 +4829,73 @@
     </div>
 
     <div id="app-global-topbar">
-        <div class="pc-global-topbar-inner">
-            <header class="pc-home-topbar">
-                <button type="button" id="app-mobile-menu-btn" class="pc-home-icon pc-mobile-menu-btn" aria-label="Menú" onclick="document.getElementById('app-mobile-dropdown-menu').classList.toggle('active')">
-                    <span class="material-symbols-outlined">menu</span>
+        <header class="funko-style-nav">
+            <!-- Mobile Menu -->
+            <button type="button" id="app-mobile-menu-btn" class="pc-home-icon pc-mobile-menu-btn" aria-label="Menú" onclick="document.getElementById('app-mobile-dropdown-menu').classList.toggle('active')">
+                <span class="material-symbols-outlined">menu</span>
+            </button>
+
+            <!-- Logo (Left) -->
+            <div class="funko-nav-left">
+                <button type="button" class="pc-home-brand" onclick="navigateToView('home')" style="border: none; background: transparent; cursor: pointer;">
+                    <img src="logo.svg" alt="Papelcool Logo" style="height: 38px; filter: drop-shadow(3px 3px 0px rgba(0,0,0,1)); display: block;">
                 </button>
+            </div>
 
-                <div class="pc-home-topbar-left">
-                    <button type="button" class="pc-home-brand" onclick="navigateToView('home')">
-                        <img src="logo.svg" alt="Papelcool Logo" style="height: 32px; filter: drop-shadow(2px 2px 0px rgba(0,0,0,1)); display: block;">
+            <!-- Nav (Center) -->
+            <nav class="funko-nav-center" aria-label="Navegación principal">
+                <button type="button" class="funko-nav-link" onclick="navigateToView('custom')">Crea el tuyo</button>
+                <button type="button" class="funko-nav-link" onclick="navigateToView('presets')">Colecciones</button>
+                <button type="button" class="funko-nav-link" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-banner-grid'), 0)">Novedades</button>
+                <button type="button" class="funko-nav-link" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-groups'), 0)">Fan Clubs</button>
+                <button type="button" class="funko-nav-link" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-community-notes'), 0)">Club Papel</button>
+            </nav>
+
+            <!-- Search & Actions (Right) -->
+            <div class="funko-nav-right">
+                <label class="funko-search" aria-label="Buscar">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="text" id="global-search-input" placeholder="Busca ideas o fandoms..." />
+                </label>
+                <div id="auth-container" style="display: flex; gap: 12px; align-items: center;">
+                    <button type="button" id="auth-register-btn" onclick="navigateToView('register')"
+                        class="pc-auth-motion px-4 py-2 hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center font-bold"
+                        style="background: #FFE600; border: 3px solid black; border-radius: 99px; box-shadow: 3px 3px 0 white; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; color: black;"
+                        aria-label="Register">
+                        ¡Regístrate!
                     </button>
-                </div>
-
-                <div class="pc-home-topbar-right">
-                    <nav class="pc-home-nav" aria-label="Navegación principal">
-                        <button type="button" class="pc-home-chip" onclick="navigateToView('custom')">Crea el tuyo</button>
-                        <button type="button" class="pc-home-chip" onclick="navigateToView('presets')">Colecciones</button>
-                        <button type="button" class="pc-home-chip" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-banner-grid'), 0)">Novedades</button>
-                        <button type="button" class="pc-home-chip" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-groups'), 0)">Fan Clubs</button>
-                        <button type="button" class="pc-home-chip" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-community-notes'), 0)">Club Papel</button>
-                    </nav>
-
-                    <label class="pc-home-search" aria-label="Buscar">
-                        <span class="material-symbols-outlined">search</span>
-                        <input type="text" id="global-search-input" placeholder="Busca artistas, fandoms o ideas..." />
-                    </label>
-
-                    <div class="pc-home-actions">
-                        <button type="button" class="pc-home-icon pc-home-avatar" onclick="toggleUserDropdown()" aria-label="Perfil">
-                            <span id="global-profile-initial">P</span>
+                    <button type="button" id="auth-login-btn" onclick="navigateToView('login')"
+                        class="pc-auth-motion px-4 py-2 hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center font-bold"
+                        style="background: white; border: 3px solid black; border-radius: 99px; box-shadow: 3px 3px 0 white; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; color: black;"
+                        aria-label="Login">
+                        Login
+                    </button>
+                    <div id="auth-user-menu" style="display: none; align-items: center; gap: 12px;">
+                        <button id="auth-user-avatar" onclick="toggleUserDropdown()"
+                            class="funko-avatar-btn" aria-label="Perfil">
+                            J
                         </button>
                     </div>
                 </div>
+            </div>
 
-                <div id="app-mobile-dropdown-menu" class="pc-home-mobile-dropdown">
-                    <button type="button" class="pc-home-chip" onclick="navigateToView('custom'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')">Crea el tuyo</button>
-                    <button type="button" class="pc-home-chip" onclick="navigateToView('presets'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')">Colecciones</button>
-                    <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-banner-grid'), 0)">Novedades</button>
-                    <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-groups'), 0)">Fan Clubs</button>
-                    <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-community-notes'), 0)">Club Papel</button>
-                </div>
-            </header>
-        </div>
+            <!-- Mobile Dropdown -->
+            <div id="app-mobile-dropdown-menu" class="pc-home-mobile-dropdown" style="display: none; flex-direction: column; gap: 0.75rem; padding: 1.5rem; background: #fff; border: 4px solid #000; border-radius: 16px; box-shadow: 6px 6px 0 rgba(0,0,0,1); position: absolute; top: calc(100% + 10px); left: 1rem; right: 1rem; z-index: 10000;">
+                <button type="button" class="pc-home-chip" onclick="navigateToView('custom'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center;">Crea el tuyo</button>
+                <button type="button" class="pc-home-chip" onclick="navigateToView('presets'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center;">Colecciones</button>
+                <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-banner-grid'), 0)" style="width: 100%; justify-content: center;">Novedades</button>
+                <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-groups'), 0)" style="width: 100%; justify-content: center;">Fan Clubs</button>
+                <div style="height: 4px; background: #000; width: 100%; margin: 0.5rem 0; border-radius: 4px;"></div>
+                <button type="button" class="pc-home-chip" onclick="navigateToView('login'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center; background: #E0F2FE;">Inicia Sesión</button>
+                <button type="button" class="pc-home-chip" onclick="navigateToView('register'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center; background: #FFE600; color: #000;">¡Regístrate!</button>
+            </div>
+            
+            <style>
+                #app-mobile-dropdown-menu.active {
+                    display: flex !important;
+                }
+            </style>
+        </header>
     </div>
 
     <!-- Authentication Modal - Sticker Style -->
@@ -4792,7 +4949,7 @@
                                         data-i18n="auth-email-label">Email
                                         / Username</label>
                                     <div style="position: relative;">
-                                        <input type="email" id="auth-email" placeholder="hello@papel.cool" required
+                                        <input type="email" id="auth-email" name="email" autocomplete="email" placeholder="hello@papel.cool" required
                                             style="width: 100%; height: 56px; padding: 0 50px 0 20px; border-radius: 16px; background: #F9FAFB; border: 3px solid #E5E7EB; font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: black; outline: none; transition: all 0.2s;"
                                             onfocus="this.style.borderColor='black'"
                                             onblur="this.style.borderColor='#E5E7EB'"
@@ -4805,7 +4962,7 @@
                                     <label
                                         style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">Password</label>
                                     <div style="position: relative;">
-                                        <input type="password" id="auth-password" placeholder="••••••••" required
+                                        <input type="password" id="auth-password" name="password" autocomplete="current-password" placeholder="••••••••" required
                                             minlength="6"
                                             style="width: 100%; height: 56px; padding: 0 50px 0 20px; border-radius: 16px; background: #F9FAFB; border: 3px solid #E5E7EB; font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: black; outline: none; transition: all 0.2s;"
                                             onfocus="this.style.borderColor='black'"
@@ -4904,7 +5061,7 @@
                                         style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;"
                                         data-i18n="auth-nickname-label">Nickname</label>
                                     <div style="position: relative;">
-                                        <input type="text" id="auth-nickname" placeholder="Papel_Cool_99" required
+                                        <input type="text" id="auth-nickname" name="nickname" autocomplete="nickname" placeholder="Papel_Cool_99" required
                                             minlength="3"
                                             style="width: 100%; height: 52px; padding: 0 50px 0 20px; border-radius: 14px; background: #F9FAFB; border: 3px solid #E5E7EB; font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: black; outline: none; transition: all 0.2s;"
                                             onfocus="this.style.borderColor='black'"
@@ -4922,7 +5079,7 @@
                                         data-i18n="auth-register-email-label">Email
                                         Address</label>
                                     <div style="position: relative;">
-                                        <input type="email" id="auth-register-email" placeholder="hello@papel.cool"
+                                        <input type="email" id="auth-register-email" name="email" autocomplete="email" placeholder="hello@papel.cool"
                                             required
                                             style="width: 100%; height: 52px; padding: 0 50px 0 20px; border-radius: 14px; background: #F9FAFB; border: 3px solid #E5E7EB; font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: black; outline: none; transition: all 0.2s;"
                                             onfocus="this.style.borderColor='black'"
@@ -4938,7 +5095,7 @@
                                     <label
                                         style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">Password</label>
                                     <div style="position: relative;">
-                                        <input type="password" id="auth-register-password" placeholder="••••••••"
+                                        <input type="password" id="auth-register-password" name="new-password" autocomplete="new-password" placeholder="••••••••"
                                             required minlength="6"
                                             style="width: 100%; height: 52px; padding: 0 50px 0 20px; border-radius: 14px; background: #F9FAFB; border: 3px solid #E5E7EB; font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: black; outline: none; transition: all 0.2s;"
                                             onfocus="this.style.borderColor='black'"
@@ -5180,53 +5337,6 @@
             TEMPLATE</span>
     </button>
 
-    <!-- Botones de redes sociales (solo visible en showcase) -->
-    <div id="social-media-buttons" class="flex gap-4 justify-center">
-        <!-- TikTok -->
-        <a href="https://www.tiktok.com/@papelcool" target="_blank" rel="noopener noreferrer"
-            class="social-btn tiktok w-12 h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-pink group"
-            aria-label="TikTok">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" class="w-6 h-6">
-                <path
-                    d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
-            </svg>
-        </a>
-
-        <!-- YouTube -->
-        <a href="https://www.youtube.com/@papelcool" target="_blank" rel="noopener noreferrer"
-            class="social-btn youtube w-12 h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-yellow group"
-            aria-label="YouTube">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" class="w-6 h-6">
-                <path
-                    d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-            </svg>
-        </a>
-
-        <!-- Instagram -->
-        <a href="https://www.instagram.com/papelcool" target="_blank" rel="noopener noreferrer"
-            class="social-btn instagram w-12 h-12 bg-white border-4 border-black rounded-xl shadow-sticker-sm flex items-center justify-center hover:bg-sticker-blue group"
-            aria-label="Instagram">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="black" class="w-6 h-6">
-                <path
-                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-            </svg>
-        </a>
-    </div>
-
-    <a id="showcase-filter-cta" href="https://www.tiktok.com/@papelcool" target="_blank" rel="noopener noreferrer"
-        aria-label="Prueba nuestros filtros en TikTok">
-        <span class="cta-badge">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="22" height="22">
-                <path
-                    d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
-            </svg>
-        </span>
-        <span class="cta-copy">
-            <small>Papelcool Lab</small>
-            <strong>Prueba nuestros filtros en TikTok</strong>
-        </span>
-    </a>
-
     <!-- Botones de presets (esquina superior izquierda) -->
     <div id="preset-action-buttons" class="absolute top-4 left-4 flex gap-3 pointer-events-auto">
         <!-- Botón 1: Volver al showcase -->
@@ -5256,32 +5366,10 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                 <path fill="currentColor" d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z" />
             </svg>
-            </span>
-    </div>
-    </div>
-    </button>
-
+        </button>
     </div>
 
     <!-- Botones de showcase inicial (sin overlay) -->
-    <div id="showcase-buttons-container" class="hidden" style="display: none;">
-        <div class="showcase-buttons" style="display: flex; gap: 24px; pointer-events: auto;">
-            <div class="button-wrap">
-                <button type="button" id="customize-btn" class="showcase-btn pc-auth-motion"
-                    style="background: #FF4D94; border: 4px solid black; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); border-radius: 20px; padding: 16px 32px; cursor: pointer;">
-                    <span
-                        style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.5rem; color: black; text-transform: uppercase; letter-spacing: 1px;">CUSTOM</span>
-                </button>
-            </div>
-            <div class="button-wrap">
-                <button type="button" id="presets-btn" class="showcase-btn pc-auth-motion"
-                    style="background: #FFE600; border: 4px solid black; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); border-radius: 20px; padding: 16px 32px; cursor: pointer;">
-                    <span
-                        style="font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.5rem; color: black; text-transform: uppercase; letter-spacing: 1px;">PRESETS</span>
-                </button>
-            </div>
-        </div>
-    </div>
 
 
 
@@ -5968,17 +6056,14 @@
         let currentProfileUserId = null;
         let currentMainPart = 'torso';
         let currentHeadPart = null;
-        const keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false, ' ': false };
-
-        // UI Elements (Moved to top to avoid ReferenceError)
-        const showcaseButtonsContainer = document.getElementById('showcase-buttons-container');
-        const customizeBtn = document.getElementById('customize-btn');
-        const presetsBtn = document.getElementById('presets-btn');
-        const editorPanelWrapper = document.getElementById('editor-panel-wrapper');
-        const presetsSection = document.getElementById('presets-section');
-        const customizeSection = document.getElementById('customize-section');
-        let authenticatedHomeView = null;
-        let userProfileView = null;
+        let keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false, ' ': false };
+        var authenticatedHomeView = document.getElementById('authenticated-home-view');
+        var userProfileView = document.getElementById('user-profile-view');
+        var canvasContainer = document.getElementById('canvas-container');
+        var fandomsOverlay = document.getElementById('fandoms-overlay');
+        var editorPanelWrapper = document.getElementById('editor-panel-wrapper');
+        var presetsSection = document.getElementById('presets-list');
+        var customizeSection = document.getElementById('character-customize-view');
 
         // Variables para showcase inicial
         let isShowcaseActive = false;
@@ -6059,7 +6144,7 @@
         let targetCameraAngle = 0; // Ángulo objetivo
         let isCameraTransitioning = false;
 
-        const canvasContainer = document.getElementById('canvas-container');
+
 
         // Ajusta cámara y renderer al tamaño REAL del contenedor del canvas
         function resizeToCanvasContainer(fovOverride) {
@@ -6072,6 +6157,7 @@
             camera.updateProjectionMatrix();
             renderer.setSize(w, h);
         }
+        // Initialization context
         const loadingIndicator = document.getElementById('loading-indicator');
         const scene = new THREE.Scene();
 
@@ -6337,7 +6423,7 @@
 
                 // Crear textura desde canvas de alta resolución
                 const texture = new THREE.CanvasTexture(canvas);
-                texture.encoding = THREE.sRGBEncoding; // IMPORTANTE: Colores correctos y saturados
+                texture.colorSpace = THREE.SRGBColorSpace; // IMPORTANTE: Colores correctos y saturados
                 texture.minFilter = THREE.LinearFilter;
                 texture.magFilter = THREE.LinearFilter;
                 texture.generateMipmaps = false;
@@ -8033,11 +8119,13 @@
                 // Usamos resizeToCanvasContainer para ajustar el renderer a ese tamaño
                 resizeToCanvasContainer();
             } else if (isShowcaseActive) {
-                const showcaseHeight = window.innerHeight * 0.6667;
-                camera.fov = window.innerWidth <= 768 ? 50 : 75;
-                camera.aspect = window.innerWidth / showcaseHeight;
+                // Canvas is now a relative section; use its actual size
+                const container = document.getElementById('canvas-container');
+                const rect = container ? container.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight * 0.8 };
+                camera.fov = window.innerWidth <= 768 ? 50 : 60;
+                camera.aspect = rect.width / rect.height;
                 camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, showcaseHeight);
+                renderer.setSize(rect.width, rect.height);
             } else {
                 camera.fov = 75;
                 camera.aspect = window.innerWidth / window.innerHeight;
@@ -8544,14 +8632,23 @@
         function startShowcase() {
             isShowcaseActive = true;
             shouldRenderScene = true;
+            if (loadedModel) loadedModel.visible = true;
 
             // Activar fondo degradado azul
             const showcaseBackground = document.getElementById('showcase-background');
             if (showcaseBackground) showcaseBackground.classList.add('active');
 
-            // Agregar clase al canvas para ajustar su altura
+            // Agregar clase al canvas para ajustar su altura y moverlo al DOM del landing page
             const canvasContainer = document.getElementById('canvas-container');
-            if (canvasContainer) { canvasContainer.classList.add('showcase-active'); canvasContainer.style.cursor = 'grab'; }
+            const homeTop = document.getElementById('home-top');
+            
+            // In showcase, keep pointer-events: none so scroll passes through and touch is disabled
+            if (canvasContainer) { 
+                if (homeTop) homeTop.appendChild(canvasContainer);
+                canvasContainer.classList.add('showcase-active'); 
+                canvasContainer.style.cursor = 'default'; 
+                canvasContainer.style.pointerEvents = 'none'; 
+            }
 
             // Mostrar logo del showcase
             const showcaseLogoContainer = document.getElementById('showcase-logo-container');
@@ -8578,14 +8675,14 @@
                 camera.fov = 60; // Desktop: Tamaño moderado del modelo
             }
 
-            // Ajustar el renderer al tamaño completo de la pantalla
+            // Ajustar el renderer al tamaño del contenedor (ahora es sección relativa)
             setTimeout(() => {
-                const w = window.innerWidth;
-                const h = window.innerHeight;
-                camera.aspect = w / h;
+                const container = document.getElementById('canvas-container');
+                const rect = container ? container.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight * 0.8 };
+                camera.aspect = rect.width / rect.height;
                 camera.updateProjectionMatrix();
-                renderer.setSize(w, h);
-                console.log(`Renderer resized to: ${w}x${h}`);
+                renderer.setSize(rect.width, rect.height);
+                console.log(`Renderer resized to: ${rect.width}x${rect.height}`);
                 if (renderer && scene && camera) renderer.render(scene, camera);
             }, 500);
 
@@ -8611,9 +8708,15 @@
             const showcaseBackground = document.getElementById('showcase-background');
             if (showcaseBackground) showcaseBackground.classList.remove('active');
 
-            // Remover clase del canvas para restaurar altura completa
+            // Re-acoplar el canvas al body y restaurar configuración para modo edición interactivo
             const canvasContainer = document.getElementById('canvas-container');
-            if (canvasContainer) { canvasContainer.classList.remove('showcase-active'); canvasContainer.style.cursor = 'default'; }
+            // Re-enable pointer-events so user can interact with the 3D model in edit mode
+            if (canvasContainer) { 
+                document.body.prepend(canvasContainer); // Devolverlo a su lugar original
+                canvasContainer.classList.remove('showcase-active'); 
+                canvasContainer.style.cursor = 'grab'; 
+                canvasContainer.style.pointerEvents = 'auto'; 
+            }
 
             // Mostrar sombra bajo los pies cuando se sale del showcase
             if (footShadow) footShadow.visible = true;
@@ -9034,6 +9137,11 @@
         function ensureDeferredViews() {
             if (!authenticatedHomeView) authenticatedHomeView = document.getElementById('authenticated-home-view');
             if (!userProfileView) userProfileView = document.getElementById('user-profile-view');
+            if (!canvasContainer) canvasContainer = document.getElementById('canvas-container');
+            if (!fandomsOverlay) fandomsOverlay = document.getElementById('fandoms-overlay');
+            if (!editorPanelWrapper) editorPanelWrapper = document.getElementById('editor-panel-wrapper');
+            if (!presetsSection) presetsSection = document.getElementById('presets-list');
+            if (!customizeSection) customizeSection = document.getElementById('character-customize-view');
         }
 
         function createPresetArtCluster(names, imageClass = '') {
@@ -9046,70 +9154,74 @@
 
         function renderAuthenticatedHome() {
             ensureDeferredViews();
-            const heroStack = document.getElementById('home-hero-stack');
-            const bannerGrid = document.getElementById('home-banner-grid');
+            const heroTop = document.getElementById('home-top');
             const collectionGrid = document.getElementById('home-collection-grid');
-            const groupGrid = document.getElementById('home-group-grid');
+            const bannerGrid = document.getElementById('home-banner-grid');
 
-            if (heroStack) {
-                heroStack.innerHTML = authenticatedHomeHeroCards.map(card => `
-                    <article class="pc-home-hero-card">
-                        <div>
-                            <h3>${card.title}</h3>
-                            <p>${card.description}</p>
+            if (heroTop) {
+                // Hardcoded the hero banner to match 'Anyone for Tennis?'
+                heroTop.innerHTML = `
+                    <div class="funko-hero-wrapper">
+                        <div class="funko-hero-inner">
+                            <div class="funko-hero-content">
+                                <span class="funko-hero-label">POP! YOURSELF</span>
+                                <h1>Hola josanager,<br>hoy toca estrenar vitrina</h1>
+                                <p>Recreate the fan in your life as a customised Papelcool! It's sure to be an amazing match.<br>Empieza con el editor de customización Pop-Art.</p>
+                                <button type="button" class="funko-hero-cta" onclick="navigateToView('custom')">CREA EL TUYO AHORA</button>
+                            </div>
+                            <div class="funko-hero-art">
+                                <img src="logo.svg" alt="Char 1" style="z-index: 2;" onerror="this.src='webclip.png'">
+                            </div>
                         </div>
-                        ${createPresetArtCluster(card.art)}
-                    </article>
-                `).join('');
-            }
-
-            if (bannerGrid) {
-                bannerGrid.innerHTML = authenticatedHomeBanners.map(card => `
-                    <article class="pc-home-banner" data-tone="${card.tone}">
-                        <div class="pc-home-banner-top">
-                            <span>${card.tag}</span>
-                            <h3>${card.title}</h3>
-                            <p>${card.description}</p>
-                        </div>
-                        <div class="pc-home-banner-art">
-                            ${card.art.map(name => `<img src="${getPresetIconSource(name)}" alt="${name}" loading="lazy">`).join('')}
-                        </div>
-                    </article>
-                `).join('');
+                    </div>
+                `;
             }
 
             if (collectionGrid) {
-                collectionGrid.innerHTML = authenticatedHomeCollections.map(card => `
-                    <article class="pc-home-collection-card">
-                        <div class="pc-home-collection-thumb">
-                            <img src="${getPresetIconSource(card.name)}" alt="${card.name}" loading="lazy">
+                // Mix the collections for 'New Picks'
+                const combined = [...authenticatedHomeCollections, {name: 'Zoey', subtitle: 'New Arrival'}];
+                collectionGrid.innerHTML = combined.map((card, i) => {
+                    const tagClass = i % 2 === 0 ? "funko-card-ribbon" : "funko-card-ribbon exclusive";
+                    const tagText = i % 2 === 0 ? "NEW IN" : "WEB EXCLUSIVE";
+                    return `
+                    <article class="funko-card" onclick="navigateToView('presets')">
+                        <div class="${tagClass}">${tagText}</div>
+                        <div class="funko-card-heart"><span class="material-symbols-outlined">favorite</span></div>
+                        <div class="funko-card-img-container">
+                            <img src="${getPresetIconSource(card.name)}" alt="${card.name}" loading="lazy" onerror="this.src='webclip.png'">
                         </div>
-                        <div>
+                        <div class="funko-card-info">
                             <h3>${card.name}</h3>
                             <p>${card.subtitle}</p>
                         </div>
                     </article>
-                `).join('');
+                `}).slice(0, 5).join('');
             }
 
-            if (groupGrid) {
-                groupGrid.innerHTML = authenticatedHomeGroups.map(card => `
-                    <article class="pc-home-group-card">
-                        <div class="pc-home-group-top">
-                            <div>
-                                <div class="pc-home-group-tag">${card.tag}</div>
-                                <h3>${card.title}</h3>
-                            </div>
-                            <button type="button" class="pc-home-btn pc-home-btn--light" onclick="navigateToView('presets')">Abrir</button>
+            if (bannerGrid) {
+                // Render the 4 columns
+                const banners = [
+                    { title: "Time for a Takedown", tag: "KPOP DEMON HUNTERS", body: "Display your idols with official collectibles.", color: "#B8860B", art: ["Mira", "Rumi"] },
+                    { title: "Ready, Set, Morph!", tag: "POWER RANGERS", body: "Power up your collection with new arrivals.", color: "#556B2F", art: ["Zoey"] },
+                    { title: "New to the Crew", tag: "ONE PIECE", body: "Set sail for new collectibles to complete your anime display.", color: "#8B4513", art: ["Baby", "Abby"] },
+                    { title: "Make an Entrance", tag: "WWE", body: "New collectibles have entered the ring.", color: "#8B0000", art: ["Steve", "Jinu"] }
+                ];
+                bannerGrid.innerHTML = banners.map(b => `
+                    <article class="funko-banner-card" style="background: ${b.color};">
+                        <div class="funko-banner-card-top">
+                            <span class="funko-banner-tag">${b.tag}</span>
+                            <h3>${b.title}</h3>
+                            <p>${b.body}</p>
+                            <button type="button" class="funko-banner-shop-btn" onclick="navigateToView('presets')">VER COLECCIÓN</button>
                         </div>
-                        <p>${card.description}</p>
-                        <div class="pc-home-group-cast">
-                            ${card.art.map(name => `<img src="${getPresetIconSource(name)}" alt="${name}" loading="lazy">`).join('')}
+                        <div class="funko-banner-card-art">
+                            ${b.art.map(name => `<img src="${getPresetIconSource(name)}" alt="${name}" onerror="this.src='webclip.png'">`).join('')}
                         </div>
                     </article>
                 `).join('');
             }
         }
+
 
         async function syncAuthenticatedHomeUser(userArg) {
             const user = userArg || (typeof getCurrentUser === 'function' ? await getCurrentUser() : null);
@@ -9139,15 +9251,16 @@
 
         function openAuthenticatedHome(show = true) {
             ensureDeferredViews();
+            document.body.classList.remove('showcase-mode');
             const authContainer = document.getElementById('auth-container');
 
             if (!authenticatedHomeView) {
-                setTimeout(() => openAuthenticatedHome(show), 0);
+                setTimeout(() => openAuthenticatedHome(show), 50);
                 return;
             }
 
             if (show) {
-                stopShowcase();
+                startShowcase();
                 document.body.classList.remove('customization-active');
                 if (editorPanelWrapper) editorPanelWrapper.style.display = 'none';
                 if (presetsSection) presetsSection.classList.add('hidden');
@@ -9156,55 +9269,36 @@
                 hideCharacterName();
 
                 if (canvasContainer) {
-                    canvasContainer.style.display = 'none';
-                    canvasContainer.classList.remove('showcase-active');
+                    canvasContainer.style.display = '';
+                    canvasContainer.classList.add('showcase-active');
                 }
 
-                shouldRenderScene = false;
-                forceMemoryCleanup();
+                shouldRenderScene = true;
                 activeAppView = 'home';
                 authenticatedHomeView.classList.add('active');
                 setGlobalTopbarVisible(true);
-                if (authContainer) authContainer.style.display = 'none';
+                if (authContainer) authContainer.style.display = 'flex';
                 if (userProfileView) userProfileView.style.display = 'none';
                 syncAuthenticatedHomeUser();
+                setTimeout(() => { onWindowResize(); }, 100);
                 return;
             }
 
             authenticatedHomeView.classList.remove('active');
             setGlobalTopbarVisible(false);
             if (fandomsOverlay) fandomsOverlay.classList.remove('active');
-            if (canvasContainer) canvasContainer.style.display = '';
-            shouldRenderScene = true;
-            if (authContainer) authContainer.style.display = '';
         }
 
         function openShowcaseView() {
-            openAuthenticatedHome(false);
-            setGlobalTopbarVisible(false);
-            if (userProfileView) userProfileView.style.display = 'none';
-            document.body.classList.remove('customization-active');
-            editorPanelWrapper.style.display = 'none';
-            presetsSection.classList.add('hidden');
-            customizeSection.classList.add('hidden');
-            hideCharacterName();
-
-            if (fandomsOverlay) fandomsOverlay.classList.remove('active');
-
-            const presetActionButtons = document.getElementById('preset-action-buttons');
-            if (presetActionButtons) presetActionButtons.classList.remove('active');
-
-            currentPresetCharacter = null;
-            const pdfBtn = document.getElementById('download-pdf-btn-moved');
-            if (pdfBtn) pdfBtn.classList.remove('active');
-
-            startShowcase();
+            openAuthenticatedHome(true);
+            document.body.classList.add('showcase-mode');
             activeAppView = 'showcase';
-            setTimeout(() => { onWindowResize(); }, 100);
         }
 
         function openCustomizationView() {
+            ensureDeferredViews();
             openAuthenticatedHome(false);
+            document.body.classList.remove('showcase-mode');
             setGlobalTopbarVisible(false);
             if (userProfileView) userProfileView.style.display = 'none';
             stopShowcase();
@@ -9212,9 +9306,9 @@
             const authContainer = document.getElementById('auth-container');
             if (authContainer) authContainer.style.display = 'none';
             document.body.classList.add('customization-active');
-            editorPanelWrapper.style.display = 'block';
-            presetsSection.classList.add('hidden');
-            customizeSection.classList.remove('hidden');
+            if (editorPanelWrapper) editorPanelWrapper.style.display = 'block';
+            if (presetsSection) presetsSection.classList.add('hidden');
+            if (customizeSection) customizeSection.classList.remove('hidden');
 
             hideCharacterName();
             hasCustomizationInteracted = false;
@@ -9229,6 +9323,7 @@
 
         function openPresetsView() {
             ensureDeferredViews();
+            document.body.classList.remove('showcase-mode');
             if (userProfileView) userProfileView.style.display = 'none';
             stopShowcase();
             document.body.classList.remove('customization-active');
@@ -9376,12 +9471,8 @@
         });
         */
 
-        // Event listeners para botones de showcase
-        customizeBtn.addEventListener('click', () => {
-            navigateToView('custom');
-        });
 
-        const fandomsOverlay = document.getElementById('fandoms-overlay');
+
         const fandomsGrid = document.getElementById('fandoms-grid');
         const fandomFilter = document.getElementById('fandom-filter');
 
@@ -9444,9 +9535,12 @@
             });
         }
 
-        presetsBtn.addEventListener('click', () => {
-            navigateToView('presets');
-        });
+        const presetsBtn = document.getElementById('presets-btn');
+        if (presetsBtn) {
+            presetsBtn.addEventListener('click', () => {
+                navigateToView('presets');
+            });
+        }
 
         // Custom Header Actions Logic
         const backToShowcaseCustomBtn = document.getElementById('back-to-showcase-custom-btn');
@@ -11235,9 +11329,11 @@
         }
 
         function updateProfileUI(isOwner) {
-            // Find the Add Button specifically in the profile main section
-            const addBtn = document.querySelector('#user-profile-view main button span.material-symbols-outlined:contains("add")')?.parentElement ||
-                document.querySelector('#user-profile-view main button:has(span:contains("add"))');
+            const profileButtons = Array.from(document.querySelectorAll('#user-profile-view main button'));
+            const addBtn = profileButtons.find((btn) => {
+                const icon = btn.querySelector('.material-symbols-outlined');
+                return icon && icon.textContent.trim() === 'add';
+            }) || null;
 
             // Finding Follow button by ID
             const followBtn = document.getElementById('profile-follow-btn');
@@ -11881,148 +11977,120 @@
 
     </script>
     <div id="authenticated-home-view">
-        <div class="pc-home-shell">
-            <main class="pc-home-content">
-                <section class="pc-home-hero">
-                    <article class="pc-home-panel pc-home-hero-copy" id="home-top">
-                        <span class="pc-home-kicker">
-                            <span class="material-symbols-outlined" style="font-size: 1rem;">bolt</span>
-                            Home Papelcool
-                        </span>
-                        <h1>Hola <span id="home-greeting-name">Creator</span>, hoy toca estrenar vitrina.</h1>
-                        <p>
-                            La sesión ahora abre una home tipo catálogo con navegación superior, banners grandes,
-                            categorías claras y un preview directo de colecciones, manteniendo el lenguaje visual
-                            sticker/papel que ya tiene la marca.
-                        </p>
-                        <div class="pc-home-cta-row">
-                            <button type="button" class="pc-home-btn" onclick="navigateToView('custom')">Crea el tuyo</button>
-                            <button type="button" class="pc-home-btn pc-home-btn--light"
-                                onclick="navigateToView('presets')">Ver colecciones</button>
-                            <button type="button" class="pc-home-btn pc-home-btn--blue"
-                                onclick="scrollAuthenticatedHomeTo('home-community-notes')">Explora el club</button>
-                        </div>
-                        <div class="pc-home-stat-row">
-                            <div class="pc-home-stat">
-                                <strong>14</strong>
-                                <span>Presets listos</span>
-                            </div>
-                            <div class="pc-home-stat">
-                                <strong>2</strong>
-                                <span>Universos activos</span>
-                            </div>
-                            <div class="pc-home-stat">
-                                <strong>24/7</strong>
-                                <span>Showcase creativo</span>
-                            </div>
-                        </div>
-                    </article>
+        <!-- Hero spacer removed: 3D model is now a section above, not a background -->
 
-                    <aside class="pc-home-panel pc-home-hero-stack" id="home-hero-stack"></aside>
-                </section>
+        <main style="pointer-events: auto; background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%); position: relative; z-index: 15; border-top: 5px solid #000; box-shadow: 0 -10px 20px rgba(0,0,0,0.2);">
+            
+            <!-- Hero Banner -->
+            <div id="home-top"></div>
 
-                <section class="pc-home-panel pc-home-category-strip" id="home-category-strip">
-                    <div class="pc-home-category-pill">Música</div>
-                    <div class="pc-home-category-pill">Videojuegos</div>
-                    <div class="pc-home-category-pill">Películas</div>
-                    <div class="pc-home-category-pill">Series</div>
-                    <div class="pc-home-category-pill">Anime</div>
-                    <div class="pc-home-category-pill">Originales</div>
-                    <div class="pc-home-category-pill">Regalos</div>
-                </section>
+            <!-- New Picks For You -->
+            <section class="funko-section" style="padding-top: 3rem;">
+                <h2>Ediciones del momento</h2>
+                <div class="funko-new-picks-grid" id="home-collection-grid"></div>
+            </section>
 
-                <section class="pc-home-banner-grid" id="home-banner-grid"></section>
+            <!-- Fandom / Banners Area -->
+            <section class="funko-section">
+                <h2>Papelcool Originals & Fandoms</h2>
+                <div class="funko-banners-grid" id="home-banner-grid"></div>
+            </section>
 
-                <section class="pc-home-panel pc-home-section">
-                    <div class="pc-home-section-head">
-                        <div>
-                            <h2>Vista rápida de colecciones</h2>
-                            <p>La home enseña una galería real de presets y manda al usuario a la pestaña completa.</p>
-                        </div>
-                        <button type="button" class="pc-home-btn pc-home-btn--light"
-                            onclick="navigateToView('presets')">Ver más</button>
+            <!-- FUNKO-STYLE FOOTER -->
+            <footer style="background: #111827; margin-top: 4rem; padding: 4rem 2rem 2rem; border-top: 5px solid #000; position: relative; overflow: hidden;">
+                <!-- Newsletter block acting like a Pop-art Sticker -->
+                <div style="background: white; border: 4px solid #000; padding: 3rem; max-width: 800px; margin: -8rem auto 4rem; position: relative; z-index: 20; box-shadow: 12px 12px 0px 0px rgba(0,0,0,1); border-radius: 12px; transform: rotate(-1deg);">
+                    <h3 style="font-family: 'Fredoka', sans-serif; font-size: 3rem; font-weight: 900; color: #000; text-transform: uppercase; margin-bottom: 1rem; text-align: center;">Únete al Newsletter</h3>
+                    <p style="font-family: 'Montserrat', sans-serif; font-size: 1.1rem; color: #111; text-align: center; margin-bottom: 2rem;">¡Entérate primero de nuevos drops, figuras especiales y eventos en TikTok!</p>
+                    <div style="display: flex; gap: 1rem; justify-content: center; max-width: 500px; margin: 0 auto;">
+                        <input type="text" placeholder="Email Address..." style="flex: 1; padding: 1rem; border: 3px solid #000; font-family: 'Montserrat', sans-serif; font-size: 1rem;">
+                        <button style="background: #000; color: #FFE600; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.2rem; padding: 0 2rem; border: 3px solid #000; cursor: pointer; text-transform: uppercase;">SIGN UP</button>
                     </div>
-                    <div class="pc-home-collection-grid" id="home-collection-grid"></div>
-                </section>
-
-                <section class="pc-home-panel pc-home-section" id="home-groups">
-                    <div class="pc-home-section-head">
-                        <div>
-                            <h2>Bandas, crews y fandoms</h2>
-                            <p>Una fila temática para navegar por nombres fuertes, igual que en la lógica de Funko.</p>
-                        </div>
-                        <button type="button" class="pc-home-btn pc-home-btn--light"
-                            onclick="scrollAuthenticatedHomeTo('home-top')">Volver arriba</button>
-                    </div>
-                    <div class="pc-home-group-grid" id="home-group-grid"></div>
-                </section>
-
-                <section class="pc-home-footer-note" id="home-community-notes">
-                    <article class="pc-home-note">
-                        <strong>Mi vitrina</strong>
-                        <p>Espacio natural para favoritos, guardados y piezas que el usuario ya abrió o compartió.</p>
-                    </article>
-                    <article class="pc-home-note">
-                        <strong>Fan Rewards</strong>
-                        <p>Preparado para sumar puntos, retos y drops semanales sin romper el flujo principal.</p>
-                    </article>
-                    <article class="pc-home-note">
-                        <strong>Regalos y packs</strong>
-                        <p>Pensado para bundles, campañas de temporada y ediciones especiales para regalar.</p>
-                    </article>
-                </section>
-            </main>
-
-            <nav class="pc-home-mobile-nav" aria-label="Navegación móvil">
-                <button type="button" class="pc-home-chip" onclick="scrollAuthenticatedHomeTo('home-top')">Home</button>
-                <button type="button" class="pc-home-chip" onclick="navigateToView('custom')">Custom</button>
-                <button type="button" class="pc-home-chip" onclick="navigateToView('presets')">Colección</button>
-                <button type="button" class="pc-home-chip" onclick="toggleUserDropdown()">Perfil</button>
-            </nav>
-        </div>
-    </div>
-
-
-    <!-- USER PROFILE VIEW (Hidden by default) -->
-    <div id="user-profile-view" style="display: none; position: fixed; inset: 0; z-index: 9000; overflow-y: auto; background: radial-gradient(circle at top left, rgba(255, 230, 0, 0.26), transparent 30%), radial-gradient(circle at bottom right, rgba(64, 123, 255, 0.18), transparent 32%), linear-gradient(180deg, #fffef8 0%, #edf5ff 100%); color: var(--pc-ink);">
-        <div class="pc-home-shell" style="min-height: 100vh; padding-bottom: 2rem;">
-            <section class="pc-home-panel pc-profile-hero">
-                <div style="width: 120px; height: 120px; border-radius: 999px; border: 4px solid #000; overflow: hidden; box-shadow: 6px 6px 0 rgba(0,0,0,1); background: #FFE600; display: flex; align-items: center; justify-content: center;">
-                    <span id="profile-avatar-initial" style="font-family: 'Fredoka', sans-serif; font-size: 3.5rem; font-weight: 700; color: #111827;">U</span>
                 </div>
-                <div style="min-width: 0;">
+
+                <!-- Social & Links -->
+                <div style="max-width: 1400px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 4rem; justify-content: space-between;">
+                    <div style="flex: 1; min-width: 250px;">
+                        <img src="logo.svg" alt="Papelcool" style="height: 50px; filter: drop-shadow(3px 3px 0 white); margin-bottom: 2rem;">
+                        <div style="display: flex; gap: 1rem;">
+                            <div style="width: 44px; height: 44px; background: white; border: 3px solid #000; border-radius: 50%; box-shadow: 4px 4px 0 #FF4D94; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                <span class="material-symbols-outlined" style="color: #000;">photo_camera</span>
+                            </div>
+                            <div style="width: 44px; height: 44px; background: white; border: 3px solid #000; border-radius: 50%; box-shadow: 4px 4px 0 #407BFF; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                <span class="material-symbols-outlined" style="color: #000;">play_arrow</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <h4 style="font-family: 'Fredoka', sans-serif; font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 1.5rem;">My Account</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; font-family: 'Montserrat', sans-serif; color: #bbb; display: flex; flex-direction: column; gap: 0.8rem;">
+                            <li style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#bbb'">Order History</li>
+                            <li style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#bbb'">Wishlist</li>
+                        </ul>
+                    </div>
+                    <div style="flex: 1; min-width: 200px;">
+                        <h4 style="font-family: 'Fredoka', sans-serif; font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 1.5rem;">Contact Us</h4>
+                        <ul style="list-style: none; padding: 0; margin: 0; font-family: 'Montserrat', sans-serif; color: #bbb; display: flex; flex-direction: column; gap: 0.8rem;">
+                            <li style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#bbb'">Support Centre</li>
+                            <li style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#bbb'">TikTok Events</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="max-width: 1400px; margin: 4rem auto 0; padding-top: 2rem; border-top: 2px solid #333; display: flex; justify-content: space-between; color: #888; font-family: 'Montserrat', sans-serif; font-size: 0.9rem;">
+                    <span>© 2026 Papelcool. All Rights Reserved.</span>
+                    <span>Built with ❤️ for Fandoms.</span>
+                </div>
+            </footer>
+        </main>
+    </div>
+    <!-- USER PROFILE VIEW (Hidden by default) -->
+    <div id="user-profile-view" style="display: none; position: fixed; inset: 0; z-index: 9000; overflow-y: auto; background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%); color: var(--pc-ink);">
+        <!-- bg floating shapes -->
+        <div style="position: fixed; top: 10%; right: -50px; width: 300px; height: 300px; background: #FFE600; opacity: 0.2; clip-path: polygon(10% 0%, 100% 5%, 90% 95%, 5% 100%); transform: rotate(12deg); pointer-events: none; z-index: 0;"></div>
+        <div style="position: fixed; bottom: -50px; left: -50px; width: 400px; height: 400px; background: #407BFF; opacity: 0.15; clip-path: polygon(5% 15%, 95% 0%, 100% 85%, 15% 100%); transform: rotate(-12deg); pointer-events: none; z-index: 0;"></div>
+
+        <div class="pc-home-shell" style="min-height: 100vh; padding: 6rem 2rem 2rem; max-width: 900px; margin: 0 auto; position: relative; z-index: 10;">
+            <section class="ui-panel" style="background: white; border: 4px solid black; border-radius: 20px; box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1); padding: 2rem; display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; margin-bottom: 2rem; position: relative;">
+                
+                <!-- Avatar Sticker -->
+                <div style="width: 140px; height: 140px; border-radius: 50%; border: 4px solid #000; overflow: hidden; box-shadow: 6px 6px 0 rgba(0,0,0,1); background: #FFE600; display: flex; align-items: center; justify-content: center; transform: rotate(-3deg);">
+                    <span id="profile-avatar-initial" style="font-family: 'Fredoka', sans-serif; font-size: 4rem; font-weight: 800; color: #000;">U</span>
+                </div>
+                
+                <div style="flex: 1; min-width: 250px;">
                     <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-                        <h2 id="profile-username" style="font-family: 'Fredoka', sans-serif; font-size: 2rem; font-weight: 700; margin: 0; color: #111827;">Username</h2>
-                        <span id="profile-handle" style="font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: #475569;">@username</span>
+                        <h2 id="profile-username" style="font-family: 'Fredoka', sans-serif; font-size: 2.5rem; font-weight: 900; margin: 0; color: #000; text-transform: uppercase;">Username</h2>
+                        <span id="profile-handle" style="font-family: 'Fredoka', sans-serif; font-size: 1.2rem; font-weight: 700; color: #FF4D94; border: 3px solid #000; border-radius: 99px; padding: 0.2rem 0.8rem; background: white; box-shadow: 3px 3px 0 #000;">@username</span>
                     </div>
-                    <div style="display: flex; flex-wrap: wrap; gap: 1.25rem; margin-bottom: 0.85rem;">
-                        <div>
-                            <strong id="profile-favorites-count" style="display: block; font-family: 'Fredoka', sans-serif; font-size: 1.2rem; color: #111827;">0</strong>
-                            <span style="font-family: 'Fredoka', sans-serif; font-size: 0.9rem; color: #475569;">Favoritos</span>
+                    <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1rem;">
+                        <div style="background: #E0F2FE; border: 3px solid #000; padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 3px 3px 0 #000; text-align: center;">
+                            <strong id="profile-favorites-count" style="display: block; font-family: 'Fredoka', sans-serif; font-size: 1.5rem; color: #000;">0</strong>
+                            <span style="font-family: 'Fredoka', sans-serif; font-size: 0.9rem; color: #000; font-weight: 700; text-transform: uppercase;">Favoritos</span>
                         </div>
-                        <div>
-                            <strong id="profile-customs-count" style="display: block; font-family: 'Fredoka', sans-serif; font-size: 1.2rem; color: #111827;">0</strong>
-                            <span style="font-family: 'Fredoka', sans-serif; font-size: 0.9rem; color: #475569;">Customs</span>
+                        <div style="background: #E0F2FE; border: 3px solid #000; padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 3px 3px 0 #000; text-align: center;">
+                            <strong id="profile-customs-count" style="display: block; font-family: 'Fredoka', sans-serif; font-size: 1.5rem; color: #000;">0</strong>
+                            <span style="font-family: 'Fredoka', sans-serif; font-size: 0.9rem; color: #000; font-weight: 700; text-transform: uppercase;">Customs</span>
                         </div>
                     </div>
-                    <p id="profile-status" style="font-family: 'Fredoka', sans-serif; font-size: 1rem; line-height: 1.45; margin: 0 0 0.55rem; color: #1E293B;">Coleccionando favoritos y creando nuevos Papelcool.</p>
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
-                        <span id="profile-email" style="font-family: 'Fredoka', sans-serif; font-size: 0.92rem; font-weight: 600; color: #334155;"></span>
-                        <span id="profile-joined" style="font-family: 'Fredoka', sans-serif; font-size: 0.92rem; font-weight: 600; color: #334155;"></span>
+                    <p id="profile-status" style="font-family: 'Montserrat', sans-serif; font-size: 1.1rem; line-height: 1.45; margin: 0 0 1rem; color: #000; font-weight: 600;">Coleccionando favoritos y creando nuevos Papelcool.</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+                        <span id="profile-email" style="font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 700; color: #555;"></span>
+                        <span id="profile-joined" style="font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 700; color: #555;"></span>
                     </div>
                 </div>
             </section>
 
-            <div style="display: flex; justify-content: center; gap: 1rem; padding: 0 1rem; margin-bottom: 2rem;">
-                <button id="tab-favorites" class="pc-home-chip active" style="flex: 1; text-align: center; justify-content: center; border: 2px solid #000; background-color: #FFE600; color: #000; box-shadow: 2px 2px 0px rgba(0,0,0,1);" onclick="switchProfileTab('favorites')">
+            <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem;">
+                <button id="tab-favorites" class="icon-btn active" style="flex: 1; max-width: 250px; text-align: center; justify-content: center; padding: 1rem; font-family: 'Fredoka', sans-serif; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; background: #FFE600; cursor: pointer; border: 4px solid #000; box-shadow: 4px 4px 0 #000; border-radius: 12px; transition: transform 0.1s;" onmousedown="this.style.transform='translate(2px, 2px)'; this.style.boxShadow='2px 2px 0 #000';" onmouseup="this.style.transform='translate(0, 0)'; this.style.boxShadow='4px 4px 0 #000';" onclick="switchProfileTab('favorites')">
                     Favoritos
                 </button>
-                <button id="tab-customs" class="pc-home-chip" style="flex: 1; text-align: center; justify-content: center; border: 2px solid #000; background-color: transparent; color: #000; box-shadow: 2px 2px 0px rgba(0,0,0,1);" onclick="switchProfileTab('customs')">
+                <button id="tab-customs" class="icon-btn" style="flex: 1; max-width: 250px; text-align: center; justify-content: center; padding: 1rem; font-family: 'Fredoka', sans-serif; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; background: white; cursor: pointer; border: 4px solid #000; box-shadow: 4px 4px 0 #000; border-radius: 12px; transition: transform 0.1s;" onmousedown="this.style.transform='translate(2px, 2px)'; this.style.boxShadow='2px 2px 0 #000';" onmouseup="this.style.transform='translate(0, 0)'; this.style.boxShadow='4px 4px 0 #000';" onclick="switchProfileTab('customs')">
                     Customs
                 </button>
             </div>
 
-            <main id="profile-content-area" style="padding: 0 1rem;">
+            <main id="profile-content-area" style="padding: 0;">
                 <!-- Content injected via JS -->
             </main>
         </div>
