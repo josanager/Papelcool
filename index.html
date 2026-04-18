@@ -6096,13 +6096,13 @@
         // Detectar si es móvil para reducir calidad y memoria
         const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         const isLowPowerMobile = isMobileDevice || window.innerWidth <= 768;
-        const pixelRatio = isLowPowerMobile ? Math.min(window.devicePixelRatio || 1, 1.25) : Math.min(window.devicePixelRatio || 1, 2);
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
         const showcaseTextureUpdateMode = isLowPowerMobile ? 'lite' : 'full';
         let shouldRenderScene = true;
         let lastFrameTimestamp = 0;
 
         const renderer = new THREE.WebGLRenderer({
-            antialias: !isMobileDevice, // Desactivar antialiasing en móvil para ahorrar memoria
+            antialias: true, // Mantener antialiasing
             alpha: true, // Habilitar transparencia
             powerPreference: 'high-performance'
         });
@@ -6333,7 +6333,7 @@
             img.onload = function () {
                 // Subimos resolución en móvil, pero usando el aspect ratio real del SVG para no
                 // reservar memoria cuadrada innecesaria en cada textura.
-                const targetLongSide = isLowPowerMobile ? 1536 : 2048;
+                const targetLongSide = isLowPowerMobile ? 2048 : 2048;
                 const sourceWidth = img.naturalWidth || img.width || 1024;
                 const sourceHeight = img.naturalHeight || img.height || 1024;
                 const scale = targetLongSide / Math.max(sourceWidth, sourceHeight, 1);
