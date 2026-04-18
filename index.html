@@ -139,9 +139,9 @@
             border-radius: 50%;
             margin-right: 12px;
             cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 0.1);
             flex-shrink: 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s ease;
         }
 
         .custom-nav-btn:hover {
@@ -154,6 +154,7 @@
             transform: scale(1.1);
             box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
             border-width: 4px;
+            transform: translateY(-2px);
         }
 
         .custom-nav-btn .btn-icon svg {
@@ -181,20 +182,22 @@
             font-size: 0.8rem;
             color: black;
             cursor: pointer;
-            transition: all 0.2s;
             text-transform: uppercase;
-            box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
         }
 
         .part-btn:hover {
             background: #f0f0f0;
             transform: translateY(-1px);
+            background: #f9fafb;
         }
 
         .part-btn.active {
             background: #FFE600;
             box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
             transform: scale(1.05);
+            transform: translateY(-1px);
         }
 
         /* Preset Character Buttons overrides */
@@ -3239,12 +3242,13 @@
             min-width: 56px;
             height: 64px;
             padding: 0;
-            border-radius: 10px;
+            border-radius: 12px;
             background: #ffffff;
-            border: 2px solid #111111;
-            color: #111111;
+            border: 2px solid #e5e7eb;
+            color: #4b5563;
             cursor: pointer;
-            box-shadow: 2px 2px 0 rgba(17, 17, 17, 0.12);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s ease;
         }
 
         .custom-nav-btn:hover {
@@ -3253,9 +3257,10 @@
 
         .custom-nav-btn.active {
             background: #ffe55c;
-            border-color: #111111;
+            border-color: #ffe55c;
             color: #111111;
-            box-shadow: 2px 2px 0 rgba(17, 17, 17, 0.9);
+            box-shadow: 0 4px 12px rgba(255, 229, 92, 0.4);
+            transform: translateY(-2px);
         }
 
         .custom-nav-btn .btn-icon {
@@ -3279,9 +3284,9 @@
         .grid-item-btn {
             aspect-ratio: 1;
             min-height: 0;
-            border-radius: 10px;
+            border-radius: 12px;
             background: rgba(255, 255, 255, 0.94);
-            border: 2px solid rgba(17, 17, 17, 0.14);
+            border: 2px solid #e5e7eb;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -3289,18 +3294,20 @@
             justify-content: flex-start;
             cursor: pointer;
             position: relative;
-            box-shadow: 0 3px 10px rgba(17, 17, 17, 0.08);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: all 0.2s ease;
         }
 
         .grid-item-btn:hover {
-            border-color: rgba(17, 17, 17, 0.14);
-            box-shadow: 0 3px 10px rgba(17, 17, 17, 0.08);
+            border-color: #d1d5db;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
         }
 
         .grid-item-btn.active {
-            background: #fff6cf;
-            border-color: #111111;
-            box-shadow: 0 0 0 2px rgba(255, 229, 92, 0.9), 0 8px 16px rgba(17, 17, 17, 0.12);
+            background: #fffaf0;
+            border-color: #ffe55c;
+            box-shadow: 0 0 0 2px #ffe55c, 0 4px 12px rgba(255, 229, 92, 0.2);
         }
 
         .grid-item-btn img {
@@ -3327,10 +3334,11 @@
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            border: 2px solid rgba(17, 17, 17, 0.18);
+            border: 2px solid #e5e7eb;
             flex-shrink: 0;
             cursor: pointer;
-            box-shadow: 0 2px 8px rgba(17, 17, 17, 0.08);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
         }
 
         .color-swatch-circle:hover {
@@ -3338,8 +3346,9 @@
         }
 
         .color-swatch-circle.active {
-            border-color: #111111;
-            box-shadow: 0 0 0 3px rgba(255, 229, 92, 0.95);
+            border-color: #ffffff;
+            box-shadow: 0 0 0 3px #ffe55c, 0 4px 8px rgba(0, 0, 0, 0.1);
+            transform: scale(1.1);
         }
 
         .custom-options-grid {
@@ -3360,24 +3369,28 @@
             min-height: 44px;
             padding: 0;
             background: rgba(255, 255, 255, 0.92);
-            border: 2px solid rgba(17, 17, 17, 0.14);
-            border-radius: 8px;
-            color: #111111;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            color: #4b5563;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
         }
 
         .part-btn:hover {
-            border-color: rgba(17, 17, 17, 0.14);
+            border-color: #d1d5db;
+            background: #f9fafb;
         }
 
         .part-btn.active {
             background: #ffe55c;
-            border-color: #111111;
+            border-color: #ffe55c;
             color: #111111;
-            box-shadow: 0 2px 0 rgba(17, 17, 17, 0.16);
+            box-shadow: 0 4px 8px rgba(255, 229, 92, 0.3);
+            transform: translateY(-1px);
         }
 
         .part-btn svg {
@@ -5019,41 +5032,18 @@
                                 <p style="text-align: center; color: #6B7280; font-family: 'Fredoka', sans-serif; font-weight: 600; margin-bottom: 16px; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em;"
                                     data-i18n="auth-social-label">
                                     Or sign in with</p>
-                                <div style="display: flex; justify-content: center; gap: 20px;">
-                                    <button onclick="handleGoogleSignIn()"
-                                        style="background: white; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(-8deg);"
-                                        onmouseover="this.style.transform='scale(1.1) rotate(-8deg)'"
-                                        onmouseout="this.style.transform='rotate(-8deg)'">
-                                        <svg width="28" height="28" viewBox="0 0 24 24">
-                                            <path
-                                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                                                fill="#4285F4" />
-                                            <path
-                                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                                                fill="#34A853" />
-                                            <path
-                                                d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z"
-                                                fill="#FBBC05" />
-                                            <path
-                                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z"
-                                                fill="#EA4335" />
+                                <div style="display: flex; justify-content: center;">
+                                    <button type="button" onclick="handleGoogleSignIn()"
+                                        style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; background: white; border: 3px solid #E5E7EB; padding: 14px; border-radius: 16px; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.2s;"
+                                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='4px 4px 0px 0px rgba(0,0,0,0.15)'"
+                                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='3px 3px 0px 0px rgba(0,0,0,0.1)'">
+                                        <svg width="24" height="24" viewBox="0 0 24 24">
+                                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                                            <path d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z" fill="#FBBC05" />
+                                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                                         </svg>
-                                    </button>
-                                    <button
-                                        style="background: black; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(5deg);"
-                                        onmouseover="this.style.transform='scale(1.1) rotate(5deg)'"
-                                        onmouseout="this.style.transform='rotate(5deg)'">
-                                        <span class="material-symbols-outlined"
-                                            style="color: white; font-size: 26px;">phone_iphone</span>
-                                    </button>
-                                    <button
-                                        style="background: #1877F2; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(-4deg);"
-                                        onmouseover="this.style.transform='scale(1.1) rotate(-4deg)'"
-                                        onmouseout="this.style.transform='rotate(-4deg)'">
-                                        <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
-                                            <path
-                                                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                                        </svg>
+                                        <span style="font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1.1rem; color: #374151;">Continue with Google</span>
                                     </button>
                                 </div>
                             </div>
@@ -5168,41 +5158,18 @@
                                 <p style="text-align: center; color: #6B7280; font-family: 'Fredoka', sans-serif; font-weight: 600; margin-bottom: 16px; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em;"
                                     data-i18n="auth-social-label">
                                     Or sign in with</p>
-                                <div style="display: flex; justify-content: center; gap: 20px;">
-                                    <button onclick="handleGoogleSignIn()"
-                                        style="background: white; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(-8deg);"
-                                        onmouseover="this.style.transform='scale(1.1) rotate(-8deg)'"
-                                        onmouseout="this.style.transform='rotate(-8deg)'">
-                                        <svg width="28" height="28" viewBox="0 0 24 24">
-                                            <path
-                                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                                                fill="#4285F4" />
-                                            <path
-                                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                                                fill="#34A853" />
-                                            <path
-                                                d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z"
-                                                fill="#FBBC05" />
-                                            <path
-                                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z"
-                                                fill="#EA4335" />
+                                <div style="display: flex; justify-content: center;">
+                                    <button type="button" onclick="handleGoogleSignIn()"
+                                        style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; background: white; border: 3px solid #E5E7EB; padding: 14px; border-radius: 16px; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.2s;"
+                                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='4px 4px 0px 0px rgba(0,0,0,0.15)'"
+                                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='3px 3px 0px 0px rgba(0,0,0,0.1)'">
+                                        <svg width="24" height="24" viewBox="0 0 24 24">
+                                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                                            <path d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z" fill="#FBBC05" />
+                                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
                                         </svg>
-                                    </button>
-                                    <button
-                                        style="background: black; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(5deg);"
-                                        onmouseover="this.style.transform='scale(1.1) rotate(5deg)'"
-                                        onmouseout="this.style.transform='rotate(5deg)'">
-                                        <span class="material-symbols-outlined"
-                                            style="color: white; font-size: 26px;">phone_iphone</span>
-                                    </button>
-                                    <button
-                                        style="background: #1877F2; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(-4deg);"
-                                        onmouseover="this.style.transform='scale(1.1) rotate(-4deg)'"
-                                        onmouseout="this.style.transform='rotate(-4deg)'">
-                                        <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
-                                            <path
-                                                d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                                        </svg>
+                                        <span style="font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1.1rem; color: #374151;">Continue with Google</span>
                                     </button>
                                 </div>
                             </div>
