@@ -1061,7 +1061,8 @@
             height: 100%;
             object-fit: contain;
             border-radius: 8px;
-            transform: scale(1.5);
+            object-position: center bottom;
+            transform: scale(1.22);
             flex-shrink: 0;
             transition: transform 250ms ease;
             will-change: transform;
@@ -4631,29 +4632,43 @@
         
         .funko-style-nav {
             display: flex; align-items: center; justify-content: space-between;
-            width: 100vw; max-width: 100%; padding: 0.8rem 2rem;
+            gap: 1rem; width: 100vw; max-width: 100%; min-height: 84px; padding: 0.75rem 1.5rem;
             background-color: #111827;
             border-bottom: 4px solid #000;
         }
         
-        .funko-nav-left, .funko-nav-right { flex: 1; display: flex; align-items: center; }
-        .funko-nav-right { justify-content: flex-end; gap: 1rem; }
-        .funko-nav-center { flex: 2; display: flex; justify-content: center; gap: 1.5rem; }
+        .funko-nav-left, .funko-nav-right { display: flex; align-items: center; min-width: 0; }
+        .funko-nav-left { flex: 0 0 auto; }
+        .funko-nav-right { flex: 0 1 auto; justify-content: flex-end; gap: 0.75rem; }
+        .funko-nav-center {
+            flex: 1 1 auto; min-width: 0; display: flex; align-items: center; justify-content: center;
+            gap: clamp(0.7rem, 1.2vw, 1.4rem);
+        }
+        .funko-brand-btn {
+            display: inline-flex; align-items: center; padding: 0; border: none; background: transparent; cursor: pointer;
+        }
+        .funko-brand-logo {
+            display: block; height: clamp(30px, 2.4vw, 38px); width: auto;
+            filter: drop-shadow(3px 3px 0px rgba(0,0,0,1));
+        }
         
         .funko-nav-link {
             background: transparent; border: none; font-family: 'Fredoka', sans-serif;
-            font-weight: 700; font-size: 1rem; color: #fff; text-transform: uppercase; cursor: pointer;
-            transition: color 0.15s; letter-spacing: 0.05em;
+            font-weight: 700; font-size: clamp(0.82rem, 0.74rem + 0.28vw, 1rem); line-height: 1.15;
+            color: #fff; text-transform: uppercase; cursor: pointer;
+            transition: color 0.15s; letter-spacing: 0.03em; padding: 0.2rem 0;
+            white-space: nowrap; flex: 0 1 auto;
         }
         .funko-nav-link:hover { color: #FFE600; }
         
         .funko-search {
             display: flex; align-items: center; background: #fff; border: 3px solid #000;
-            border-radius: 99px; padding: 0.4rem 1rem; width: 260px; box-shadow: 3px 3px 0 #fff;
+            border-radius: 99px; padding: 0.35rem 0.9rem; width: clamp(180px, 18vw, 260px); min-width: 0;
+            box-shadow: 3px 3px 0 #fff;
         }
         .funko-search input {
             border: none; outline: none; background: transparent; font-family: 'Fredoka', sans-serif;
-            font-weight: 600; font-size: 0.9rem; color: #000; width: 100%; margin-left: 0.5rem;
+            font-weight: 600; font-size: 0.88rem; color: #000; width: 100%; margin-left: 0.45rem; min-width: 0;
         }
         .funko-avatar-btn {
             width: 44px; height: 44px; border-radius: 50%; border: 3px solid #000;
@@ -4662,6 +4677,43 @@
             margin-right: 0.5rem;
         }
         .funko-avatar-btn span { color: #000 !important; }
+        .funko-auth-actions {
+            display: flex; gap: 0.65rem; align-items: center; flex-wrap: nowrap; min-width: 0;
+        }
+        .funko-auth-btn {
+            min-height: 42px; padding: 0.65rem 1rem; border: 3px solid #000; border-radius: 999px;
+            box-shadow: 3px 3px 0 white; font-family: 'Fredoka', sans-serif; font-size: 0.88rem; font-weight: 700;
+            line-height: 1; white-space: nowrap;
+        }
+
+        .funko-home-footer {
+            background: #111827; margin-top: 4rem; padding: 3rem 2rem 2rem; border-top: 5px solid #000;
+            position: relative; overflow: hidden;
+        }
+        .funko-footer-main {
+            max-width: 1400px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 4rem; justify-content: space-between;
+        }
+        .funko-footer-brand {
+            flex: 0 0 220px; min-width: 180px;
+        }
+        .funko-footer-logo {
+            display: block; height: 34px; width: auto; margin-bottom: 0.5rem; filter: none;
+        }
+        .funko-newsletter-card {
+            background: white; border: 4px solid #000; padding: 3rem; max-width: 800px;
+            margin: 0 auto 4rem; position: relative; z-index: 20; box-shadow: 12px 12px 0px 0px rgba(0,0,0,1);
+            border-radius: 12px; transform: none;
+        }
+        .funko-newsletter-form {
+            display: flex; gap: 1rem; justify-content: center; max-width: 500px; margin: 0 auto;
+        }
+        .funko-newsletter-input {
+            flex: 1; min-width: 0; padding: 1rem; border: 3px solid #000; font-family: 'Montserrat', sans-serif; font-size: 1rem;
+        }
+        .funko-newsletter-submit {
+            background: #000; color: #FFE600; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.2rem;
+            padding: 0 2rem; border: 3px solid #000; cursor: pointer; text-transform: uppercase; white-space: nowrap;
+        }
 
         /* HERO IMMERSIVE (FULL BLEED) */
         #authenticated-home-view { padding-top: 5rem; width: 100%; overflow-x: hidden; }
@@ -4670,6 +4722,11 @@
             background: linear-gradient(135deg, #FF4D94 0%, #FFE600 100%);
             border-bottom: 5px solid #000; position: relative; overflow: hidden;
             display: flex; align-items: center; justify-content: center;
+        }
+        .funko-showcase-slot {
+            width: 100vw; margin-left: calc(-50vw + 50%);
+            min-height: 56vh; background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%);
+            border-bottom: 5px solid #000; position: relative; overflow: hidden;
         }
         .funko-hero-inner {
             width: min(1400px, 100%); display: flex; min-height: 480px; align-items: center; padding: 3rem 2rem;
@@ -4700,7 +4757,8 @@
             flex: 1; display: flex; justify-content: flex-end; align-items: flex-end; position: relative; z-index: 1; height: 100%; padding-top: 2rem;
         }
         .funko-hero-art img {
-            height: 480px; width: auto; filter: drop-shadow(15px 15px 0 rgba(0,0,0,0.8)); margin-left: -50px;
+            height: clamp(240px, 26vw, 340px); max-width: min(100%, 640px); width: auto;
+            filter: drop-shadow(12px 12px 0 rgba(0,0,0,0.75)); margin-left: 0;
         }
 
         /* NEW PICKS FOR YOU SECTION */
@@ -4709,12 +4767,35 @@
             text-align: center; font-family: 'Fredoka', sans-serif; font-size: 2.8rem; font-weight: 900; color: #111827; text-transform: uppercase; margin-bottom: 3rem;
             text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
         }
+        .funko-carousel-header {
+            display: flex; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem;
+        }
+        .funko-carousel-header h2 {
+            margin: 0; text-align: left;
+        }
+        .funko-carousel-controls {
+            display: flex; align-items: center; gap: 0.75rem;
+        }
+        .funko-carousel-btn {
+            width: 48px; height: 48px; border: 3px solid #000; border-radius: 999px; background: #fff;
+            display: inline-flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 4px 4px 0 #000;
+        }
+        .funko-carousel-btn .material-symbols-outlined {
+            font-size: 1.5rem; color: #000;
+        }
+        .funko-carousel-viewport {
+            overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none;
+            padding-bottom: 0.35rem;
+        }
+        .funko-carousel-viewport::-webkit-scrollbar {
+            display: none;
+        }
         .funko-new-picks-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 2rem;
+            display: grid; grid-auto-flow: column; grid-auto-columns: minmax(240px, 280px); gap: 1.5rem; width: max-content;
         }
         .funko-card {
             background: #fff; border: 4px solid #000; border-radius: 16px; position: relative; overflow: hidden;
-            display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s; box-shadow: 0 0 0 #000;
+            display: flex; flex-direction: column; cursor: pointer; transition: transform 0.2s; box-shadow: 0 0 0 #000; scroll-snap-align: start;
         }
         .funko-card:hover { transform: translateY(-5px); box-shadow: 8px 8px 0 #000; }
         .funko-card-ribbon {
@@ -4731,8 +4812,11 @@
             background: #f8fafc; width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
             border-bottom: 4px solid #000;
         }
-        .funko-card-img-container img { width: 85%; object-fit: contain; filter: drop-shadow(5px 5px 0 rgba(0,0,0,0.5)); transition: transform 0.3s; }
-        .funko-card:hover .funko-card-img-container img { transform: scale(1.1); }
+        .funko-card-img-container img {
+            width: 100%; height: 100%; object-fit: contain; object-position: center bottom;
+            transform: scale(1.16); filter: drop-shadow(5px 5px 0 rgba(0,0,0,0.5)); transition: transform 0.3s;
+        }
+        .funko-card:hover .funko-card-img-container img { transform: scale(1.22); }
         .funko-card-info { padding: 1.25rem; }
         .funko-card-info h3 { font-family: 'Fredoka', sans-serif; font-size: 1.3rem; font-weight: 800; color: #000; margin: 0 0 0.3rem; text-transform: uppercase; }
         .funko-card-info p { font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 600; color: #475569; margin: 0; }
@@ -4767,36 +4851,78 @@
         }
         .funko-banner-card-art img { height: 280px; filter: drop-shadow(8px 8px 0 rgba(0,0,0,0.8)); margin: 0 -15px; }
 
+        @media (max-width: 1320px) {
+            .funko-style-nav { padding: 0.7rem 1.1rem; gap: 0.75rem; }
+            .funko-nav-center { gap: 0.85rem; }
+            .funko-nav-right { gap: 0.55rem; }
+            .funko-search { width: 200px; }
+            .funko-auth-btn { padding-inline: 0.85rem; font-size: 0.82rem; }
+        }
         @media (max-width: 1180px) {
             .funko-nav-center { display: none !important; }
+            .funko-style-nav { min-height: 76px; }
             .funko-banners-grid { grid-template-columns: repeat(2, 1fr); }
             .funko-hero-inner { flex-direction: column; text-align: center; padding: 2rem; }
             .funko-hero-art { margin-top: 2rem; justify-content: center; }
-            .funko-hero-art img { margin: 0; height: 350px; }
+            .funko-hero-art img { margin: 0; height: 260px; }
             .funko-hero-content { margin-top: 2rem; }
         }
         @media (max-width: 768px) {
             /* Navbar Mobile Adaptations */
             .funko-nav-right .funko-search,
             #auth-container { display: none !important; }
-            .funko-nav-right { flex: none !important; }
-            .funko-nav-left { flex: none !important; }
+            .funko-style-nav {
+                display: grid; grid-template-columns: 56px minmax(0, 1fr) 56px;
+                align-items: center; gap: 0; padding: 0.75rem 1rem;
+            }
+            #app-mobile-menu-btn { grid-column: 1; justify-self: start; }
+            .funko-nav-left {
+                grid-column: 2; display: flex; justify-content: center; width: 100%; min-width: 0;
+            }
+            .funko-nav-right {
+                grid-column: 3; display: block !important; width: 56px; min-width: 56px; visibility: hidden;
+            }
+            .funko-brand-btn { justify-content: center; width: 100%; }
             
             /* Responsive Hero & 3D Canvas */
             .funko-banners-grid { grid-template-columns: 1fr; }
             .funko-hero-content h1 { font-size: 2.2rem; margin-bottom: 1rem; text-shadow: 2px 2px 0 #fff; line-height: 1.2; }
             .funko-hero-content p { font-size: 0.95rem; padding: 0.8rem; margin-bottom: 1.5rem; }
             .funko-hero-label { font-size: 0.9rem; margin-bottom: 1rem; padding: 0.3rem 0.8rem; }
-            .funko-hero-art img { height: 280px; margin-left: 0; }
+            .funko-hero-art img { height: 180px; margin-left: 0; }
             .funko-hero-inner { flex-direction: column; text-align: center; padding: 1.5rem 1rem; min-height: auto; }
             .funko-hero-content { margin-top: 1rem; }
             .funko-hero-art { margin-top: 1.5rem; justify-content: center; width: 100%; padding-top: 0; }
-            #canvas-container.showcase-active { height: 50vh !important; max-height: 50vh !important; }
+            .funko-showcase-slot { min-height: 52vh; }
+            #canvas-container.showcase-active {
+                height: 100% !important; max-height: none !important; min-height: 52vh !important;
+            }
             
             /* Section Paddings & Grid */
             .funko-section { padding: 0 1rem; margin-top: 2rem; margin-bottom: 1rem; }
             .funko-section h2 { font-size: 2rem; margin-bottom: 1.5rem; }
-            .funko-new-picks-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+            .funko-carousel-header { align-items: flex-end; margin-bottom: 1rem; }
+            .funko-carousel-controls { display: none; }
+            .funko-new-picks-grid { grid-auto-columns: minmax(210px, 78vw); gap: 1rem; }
+            .funko-card:hover { transform: none; box-shadow: 6px 6px 0 #000; }
+            .funko-card:hover .funko-card-img-container img { transform: scale(1.16); }
+            .funko-home-footer { padding: 2rem 1rem 1.5rem; }
+            .funko-newsletter-card { padding: 2rem 1.25rem; margin: 0 auto 2.5rem; }
+            .funko-newsletter-card h3 { font-size: 2.2rem !important; }
+            .funko-newsletter-form { flex-direction: column; max-width: none; }
+            .funko-newsletter-submit { min-height: 54px; padding: 0.9rem 1.2rem; }
+            .funko-footer-main { gap: 2rem; }
+            .funko-footer-brand { flex-basis: 100%; min-width: 0; }
+            .preset-character-btn {
+                width: 108px;
+            }
+            .preset-character-btn .character-icon-img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                object-position: center bottom;
+                transform: scale(1.22);
+            }
         }
     
         /* SHOWCASE MODE NAVBAR - Eliminado para mantener la nav visible */
@@ -4876,8 +5002,8 @@
 
             <!-- Logo (Left) -->
             <div class="funko-nav-left">
-                <button type="button" class="pc-home-brand" onclick="navigateToView('home')" style="border: none; background: transparent; cursor: pointer;">
-                    <img src="logo.svg" alt="Papelcool Logo" style="height: 38px; filter: drop-shadow(3px 3px 0px rgba(0,0,0,1)); display: block;">
+                <button type="button" class="pc-home-brand funko-brand-btn" onclick="navigateToView('home')">
+                    <img src="logo.svg" alt="Papelcool Logo" class="funko-brand-logo">
                 </button>
             </div>
 
@@ -4896,16 +5022,16 @@
                     <span class="material-symbols-outlined">search</span>
                     <input type="text" id="global-search-input" placeholder="Busca ideas o fandoms..." />
                 </label>
-                <div id="auth-container" style="display: flex; gap: 12px; align-items: center;">
+                <div id="auth-container" class="funko-auth-actions">
                     <button type="button" id="auth-register-btn" onclick="navigateToView('register')"
-                        class="pc-auth-motion px-4 py-2 hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center font-bold"
-                        style="background: #FFE600; border: 3px solid black; border-radius: 99px; box-shadow: 3px 3px 0 white; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; color: black;"
+                        class="pc-auth-motion px-4 py-2 hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center font-bold funko-auth-btn"
+                        style="background: #FFE600; color: black;"
                         aria-label="Register">
                         ¡Regístrate!
                     </button>
                     <button type="button" id="auth-login-btn" onclick="navigateToView('login')"
-                        class="pc-auth-motion px-4 py-2 hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center font-bold"
-                        style="background: white; border: 3px solid black; border-radius: 99px; box-shadow: 3px 3px 0 white; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; color: black;"
+                        class="pc-auth-motion px-4 py-2 hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center font-bold funko-auth-btn"
+                        style="background: white; color: black;"
                         aria-label="Login">
                         Login
                     </button>
@@ -4925,7 +5051,7 @@
                 <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-banner-grid'), 0)" style="width: 100%; justify-content: center;">Novedades</button>
                 <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-groups'), 0)" style="width: 100%; justify-content: center;">Fan Clubs</button>
                 <div style="height: 4px; background: #000; width: 100%; margin: 0.5rem 0; border-radius: 4px;"></div>
-                <button type="button" class="pc-home-chip" onclick="navigateToView('login'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center; background: #E0F2FE;">Inicia Sesión</button>
+                <button type="button" class="pc-home-chip" onclick="navigateToView('login'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center; background: #E0F2FE;">Inicia sesión</button>
                 <button type="button" class="pc-home-chip" onclick="navigateToView('register'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center; background: #FFE600; color: #000;">¡Regístrate!</button>
             </div>
             
@@ -4972,14 +5098,12 @@
 
                         <!-- LOGIN FORM -->
                         <div id="auth-login-form">
-                            <!-- Header -->
                             <div style="margin-bottom: 16px;">
                                 <h2 style="font-family: 'Fredoka', sans-serif; font-size: 1.8rem; font-weight: 700; color: black; margin: 0; text-transform: uppercase;"
                                     data-i18n="auth-who-are-you">
                                     Who are you?</h2>
                                 <div style="width: 80px; height: 4px; background: #FFE600; margin-top: 8px;"></div>
                             </div>
-
                             <form id="auth-form" onsubmit="handleAuthSubmit(event)"
                                 style="display: flex; flex-direction: column; gap: 20px;">
                                 <div>
@@ -4999,7 +5123,8 @@
                                 </div>
                                 <div>
                                     <label
-                                        style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">Password</label>
+                                        style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;"
+                                        data-i18n="auth-password-label">Password</label>
                                     <div style="position: relative;">
                                         <input type="password" id="auth-password" name="password" autocomplete="current-password" placeholder="••••••••" required
                                             minlength="6"
@@ -5027,23 +5152,29 @@
                                 </div>
                             </form>
 
-                            <!-- Social Badges -->
                             <div style="margin-top: 28px;">
                                 <p style="text-align: center; color: #6B7280; font-family: 'Fredoka', sans-serif; font-weight: 600; margin-bottom: 16px; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em;"
                                     data-i18n="auth-social-label">
                                     Or sign in with</p>
-                                <div style="display: flex; justify-content: center;">
-                                    <button type="button" onclick="handleGoogleSignIn()"
-                                        style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; background: white; border: 3px solid #E5E7EB; padding: 14px; border-radius: 16px; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.2s;"
-                                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='4px 4px 0px 0px rgba(0,0,0,0.15)'"
-                                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='3px 3px 0px 0px rgba(0,0,0,0.1)'">
-                                        <svg width="24" height="24" viewBox="0 0 24 24">
-                                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                                            <path d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z" fill="#FBBC05" />
-                                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                                <div style="display: flex; justify-content: center; gap: 20px;">
+                                    <button onclick="handleGoogleSignIn()"
+                                        style="background: white; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(-8deg);"
+                                        onmouseover="this.style.transform='scale(1.1) rotate(-8deg)'"
+                                        onmouseout="this.style.transform='rotate(-8deg)'">
+                                        <svg width="28" height="28" viewBox="0 0 24 24">
+                                            <path
+                                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                                fill="#4285F4" />
+                                            <path
+                                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                                fill="#34A853" />
+                                            <path
+                                                d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z"
+                                                fill="#FBBC05" />
+                                            <path
+                                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z"
+                                                fill="#EA4335" />
                                         </svg>
-                                        <span style="font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1.1rem; color: #374151;">Continue with Google</span>
                                     </button>
                                 </div>
                             </div>
@@ -5051,7 +5182,6 @@
 
                         <!-- REGISTER FORM -->
                         <div id="auth-register-form" style="display: none;">
-                            <!-- Header with Step Indicator -->
                             <div
                                 style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
                                 <div>
@@ -5071,7 +5201,6 @@
 
                             <form id="auth-register-form-element" onsubmit="handleAuthSubmit(event)"
                                 style="display: flex; flex-direction: column; gap: 18px;">
-                                <!-- Nickname -->
                                 <div>
                                     <label
                                         style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;"
@@ -5088,7 +5217,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Email -->
                                 <div>
                                     <label
                                         style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;"
@@ -5106,10 +5234,10 @@
                                     </div>
                                 </div>
 
-                                <!-- Password -->
                                 <div>
                                     <label
-                                        style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;">Password</label>
+                                        style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;"
+                                        data-i18n="auth-password-label">Password</label>
                                     <div style="position: relative;">
                                         <input type="password" id="auth-register-password" name="new-password" autocomplete="new-password" placeholder="••••••••"
                                             required minlength="6"
@@ -5123,7 +5251,6 @@
                                     </div>
                                 </div>
 
-                                <!-- Terms Checkbox -->
                                 <div style="display: flex; align-items: flex-start; gap: 12px; margin-top: 8px;">
                                     <input type="checkbox" id="auth-terms" required
                                         style="width: 22px; height: 22px; margin-top: 2px; cursor: pointer; accent-color: black;">
@@ -5137,7 +5264,6 @@
                                     </label>
                                 </div>
 
-                                <!-- Submit Button -->
                                 <div style="padding-top: 12px;">
                                     <button type="submit" id="auth-register-submit-btn"
                                         style="width: 100%; background: #2ECC71; border: 4px solid black; padding: 18px; border-radius: 16px; box-shadow: 5px 5px 0px 0px rgba(0,0,0,1); cursor: pointer; transition: all 0.2s;"
@@ -5153,23 +5279,29 @@
                                 </div>
                             </form>
 
-                            <!-- Social Badges (Register) -->
                             <div style="margin-top: 28px;">
                                 <p style="text-align: center; color: #6B7280; font-family: 'Fredoka', sans-serif; font-weight: 600; margin-bottom: 16px; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em;"
                                     data-i18n="auth-social-label">
                                     Or sign in with</p>
-                                <div style="display: flex; justify-content: center;">
-                                    <button type="button" onclick="handleGoogleSignIn()"
-                                        style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; background: white; border: 3px solid #E5E7EB; padding: 14px; border-radius: 16px; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.2s;"
-                                        onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='4px 4px 0px 0px rgba(0,0,0,0.15)'"
-                                        onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='3px 3px 0px 0px rgba(0,0,0,0.1)'">
-                                        <svg width="24" height="24" viewBox="0 0 24 24">
-                                            <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                                            <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                                            <path d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z" fill="#FBBC05" />
-                                            <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                                <div style="display: flex; justify-content: center; gap: 20px;">
+                                    <button onclick="handleGoogleSignIn()"
+                                        style="background: white; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(-8deg);"
+                                        onmouseover="this.style.transform='scale(1.1) rotate(-8deg)'"
+                                        onmouseout="this.style.transform='rotate(-8deg)'">
+                                        <svg width="28" height="28" viewBox="0 0 24 24">
+                                            <path
+                                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                                                fill="#4285F4" />
+                                            <path
+                                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                                                fill="#34A853" />
+                                            <path
+                                                d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z"
+                                                fill="#FBBC05" />
+                                            <path
+                                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z"
+                                                fill="#EA4335" />
                                         </svg>
-                                        <span style="font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1.1rem; color: #374151;">Continue with Google</span>
                                     </button>
                                 </div>
                             </div>
@@ -5824,6 +5956,8 @@
             }
 
             init() {
+                this.currentLang = 'es';
+                localStorage.setItem('papelcool_lang', 'es');
                 this.updateUI();
 
             }
@@ -5978,6 +6112,8 @@
         var editorPanelWrapper = document.getElementById('editor-panel-wrapper');
         var presetsSection = document.getElementById('presets-section');
         var customizeSection = document.getElementById('customize-section');
+        let baseModelScale = 1;
+        let baseGroundY = 0;
 
         // Variables para showcase inicial
         let isShowcaseActive = false;
@@ -6485,9 +6621,11 @@
                 const maxDim = Math.max(size.x, size.y, size.z);
                 const scale = 2.5 / maxDim;
                 loadedModel.scale.set(scale, scale, scale);
+                baseModelScale = scale;
                 loadedModel.position.sub(center.multiplyScalar(scale));
                 const scaledHeight = size.y * scale;
                 groundY = scaledHeight / 2;
+                baseGroundY = groundY;
                 // Levantar ligeramente el modelo para que no atraviese el suelo
                 loadedModel.position.y = groundY + 0.02;
                 modelCenter.set(0, groundY + 0.02, 0);
@@ -8617,9 +8755,14 @@
             }
 
             console.log('Initializing showcase model visibility...');
+            const showcaseScaleBoost = window.innerWidth <= 768 ? 1.24 : 1.1;
+            const showcaseScale = baseModelScale * showcaseScaleBoost;
+            const showcaseGround = baseGroundY * showcaseScaleBoost;
             loadedModel.visible = true;
-            loadedModel.position.set(0, groundY + 0.02, 0);
+            loadedModel.scale.set(showcaseScale, showcaseScale, showcaseScale);
+            loadedModel.position.set(0, showcaseGround + 0.02, 0);
             loadedModel.rotation.set(0, 0, 0);
+            modelCenter.set(0, showcaseGround + 0.02, 0);
 
             if (camera && originalCameraPos) camera.position.copy(originalCameraPos);
             if (controls && modelCenter) controls.target.copy(modelCenter);
@@ -8669,11 +8812,11 @@
 
             // Agregar clase al canvas para ajustar su altura y moverlo al DOM del landing page
             const canvasContainer = document.getElementById('canvas-container');
-            const homeTop = document.getElementById('home-top');
+            const homeShowcaseSlot = document.getElementById('home-showcase-slot');
             
             // In showcase, keep pointer-events: none so scroll passes through and touch is disabled
             if (canvasContainer) { 
-                if (homeTop) homeTop.appendChild(canvasContainer);
+                if (homeShowcaseSlot) homeShowcaseSlot.appendChild(canvasContainer);
                 canvasContainer.classList.add('showcase-active'); 
                 canvasContainer.style.cursor = 'default'; 
                 canvasContainer.style.pointerEvents = 'none'; 
@@ -8699,9 +8842,9 @@
 
             // Ajustar FOV para tamaño óptimo del modelo en showcase
             if (window.innerWidth <= 768) {
-                camera.fov = 55; // Móvil: Tamaño moderado del modelo
+                camera.fov = 58;
             } else {
-                camera.fov = 60; // Desktop: Tamaño moderado del modelo
+                camera.fov = 60;
             }
 
             // Ajustar el renderer al tamaño del contenedor (ahora es sección relativa)
@@ -9124,25 +9267,25 @@
             {
                 tone: 'cream',
                 tag: 'Regalos',
-                title: 'Presents que sí venden',
-                description: 'Un hueco claro para packs, campañas especiales y personajes listos para regalar.',
+                title: 'Regalos que sí conectan',
+                description: 'Un espacio claro para packs, campañas especiales y personajes listos para regalar.',
                 art: ['Mira', 'Zoey']
             }
         ];
 
         const authenticatedHomeCollections = [
-            { name: 'Mira', subtitle: 'Glow stage edit' },
-            { name: 'Rumi', subtitle: 'Collector spotlight' },
-            { name: 'Romance', subtitle: 'Limited mood' },
-            { name: 'Steve', subtitle: 'Gaming icon' },
-            { name: 'Abby', subtitle: 'Fan favorite' }
+            { name: 'Mira', subtitle: 'Edición glow de escenario' },
+            { name: 'Rumi', subtitle: 'Selección destacada' },
+            { name: 'Romance', subtitle: 'Edición limitada' },
+            { name: 'Steve', subtitle: 'Icono gamer' },
+            { name: 'Abby', subtitle: 'Favorita del fandom' }
         ];
 
         const authenticatedHomeGroups = [
             {
                 title: 'BLACKPINK',
                 tag: 'Top title',
-                description: 'Fila preparada para activaciones musicales, looks de tour y colecciones por comeback.',
+                description: 'Fila pensada para lanzamientos musicales, looks de gira y colecciones por comeback.',
                 art: ['Mira', 'Rumi', 'Zoey']
             },
             {
@@ -9181,6 +9324,18 @@
             `;
         }
 
+        function scrollFunkoCollection(direction) {
+            const viewport = document.querySelector('.funko-carousel-viewport');
+            if (!viewport) return;
+            const delta = Math.max(280, Math.floor(viewport.clientWidth * 0.82));
+            viewport.scrollBy({
+                left: direction === 'prev' ? -delta : delta,
+                behavior: 'smooth'
+            });
+        }
+
+        window.scrollFunkoCollection = scrollFunkoCollection;
+
         function renderAuthenticatedHome() {
             ensureDeferredViews();
             const heroTop = document.getElementById('home-top');
@@ -9188,30 +9343,28 @@
             const bannerGrid = document.getElementById('home-banner-grid');
 
             if (heroTop) {
-                // Hardcoded the hero banner to match 'Anyone for Tennis?'
                 heroTop.innerHTML = `
                     <div class="funko-hero-wrapper">
                         <div class="funko-hero-inner">
                             <div class="funko-hero-content">
-                                <span class="funko-hero-label">POP! YOURSELF</span>
-                                <h1>Hola josanager,<br>hoy toca estrenar vitrina</h1>
-                                <p>Recreate the fan in your life as a customised Papelcool! It's sure to be an amazing match.<br>Empieza con el editor de customización Pop-Art.</p>
-                                <button type="button" class="funko-hero-cta" onclick="navigateToView('custom')">CREA EL TUYO AHORA</button>
+                                <span class="funko-hero-label">Papelcustom</span>
+                                <h1>Tu vitrina<br>empieza aquí</h1>
+                                <button type="button" class="funko-hero-cta" onclick="navigateToView('custom')">Crea el tuyo ahora</button>
                             </div>
                             <div class="funko-hero-art">
                                 <img src="logo.svg" alt="Char 1" style="z-index: 2;" onerror="this.src='webclip.png'">
                             </div>
                         </div>
                     </div>
+                    <div class="funko-showcase-slot" id="home-showcase-slot"></div>
                 `;
             }
 
             if (collectionGrid) {
-                // Mix the collections for 'New Picks'
-                const combined = [...authenticatedHomeCollections, {name: 'Zoey', subtitle: 'New Arrival'}];
+                const combined = [...authenticatedHomeCollections, {name: 'Zoey', subtitle: 'Nueva llegada'}];
                 collectionGrid.innerHTML = combined.map((card, i) => {
                     const tagClass = i % 2 === 0 ? "funko-card-ribbon" : "funko-card-ribbon exclusive";
-                    const tagText = i % 2 === 0 ? "NEW IN" : "WEB EXCLUSIVE";
+                    const tagText = i % 2 === 0 ? "NUEVO" : "EXCLUSIVO WEB";
                     return `
                     <article class="funko-card" onclick="navigateToView('presets')">
                         <div class="${tagClass}">${tagText}</div>
@@ -9230,10 +9383,10 @@
             if (bannerGrid) {
                 // Render the 4 columns
                 const banners = [
-                    { title: "Time for a Takedown", tag: "KPOP DEMON HUNTERS", body: "Display your idols with official collectibles.", color: "#B8860B", art: ["Mira", "Rumi"] },
-                    { title: "Ready, Set, Morph!", tag: "POWER RANGERS", body: "Power up your collection with new arrivals.", color: "#556B2F", art: ["Zoey"] },
-                    { title: "New to the Crew", tag: "ONE PIECE", body: "Set sail for new collectibles to complete your anime display.", color: "#8B4513", art: ["Baby", "Abby"] },
-                    { title: "Make an Entrance", tag: "WWE", body: "New collectibles have entered the ring.", color: "#8B0000", art: ["Steve", "Jinu"] }
+                    { title: "Hora del combate", tag: "KPOP DEMON HUNTERS", body: "Luce a tus idols con coleccionables oficiales.", color: "#B8860B", art: ["Mira", "Rumi"] },
+                    { title: "Listos para morph", tag: "POWER RANGERS", body: "Potencia tu colección con nuevas llegadas.", color: "#556B2F", art: ["Zoey"] },
+                    { title: "Nuevo en la tripulación", tag: "ONE PIECE", body: "Zarpa con nuevos coleccionables para completar tu vitrina anime.", color: "#8B4513", art: ["Baby", "Abby"] },
+                    { title: "Haz tu entrada", tag: "WWE", body: "Nuevos coleccionables han entrado al ring.", color: "#8B0000", art: ["Steve", "Jinu"] }
                 ];
                 bannerGrid.innerHTML = banners.map(b => `
                     <article class="funko-banner-card" style="background: ${b.color};">
@@ -11232,13 +11385,14 @@
             if (modal) {
                 modal.style.display = 'flex';
                 switchAuthTab(mode);
-                // Reset form
-                document.getElementById('auth-email').value = '';
-                document.getElementById('auth-password').value = '';
+                const emailField = document.getElementById('auth-email');
+                const passwordField = document.getElementById('auth-password');
                 const nicknameField = document.getElementById('auth-nickname');
                 const registerEmailField = document.getElementById('auth-register-email');
                 const registerPasswordField = document.getElementById('auth-register-password');
                 const termsField = document.getElementById('auth-terms');
+                if (emailField) emailField.value = '';
+                if (passwordField) passwordField.value = '';
                 if (nicknameField) nicknameField.value = '';
                 if (registerEmailField) registerEmailField.value = '';
                 if (registerPasswordField) registerPasswordField.value = '';
@@ -11277,7 +11431,6 @@
                 headerBadge.textContent = langManager.getTranslation(mode === 'login' ? 'auth-join-us' : 'auth-sign-up');
             }
 
-            // Update Step indicator
             const stepIndicator = document.querySelector('#auth-register-form span[data-i18n^="auth-step"]');
             if (stepIndicator) {
                 stepIndicator.setAttribute('data-i18n', 'auth-step-1');
@@ -12063,60 +12216,64 @@
 
             <!-- New Picks For You -->
             <section class="funko-section" style="padding-top: 3rem;">
-                <h2>Ediciones del momento</h2>
-                <div class="funko-new-picks-grid" id="home-collection-grid"></div>
+                <div class="funko-carousel-header">
+                    <h2>Ediciones del momento</h2>
+                    <div class="funko-carousel-controls" aria-label="Controles del carrusel">
+                        <button type="button" class="funko-carousel-btn" onclick="scrollFunkoCollection('prev')" aria-label="Anterior">
+                            <span class="material-symbols-outlined">arrow_back</span>
+                        </button>
+                        <button type="button" class="funko-carousel-btn" onclick="scrollFunkoCollection('next')" aria-label="Siguiente">
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="funko-carousel-viewport">
+                    <div class="funko-new-picks-grid" id="home-collection-grid"></div>
+                </div>
             </section>
 
             <!-- Fandom / Banners Area -->
             <section class="funko-section">
-                <h2>Papelcool Originals & Fandoms</h2>
+                <h2>Originales de Papelcool y fandoms</h2>
                 <div class="funko-banners-grid" id="home-banner-grid"></div>
             </section>
 
             <!-- FUNKO-STYLE FOOTER -->
-            <footer style="background: #111827; margin-top: 4rem; padding: 4rem 2rem 2rem; border-top: 5px solid #000; position: relative; overflow: hidden;">
+            <footer class="funko-home-footer">
                 <!-- Newsletter block acting like a Pop-art Sticker -->
-                <div style="background: white; border: 4px solid #000; padding: 3rem; max-width: 800px; margin: -8rem auto 4rem; position: relative; z-index: 20; box-shadow: 12px 12px 0px 0px rgba(0,0,0,1); border-radius: 12px; transform: rotate(-1deg);">
+                <div class="funko-newsletter-card">
                     <h3 style="font-family: 'Fredoka', sans-serif; font-size: 3rem; font-weight: 900; color: #000; text-transform: uppercase; margin-bottom: 1rem; text-align: center;">Únete al Newsletter</h3>
                     <p style="font-family: 'Montserrat', sans-serif; font-size: 1.1rem; color: #111; text-align: center; margin-bottom: 2rem;">¡Entérate primero de nuevos drops, figuras especiales y eventos en TikTok!</p>
-                    <div style="display: flex; gap: 1rem; justify-content: center; max-width: 500px; margin: 0 auto;">
-                        <input type="text" placeholder="Email Address..." style="flex: 1; padding: 1rem; border: 3px solid #000; font-family: 'Montserrat', sans-serif; font-size: 1rem;">
-                        <button style="background: #000; color: #FFE600; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.2rem; padding: 0 2rem; border: 3px solid #000; cursor: pointer; text-transform: uppercase;">SIGN UP</button>
+                    <div class="funko-newsletter-form">
+                        <input type="text" placeholder="Correo electrónico..." class="funko-newsletter-input">
+                        <button class="funko-newsletter-submit">SUSCRIBIRME</button>
                     </div>
                 </div>
 
                 <!-- Social & Links -->
-                <div style="max-width: 1400px; margin: 0 auto; display: flex; flex-wrap: wrap; gap: 4rem; justify-content: space-between;">
-                    <div style="flex: 1; min-width: 250px;">
-                        <img src="logo.svg" alt="Papelcool" style="height: 50px; filter: drop-shadow(3px 3px 0 white); margin-bottom: 2rem;">
-                        <div style="display: flex; gap: 1rem;">
-                            <div style="width: 44px; height: 44px; background: white; border: 3px solid #000; border-radius: 50%; box-shadow: 4px 4px 0 #FF4D94; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                                <span class="material-symbols-outlined" style="color: #000;">photo_camera</span>
-                            </div>
-                            <div style="width: 44px; height: 44px; background: white; border: 3px solid #000; border-radius: 50%; box-shadow: 4px 4px 0 #407BFF; display: flex; align-items: center; justify-content: center; cursor: pointer;">
-                                <span class="material-symbols-outlined" style="color: #000;">play_arrow</span>
-                            </div>
-                        </div>
+                <div class="funko-footer-main">
+                    <div class="funko-footer-brand">
+                        <img src="logo.svg" alt="Papelcool" class="funko-footer-logo">
                     </div>
                     <div style="flex: 1; min-width: 200px;">
-                        <h4 style="font-family: 'Fredoka', sans-serif; font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 1.5rem;">My Account</h4>
+                        <h4 style="font-family: 'Fredoka', sans-serif; font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 1.5rem;">Mi cuenta</h4>
                         <ul style="list-style: none; padding: 0; margin: 0; font-family: 'Montserrat', sans-serif; color: #bbb; display: flex; flex-direction: column; gap: 0.8rem;">
-                            <li style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#bbb'">Order History</li>
+                            <li style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#bbb'">Historial de pedidos</li>
                             <li style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#bbb'">Wishlist</li>
                         </ul>
                     </div>
                     <div style="flex: 1; min-width: 200px;">
-                        <h4 style="font-family: 'Fredoka', sans-serif; font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 1.5rem;">Contact Us</h4>
+                        <h4 style="font-family: 'Fredoka', sans-serif; font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 1.5rem;">Contacto</h4>
                         <ul style="list-style: none; padding: 0; margin: 0; font-family: 'Montserrat', sans-serif; color: #bbb; display: flex; flex-direction: column; gap: 0.8rem;">
-                            <li style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#bbb'">Support Centre</li>
-                            <li style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#bbb'">TikTok Events</li>
+                            <li style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#bbb'">Centro de soporte</li>
+                            <li style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#bbb'">Eventos de TikTok</li>
                         </ul>
                     </div>
                 </div>
 
                 <div style="max-width: 1400px; margin: 4rem auto 0; padding-top: 2rem; border-top: 2px solid #333; display: flex; justify-content: space-between; color: #888; font-family: 'Montserrat', sans-serif; font-size: 0.9rem;">
-                    <span>© 2026 Papelcool. All Rights Reserved.</span>
-                    <span>Built with ❤️ for Fandoms.</span>
+                    <span>© 2026 Papelcool. Todos los derechos reservados.</span>
+                    <span>Hecho con ❤️ para fandoms.</span>
                 </div>
             </footer>
         </main>
