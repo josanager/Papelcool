@@ -140,21 +140,20 @@
             margin-right: 12px;
             cursor: pointer;
             flex-shrink: 0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            transition: all 0.2s ease;
+            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
+            transition: all 0.18s ease;
         }
 
         .custom-nav-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 3px 5px 0px 0px rgba(0, 0, 0, 0.2);
+            transform: translate(-1px, -1px);
+            box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .custom-nav-btn.active {
             background: #FFE600;
-            transform: scale(1.1);
             box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
             border-width: 4px;
-            transform: translateY(-2px);
+            transform: translate(-1px, -1px);
         }
 
         .custom-nav-btn .btn-icon svg {
@@ -173,31 +172,30 @@
 
         /* Part Selection Buttons (Head, Torso, etc.) */
         .part-btn {
-            padding: 8px 16px;
+            padding: 10px 18px;
             background: white;
             border: 3px solid black;
             border-radius: 20px;
             font-family: 'Fredoka', sans-serif;
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: black;
             cursor: pointer;
             text-transform: uppercase;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: all 0.18s ease;
+            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .part-btn:hover {
-            background: #f0f0f0;
-            transform: translateY(-1px);
             background: #f9fafb;
+            transform: translate(-1px, -1px);
+            box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .part-btn.active {
             background: #FFE600;
             box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-            transform: scale(1.05);
-            transform: translateY(-1px);
+            transform: translate(-1px, -1px);
         }
 
         /* Preset Character Buttons overrides */
@@ -393,12 +391,19 @@
             top: 12px;
             right: 12px;
             z-index: 10;
-            color: #ccc;
-            transition: color 0.2s;
+            color: #d4d4d8;
+            transition: color 0.2s, transform 0.2s, font-variation-settings 0.2s;
+            font-variation-settings: 'FILL' 0;
         }
 
         .fandom-heart:hover {
-            color: #FF4D94;
+            color: #FFC700;
+            transform: scale(1.06);
+        }
+
+        .fandom-heart.active {
+            color: #FFC700 !important;
+            font-variation-settings: 'FILL' 1;
         }
 
         .fandom-image-container {
@@ -413,21 +418,26 @@
         }
 
         .fandom-image-container img {
-            width: 90%;
-            height: 90%;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
+            object-position: center bottom;
+            padding: 0.15rem;
+            transform: scale(1.77);
             transition: transform 0.3s;
         }
 
         .fandom-card:hover .fandom-image-container img {
-            transform: scale(1.1);
+            transform: scale(1.85);
         }
 
         .fandom-info {
             padding: 1rem;
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            align-items: center;
+            text-align: center;
+            gap: 6px;
         }
 
         .fandom-tag {
@@ -455,23 +465,54 @@
 
         .fandom-select-btn {
             margin-top: 12px;
+            width: 100%;
             background: #FFE600;
-            border: 3px solid black;
-            border-radius: 12px;
-            padding: 8px;
+            border: 4px solid black;
+            border-radius: 16px;
+            padding: 12px 20px;
             font-family: 'Fredoka', sans-serif;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: black;
             text-transform: uppercase;
             box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-            transition: all 0.2s;
+            transition: all 0.18s ease;
+            cursor: pointer;
         }
 
         .fandom-card:hover .fandom-select-btn {
             background: #FFD400;
             transform: translate(-1px, -1px);
             box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+        }
+
+        .fandom-select-btn:active {
+            transform: translate(2px, 2px) !important;
+            box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1) !important;
+        }
+
+        .pc-home-collection-fandom-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+        }
+
+        .pc-home-collection-fandom-grid .fandom-card {
+            min-height: 100%;
+        }
+
+        .pc-home-collection-fandom-grid .fandom-image-container {
+            height: 260px;
+        }
+
+        .pc-favorite-card-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center bottom;
+            padding: 0.5rem;
+            transform: scale(1.12);
         }
 
         @media (max-width: 768px) {
@@ -495,6 +536,15 @@
 
             .fandom-image-container {
                 height: 210px;
+            }
+
+            .pc-home-collection-fandom-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 1rem;
+            }
+
+            .pc-home-collection-fandom-grid .fandom-image-container {
+                height: 220px;
             }
         }
 
@@ -773,6 +823,8 @@
             display: grid;
             grid-template-columns: repeat(5, minmax(0, 1fr));
             gap: 1rem;
+            overflow: visible;
+            padding: 4px;
         }
 
         .pc-favorite-card {
@@ -907,7 +959,7 @@
         h2 {
             font-family: 'Fredoka', sans-serif;
             letter-spacing: 1px;
-            text-shadow: 0 2px 10px rgba(255, 238, 0, 0.3);
+            text-shadow: none;
         }
 
         #canvas-container {
@@ -1075,6 +1127,8 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 12px;
             justify-items: center;
+            overflow: visible;
+            padding: 4px;
         }
 
         /* Carrusel horizontal en móvil */
@@ -2584,62 +2638,69 @@
         .pdf-progress-bar-container {
             width: 100%;
             height: 40px;
-            background: rgba(0, 0, 0, 0.3);
+            background: #F3F4F6;
             border-radius: 20px;
             overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: 3px solid black;
             margin-bottom: 1.5rem;
         }
 
         .pdf-progress-bar {
             width: 0%;
             height: 100%;
-            background: linear-gradient(90deg, #ffee00, #ff9d00, #ff9d00);
+            background: linear-gradient(90deg, #FFE600, #FF4D94);
             transition: width 0.3s ease;
-            box-shadow: 0 0 20px rgba(255, 238, 0, 0.8);
+            box-shadow: none;
         }
 
         .pdf-preparing-text {
             font-family: 'Fredoka', sans-serif;
             font-size: 1.2rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.9);
+            font-weight: 700;
+            color: #111827;
             margin-bottom: 1rem;
             text-align: center;
+            text-transform: uppercase;
         }
 
         .pdf-progress-text {
             font-family: 'Fredoka', sans-serif;
             font-size: 2rem;
             font-weight: 700;
-            color: #ffee00;
+            color: #FF4D94;
             margin: 0;
-            text-shadow: 0 0 10px rgba(255, 238, 0, 0.8);
+            text-shadow: none;
         }
 
         /* Botón de descarga DENTRO del modal */
         .final-download-btn-modal {
             width: 100%;
             padding: 1.2rem 2rem;
-            background: linear-gradient(135deg, #a4d100 0%, #a4d100 100%);
-            border: none;
-            border-radius: 15px;
-            color: #005580;
+            background: #2ECC71;
+            border: 4px solid black;
+            border-radius: 16px;
+            color: white;
             font-family: 'Fredoka', sans-serif;
             font-size: 1.1rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.5);
+            transition: all 0.18s ease;
+            box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.5rem;
+            text-transform: uppercase;
         }
 
         .final-download-btn-modal:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 30px rgba(0, 255, 136, 0.7);
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+        }
+
+        .final-download-btn-modal:active {
+            transform: translate(3px, 3px);
+            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .final-download-btn-modal svg {
@@ -2648,11 +2709,13 @@
         }
 
         .pdf-download-message {
-            color: rgba(255, 255, 255, 0.8);
+            color: #6B7280;
             font-size: 0.85rem;
             text-align: center;
             line-height: 1.4;
             margin-top: 1rem;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
         }
 
 
@@ -2706,17 +2769,17 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.5);
             z-index: 9999;
         }
 
         /* Modal interno - ventana flotante pequeña */
         .pdf-progress-modal {
-            background: rgba(0, 22, 40, 0.98);
+            background: white;
             padding: 3rem;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(255, 238, 0, 0.4);
-            border: 2px solid rgba(255, 238, 0, 0.6);
+            border-radius: 24px;
+            box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+            border: 4px solid black;
             max-width: 500px;
             width: 90%;
             display: flex;
@@ -3005,12 +3068,11 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.5);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 10000;
-            backdrop-filter: blur(4px);
         }
 
         #account-modal.active {
@@ -3018,13 +3080,13 @@
         }
 
         .account-modal-content {
-            background: linear-gradient(135deg, #0078a8 0%, #005580 100%);
-            border-radius: 20px;
+            background: white;
+            border-radius: 24px;
             padding: 2.5rem;
             max-width: 450px;
             width: 90%;
-            box-shadow: 0 10px 40px rgba(255, 238, 0, 0.2);
-            border: 1px solid rgba(255, 238, 0, 0.2);
+            box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1);
+            border: 4px solid black;
             position: relative;
         }
 
@@ -3032,36 +3094,45 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            width: 32px;
-            height: 32px;
+            background: #f3f4f6;
+            border: 3px solid black;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s ease;
+            transition: all 0.18s ease;
+            box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .modal-close-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
+            background: #FFE600;
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+        }
+
+        .modal-close-btn:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .modal-close-btn svg {
             width: 20px;
             height: 20px;
-            color: white;
+            color: black;
         }
 
         .modal-title {
             font-family: 'Fredoka', sans-serif;
             font-size: 1.8rem;
-            color: #ffee00;
+            font-weight: 700;
+            color: #111827;
             margin: 0 0 1.5rem;
             text-align: center;
-            text-shadow: 0 0 10px rgba(255, 238, 0, 0.5);
+            text-transform: uppercase;
+            text-shadow: none;
         }
 
         .modal-user-info {
@@ -3071,8 +3142,10 @@
 
         .modal-user-email {
             font-size: 1rem;
-            color: rgba(255, 255, 255, 0.8);
+            color: #4B5563;
             margin: 0 0 0.5rem;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 600;
         }
 
         .modal-subscription-status {
@@ -3084,61 +3157,79 @@
         }
 
         .modal-subscription-status.active {
-            background: rgba(164, 209, 0, 0.2);
-            color: #a4d100;
-            border: 1px solid rgba(164, 209, 0, 0.4);
+            background: #D1FAE5;
+            color: #059669;
+            border: 2px solid #059669;
         }
 
         .modal-subscription-status.inactive {
-            background: rgba(255, 77, 0, 0.2);
-            color: #ff4d00;
-            border: 1px solid rgba(255, 77, 0, 0.4);
+            background: #FEE2E2;
+            color: #DC2626;
+            border: 2px solid #DC2626;
         }
 
         .modal-button {
             width: 100%;
             padding: 1rem;
-            border: none;
-            border-radius: 50px;
+            border: 3px solid black;
+            border-radius: 16px;
             font-family: 'Fredoka', sans-serif;
             font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.18s ease;
             margin-bottom: 0.75rem;
+            text-transform: uppercase;
         }
 
         .modal-button-primary {
-            background: linear-gradient(135deg, #ffee00 0%, #ff9d00 100%);
+            background: #FFE600;
             color: #000;
-            box-shadow: 0 4px 15px rgba(255, 238, 0, 0.3);
+            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .modal-button-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 238, 0, 0.4);
+            transform: translate(-1px, -1px);
+            box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+        }
+
+        .modal-button-primary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .modal-button-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: white;
+            color: #111827;
+            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .modal-button-secondary:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
+            background: #f9fafb;
+            transform: translate(-1px, -1px);
+            box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+        }
+
+        .modal-button-secondary:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .modal-button-logout {
-            background: rgba(255, 77, 0, 0.1);
-            color: #ff4d00;
-            border: 1px solid rgba(255, 77, 0, 0.3);
+            background: #FF4D94;
+            color: white;
+            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .modal-button-logout:hover {
-            background: rgba(255, 77, 0, 0.2);
-            transform: translateY(-2px);
+            background: #e6447f;
+            transform: translate(-1px, -1px);
+            box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);
+        }
+
+        .modal-button-logout:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
         }
 
 
@@ -3163,6 +3254,7 @@
                 box-shadow: 8px 0 24px rgba(0, 0, 0, 0.18);
                 z-index: 40;
                 padding: 0;
+                pointer-events: auto;
             }
 
             /* Canvas Adjustment Desktop */
@@ -3176,6 +3268,8 @@
             #editor-panel-wrapper .ui-panel {
                 height: 100%;
                 overflow-y: auto;
+                pointer-events: auto;
+                touch-action: pan-y;
                 border-radius: 0;
                 background: transparent;
                 padding: 18px 16px 20px !important;
@@ -3204,6 +3298,7 @@
                 border-top-right-radius: 18px;
                 z-index: 40;
                 padding: 0;
+                pointer-events: auto;
             }
 
             /* Canvas Adjustment Mobile */
@@ -3219,6 +3314,8 @@
             #editor-panel-wrapper .ui-panel {
                 height: 100%;
                 overflow-y: auto;
+                pointer-events: auto;
+                touch-action: pan-y;
                 border-radius: 18px 18px 0 0;
                 background: transparent;
                 padding: 14px 14px calc(26px + env(safe-area-inset-bottom, 0px)) !important;
@@ -3234,39 +3331,62 @@
         #customize-section {
             min-height: 0;
             color: #111111;
+            flex: 1 1 auto;
+            overflow: visible;
+        }
+
+        .customize-panel-scroll {
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: visible;
+            padding-bottom: 20px;
+            pointer-events: auto;
+            touch-action: pan-y;
         }
 
         .custom-nav-btn {
             display: flex;
             align-items: center;
             justify-content: center;
-            min-width: 56px;
-            height: 64px;
+            width: 60px;
+            min-width: 60px;
+            height: 60px;
             padding: 0;
-            border-radius: 12px;
+            border-radius: 14px;
             background: #ffffff;
-            border: 2px solid #e5e7eb;
-            color: #4b5563;
+            border: 3px solid black;
+            color: #111111;
             cursor: pointer;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            transition: all 0.2s ease;
+            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
+            transition: all 0.18s ease;
+            flex: 0 0 60px;
         }
 
         .custom-nav-btn:hover {
-            background: #ffffff;
+            background: #f9fafb;
+            transform: translate(-1px, -1px);
+            box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 1);
+        }
+
+        .custom-nav-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .custom-nav-btn.active {
-            background: #ffe55c;
-            border-color: #ffe55c;
+            background: #FFE600;
+            border-color: black;
             color: #111111;
-            box-shadow: 0 4px 12px rgba(255, 229, 92, 0.4);
-            transform: translateY(-2px);
+            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+            transform: translate(-1px, -1px);
         }
 
         .custom-nav-btn .btn-icon {
-            width: 28px;
-            height: 28px;
+            width: 30px;
+            height: 30px;
         }
 
         .custom-nav-btn span {
@@ -3285,9 +3405,9 @@
         .grid-item-btn {
             aspect-ratio: 1;
             min-height: 0;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.94);
-            border: 2px solid #e5e7eb;
+            border-radius: 14px;
+            background: white;
+            border: 3px solid black;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -3295,20 +3415,25 @@
             justify-content: flex-start;
             cursor: pointer;
             position: relative;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-            transition: all 0.2s ease;
+            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
+            transition: all 0.18s ease;
         }
 
         .grid-item-btn:hover {
-            border-color: #d1d5db;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transform: translateY(-2px);
+            border-color: black;
+            box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 1);
+            transform: translate(-1px, -1px);
+        }
+
+        .grid-item-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .grid-item-btn.active {
-            background: #fffaf0;
-            border-color: #ffe55c;
-            box-shadow: 0 0 0 2px #ffe55c, 0 4px 12px rgba(255, 229, 92, 0.2);
+            background: #FFF8E0;
+            border-color: black;
+            box-shadow: 0 0 0 3px #FFE600, 4px 4px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .grid-item-btn img {
@@ -3324,7 +3449,7 @@
             justify-content: center;
             padding: 10px;
             min-height: 100%;
-            background: linear-gradient(180deg, rgba(242, 247, 255, 0.9) 0%, rgba(231, 239, 252, 0.9) 100%);
+            background: linear-gradient(180deg, #f4f8ff 0%, #eef3fc 100%);
         }
 
         .grid-item-btn-label {
@@ -3335,20 +3460,26 @@
             width: 44px;
             height: 44px;
             border-radius: 50%;
-            border: 2px solid #e5e7eb;
+            border: 3px solid black;
             flex-shrink: 0;
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: all 0.2s ease;
+            box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
+            transition: all 0.18s ease;
         }
 
         .color-swatch-circle:hover {
-            transform: none;
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+        }
+
+        .color-swatch-circle:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .color-swatch-circle.active {
-            border-color: #ffffff;
-            box-shadow: 0 0 0 3px #ffe55c, 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-color: black;
+            box-shadow: 0 0 0 3px #FFE600, 3px 3px 0px 0px rgba(0, 0, 0, 1);
             transform: scale(1.1);
         }
 
@@ -3356,47 +3487,62 @@
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 12px;
-            padding: 4px 2px 8px;
+            padding: 8px 4px 12px;
+            overflow: visible;
         }
 
         .part-selection-grid {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 8px;
+            gap: 10px;
             margin-top: 12px;
+            overflow: visible;
+            padding: 4px;
         }
 
         .part-btn {
-            min-height: 44px;
-            padding: 0;
-            background: rgba(255, 255, 255, 0.92);
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            color: #4b5563;
+            min-height: 48px;
+            padding: 10px 18px;
+            background: white;
+            border: 3px solid black;
+            border-radius: 14px;
+            color: #111111;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            gap: 6px;
+            transition: all 0.18s ease;
+            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
         }
 
         .part-btn:hover {
-            border-color: #d1d5db;
+            border-color: black;
             background: #f9fafb;
+            transform: translate(-1px, -1px);
+            box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 1);
+        }
+
+        .part-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 1);
         }
 
         .part-btn.active {
-            background: #ffe55c;
-            border-color: #ffe55c;
+            background: #FFE600;
+            border-color: black;
             color: #111111;
-            box-shadow: 0 4px 8px rgba(255, 229, 92, 0.3);
-            transform: translateY(-1px);
+            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+            transform: translate(-1px, -1px);
         }
 
         .part-btn svg {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
         }
 
         .custom-editor-block {
@@ -3418,9 +3564,15 @@
 
         .custom-slider-row {
             display: grid;
-            grid-template-columns: 20px 1fr;
+            grid-template-columns: 1fr;
             align-items: center;
-            gap: 10px;
+            gap: 0;
+        }
+
+        .custom-slider-row input[type="range"] {
+            border: 0 !important;
+            box-shadow: none !important;
+            outline: none;
         }
 
         .custom-slider-icon {
@@ -3430,6 +3582,37 @@
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+
+        .custom-panel-section {
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
+            padding: 14px;
+            margin-bottom: 14px;
+            overflow: visible;
+        }
+
+        .custom-panel-title {
+            margin: 0 0 10px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #334155;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .custom-panel-section #global-color-palette {
+            margin-bottom: 0;
+            padding: 6px 8px;
+            gap: 12px;
+        }
+
+        .custom-panel-section .part-selection-grid,
+        .custom-panel-section .custom-slider-stack,
+        .custom-panel-section .custom-options-grid {
+            margin-top: 0;
         }
 
         @media (max-width: 1024px) {
@@ -3982,7 +4165,7 @@
             align-items: center;
             justify-content: center;
             gap: 0.45rem;
-            padding: 0.8rem 1rem;
+            padding: 0.85rem 1.1rem;
             border: 3px solid #000;
             border-radius: 999px;
             background: #fff;
@@ -3994,6 +4177,18 @@
             color: var(--pc-ink);
             text-decoration: none;
             cursor: pointer;
+            transition: all 0.18s ease;
+        }
+
+        .pc-home-chip:hover {
+            background: #FFE600;
+            transform: translate(-1px, -1px);
+            box-shadow: 6px 6px 0 rgba(0, 0, 0, 1);
+        }
+
+        .pc-home-chip:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 1);
         }
 
         .pc-home-search {
@@ -4040,6 +4235,18 @@
             color: var(--pc-ink);
             box-shadow: 4px 4px 0 rgba(0, 0, 0, 1);
             cursor: pointer;
+            transition: all 0.18s ease;
+        }
+
+        .pc-home-icon:hover {
+            background: #FFE600;
+            transform: translate(-1px, -1px);
+            box-shadow: 6px 6px 0 rgba(0, 0, 0, 1);
+        }
+
+        .pc-home-icon:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 1);
         }
 
         .pc-home-avatar {
@@ -4671,19 +4878,30 @@
             font-weight: 600; font-size: 0.88rem; color: #000; width: 100%; margin-left: 0.45rem; min-width: 0;
         }
         .funko-avatar-btn {
-            width: 44px; height: 44px; border-radius: 50%; border: 3px solid #000;
+            width: 48px; height: 48px; border-radius: 50%; border: 3px solid #000;
             background: #FFE600; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.2rem;
-            display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0 #fff; cursor: pointer;
-            margin-right: 0.5rem;
+            display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0 rgba(0,0,0,1); cursor: pointer;
+            margin-right: 0.5rem; transition: all 0.18s ease;
         }
+        .funko-avatar-btn:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 rgba(0,0,0,1); }
+        .funko-avatar-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 rgba(0,0,0,1); }
         .funko-avatar-btn span { color: #000 !important; }
         .funko-auth-actions {
-            display: flex; gap: 0.65rem; align-items: center; flex-wrap: nowrap; min-width: 0;
+            display: flex; gap: 0.75rem; align-items: center; flex-wrap: nowrap; min-width: 0;
         }
         .funko-auth-btn {
-            min-height: 42px; padding: 0.65rem 1rem; border: 3px solid #000; border-radius: 999px;
-            box-shadow: 3px 3px 0 white; font-family: 'Fredoka', sans-serif; font-size: 0.88rem; font-weight: 700;
-            line-height: 1; white-space: nowrap;
+            min-height: 48px; padding: 0.75rem 1.25rem; border: 3px solid #000; border-radius: 16px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,1); font-family: 'Fredoka', sans-serif; font-size: 0.92rem; font-weight: 700;
+            line-height: 1; white-space: nowrap; text-transform: uppercase; cursor: pointer;
+            transition: all 0.18s ease;
+        }
+        .funko-auth-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 6px 6px 0 rgba(0,0,0,1);
+        }
+        .funko-auth-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0,0,0,1);
         }
 
         .funko-home-footer {
@@ -4709,19 +4927,32 @@
         }
         .funko-newsletter-input {
             flex: 1; min-width: 0; padding: 1rem; border: 3px solid #000; font-family: 'Montserrat', sans-serif; font-size: 1rem;
+            border-radius: 16px; box-shadow: 4px 4px 0 rgba(0,0,0,1); outline: none; transition: border-color 0.2s;
         }
+        .funko-newsletter-input:focus { border-color: #407BFF; }
         .funko-newsletter-submit {
             background: #000; color: #FFE600; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.2rem;
             padding: 0 2rem; border: 3px solid #000; cursor: pointer; text-transform: uppercase; white-space: nowrap;
+            border-radius: 16px; box-shadow: 4px 4px 0 rgba(0,0,0,1); transition: all 0.18s ease;
         }
 
         /* HERO IMMERSIVE (FULL BLEED) */
         #authenticated-home-view { padding-top: 5rem; width: 100%; overflow-x: hidden; }
         .funko-hero-wrapper {
             width: 100vw; margin-left: calc(-50vw + 50%);
-            background: linear-gradient(135deg, #FF4D94 0%, #FFE600 100%);
+            background:
+                linear-gradient(90deg, rgba(255, 243, 224, 0.48) 0%, rgba(255, 243, 224, 0.26) 38%, rgba(255, 243, 224, 0.16) 100%),
+                url('output/generated/hero-banner-square-heads.png') center center / cover no-repeat;
             border-bottom: 5px solid #000; position: relative; overflow: hidden;
             display: flex; align-items: center; justify-content: center;
+        }
+        .funko-hero-wrapper::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+            pointer-events: none;
         }
         .funko-showcase-slot {
             width: 100vw; margin-left: calc(-50vw + 50%);
@@ -4729,10 +4960,12 @@
             border-bottom: 5px solid #000; position: relative; overflow: hidden;
         }
         .funko-hero-inner {
-            width: min(1400px, 100%); display: flex; min-height: 480px; align-items: center; padding: 3rem 2rem;
+            width: min(1400px, 100%); display: flex; min-height: 480px; align-items: center; justify-content: flex-start; padding: 2.5rem 2rem;
+            position: relative; isolation: isolate;
         }
         .funko-hero-content {
-            flex: 1; max-width: 600px; z-index: 2; position: relative;
+            flex: 0 0 min(520px, 100%); max-width: 600px; z-index: 2; position: relative;
+            padding: 0;
         }
         .funko-hero-label {
             font-family: 'Fredoka', sans-serif; font-size: 1.2rem; font-weight: 700; color: #000; text-transform: uppercase;
@@ -4742,27 +4975,24 @@
         .funko-hero-content h1 {
             font-family: 'Fredoka', sans-serif; font-size: 3.5rem; font-weight: 900; line-height: 1.1; color: #000; text-transform: uppercase; margin-bottom: 1.5rem;
             text-shadow: 3px 3px 0 #fff;
+            max-width: 11ch;
         }
         .funko-hero-content p {
             font-family: 'Montserrat', sans-serif; font-size: 1.2rem; font-weight: 600; color: #000; line-height: 1.5; margin-bottom: 2.5rem;
             background: rgba(255,255,255,0.7); padding: 1rem; border-radius: 12px; border: 3px solid #000;
         }
         .funko-hero-cta {
-            background: #fff; border: 4px solid #000; padding: 1rem 2rem; border-radius: 99px; cursor: pointer;
-            font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.2rem; text-transform: uppercase; color: #000;
-            box-shadow: 6px 6px 0 #000; transition: transform 0.1s, box-shadow 0.1s; display: inline-block;
+            background: #FFE600; border: 4px solid #000; padding: 1.1rem 2.2rem; border-radius: 99px; cursor: pointer;
+            font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.3rem; text-transform: uppercase; color: #000;
+            box-shadow: 6px 6px 0 #000; transition: all 0.18s ease; display: inline-block;
         }
         .funko-hero-cta:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 #000; }
-        .funko-hero-art {
-            flex: 1; display: flex; justify-content: flex-end; align-items: flex-end; position: relative; z-index: 1; height: 100%; padding-top: 2rem;
-        }
-        .funko-hero-art img {
-            height: clamp(240px, 26vw, 340px); max-width: min(100%, 640px); width: auto;
-            filter: drop-shadow(12px 12px 0 rgba(0,0,0,0.75)); margin-left: 0;
-        }
-
+        .funko-hero-cta:active { transform: translate(3px, 3px); box-shadow: 3px 3px 0 #000; }
         /* NEW PICKS FOR YOU SECTION */
         .funko-section { width: min(1400px, 100%); margin: 4rem auto 2rem; padding: 0 2rem; }
+        .funko-section:first-of-type {
+            margin-bottom: 4.5rem;
+        }
         .funko-section h2 {
             text-align: center; font-family: 'Fredoka', sans-serif; font-size: 2.8rem; font-weight: 900; color: #111827; text-transform: uppercase; margin-bottom: 3rem;
             text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
@@ -4779,19 +5009,52 @@
         .funko-carousel-btn {
             width: 48px; height: 48px; border: 3px solid #000; border-radius: 999px; background: #fff;
             display: inline-flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 4px 4px 0 #000;
+            transition: all 0.18s ease;
+        }
+        .funko-carousel-btn:hover {
+            background: #FFE600; transform: translate(-1px, -1px); box-shadow: 6px 6px 0 #000;
+        }
+        .funko-carousel-btn:active {
+            transform: translate(2px, 2px); box-shadow: 2px 2px 0 #000;
         }
         .funko-carousel-btn .material-symbols-outlined {
             font-size: 1.5rem; color: #000;
         }
         .funko-carousel-viewport {
-            overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none;
-            padding-bottom: 0.35rem;
+            overflow-x: auto; overflow-y: visible; scroll-snap-type: x mandatory; scrollbar-width: none;
+            padding: 0.75rem 0.25rem 1rem;
+            margin: -0.5rem -0.25rem 0;
         }
         .funko-carousel-viewport::-webkit-scrollbar {
             display: none;
         }
         .funko-new-picks-grid {
-            display: grid; grid-auto-flow: column; grid-auto-columns: minmax(240px, 280px); gap: 1.5rem; width: max-content;
+            display: grid; grid-auto-flow: column; grid-auto-columns: 320px; gap: 1.5rem; width: max-content;
+        }
+
+        .funko-new-picks-grid .fandom-card {
+            width: 100%;
+            min-height: 100%;
+            scroll-snap-align: start;
+            min-width: 320px;
+            max-width: 320px;
+        }
+
+        .funko-new-picks-grid .fandom-card:hover {
+            transform: none;
+            box-shadow: 10px 10px 0 rgba(0, 0, 0, 1);
+        }
+
+        .funko-new-picks-grid .fandom-image-container {
+            height: 250px;
+        }
+
+        .funko-new-picks-grid .fandom-image-container img {
+            transform: scale(1.24);
+        }
+
+        .funko-new-picks-grid .fandom-card:hover .fandom-image-container img {
+            transform: scale(1.3);
         }
         .funko-card {
             background: #fff; border: 4px solid #000; border-radius: 16px; position: relative; overflow: hidden;
@@ -4863,8 +5126,6 @@
             .funko-style-nav { min-height: 76px; }
             .funko-banners-grid { grid-template-columns: repeat(2, 1fr); }
             .funko-hero-inner { flex-direction: column; text-align: center; padding: 2rem; }
-            .funko-hero-art { margin-top: 2rem; justify-content: center; }
-            .funko-hero-art img { margin: 0; height: 260px; }
             .funko-hero-content { margin-top: 2rem; }
         }
         @media (max-width: 768px) {
@@ -4889,10 +5150,8 @@
             .funko-hero-content h1 { font-size: 2.2rem; margin-bottom: 1rem; text-shadow: 2px 2px 0 #fff; line-height: 1.2; }
             .funko-hero-content p { font-size: 0.95rem; padding: 0.8rem; margin-bottom: 1.5rem; }
             .funko-hero-label { font-size: 0.9rem; margin-bottom: 1rem; padding: 0.3rem 0.8rem; }
-            .funko-hero-art img { height: 180px; margin-left: 0; }
-            .funko-hero-inner { flex-direction: column; text-align: center; padding: 1.5rem 1rem; min-height: auto; }
-            .funko-hero-content { margin-top: 1rem; }
-            .funko-hero-art { margin-top: 1.5rem; justify-content: center; width: 100%; padding-top: 0; }
+            .funko-hero-inner { flex-direction: column; text-align: center; justify-content: center; padding: 1.5rem 1rem; min-height: 420px; }
+            .funko-hero-content { margin-top: 1rem; width: min(320px, 100%); }
             .funko-showcase-slot { min-height: 52vh; }
             #canvas-container.showcase-active {
                 height: 100% !important; max-height: none !important; min-height: 52vh !important;
@@ -4900,12 +5159,26 @@
             
             /* Section Paddings & Grid */
             .funko-section { padding: 0 1rem; margin-top: 2rem; margin-bottom: 1rem; }
+            .funko-section:first-of-type { margin-bottom: 3.25rem; }
             .funko-section h2 { font-size: 2rem; margin-bottom: 1.5rem; }
             .funko-carousel-header { align-items: flex-end; margin-bottom: 1rem; }
             .funko-carousel-controls { display: none; }
-            .funko-new-picks-grid { grid-auto-columns: minmax(210px, 78vw); gap: 1rem; }
+            .funko-new-picks-grid { grid-auto-columns: 320px; gap: 1rem; }
+            .funko-new-picks-grid .fandom-card {
+                min-width: min(320px, calc(100vw - 3rem));
+                max-width: min(320px, calc(100vw - 3rem));
+            }
             .funko-card:hover { transform: none; box-shadow: 6px 6px 0 #000; }
             .funko-card:hover .funko-card-img-container img { transform: scale(1.16); }
+            .funko-new-picks-grid .fandom-image-container {
+                height: 220px;
+            }
+            .funko-new-picks-grid .fandom-image-container img {
+                transform: scale(1.28);
+            }
+            .funko-new-picks-grid .fandom-card:hover .fandom-image-container img {
+                transform: scale(1.34);
+            }
             .funko-home-footer { padding: 2rem 1rem 1.5rem; }
             .funko-newsletter-card { padding: 2rem 1.25rem; margin: 0 auto 2.5rem; }
             .funko-newsletter-card h3 { font-size: 2.2rem !important; }
@@ -4960,8 +5233,8 @@
 
     <!-- Dropdown Menu - Global Fixed - Sticker Style -->
     <div id="auth-user-dropdown"
-        style="display: none; position: fixed; top: 75px; right: 20px; min-width: 200px; z-index: 10000;"
-        class="bg-white border-4 border-black rounded-xl shadow-sticker-md p-3">
+        style="display: none; position: fixed; top: 75px; right: 20px; min-width: 220px; z-index: 10000; background: white; border: 4px solid black; border-radius: 20px; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); padding: 12px;"
+        class="">
 
         <!-- User Email -->
         <div id="auth-user-email" class="px-3 py-2 mb-2 text-sm font-bold text-black border-b-2 border-black"
@@ -5045,7 +5318,7 @@
             </div>
 
             <!-- Mobile Dropdown -->
-            <div id="app-mobile-dropdown-menu" class="pc-home-mobile-dropdown" style="display: none; flex-direction: column; gap: 0.75rem; padding: 1.5rem; background: #fff; border: 4px solid #000; border-radius: 16px; box-shadow: 6px 6px 0 rgba(0,0,0,1); position: absolute; top: calc(100% + 10px); left: 1rem; right: 1rem; z-index: 10000;">
+            <div id="app-mobile-dropdown-menu" class="pc-home-mobile-dropdown" style="display: none; flex-direction: column; gap: 0.85rem; padding: 1.5rem; background: #fff; border: 4px solid #000; border-radius: 24px; box-shadow: 8px 8px 0 rgba(0,0,0,1); position: absolute; top: calc(100% + 12px); left: 1rem; right: 1rem; z-index: 10000;">
                 <button type="button" class="pc-home-chip" onclick="navigateToView('custom'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center;">Crea el tuyo</button>
                 <button type="button" class="pc-home-chip" onclick="navigateToView('presets'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center;">Colecciones</button>
                 <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-banner-grid'), 0)" style="width: 100%; justify-content: center;">Novedades</button>
@@ -5578,10 +5851,10 @@
                 </div>
 
                 <div id="customize-section" class="hidden h-full flex flex-col">
+                    <div class="customize-panel-scroll">
                     <!-- Main Category Carousel -->
-                    <div class="custom-editor-block flex space-x-3 overflow-x-auto py-1 mb-2 pointer-events-auto flex-none no-scrollbar"
+                    <div class="custom-editor-block custom-panel-section flex gap-3 overflow-x-auto py-2 px-1 mb-2 pointer-events-auto flex-none no-scrollbar"
                         id="main-category-carousel">
-                        <!-- EYES -->
                         <button class="custom-nav-btn active" data-category="eyes">
                             <div class="btn-icon">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
@@ -5590,7 +5863,6 @@
                                 </svg>
                             </div>
                         </button>
-                        <!-- BROWS -->
                         <button class="custom-nav-btn" data-category="eyebrows">
                             <div class="btn-icon">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
@@ -5599,7 +5871,6 @@
                                 </svg>
                             </div>
                         </button>
-                        <!-- NOSE -->
                         <button class="custom-nav-btn" data-category="nose">
                             <div class="btn-icon">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
@@ -5608,7 +5879,6 @@
                                 </svg>
                             </div>
                         </button>
-                        <!-- EARS -->
                         <button class="custom-nav-btn" data-category="ears">
                             <div class="btn-icon">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
@@ -5617,7 +5887,6 @@
                                 </svg>
                             </div>
                         </button>
-                        <!-- HAIR -->
                         <button class="custom-nav-btn" data-category="hair">
                             <div class="btn-icon">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
@@ -5626,7 +5895,6 @@
                                 </svg>
                             </div>
                         </button>
-                        <!-- TORSO -->
                         <button class="custom-nav-btn" data-category="torso">
                             <div class="btn-icon">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
@@ -5634,7 +5902,6 @@
                                 </svg>
                             </div>
                         </button>
-                        <!-- ARMS -->
                         <button class="custom-nav-btn" data-category="arms">
                             <div class="btn-icon">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
@@ -5642,7 +5909,6 @@
                                 </svg>
                             </div>
                         </button>
-                        <!-- LEGS -->
                         <button class="custom-nav-btn" data-category="legs">
                             <div class="btn-icon">
                                 <svg viewBox="0 0 24 24" fill="currentColor">
@@ -5653,35 +5919,31 @@
                         </button>
                     </div>
 
-                    <div class="custom-editor-block flex-none mb-4">
+                    <div class="custom-editor-block custom-panel-section flex-none mb-4">
+                        <p class="custom-panel-title">Tonos de piel</p>
                         <div id="global-color-palette"
                             class="flex space-x-2 overflow-x-auto py-2 mb-2 pointer-events-auto no-scrollbar">
-                            <!-- Color swatches will be populated here -->
                         </div>
+                    </div>
 
+                    <div class="custom-editor-block custom-panel-section flex-none mb-4">
+                        <p class="custom-panel-title">Ajustes de color</p>
                         <div class="custom-slider-stack pointer-events-auto">
                             <div class="custom-slider-row">
-                                <div class="custom-slider-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M12 3a9 9 0 1 0 9 9c0-.55-.45-1-1-1h-3.2a2.3 2.3 0 0 1-2.3-2.3 2.3 2.3 0 0 1 .67-1.63l1.82-1.82A1 1 0 0 0 16.28 3H12z"/>
-                                    </svg>
-                                </div>
                                 <input type="range" id="hue-slider" min="0" max="360" value="0"
                                     class="w-full h-4 rounded-lg appearance-none cursor-pointer"
-                                    style="background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); border: 3px solid black;">
+                                    style="background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); border: 0;">
                             </div>
                             <div class="custom-slider-row">
-                                <div class="custom-slider-icon" aria-hidden="true">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M6.76 4.84l-1.8-1.79L3.55 4.46l1.79 1.8 1.42-1.42zm10.9 0 1.79-1.79 1.41 1.41-1.79 1.8-1.41-1.42zM12 1h2v3h-2V1zm6 11h3v2h-3v-2zM3 12h3v2H3v-2zm2.34 7.74-1.79 1.8 1.41 1.41 1.8-1.79-1.42-1.42zM12 20h2v3h-2v-3zm6.66-.26 1.41 1.42 1.79-1.8-1.41-1.41-1.79 1.79zM13 6h-2v7h7v-2h-5z"/>
-                                    </svg>
-                                </div>
                                 <input type="range" id="lightness-slider" min="0" max="100" value="50"
                                     class="w-full h-4 rounded-lg appearance-none cursor-pointer"
-                                    style="background: linear-gradient(to right, #000000, #888888, #ffffff); border: 3px solid black;">
+                                    style="background: linear-gradient(to right, #000000, #888888, #ffffff); border: 0;">
                             </div>
                         </div>
+                    </div>
 
+                    <div class="custom-editor-block custom-panel-section flex-none mb-4">
+                        <p class="custom-panel-title">Aplicar color a</p>
                         <div class="part-selection-grid pointer-events-auto">
                             <button type="button" class="part-btn active" data-part="all" aria-label="Total">
                                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"/></svg>
@@ -5707,12 +5969,13 @@
                         </div>
                     </div>
 
-                    <!-- Options Grid -->
-                    <div id="custom-options-grid"
-                        class="custom-options-grid pointer-events-auto flex-grow overflow-y-auto no-scrollbar mb-4">
-                        <!-- Options will be populated here -->
+                    <div class="custom-editor-block custom-panel-section flex-grow mb-4">
+                        <p class="custom-panel-title">Opciones disponibles</p>
+                        <div id="custom-options-grid"
+                            class="custom-options-grid pointer-events-auto flex-grow overflow-y-auto no-scrollbar">
+                        </div>
                     </div>
-
+                    </div>
 
                 </div><!-- Cierre de customize-section -->
             </div>
@@ -6227,15 +6490,18 @@
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const originalCameraPos = new THREE.Vector3(0, 1.5, 5);
+        const mobileCustomizationCameraPos = new THREE.Vector3(0, 1.72, 3.15);
+        const desktopCustomizationCameraPos = new THREE.Vector3(0, 1.6, 4.2);
         camera.position.copy(originalCameraPos);
 
         // Detectar si es móvil para reducir calidad y memoria
         const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         const isLowPowerMobile = isMobileDevice || window.innerWidth <= 768;
-        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        const pixelRatio = isLowPowerMobile ? Math.min(window.devicePixelRatio || 1, 1.2) : Math.min(window.devicePixelRatio || 1, 1.8);
         const showcaseTextureUpdateMode = isLowPowerMobile ? 'lite' : 'full';
         let shouldRenderScene = true;
         let lastFrameTimestamp = 0;
+        let customRenderBurstFrames = 0;
 
         const renderer = new THREE.WebGLRenderer({
             antialias: true, // Mantener antialiasing
@@ -6253,6 +6519,15 @@
         controls.enableDamping = true;
         controls.minDistance = 3;  // Zoom in máximo (más cerca)
         controls.maxDistance = 25; // Zoom out máximo (más lejos)
+
+        function requestCustomRender(frames = 12) {
+            customRenderBurstFrames = Math.max(customRenderBurstFrames, frames);
+            shouldRenderScene = true;
+        }
+
+        controls.addEventListener('change', () => {
+            requestCustomRender(isLowPowerMobile ? 10 : 16);
+        });
 
         // Iluminación sin sombras - 100% clara y uniforme
         // Luz ambiental fuerte - ilumina todo uniformemente sin crear sombras
@@ -8032,7 +8307,14 @@
         // Sliders de personalización de color
         const hueSlider = document.getElementById('hue-slider');
         const lightnessSlider = document.getElementById('lightness-slider');
+        const customizeSectionRoot = document.getElementById('customize-section');
         let colorTargetPart = 'all';
+
+        if (customizeSectionRoot) {
+            customizeSectionRoot.addEventListener('pointerdown', () => {
+                requestCustomRender(isLowPowerMobile ? 10 : 16);
+            }, { passive: true });
+        }
 
         // Part selection logic
         const partButtons = document.querySelectorAll('.part-btn');
@@ -8065,6 +8347,7 @@
             const customColor = hslToHex(hue, saturation, lightness);
             const colorHex = parseInt(customColor.replace('#', '0x'), 16);
             const colorObj = new THREE.Color(colorHex);
+            requestCustomRender(isLowPowerMobile ? 14 : 20);
 
             if (!loadedModel) return;
 
@@ -8359,6 +8642,7 @@
         function animate() {
             requestAnimationFrame(animate);
             const nowMs = performance.now();
+            const isCustomEditingView = activeAppView === 'custom' && appMode !== 'play';
 
             if (isLowPowerMobile && nowMs - lastFrameTimestamp < 1000 / 30) {
                 return;
@@ -8369,6 +8653,10 @@
             const dt = Math.min(clock.getDelta(), 0.1); // Limitar dt para evitar grandes saltos
 
             if (!shouldRenderScene && !isCircularCameraAnimation && !isAnimatingCamera) {
+                return;
+            }
+
+            if (isCustomEditingView && !isCircularCameraAnimation && !isAnimatingCamera && customRenderBurstFrames <= 0) {
                 return;
             }
 
@@ -8473,6 +8761,10 @@
 
             controls.update();
             renderer.render(scene, camera);
+
+            if (isCustomEditingView && customRenderBurstFrames > 0) {
+                customRenderBurstFrames -= 1;
+            }
         }
 
         document.addEventListener('visibilitychange', () => {
@@ -8755,7 +9047,7 @@
             }
 
             console.log('Initializing showcase model visibility...');
-            const showcaseScaleBoost = window.innerWidth <= 768 ? 1.24 : 1.1;
+            const showcaseScaleBoost = window.innerWidth <= 768 ? 1.08 : 1.0;
             const showcaseScale = baseModelScale * showcaseScaleBoost;
             const showcaseGround = baseGroundY * showcaseScaleBoost;
             loadedModel.visible = true;
@@ -9061,6 +9353,37 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
 
+        function resetModelAppearanceToWhite() {
+            const whiteColor = new THREE.Color(0xffffff);
+            isCustomSkinColorSelected = false;
+
+            if (hueSlider) hueSlider.value = 0;
+            if (lightnessSlider) lightnessSlider.value = 50;
+
+            const paintWhite = (mesh) => {
+                if (!mesh) return;
+                mesh.traverse((child) => {
+                    if (child.isMesh && child.material && child.material.color) {
+                        if (Array.isArray(child.material)) {
+                            child.material.forEach((mat) => {
+                                if (mat.color) mat.color.copy(whiteColor);
+                            });
+                        } else {
+                            child.material.color.copy(whiteColor);
+                        }
+                    }
+                });
+            };
+
+            paintWhite(modelParts.head);
+            paintWhite(modelParts.torso);
+            (modelParts.arms || []).forEach(paintWhite);
+            (modelParts.legs || []).forEach(paintWhite);
+            (modelParts.ears || []).forEach(paintWhite);
+
+            requestCustomRender(isLowPowerMobile ? 18 : 24);
+        }
+
         function updateShowcaseRotation() {
             if (isShowcaseActive && loadedModel) {
                 // Rotación automática suave y continua (normalizada para evitar overflow)
@@ -9274,11 +9597,9 @@
         ];
 
         const authenticatedHomeCollections = [
-            { name: 'Mira', subtitle: 'Edición glow de escenario' },
-            { name: 'Rumi', subtitle: 'Selección destacada' },
-            { name: 'Romance', subtitle: 'Edición limitada' },
-            { name: 'Steve', subtitle: 'Icono gamer' },
-            { name: 'Abby', subtitle: 'Favorita del fandom' }
+            'Steve', 'Alex', 'Zombie', 'Skeleton', 'Creeper', 'Enderman',
+            'Baby', 'Mystery', 'Romance', 'Abby', 'Jinu', 'Zoey',
+            'Rumi', 'Mira'
         ];
 
         const authenticatedHomeGroups = [
@@ -9324,6 +9645,15 @@
             `;
         }
 
+        function getCollectionBadgeText(name, index) {
+            if ((characterFandoms[name] || 'other') === 'minecraft') return 'Nuevo';
+            return index % 3 === 0 ? 'Destacado' : 'Nuevo';
+        }
+
+        function getCollectionButtonLabel() {
+            return 'Seleccionar personaje';
+        }
+
         function scrollFunkoCollection(direction) {
             const viewport = document.querySelector('.funko-carousel-viewport');
             if (!viewport) return;
@@ -9347,12 +9677,8 @@
                     <div class="funko-hero-wrapper">
                         <div class="funko-hero-inner">
                             <div class="funko-hero-content">
-                                <span class="funko-hero-label">Papelcustom</span>
-                                <h1>Tu vitrina<br>empieza aquí</h1>
+                                <h1>Crear nunca fue tan divertido</h1>
                                 <button type="button" class="funko-hero-cta" onclick="navigateToView('custom')">Crea el tuyo ahora</button>
-                            </div>
-                            <div class="funko-hero-art">
-                                <img src="logo.svg" alt="Char 1" style="z-index: 2;" onerror="this.src='webclip.png'">
                             </div>
                         </div>
                     </div>
@@ -9361,32 +9687,37 @@
             }
 
             if (collectionGrid) {
-                const combined = [...authenticatedHomeCollections, {name: 'Zoey', subtitle: 'Nueva llegada'}];
-                collectionGrid.innerHTML = combined.map((card, i) => {
-                    const tagClass = i % 2 === 0 ? "funko-card-ribbon" : "funko-card-ribbon exclusive";
-                    const tagText = i % 2 === 0 ? "NUEVO" : "EXCLUSIVO WEB";
+                collectionGrid.className = 'funko-new-picks-grid';
+                collectionGrid.innerHTML = authenticatedHomeCollections.slice(0, 6).map((name, index) => {
+                    const fandomKey = characterFandoms[name] || 'other';
+                    const fandomLabel = fandomLabels[fandomKey] || 'Papelcool Original';
+                    const isFav = isFavorite(name);
+
                     return `
-                    <article class="funko-card" onclick="navigateToView('presets')">
-                        <div class="${tagClass}">${tagText}</div>
-                        <div class="funko-card-heart"><span class="material-symbols-outlined">favorite</span></div>
-                        <div class="funko-card-img-container">
-                            <img src="${getPresetIconSource(card.name)}" alt="${card.name}" loading="lazy" onerror="this.src='webclip.png'">
+                    <article class="fandom-card" onclick="window.setPresetCharacter && window.setPresetCharacter('${name}'); navigateToView('custom')">
+                        <div class="fandom-badge">${getCollectionBadgeText(name, index)}</div>
+                        <button class="fandom-heart material-symbols-outlined ${isFav ? 'active' : ''}" data-favorite-name="${name}" onclick="event.stopPropagation(); toggleFavorite('${name}', this)">star</button>
+                        <div class="fandom-image-container">
+                            <img src="${getPresetIconSource(name)}" alt="${name}" loading="lazy" onerror="this.src='webclip.png'">
                         </div>
-                        <div class="funko-card-info">
-                            <h3>${card.name}</h3>
-                            <p>${card.subtitle}</p>
+                        <div class="fandom-info">
+                            <span class="fandom-tag">${fandomLabel}</span>
+                            <h3 class="fandom-name">${name}</h3>
+                            <button class="fandom-select-btn">${getCollectionButtonLabel()}</button>
                         </div>
                     </article>
-                `}).slice(0, 5).join('');
+                `;
+                }).join('');
+                syncFavoriteButtons();
             }
 
             if (bannerGrid) {
                 // Render the 4 columns
                 const banners = [
-                    { title: "Hora del combate", tag: "KPOP DEMON HUNTERS", body: "Luce a tus idols con coleccionables oficiales.", color: "#B8860B", art: ["Mira", "Rumi"] },
-                    { title: "Listos para morph", tag: "POWER RANGERS", body: "Potencia tu colección con nuevas llegadas.", color: "#556B2F", art: ["Zoey"] },
-                    { title: "Nuevo en la tripulación", tag: "ONE PIECE", body: "Zarpa con nuevos coleccionables para completar tu vitrina anime.", color: "#8B4513", art: ["Baby", "Abby"] },
-                    { title: "Haz tu entrada", tag: "WWE", body: "Nuevos coleccionables han entrado al ring.", color: "#8B0000", art: ["Steve", "Jinu"] }
+                    { title: "Kpop Demon Hunters", tag: "KPOP DEMON HUNTERS", body: "Reune a tus idols favoritos en una vitrina lista para escenario, fandom y coleccion.", color: "#B8860B", art: ["Mira", "Rumi"] },
+                    { title: "Morat", tag: "MORAT", body: "Arma una coleccion con vibra acustica, amigos de gira y momentos para cantar juntos.", color: "#556B2F", art: ["Jinu", "Zoey"] },
+                    { title: "Minecraft", tag: "MINECRAFT", body: "Construye una escena tranquila con personajes iconicos listos para compartir mundo.", color: "#8B4513", art: ["Steve", "Alex"] },
+                    { title: "One Direction", tag: "ONE DIRECTION", body: "Guarda una etapa de nostalgia pop con personajes pensados para fans de siempre.", color: "#8B0000", art: ["Baby", "Abby"] }
                 ];
                 bannerGrid.innerHTML = banners.map(b => `
                     <article class="funko-banner-card" style="background: ${b.color};">
@@ -9502,6 +9833,19 @@
                 initNewCustomizationUI();
             }
 
+            controls.enableDamping = !isLowPowerMobile;
+            controls.dampingFactor = isLowPowerMobile ? 0.04 : 0.1;
+            controls.enablePan = !isLowPowerMobile;
+            if (isLowPowerMobile) {
+                camera.position.copy(mobileCustomizationCameraPos);
+                controls.target.copy(modelCenter);
+            } else {
+                camera.position.copy(desktopCustomizationCameraPos);
+                controls.target.copy(modelCenter);
+            }
+            resetModelAppearanceToWhite();
+            requestCustomRender(isLowPowerMobile ? 18 : 24);
+
             setTimeout(() => {
                 onWindowResize();
             }, 350);
@@ -9525,6 +9869,7 @@
                 canvasContainer.classList.remove('showcase-active');
             }
             shouldRenderScene = false;
+            customRenderBurstFrames = 0;
             forceMemoryCleanup();
             setGlobalTopbarVisible(true);
             activeAppView = 'presets';
@@ -9686,19 +10031,18 @@
                 const card = document.createElement('div');
                 card.className = 'fandom-card';
                 const isFav = isFavorite(name);
-                const heartColor = isFav ? 'color: #FF4D94;' : '';
                 const heartClass = isFav ? 'active' : '';
 
                 card.innerHTML = `
                     <div class="fandom-badge">New</div>
-                    <button class="fandom-heart material-symbols-outlined ${heartClass}" data-favorite-name="${name}" onclick="event.stopPropagation(); toggleFavorite('${name}', this)" style="${heartColor}">favorite</button>
+                    <button class="fandom-heart material-symbols-outlined ${heartClass}" data-favorite-name="${name}" onclick="event.stopPropagation(); toggleFavorite('${name}', this)">star</button>
                     <div class="fandom-image-container">
                         <img src="${presetIcons[name]}" alt="${name}">
                     </div>
                     <div class="fandom-info">
                         <span class="fandom-tag">${fandomLabels[fandomKey] || 'Papelcool Original'}</span>
                         <h3 class="fandom-name">${name}</h3>
-                        <button class="fandom-select-btn">Select Character</button>
+                        <button class="fandom-select-btn">Seleccionar personaje</button>
                     </div>
                 `;
 
@@ -12011,7 +12355,12 @@
             document.querySelectorAll('[data-favorite-name]').forEach((button) => {
                 const active = isFavorite(button.dataset.favoriteName);
                 button.classList.toggle('active', active);
-                button.style.color = active ? '#FF4D94' : '';
+                if (button.classList.contains('fandom-heart')) {
+                    button.textContent = 'star';
+                    button.style.color = active ? '#FFC700' : '';
+                } else {
+                    button.style.color = active ? '#FF4D94' : '';
+                }
             });
         }
 
@@ -12020,7 +12369,7 @@
             return `
                 <article class="pc-favorite-card" onclick="openFavoriteCharacter('${name}', '${context}')">
                     <button type="button" class="pc-home-icon pc-favorite-heart ${isFavorite(name) ? 'active' : ''}" data-favorite-name="${name}" aria-label="Favorito" onclick="event.stopPropagation(); toggleFavorite('${name}', this)">
-                        <span class="material-symbols-outlined">favorite</span>
+                        <span class="material-symbols-outlined">star</span>
                     </button>
                     <div class="pc-favorite-card-thumb">
                         <img src="${iconSrc}" alt="${name}" loading="lazy">
@@ -12033,7 +12382,7 @@
         function getFavoritesEmptyMarkup() {
             return `
                 <div class="pc-favorites-empty">
-                    <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: #FF4D94;">favorite_border</span>
+                    <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: #FFC700;">star</span>
                     <p>No tienes favoritos todavía.</p>
                     <p style="font-size: 0.9rem; margin-top: 0.5rem;">Guarda tus Papelcools desde Colecciones y aparecerán aquí automáticamente.</p>
                 </div>
@@ -12068,7 +12417,12 @@
             if (btnElement) {
                 const active = nextFavorites.includes(characterName);
                 btnElement.classList.toggle('active', active);
-                btnElement.style.color = active ? '#FF4D94' : '';
+                if (btnElement.classList.contains('fandom-heart')) {
+                    btnElement.textContent = 'star';
+                    btnElement.style.color = active ? '#FFC700' : '';
+                } else {
+                    btnElement.style.color = active ? '#FF4D94' : '';
+                }
             }
 
             refreshFavoritesUI();
