@@ -199,6 +199,13 @@
         }
 
         /* Preset Character Buttons overrides */
+        :root {
+            --pc-character-card-width: 100px;
+            --pc-character-card-height: 158px;
+            --pc-character-shell-min: 150px;
+            --pc-character-shell-max: 300px;
+        }
+
         .preset-character-btn {
             background: transparent;
             border: none;
@@ -209,13 +216,15 @@
 
         .preset-character-btn img {
             width: 100%;
-            height: auto;
+            height: 100%;
             display: block;
             border-radius: 8px;
             border: 4px solid black;
             box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
             background: white;
             transition: all 0.2s;
+            object-fit: contain;
+            object-position: center bottom;
         }
 
         .preset-character-btn:hover {
@@ -358,6 +367,10 @@
             display: flex;
             flex-direction: column;
             position: relative;
+            width: 100%;
+            min-width: 0;
+            height: auto;
+            container-type: inline-size;
         }
 
         .fandom-card:hover {
@@ -372,28 +385,30 @@
 
         .fandom-badge {
             position: absolute;
-            top: 12px;
-            left: 12px;
+            top: clamp(8px, 4cqw, 12px);
+            left: clamp(8px, 4cqw, 12px);
             background: #FF4D94;
             color: white;
             border: 2px solid black;
-            padding: 4px 12px;
+            padding: clamp(2px, 1.2cqw, 4px) clamp(8px, 4.6cqw, 12px);
             border-radius: 99px;
             font-family: 'Fredoka', sans-serif;
             font-weight: 700;
-            font-size: 0.7rem;
+            font-size: clamp(0.56rem, 3.3cqw, 0.7rem);
+            line-height: 1;
             text-transform: uppercase;
             z-index: 10;
         }
 
         .fandom-heart {
             position: absolute;
-            top: 12px;
-            right: 12px;
+            top: clamp(8px, 4cqw, 12px);
+            right: clamp(8px, 4cqw, 12px);
             z-index: 10;
             color: #d4d4d8;
             transition: color 0.2s, transform 0.2s, font-variation-settings 0.2s;
             font-variation-settings: 'FILL' 0;
+            font-size: clamp(1rem, 8.2cqw, 1.65rem);
         }
 
         .fandom-heart:hover {
@@ -409,12 +424,14 @@
         .fandom-image-container {
             background-color: #D1E9FF;
             width: 100%;
-            height: 240px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-bottom: 4px solid black;
             position: relative;
+            flex: 0 0 auto;
+            aspect-ratio: 300 / 224;
+            overflow: hidden;
         }
 
         .fandom-image-container img {
@@ -423,61 +440,72 @@
             object-fit: contain;
             object-position: center bottom;
             padding: 0.15rem;
-            transform: scale(1.77);
+            transform: scale(1.58);
             transition: transform 0.3s;
         }
 
         .fandom-card:hover .fandom-image-container img {
-            transform: scale(1.85);
+            transform: scale(1.66);
         }
 
         .fandom-info {
-            padding: 1rem;
+            padding: clamp(0.62rem, 4.6cqw, 0.9rem) clamp(0.58rem, 4.2cqw, 0.85rem) clamp(0.68rem, 4.9cqw, 0.95rem);
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            gap: 6px;
+            gap: clamp(0.22rem, 1.8cqw, 0.4rem);
+            flex: 1 1 auto;
+            justify-content: space-between;
+            min-height: 0;
         }
 
         .fandom-tag {
             display: inline-flex;
             align-items: center;
             width: fit-content;
-            padding: 0.25rem 0.55rem;
+            padding: clamp(0.18rem, 1.3cqw, 0.25rem) clamp(0.42rem, 3cqw, 0.55rem);
             border-radius: 999px;
             background: #DBEAFE;
             font-family: 'Fredoka', sans-serif;
             font-weight: 700;
-            font-size: 0.7rem;
+            font-size: clamp(0.54rem, 2.8cqw, 0.7rem);
             color: #1E3A8A;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: clamp(0.01em, 0.2cqw, 0.05em);
         }
 
         .fandom-name {
             font-family: 'Fredoka', sans-serif;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: clamp(0.8rem, 4.7cqw, 1rem);
             color: black;
             text-transform: uppercase;
+            margin: 0;
+            line-height: 1.05;
         }
 
         .fandom-select-btn {
-            margin-top: 12px;
+            margin-top: auto;
             width: 100%;
             background: #FFE600;
-            border: 4px solid black;
-            border-radius: 16px;
-            padding: 12px 20px;
+            border: 3px solid black;
+            border-radius: clamp(10px, 5cqw, 16px);
+            padding: clamp(0.4rem, 3cqw, 0.7rem) clamp(0.4rem, 3cqw, 0.8rem);
             font-family: 'Fredoka', sans-serif;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: clamp(0.62rem, 3.5cqw, 0.82rem);
             color: black;
             text-transform: uppercase;
-            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
             transition: all 0.18s ease;
             cursor: pointer;
+            line-height: 1.1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-wrap: balance;
+            flex-shrink: 0;
         }
 
         .fandom-card:hover .fandom-select-btn {
@@ -493,26 +521,26 @@
 
         .pc-home-collection-fandom-grid {
             display: grid;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(5, 1fr);
             gap: 1.5rem;
             width: 100%;
         }
 
-        .pc-home-collection-fandom-grid .fandom-card {
-            min-height: 100%;
-        }
-
-        .pc-home-collection-fandom-grid .fandom-image-container {
-            height: 260px;
-        }
-
         .pc-favorite-card-thumb img {
-            width: 100%;
-            height: 100%;
+            width: 88%;
+            height: 88%;
             object-fit: contain;
             object-position: center bottom;
-            padding: 0.5rem;
-            transform: scale(1.12);
+            padding: 0;
+            transform: scale(1.05);
+        }
+
+        #fandoms-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            column-gap: 1.25rem;
+            row-gap: 1.5rem;
+            padding-bottom: 5rem;
         }
 
         @media (max-width: 768px) {
@@ -534,17 +562,9 @@
                 justify-content: flex-start;
             }
 
-            .fandom-image-container {
-                height: 210px;
-            }
-
-            .pc-home-collection-fandom-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 1rem;
-            }
-
-            .pc-home-collection-fandom-grid .fandom-image-container {
-                height: 220px;
+            #fandoms-grid {
+                column-gap: 1rem;
+                row-gap: 1.25rem;
             }
         }
 
@@ -821,10 +841,11 @@
 
         .pc-favorites-grid {
             display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(5, 1fr);
+            column-gap: 1.25rem;
+            row-gap: 1.5rem;
             overflow: visible;
-            padding: 4px;
+            padding: 0.25rem 0;
         }
 
         .pc-favorite-card {
@@ -841,6 +862,10 @@
             cursor: pointer;
             transition: transform 0.18s ease, box-shadow 0.18s ease;
             min-height: 100%;
+            width: 100%;
+            min-width: 0;
+            height: auto;
+            container-type: inline-size;
         }
 
         .pc-favorite-card:hover {
@@ -850,7 +875,6 @@
 
         .pc-favorite-card-thumb {
             width: 100%;
-            aspect-ratio: 1;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -859,6 +883,7 @@
             border-radius: 12px;
             margin-bottom: 0.7rem;
             overflow: hidden;
+            flex: 0 0 58.95%;
         }
 
         .pc-favorite-card-thumb img {
@@ -870,23 +895,24 @@
         .pc-favorite-card-title {
             margin: 0;
             font-family: 'Fredoka', sans-serif;
-            font-size: 0.98rem;
+            font-size: clamp(0.78rem, 4.6cqw, 0.98rem);
             font-weight: 700;
-            line-height: 1.1;
+            line-height: 1.06;
             text-align: center;
             color: #111827;
             text-transform: uppercase;
+            text-wrap: balance;
         }
 
         .pc-favorite-heart {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: clamp(8px, 3.4cqw, 10px);
+            right: clamp(8px, 3.4cqw, 10px);
             z-index: 12;
-            width: 40px;
-            height: 40px;
+            width: clamp(30px, 13.5cqw, 40px);
+            height: clamp(30px, 13.5cqw, 40px);
             border-width: 2px;
-            border-radius: 14px;
+            border-radius: clamp(10px, 4.8cqw, 14px);
             color: #94A3B8;
             font-variation-settings: 'FILL' 0;
         }
@@ -913,8 +939,8 @@
 
         @media (max-width: 768px) {
             .pc-favorites-grid {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: 0.8rem;
+                column-gap: 1rem;
+                row-gap: 1.25rem;
             }
 
             .pc-favorite-card {
@@ -1101,8 +1127,8 @@
             border-radius: 16px;
             background-color: transparent;
             font-size: 1rem;
-            width: 90px;
-            aspect-ratio: 3 / 4;
+            width: 100%;
+            height: auto;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1114,47 +1140,189 @@
             object-fit: contain;
             border-radius: 8px;
             object-position: center bottom;
-            transform: scale(1.22);
+            transform: scale(1.08);
             flex-shrink: 0;
             transition: transform 250ms ease;
             will-change: transform;
             z-index: 2;
         }
 
-        /* Contenedor de presets - Grid 3 columnas en desktop */
+        /* Contenedor de presets - Grid 5 columnas en desktop */
         .presets-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            justify-items: center;
+            grid-template-columns: repeat(5, 1fr);
+            column-gap: 1.25rem;
+            row-gap: 1.5rem;
             overflow: visible;
-            padding: 4px;
+            padding: 0.25rem 0;
         }
 
-        /* Carrusel horizontal en móvil */
-        @media (max-width: 1024px) {
+        @media (max-width: 1279px) {
+
+            #fandoms-grid,
+            .pc-favorites-grid,
+            .presets-grid,
+            .pc-home-collection-fandom-grid {
+                grid-template-columns: repeat(4, 1fr);
+                column-gap: 1rem;
+                row-gap: 1.25rem;
+            }
+
+            .fandom-badge {
+                font-size: 0.66rem;
+                padding: 4px 11px;
+            }
+
+            .fandom-heart {
+                font-size: 1.5rem;
+            }
+
+            .fandom-info {
+                padding: 0.82rem 0.78rem 0.88rem;
+                gap: 0.35rem;
+            }
+
+            .fandom-tag {
+                padding: 0.22rem 0.5rem;
+                font-size: 0.64rem;
+            }
+
+            .fandom-name,
+            .pc-favorite-card-title {
+                font-size: 0.92rem;
+                line-height: 1.08;
+            }
+
+            .fandom-select-btn {
+                margin-top: 0.4rem;
+                padding: 0.76rem 0.82rem;
+                font-size: 0.76rem;
+                line-height: 1.08;
+            }
+
+            .pc-favorite-card {
+                padding: 0.82rem;
+            }
+
+            .pc-favorite-card-thumb {
+                margin-bottom: 0.62rem;
+            }
+        }
+
+        @media (max-width: 900px) {
+            #fandoms-grid,
+            .pc-favorites-grid,
+            .presets-grid,
+            .pc-home-collection-fandom-grid {
+                grid-template-columns: repeat(3, 1fr);
+                column-gap: 0.9rem;
+                row-gap: 1.1rem;
+            }
+        }
+
+        @media (max-width: 720px) {
+            :root {
+                --pc-character-shell-min: 130px;
+            }
+
+            #fandoms-grid,
+            .pc-favorites-grid,
+            .presets-grid,
+            .pc-home-collection-fandom-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                column-gap: 0.85rem;
+                row-gap: 1rem;
+            }
+
             .presets-grid {
-                display: flex;
-                grid-template-columns: none;
-                gap: 16px;
-                overflow-x: auto;
-                overflow-y: hidden;
-                scroll-snap-type: x mandatory;
-                -webkit-overflow-scrolling: touch;
-                scrollbar-width: none;
-                /* Firefox */
-                padding: 8px 4px;
-                justify-items: flex-start;
+                padding: 0.25rem 0;
             }
 
-            .presets-grid::-webkit-scrollbar {
-                display: none;
-                /* Chrome, Safari, Edge */
+            .fandom-card,
+            .pc-favorite-card {
+                border-width: 3px;
+                border-radius: 20px;
+                box-shadow: 6px 6px 0 rgba(0, 0, 0, 1);
             }
 
-            .presets-grid .preset-character-btn {
-                flex-shrink: 0;
-                scroll-snap-align: center;
+            .fandom-card:hover,
+            .pc-favorite-card:hover {
+                box-shadow: 8px 8px 0 rgba(0, 0, 0, 1);
+            }
+
+            .fandom-image-container,
+            .pc-favorite-card-thumb {
+                border-bottom-width: 3px;
+            }
+
+            .fandom-image-container img {
+                transform: scale(1.48);
+            }
+
+            .fandom-card:hover .fandom-image-container img {
+                transform: scale(1.54);
+            }
+
+            .fandom-badge {
+                top: 10px;
+                left: 10px;
+                padding: 3px 10px;
+                font-size: 0.62rem;
+            }
+
+            .fandom-heart {
+                top: 10px;
+                right: 10px;
+                font-size: 1.3rem;
+            }
+
+            .fandom-info {
+                padding: 0.75rem 0.65rem 0.8rem;
+                gap: 0.3rem;
+            }
+
+            .fandom-tag {
+                padding: 0.22rem 0.5rem;
+                font-size: 0.58rem;
+                letter-spacing: 0.03em;
+            }
+
+            .fandom-name,
+            .pc-favorite-card-title {
+                font-size: 0.82rem;
+                line-height: 1.05;
+            }
+
+            .fandom-select-btn {
+                margin-top: 0.35rem;
+                border-width: 3px;
+                border-radius: 14px;
+                padding: 0.68rem 0.65rem;
+                font-size: 0.72rem;
+                line-height: 1.05;
+                box-shadow: 3px 3px 0 rgba(0, 0, 0, 1);
+            }
+
+            .fandom-card:hover .fandom-select-btn {
+                box-shadow: 5px 5px 0 rgba(0, 0, 0, 1);
+            }
+
+            .pc-favorite-card {
+                padding: 0.75rem;
+            }
+
+            .pc-favorite-card-thumb {
+                border-width: 2px;
+                border-radius: 10px;
+                margin-bottom: 0.55rem;
+            }
+
+            .pc-favorite-heart {
+                top: 8px;
+                right: 8px;
+                width: 34px;
+                height: 34px;
+                border-radius: 12px;
             }
         }
 
@@ -2417,6 +2585,88 @@
             box-shadow: -0.15em -0.15em 0.15em -0.075em rgba(5, 5, 5, 0.25),
                 0.0375em 0.0375em 0.0675em 0 rgba(5, 5, 5, 0.1);
             font-size: 1.8rem;
+        }
+
+        .preset-template-download {
+            position: fixed;
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%);
+            z-index: 35;
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            min-height: 56px;
+            padding: 0.9rem 1.15rem;
+            border: 4px solid #111111;
+            border-radius: 18px;
+            background: rgba(255, 255, 255, 0.96);
+            box-shadow: 8px 8px 0 rgba(17, 17, 17, 1);
+            color: #111111;
+            font-family: 'Fredoka', sans-serif;
+            pointer-events: auto;
+        }
+
+        .preset-template-download.active {
+            display: inline-flex;
+        }
+
+        .preset-template-download[disabled] {
+            opacity: 0.72;
+            cursor: not-allowed;
+        }
+
+        .preset-template-download svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .preset-template-download-copy {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.1rem;
+            line-height: 1;
+        }
+
+        .preset-template-download-label {
+            font-size: 0.98rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .preset-template-download-meta {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.73rem;
+            font-weight: 700;
+            color: rgba(17, 17, 17, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .preset-template-download {
+                left: 16px;
+                right: 16px;
+                bottom: 16px;
+                transform: none;
+                width: auto;
+                justify-content: center;
+                padding: 0.85rem 1rem;
+                border-radius: 16px;
+                box-shadow: 6px 6px 0 rgba(17, 17, 17, 1);
+            }
+
+            .preset-template-download-copy {
+                min-width: 0;
+            }
+
+            .preset-template-download-label {
+                font-size: 0.9rem;
+            }
+
+            .preset-template-download-meta {
+                font-size: 0.68rem;
+            }
         }
 
         #download-pdf-btn::after {
@@ -5029,15 +5279,14 @@
             display: none;
         }
         .funko-new-picks-grid {
-            display: grid; grid-auto-flow: column; grid-auto-columns: 320px; gap: 1.5rem; width: max-content;
+            display: grid; grid-auto-flow: column; grid-auto-columns: 240px; gap: 1.5rem; width: max-content;
         }
 
         .funko-new-picks-grid .fandom-card {
             width: 100%;
-            min-height: 100%;
             scroll-snap-align: start;
-            min-width: 320px;
-            max-width: 320px;
+            min-width: 240px;
+            max-width: 240px;
         }
 
         .funko-new-picks-grid .fandom-card:hover {
@@ -5045,16 +5294,12 @@
             box-shadow: 10px 10px 0 rgba(0, 0, 0, 1);
         }
 
-        .funko-new-picks-grid .fandom-image-container {
-            height: 250px;
-        }
-
         .funko-new-picks-grid .fandom-image-container img {
-            transform: scale(1.24);
+            transform: scale(1.58);
         }
 
         .funko-new-picks-grid .fandom-card:hover .fandom-image-container img {
-            transform: scale(1.3);
+            transform: scale(1.66);
         }
         .funko-card {
             background: #fff; border: 4px solid #000; border-radius: 16px; position: relative; overflow: hidden;
@@ -5076,8 +5321,13 @@
             border-bottom: 4px solid #000;
         }
         .funko-card-img-container img {
-            width: 100%; height: 100%; object-fit: contain; object-position: center bottom;
-            transform: scale(1.16); filter: drop-shadow(5px 5px 0 rgba(0,0,0,0.5)); transition: transform 0.3s;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center bottom;
+            transform: scale(1.16);
+            filter: drop-shadow(5px 5px 0 rgba(0,0,0,0.5));
+            transition: transform 0.3s;
         }
         .funko-card:hover .funko-card-img-container img { transform: scale(1.22); }
         .funko-card-info { padding: 1.25rem; }
@@ -5147,11 +5397,23 @@
             
             /* Responsive Hero & 3D Canvas */
             .funko-banners-grid { grid-template-columns: 1fr; }
-            .funko-hero-content h1 { font-size: 2.2rem; margin-bottom: 1rem; text-shadow: 2px 2px 0 #fff; line-height: 1.2; }
+            .funko-hero-content h1 {
+                font-size: clamp(2.8rem, 10.5vw, 3.9rem);
+                margin: 0 auto 1rem;
+                text-shadow: 2px 2px 0 #fff;
+                line-height: 1.08;
+                text-align: center;
+                max-width: 12ch;
+            }
             .funko-hero-content p { font-size: 0.95rem; padding: 0.8rem; margin-bottom: 1.5rem; }
             .funko-hero-label { font-size: 0.9rem; margin-bottom: 1rem; padding: 0.3rem 0.8rem; }
             .funko-hero-inner { flex-direction: column; text-align: center; justify-content: center; padding: 1.5rem 1rem; min-height: 420px; }
-            .funko-hero-content { margin-top: 1rem; width: min(320px, 100%); }
+            .funko-hero-content {
+                margin-top: 1rem;
+                width: min(320px, 100%);
+                margin-left: auto;
+                margin-right: auto;
+            }
             .funko-showcase-slot { min-height: 52vh; }
             #canvas-container.showcase-active {
                 height: 100% !important; max-height: none !important; min-height: 52vh !important;
@@ -5163,21 +5425,18 @@
             .funko-section h2 { font-size: 2rem; margin-bottom: 1.5rem; }
             .funko-carousel-header { align-items: flex-end; margin-bottom: 1rem; }
             .funko-carousel-controls { display: none; }
-            .funko-new-picks-grid { grid-auto-columns: 320px; gap: 1rem; }
+            .funko-new-picks-grid { grid-auto-columns: 200px; gap: 1rem; }
             .funko-new-picks-grid .fandom-card {
-                min-width: min(320px, calc(100vw - 3rem));
-                max-width: min(320px, calc(100vw - 3rem));
+                min-width: 200px;
+                max-width: 200px;
             }
             .funko-card:hover { transform: none; box-shadow: 6px 6px 0 #000; }
-            .funko-card:hover .funko-card-img-container img { transform: scale(1.16); }
-            .funko-new-picks-grid .fandom-image-container {
-                height: 220px;
-            }
+            .funko-card:hover .funko-card-img-container img { transform: scale(1.22); }
             .funko-new-picks-grid .fandom-image-container img {
-                transform: scale(1.28);
+                transform: scale(1.48);
             }
             .funko-new-picks-grid .fandom-card:hover .fandom-image-container img {
-                transform: scale(1.34);
+                transform: scale(1.56);
             }
             .funko-home-footer { padding: 2rem 1rem 1.5rem; }
             .funko-newsletter-card { padding: 2rem 1.25rem; margin: 0 auto 2.5rem; }
@@ -5187,7 +5446,9 @@
             .funko-footer-main { gap: 2rem; }
             .funko-footer-brand { flex-basis: 100%; min-width: 0; }
             .preset-character-btn {
-                width: 108px;
+                width: 100%;
+                height: auto;
+                aspect-ratio: 300 / 380;
             }
             .preset-character-btn .character-icon-img {
                 width: 100%;
@@ -5269,7 +5530,7 @@
     <div id="app-global-topbar">
         <header class="funko-style-nav">
             <!-- Mobile Menu -->
-            <button type="button" id="app-mobile-menu-btn" class="pc-home-icon pc-mobile-menu-btn" aria-label="Menú" onclick="document.getElementById('app-mobile-dropdown-menu').classList.toggle('active')">
+            <button type="button" id="app-mobile-menu-btn" class="pc-home-icon pc-mobile-menu-btn" aria-label="Menú">
                 <span class="material-symbols-outlined">menu</span>
             </button>
 
@@ -5293,7 +5554,7 @@
             <div class="funko-nav-right">
                 <label class="funko-search" aria-label="Buscar">
                     <span class="material-symbols-outlined">search</span>
-                    <input type="text" id="global-search-input" placeholder="Busca ideas o fandoms..." />
+                    <input type="text" id="global-search-input" placeholder="Busca ideas o fandoms..." autocomplete="off" />
                 </label>
                 <div id="auth-container" class="funko-auth-actions">
                     <button type="button" id="auth-register-btn" onclick="navigateToView('register')"
@@ -5769,6 +6030,16 @@
 
     <!-- Botones de showcase inicial (sin overlay) -->
 
+    <button type="button" id="preset-template-download" class="preset-template-download" aria-label="Descargar plantilla PDF">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 3a1 1 0 0 1 1 1v8.59l2.3-2.29a1 1 0 1 1 1.4 1.41l-4 3.99a1 1 0 0 1-1.4 0l-4-3.99a1 1 0 1 1 1.4-1.41L11 12.59V4a1 1 0 0 1 1-1ZM5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1Z"/>
+        </svg>
+        <span class="preset-template-download-copy">
+            <span class="preset-template-download-label" data-i18n="download-preset-template-btn">Descargar plantilla</span>
+            <span class="preset-template-download-meta" data-i18n="download-preset-template-meta">PDF listo para imprimir</span>
+        </span>
+    </button>
+
 
 
 
@@ -6039,6 +6310,10 @@
                 'part-leg-l': 'Left Leg',
                 'part-leg-r': 'Right Leg',
                 'download-template-btn': 'DOWNLOAD TEMPLATE',
+                'download-preset-template-btn': 'DOWNLOAD TEMPLATE',
+                'download-preset-template-meta': 'Print-ready PDF from Papelcool cloud',
+                'preset-template-missing': 'This preset does not have a PDF template available yet.',
+                'preset-template-download-error': 'We could not download this template right now. Please try again in a moment.',
                 'search-presets': 'Search presets...',
                 'alert-select-preset': 'Please select a preset character first.',
                 'unknown-character': 'Unknown Character',
@@ -6130,6 +6405,10 @@
                 'part-leg-l': 'Pierna Izq',
                 'part-leg-r': 'Pierna Der',
                 'download-template-btn': 'DESCARGAR PLANTILLA',
+                'download-preset-template-btn': 'DESCARGAR PLANTILLA',
+                'download-preset-template-meta': 'PDF listo para imprimir desde la nube de Papelcool',
+                'preset-template-missing': 'Este personaje aún no tiene una plantilla PDF disponible.',
+                'preset-template-download-error': 'No pudimos descargar esta plantilla en este momento. Inténtalo de nuevo en unos minutos.',
                 'search-presets': 'Buscar modelos...',
                 'alert-select-preset': 'Por favor, selecciona un personaje preestablecido primero.',
                 'unknown-character': 'Personaje Desconocido',
@@ -6301,6 +6580,7 @@
             const path = window.location.pathname.toLowerCase();
             if (path.includes('/studio/custom')) return 'custom';
             if (path.includes('/studio/presets')) return 'presets';
+            if (path.includes('/studio/preset-preview')) return 'preset-preview';
             if (path.includes('/auth/login')) return 'login';
             if (path.includes('/auth/register')) return 'register';
             if (path.includes('/showcase')) return 'showcase';
@@ -6343,6 +6623,11 @@
 
             if (view === 'presets') {
                 openPresetsView();
+                return;
+            }
+
+            if (view === 'preset-preview') {
+                openPresetPreviewView();
                 return;
             }
 
@@ -9766,6 +10051,7 @@
             ensureDeferredViews();
             document.body.classList.remove('showcase-mode');
             const authContainer = document.getElementById('auth-container');
+            updatePresetTemplateDownloadButton();
 
             if (!authenticatedHomeView) {
                 setTimeout(() => openAuthenticatedHome(show), 50);
@@ -9849,6 +10135,7 @@
             setTimeout(() => {
                 onWindowResize();
             }, 350);
+            updatePresetTemplateDownloadButton();
         }
 
         function openPresetsView() {
@@ -9875,6 +10162,56 @@
             activeAppView = 'presets';
             renderFandomsGrid();
             fandomsOverlay.classList.add('active');
+            updatePresetTemplateDownloadButton();
+        }
+
+        function openPresetPreviewView() {
+            ensureDeferredViews();
+            document.body.classList.remove('showcase-mode');
+            document.body.classList.remove('customization-active');
+            if (userProfileView) userProfileView.style.display = 'none';
+            stopShowcase();
+            if (fandomsOverlay) fandomsOverlay.classList.remove('active');
+            const authContainer = document.getElementById('auth-container');
+            if (authContainer) authContainer.style.display = 'none';
+            if (authenticatedHomeView) authenticatedHomeView.classList.remove('active');
+            if (editorPanelWrapper) editorPanelWrapper.style.display = 'none';
+            if (presetsSection) presetsSection.classList.add('hidden');
+            if (customizeSection) customizeSection.classList.add('hidden');
+            if (canvasContainer) {
+                canvasContainer.style.display = '';
+                canvasContainer.classList.remove('showcase-active');
+                canvasContainer.style.cursor = 'grab';
+                canvasContainer.style.pointerEvents = 'auto';
+            }
+
+            shouldRenderScene = true;
+            setGlobalTopbarVisible(false);
+            activeAppView = 'preset-preview';
+
+            const presetActionButtons = document.getElementById('preset-action-buttons');
+            if (presetActionButtons) presetActionButtons.classList.remove('active');
+
+            if (currentPresetCharacter) {
+                showCharacterName(currentPresetCharacter);
+            }
+
+            controls.enabled = true;
+            controls.enablePan = !isLowPowerMobile;
+            controls.enableZoom = true;
+            controls.enableDamping = true;
+            controls.dampingFactor = isLowPowerMobile ? 0.04 : 0.1;
+            controls.minPolarAngle = 0;
+            controls.maxPolarAngle = Math.PI;
+            camera.position.set(0, 1.5, 5);
+            controls.target.copy(modelCenter);
+            controls.update();
+            requestCustomRender(isLowPowerMobile ? 18 : 24);
+
+            setTimeout(() => {
+                onWindowResize();
+            }, 120);
+            updatePresetTemplateDownloadButton();
         }
 
         async function applyInitialViewFromRoute() {
@@ -9895,6 +10232,11 @@
 
             if (requestedView === 'presets') {
                 navigateToView('presets', { updateHistory: false, replaceHistory: true });
+                return;
+            }
+
+            if (requestedView === 'preset-preview') {
+                navigateToView('preset-preview', { updateHistory: false, replaceHistory: true });
                 return;
             }
 
@@ -10006,6 +10348,9 @@
 
         const fandomsGrid = document.getElementById('fandoms-grid');
         const fandomFilter = document.getElementById('fandom-filter');
+        const globalSearchInput = document.getElementById('global-search-input');
+        const mobileMenuButton = document.getElementById('app-mobile-menu-btn');
+        const mobileDropdownMenu = document.getElementById('app-mobile-dropdown-menu');
 
         const characterFandoms = {
             'Steve': 'minecraft', 'Alex': 'minecraft', 'Zombie': 'minecraft',
@@ -10020,6 +10365,110 @@
             'kpop': 'Kpop Demon Hunters'
         };
 
+        let globalPresetSearchQuery = '';
+
+        const R2_PDF_BASE_URL = 'https://pub-9432515251e743b7979ceb8e264f80ec.r2.dev/presets-pdfs/';
+        const availablePresetPdfs = Object.freeze({
+            Abby: 'Abby.pdf',
+            Baby: 'Baby.pdf',
+            Jinu: 'Jinu.pdf',
+            Mira: 'Mira.pdf',
+            Rumi: 'Rumi.pdf',
+            Zoey: 'Zoey.pdf'
+        });
+
+        function getPresetSearchText(name, fandomKey) {
+            const fandomLabel = (fandomLabels[fandomKey] || 'Papelcool Original').toLowerCase();
+            const fandomGroup = fandomKey === 'minecraft'
+                ? 'minecraft steve alex zombie skeleton creeper enderman'
+                : fandomKey === 'kpop'
+                    ? 'kpop demon hunters baby mystery romance abby jinu zoey rumi mira'
+                    : 'papelcool original';
+            return `${name.toLowerCase()} ${fandomLabel} ${fandomGroup}`;
+        }
+
+        function closeMobileDropdown() {
+            if (mobileDropdownMenu) {
+                mobileDropdownMenu.classList.remove('active');
+            }
+        }
+
+        function getPresetPdfUrl(characterName) {
+            const fileName = availablePresetPdfs[characterName];
+            if (!fileName) return null;
+            return `${R2_PDF_BASE_URL}${fileName}`;
+        }
+
+        function updatePresetTemplateDownloadButton() {
+            const presetTemplateDownloadBtn = document.getElementById('preset-template-download');
+            if (!presetTemplateDownloadBtn) return;
+
+            const labelEl = presetTemplateDownloadBtn.querySelector('.preset-template-download-label');
+            const metaEl = presetTemplateDownloadBtn.querySelector('.preset-template-download-meta');
+
+            const shouldShow = activeAppView === 'preset-preview' && Boolean(currentPresetCharacter);
+            presetTemplateDownloadBtn.classList.toggle('active', shouldShow);
+
+            if (!shouldShow) return;
+
+            const templateUrl = getPresetPdfUrl(currentPresetCharacter);
+            const hasTemplate = Boolean(templateUrl);
+            const defaultLabel = langManager.get('download-preset-template-btn');
+            const defaultMeta = langManager.get('download-preset-template-meta');
+
+            presetTemplateDownloadBtn.disabled = !hasTemplate;
+            presetTemplateDownloadBtn.setAttribute('aria-disabled', hasTemplate ? 'false' : 'true');
+            presetTemplateDownloadBtn.dataset.pdfUrl = templateUrl || '';
+            presetTemplateDownloadBtn.title = hasTemplate ? '' : langManager.get('preset-template-missing');
+
+            if (labelEl) {
+                labelEl.textContent = hasTemplate
+                    ? defaultLabel
+                    : (langManager.currentLang === 'es' ? 'PDF no disponible' : 'PDF unavailable');
+            }
+
+            if (metaEl) {
+                metaEl.textContent = hasTemplate
+                    ? defaultMeta
+                    : langManager.get('preset-template-missing');
+            }
+        }
+
+        function downloadPresetTemplate() {
+            if (!currentPresetCharacter) {
+                alert(langManager.get('alert-select-preset'));
+                return;
+            }
+
+            const templateUrl = getPresetPdfUrl(currentPresetCharacter);
+            if (!templateUrl) {
+                alert(langManager.get('preset-template-missing'));
+                return;
+            }
+
+            try {
+                const link = document.createElement('a');
+                link.href = templateUrl;
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                link.download = availablePresetPdfs[currentPresetCharacter] || `Papelcool-${currentPresetCharacter}.pdf`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } catch (error) {
+                console.error('Preset template download failed:', error);
+                alert(langManager.get('preset-template-download-error'));
+            }
+        }
+
+        function toggleMobileDropdown(forceOpen) {
+            if (!mobileDropdownMenu) return;
+            const nextState = typeof forceOpen === 'boolean'
+                ? forceOpen
+                : !mobileDropdownMenu.classList.contains('active');
+            mobileDropdownMenu.classList.toggle('active', nextState);
+        }
+
         function renderFandomsGrid(filter = 'all') {
             if (!fandomsGrid) return;
             fandomsGrid.innerHTML = '';
@@ -10027,6 +10476,10 @@
             Object.keys(presetIcons).forEach(name => {
                 const fandomKey = characterFandoms[name] || 'other';
                 if (filter !== 'all' && fandomKey !== filter) return;
+                if (globalPresetSearchQuery) {
+                    const searchText = getPresetSearchText(name, fandomKey);
+                    if (!searchText.includes(globalPresetSearchQuery)) return;
+                }
 
                 const card = document.createElement('div');
                 card.className = 'fandom-card';
@@ -10046,10 +10499,10 @@
                     </div>
                 `;
 
-                card.addEventListener('click', () => {
+                card.addEventListener('click', async () => {
                     if (window.setPresetCharacter) {
-                        window.setPresetCharacter(name);
-                        navigateToView('custom');
+                        navigateToView('preset-preview');
+                        await window.setPresetCharacter(name);
                     }
                 });
 
@@ -10059,9 +10512,49 @@
             syncFavoriteButtons();
         }
 
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                toggleMobileDropdown();
+            });
+        }
+
+        document.addEventListener('click', (event) => {
+            if (!mobileDropdownMenu || !mobileDropdownMenu.classList.contains('active')) return;
+            const clickedInsideMenu = mobileDropdownMenu.contains(event.target);
+            const clickedMenuButton = mobileMenuButton && mobileMenuButton.contains(event.target);
+            if (!clickedInsideMenu && !clickedMenuButton) {
+                closeMobileDropdown();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeMobileDropdown();
+            }
+        });
+
         if (fandomFilter) {
             fandomFilter.addEventListener('change', (e) => {
                 renderFandomsGrid(e.target.value);
+            });
+        }
+
+        if (globalSearchInput) {
+            globalSearchInput.addEventListener('focus', () => {
+                if (activeAppView !== 'presets') {
+                    navigateToView('presets');
+                }
+            });
+
+            globalSearchInput.addEventListener('input', (e) => {
+                globalPresetSearchQuery = e.target.value.toLowerCase().trim();
+                if (activeAppView !== 'presets') {
+                    navigateToView('presets');
+                    return;
+                }
+                const selectedFilter = fandomFilter ? fandomFilter.value : 'all';
+                renderFandomsGrid(selectedFilter);
             });
         }
 
@@ -10442,16 +10935,11 @@
         let currentPdfInstance = null; // Almacenar la instancia de jsPDF para descarga robusta
 
         // Función unificada para cargar personajes preestablecidos
-        function setPresetCharacter(name) {
+        async function setPresetCharacter(name) {
             currentPresetCharacter = name;
-            applyPresetCharacter(name);
+            await applyPresetCharacter(name);
             showCharacterName(name);
-
-            // Obtener el botón PDF si no está disponible
-            const pdfBtn = document.getElementById('download-pdf-btn-moved');
-            if (pdfBtn) {
-                pdfBtn.classList.add('active');
-            }
+            updatePresetTemplateDownloadButton();
         }
         window.setPresetCharacter = setPresetCharacter;
 
@@ -10473,10 +10961,15 @@
         const backToShowcaseBtn = document.getElementById('back-to-showcase-btn');
         const playModeBtnMoved = document.getElementById('play-mode-btn-desktop-moved');
         const downloadPdfBtnMoved = document.getElementById('download-pdf-btn-moved');
+        const presetTemplateDownloadBtn = document.getElementById('preset-template-download');
 
         // Botón 1: Volver al showcase
         if (backToShowcaseBtn) {
             backToShowcaseBtn.addEventListener('click', () => {
+                if (activeAppView === 'preset-preview') {
+                    navigateToView('presets');
+                    return;
+                }
                 navigateToView('home');
             });
         }
@@ -10498,6 +10991,12 @@
 
                 // Generate PDF directly (triggers save dialog)
                 generatePDF();
+            });
+        }
+
+        if (presetTemplateDownloadBtn) {
+            presetTemplateDownloadBtn.addEventListener('click', () => {
+                downloadPresetTemplate();
             });
         }
 
