@@ -6789,7 +6789,7 @@
         let customRenderBurstFrames = 0;
 
         const renderer = new THREE.WebGLRenderer({
-            antialias: true, // Mantener antialiasing
+            antialias: !isLowPowerMobile, // En móvil priorizamos fluidez del 3D en presets
             alpha: true, // Habilitar transparencia
             powerPreference: 'high-performance'
         });
@@ -6804,6 +6804,23 @@
         controls.enableDamping = true;
         controls.minDistance = 3;  // Zoom in máximo (más cerca)
         controls.maxDistance = 25; // Zoom out máximo (más lejos)
+        let isControlInteracting = false;
+
+        renderer.domElement.addEventListener('pointerdown', () => {
+            if (activeAppView === 'preset-preview') {
+                isControlInteracting = true;
+                requestCustomRender(isLowPowerMobile ? 20 : 28);
+            }
+        });
+        renderer.domElement.addEventListener('pointerup', () => {
+            isControlInteracting = false;
+        });
+        renderer.domElement.addEventListener('pointercancel', () => {
+            isControlInteracting = false;
+        });
+        window.addEventListener('pointerup', () => {
+            isControlInteracting = false;
+        });
 
         function requestCustomRender(frames = 12) {
             customRenderBurstFrames = Math.max(customRenderBurstFrames, frames);
@@ -6816,7 +6833,8 @@
 
         // Iluminación sin sombras - 100% clara y uniforme
         // Luz ambiental fuerte - ilumina todo uniformemente sin crear sombras
-        scene.add(new THREE.AmbientLight(0xffffff, 2.0));
+        const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
+        scene.add(ambientLight);
 
         // Luces direccionales suaves desde múltiples ángulos para eliminar sombras
         // Luz frontal superior
@@ -6843,6 +6861,24 @@
         const backLight = new THREE.DirectionalLight(0xffffff, 0.5);
         backLight.position.set(0, 5, -10);
         scene.add(backLight);
+        const supplementalLights = [frontBottomLight, leftLight, rightLight, backLight];
+
+        function applyPresetPreviewPerformanceProfile() {
+            const inPresetPreview = activeAppView === 'preset-preview';
+            const useLowPowerPresetProfile = isLowPowerMobile && inPresetPreview;
+
+            // En preset-preview móvil reducimos costo por pixel en iluminación dinámica.
+            supplementalLights.forEach((light) => {
+                light.visible = !useLowPowerPresetProfile;
+            });
+
+            controls.enableDamping = !useLowPowerPresetProfile;
+            controls.enablePan = !useLowPowerPresetProfile;
+            controls.rotateSpeed = useLowPowerPresetProfile ? 0.85 : 1.0;
+            controls.zoomSpeed = useLowPowerPresetProfile ? 0.8 : 1.0;
+
+            requestCustomRender(useLowPowerPresetProfile ? 26 : 18);
+        }
 
         // Referencia al grid para poder alternar visibilidad (DISABLED - clean background)
         // const gridHelper = new THREE.GridHelper(200, 200, 0x404040);
@@ -8954,8 +8990,10 @@
             requestAnimationFrame(animate);
             const nowMs = performance.now();
             const isCustomEditingView = activeAppView === 'custom' && appMode !== 'play';
+            const isPresetPreviewView = activeAppView === 'preset-preview' && appMode !== 'play';
+            const mobileFrameBudget = isPresetPreviewView ? (1000 / 24) : (1000 / 30);
 
-            if (isLowPowerMobile && nowMs - lastFrameTimestamp < 1000 / 30) {
+            if (isLowPowerMobile && nowMs - lastFrameTimestamp < mobileFrameBudget) {
                 return;
             }
 
@@ -8968,6 +9006,19 @@
             }
 
             if (isCustomEditingView && !isCircularCameraAnimation && !isAnimatingCamera && customRenderBurstFrames <= 0) {
+                return;
+            }
+
+            // En preset-preview móvil renderizamos por demanda durante interacción
+            // para evitar repintado continuo cuando no hay movimiento.
+            if (
+                isLowPowerMobile &&
+                isPresetPreviewView &&
+                !isCircularCameraAnimation &&
+                !isAnimatingCamera &&
+                !isControlInteracting &&
+                customRenderBurstFrames <= 0
+            ) {
                 return;
             }
 
@@ -10100,6 +10151,7 @@
 
                 shouldRenderScene = true;
                 activeAppView = 'home';
+                applyPresetPreviewPerformanceProfile();
                 authenticatedHomeView.classList.add('active');
                 setGlobalTopbarVisible(true);
                 if (authContainer) authContainer.style.display = 'flex';
@@ -10157,6 +10209,7 @@
             }
             resetModelAppearanceToWhite();
             requestCustomRender(isLowPowerMobile ? 18 : 24);
+            applyPresetPreviewPerformanceProfile();
 
             setTimeout(() => {
                 onWindowResize();
@@ -10186,6 +10239,7 @@
             forceMemoryCleanup();
             setGlobalTopbarVisible(true);
             activeAppView = 'presets';
+            applyPresetPreviewPerformanceProfile();
             renderFandomsGrid();
             fandomsOverlay.classList.add('active');
             updatePresetTemplateDownloadButton();
@@ -10223,15 +10277,16 @@
             }
 
             controls.enabled = true;
-            controls.enablePan = !isLowPowerMobile;
             controls.enableZoom = true;
-            controls.enableDamping = true;
+            controls.enablePan = !isLowPowerMobile;
+            controls.enableDamping = !isLowPowerMobile;
             controls.dampingFactor = isLowPowerMobile ? 0.04 : 0.1;
             controls.minPolarAngle = 0;
             controls.maxPolarAngle = Math.PI;
             camera.position.set(0, 1.5, 5);
             controls.target.copy(modelCenter);
             controls.update();
+            applyPresetPreviewPerformanceProfile();
             requestCustomRender(isLowPowerMobile ? 18 : 24);
 
             setTimeout(() => {
