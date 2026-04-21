@@ -6789,7 +6789,7 @@
         let customRenderBurstFrames = 0;
 
         const renderer = new THREE.WebGLRenderer({
-            antialias: true, // Mantener antialiasing
+            antialias: !isLowPowerMobile, // En móvil priorizamos fluidez del 3D en presets
             alpha: true, // Habilitar transparencia
             powerPreference: 'high-performance'
         });
@@ -6804,6 +6804,23 @@
         controls.enableDamping = true;
         controls.minDistance = 3;  // Zoom in máximo (más cerca)
         controls.maxDistance = 25; // Zoom out máximo (más lejos)
+        let isControlInteracting = false;
+
+        renderer.domElement.addEventListener('pointerdown', () => {
+            if (activeAppView === 'preset-preview') {
+                isControlInteracting = true;
+                requestCustomRender(isLowPowerMobile ? 20 : 28);
+            }
+        });
+        renderer.domElement.addEventListener('pointerup', () => {
+            isControlInteracting = false;
+        });
+        renderer.domElement.addEventListener('pointercancel', () => {
+            isControlInteracting = false;
+        });
+        window.addEventListener('pointerup', () => {
+            isControlInteracting = false;
+        });
 
         function requestCustomRender(frames = 12) {
             customRenderBurstFrames = Math.max(customRenderBurstFrames, frames);
@@ -6816,7 +6833,8 @@
 
         // Iluminación sin sombras - 100% clara y uniforme
         // Luz ambiental fuerte - ilumina todo uniformemente sin crear sombras
-        scene.add(new THREE.AmbientLight(0xffffff, 2.0));
+        const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
+        scene.add(ambientLight);
 
         // Luces direccionales suaves desde múltiples ángulos para eliminar sombras
         // Luz frontal superior
@@ -6843,6 +6861,24 @@
         const backLight = new THREE.DirectionalLight(0xffffff, 0.5);
         backLight.position.set(0, 5, -10);
         scene.add(backLight);
+        const supplementalLights = [frontBottomLight, leftLight, rightLight, backLight];
+
+        function applyPresetPreviewPerformanceProfile() {
+            const inPresetPreview = activeAppView === 'preset-preview';
+            const useLowPowerPresetProfile = isLowPowerMobile && inPresetPreview;
+
+            // En preset-preview móvil reducimos costo por pixel en iluminación dinámica.
+            supplementalLights.forEach((light) => {
+                light.visible = !useLowPowerPresetProfile;
+            });
+
+            controls.enableDamping = !useLowPowerPresetProfile;
+            controls.enablePan = !useLowPowerPresetProfile;
+            controls.rotateSpeed = useLowPowerPresetProfile ? 0.85 : 1.0;
+            controls.zoomSpeed = useLowPowerPresetProfile ? 0.8 : 1.0;
+
+            requestCustomRender(useLowPowerPresetProfile ? 26 : 18);
+        }
 
         // Referencia al grid para poder alternar visibilidad (DISABLED - clean background)
         // const gridHelper = new THREE.GridHelper(200, 200, 0x404040);
@@ -6974,14 +7010,14 @@
         const svgRasterCache = new Map();
         const MAX_CACHED_RASTERS = isLowPowerMobile ? 3 : 12;
 
-        function registerRasterSource(url, source) {
-            if (!url || !source) return;
+        function registerRasterSource(cacheKey, source) {
+            if (!cacheKey || !source) return;
 
-            if (svgRasterCache.has(url)) {
-                svgRasterCache.delete(url);
+            if (svgRasterCache.has(cacheKey)) {
+                svgRasterCache.delete(cacheKey);
             }
 
-            svgRasterCache.set(url, source);
+            svgRasterCache.set(cacheKey, source);
 
             while (svgRasterCache.size > MAX_CACHED_RASTERS) {
                 const firstKey = svgRasterCache.keys().next().value;
@@ -6989,13 +7025,37 @@
             }
         }
 
-        function getCachedRasterSource(url) {
-            if (!svgRasterCache.has(url)) return null;
+        function getCachedRasterSource(cacheKey) {
+            if (!svgRasterCache.has(cacheKey)) return null;
 
-            const source = svgRasterCache.get(url);
-            svgRasterCache.delete(url);
-            svgRasterCache.set(url, source);
+            const source = svgRasterCache.get(cacheKey);
+            svgRasterCache.delete(cacheKey);
+            svgRasterCache.set(cacheKey, source);
             return source;
+        }
+
+        function getAdaptiveRasterLongSide(url) {
+            // SVG sigue siendo vectorial en red/disco; aquí solo controlamos la
+            // rasterización temporal en memoria para WebGL.
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const viewportLongSide = Math.max(
+                canvasContainer?.clientWidth || window.innerWidth || 1024,
+                canvasContainer?.clientHeight || window.innerHeight || 1024
+            );
+
+            const normalizedUrl = (url || '').toLowerCase();
+            let contentMultiplier = 1;
+
+            if (normalizedUrl.includes('/eyes/') || normalizedUrl.includes('/eyebrows/') || normalizedUrl.includes('/nose/')) {
+                contentMultiplier = 0.62;
+            } else if (normalizedUrl.includes('/ear')) {
+                contentMultiplier = 0.7;
+            } else if (normalizedUrl.includes('/hair/')) {
+                contentMultiplier = 0.92;
+            }
+
+            const adaptiveTarget = Math.ceil(viewportLongSide * dpr * contentMultiplier * 1.35);
+            return Math.max(1024, Math.min(2048, adaptiveTarget));
         }
 
         function createTextureFromRasterSource(source) {
@@ -7016,8 +7076,11 @@
         // Función para cargar SVG a alta resolución con colores correctos y cache
         // Convierte SVG vectorial a imagen de alta calidad antes de usarlo como textura
         function loadSVGAsHighResTexture(url, onLoad, onError) {
+            const targetLongSide = getAdaptiveRasterLongSide(url);
+            const cacheKey = `${url}::${targetLongSide}`;
+
             // Verificar cache primero
-            const cachedRaster = getCachedRasterSource(url);
+            const cachedRaster = getCachedRasterSource(cacheKey);
             if (cachedRaster) {
                 if (onLoad) onLoad(createTextureFromRasterSource(cachedRaster));
                 return;
@@ -7029,7 +7092,6 @@
             img.onload = function () {
                 // Subimos resolución en móvil, pero usando el aspect ratio real del SVG para no
                 // reservar memoria cuadrada innecesaria en cada textura.
-                const targetLongSide = isLowPowerMobile ? 2048 : 2048;
                 const sourceWidth = img.naturalWidth || img.width || 1024;
                 const sourceHeight = img.naturalHeight || img.height || 1024;
                 const scale = targetLongSide / Math.max(sourceWidth, sourceHeight, 1);
@@ -7048,7 +7110,7 @@
                 ctx.imageSmoothingQuality = 'high';
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                registerRasterSource(url, canvas);
+                registerRasterSource(cacheKey, canvas);
 
                 if (onLoad) onLoad(createTextureFromRasterSource(canvas));
             };
@@ -8928,8 +8990,10 @@
             requestAnimationFrame(animate);
             const nowMs = performance.now();
             const isCustomEditingView = activeAppView === 'custom' && appMode !== 'play';
+            const isPresetPreviewView = activeAppView === 'preset-preview' && appMode !== 'play';
+            const mobileFrameBudget = isPresetPreviewView ? (1000 / 24) : (1000 / 30);
 
-            if (isLowPowerMobile && nowMs - lastFrameTimestamp < 1000 / 30) {
+            if (isLowPowerMobile && nowMs - lastFrameTimestamp < mobileFrameBudget) {
                 return;
             }
 
@@ -8942,6 +9006,19 @@
             }
 
             if (isCustomEditingView && !isCircularCameraAnimation && !isAnimatingCamera && customRenderBurstFrames <= 0) {
+                return;
+            }
+
+            // En preset-preview móvil renderizamos por demanda durante interacción
+            // para evitar repintado continuo cuando no hay movimiento.
+            if (
+                isLowPowerMobile &&
+                isPresetPreviewView &&
+                !isCircularCameraAnimation &&
+                !isAnimatingCamera &&
+                !isControlInteracting &&
+                customRenderBurstFrames <= 0
+            ) {
                 return;
             }
 
@@ -10074,6 +10151,7 @@
 
                 shouldRenderScene = true;
                 activeAppView = 'home';
+                applyPresetPreviewPerformanceProfile();
                 authenticatedHomeView.classList.add('active');
                 setGlobalTopbarVisible(true);
                 if (authContainer) authContainer.style.display = 'flex';
@@ -10131,6 +10209,7 @@
             }
             resetModelAppearanceToWhite();
             requestCustomRender(isLowPowerMobile ? 18 : 24);
+            applyPresetPreviewPerformanceProfile();
 
             setTimeout(() => {
                 onWindowResize();
@@ -10160,6 +10239,7 @@
             forceMemoryCleanup();
             setGlobalTopbarVisible(true);
             activeAppView = 'presets';
+            applyPresetPreviewPerformanceProfile();
             renderFandomsGrid();
             fandomsOverlay.classList.add('active');
             updatePresetTemplateDownloadButton();
@@ -10197,15 +10277,16 @@
             }
 
             controls.enabled = true;
-            controls.enablePan = !isLowPowerMobile;
             controls.enableZoom = true;
-            controls.enableDamping = true;
+            controls.enablePan = !isLowPowerMobile;
+            controls.enableDamping = !isLowPowerMobile;
             controls.dampingFactor = isLowPowerMobile ? 0.04 : 0.1;
             controls.minPolarAngle = 0;
             controls.maxPolarAngle = Math.PI;
             camera.position.set(0, 1.5, 5);
             controls.target.copy(modelCenter);
             controls.update();
+            applyPresetPreviewPerformanceProfile();
             requestCustomRender(isLowPowerMobile ? 18 : 24);
 
             setTimeout(() => {
@@ -10625,8 +10706,68 @@
             });
         }
 
+        let presetApplicationVersion = 0;
+
+        function collectPresetTextureUrls({ eyeTexture, eyebrowTexture, noseTexture, hairTexture, torsoTexture, armTexture, legTexture }) {
+            const urls = [];
+            const pushIfValid = (value) => {
+                if (typeof value === 'string' && value.trim()) urls.push(value);
+            };
+
+            pushIfValid(eyeTexture?.url);
+            pushIfValid(eyebrowTexture?.url);
+            pushIfValid(noseTexture?.url);
+            pushIfValid(hairTexture?.frontUrl);
+            pushIfValid(hairTexture?.backUrl);
+            pushIfValid(hairTexture?.leftUrl);
+            pushIfValid(hairTexture?.rightUrl);
+            pushIfValid(hairTexture?.upUrl);
+            pushIfValid(torsoTexture?.frontUrl);
+            pushIfValid(torsoTexture?.backUrl);
+            pushIfValid(armTexture?.leftUrl);
+            pushIfValid(armTexture?.rightUrl);
+            pushIfValid(legTexture?.leftUrl);
+            pushIfValid(legTexture?.rightUrl);
+
+            return Array.from(new Set(urls));
+        }
+
+        function loadOptimizedTextureAsync(url) {
+            return new Promise((resolve, reject) => {
+                loadOptimizedTexture(
+                    url,
+                    (texture) => {
+                        try {
+                            if (texture?.dispose) texture.dispose();
+                        } catch (disposeError) {
+                            console.warn('No se pudo liberar textura temporal de precarga:', disposeError);
+                        }
+                        resolve();
+                    },
+                    reject
+                );
+            });
+        }
+
+        async function preloadPresetTextures(urls, runVersion) {
+            if (!Array.isArray(urls) || urls.length === 0) return;
+
+            // En móvil: precarga serial para evitar picos de memoria por múltiples rasterizaciones 2K simultáneas.
+            if (isLowPowerMobile) {
+                for (const url of urls) {
+                    if (runVersion !== presetApplicationVersion) return;
+                    await loadOptimizedTextureAsync(url);
+                }
+                return;
+            }
+
+            await Promise.all(urls.map((url) => loadOptimizedTextureAsync(url)));
+        }
+
         // Función para aplicar personaje preestablecido (OPTIMIZADA PARA MÓVIL)
         async function applyPresetCharacter(characterName) {
+            const runVersion = ++presetApplicationVersion;
+
             // Aplicar color de piel más claro (#F7D5CF) a todos los personajes preestablecidos
             const lightestSkinColor = new THREE.Color('#F7D5CF');
 
@@ -10923,8 +11064,29 @@
                 if (armTexture) tasks.push(async () => { currentArmLeftURL = armTexture.leftUrl; currentArmRightURL = armTexture.rightUrl; changeArmClothing('left', armTexture.leftUrl); changeArmClothing('right', armTexture.rightUrl); });
                 if (legTexture) tasks.push(async () => { currentLegLeftURL = legTexture.leftUrl; currentLegRightURL = legTexture.rightUrl; changeLegClothing('left', legTexture.leftUrl); changeLegClothing('right', legTexture.rightUrl); });
 
-                await Promise.all(tasks.map(t => t()));
+                if (isMobile) {
+                    for (const task of tasks) {
+                        if (runVersion !== presetApplicationVersion) return;
+                        await task();
+                        await new Promise((resolve) => requestAnimationFrame(resolve));
+                    }
+                } else {
+                    await Promise.all(tasks.map(t => t()));
+                }
             };
+
+            const textureUrls = collectPresetTextureUrls({
+                eyeTexture,
+                eyebrowTexture,
+                noseTexture,
+                hairTexture,
+                torsoTexture,
+                armTexture,
+                legTexture
+            });
+
+            await preloadPresetTextures(textureUrls, runVersion);
+            if (runVersion !== presetApplicationVersion) return;
 
             await applyTextures();
         }
