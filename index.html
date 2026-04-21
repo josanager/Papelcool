@@ -6974,14 +6974,14 @@
         const svgRasterCache = new Map();
         const MAX_CACHED_RASTERS = isLowPowerMobile ? 3 : 12;
 
-        function registerRasterSource(url, source) {
-            if (!url || !source) return;
+        function registerRasterSource(cacheKey, source) {
+            if (!cacheKey || !source) return;
 
-            if (svgRasterCache.has(url)) {
-                svgRasterCache.delete(url);
+            if (svgRasterCache.has(cacheKey)) {
+                svgRasterCache.delete(cacheKey);
             }
 
-            svgRasterCache.set(url, source);
+            svgRasterCache.set(cacheKey, source);
 
             while (svgRasterCache.size > MAX_CACHED_RASTERS) {
                 const firstKey = svgRasterCache.keys().next().value;
@@ -6989,13 +6989,37 @@
             }
         }
 
-        function getCachedRasterSource(url) {
-            if (!svgRasterCache.has(url)) return null;
+        function getCachedRasterSource(cacheKey) {
+            if (!svgRasterCache.has(cacheKey)) return null;
 
-            const source = svgRasterCache.get(url);
-            svgRasterCache.delete(url);
-            svgRasterCache.set(url, source);
+            const source = svgRasterCache.get(cacheKey);
+            svgRasterCache.delete(cacheKey);
+            svgRasterCache.set(cacheKey, source);
             return source;
+        }
+
+        function getAdaptiveRasterLongSide(url) {
+            // SVG sigue siendo vectorial en red/disco; aquí solo controlamos la
+            // rasterización temporal en memoria para WebGL.
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const viewportLongSide = Math.max(
+                canvasContainer?.clientWidth || window.innerWidth || 1024,
+                canvasContainer?.clientHeight || window.innerHeight || 1024
+            );
+
+            const normalizedUrl = (url || '').toLowerCase();
+            let contentMultiplier = 1;
+
+            if (normalizedUrl.includes('/eyes/') || normalizedUrl.includes('/eyebrows/') || normalizedUrl.includes('/nose/')) {
+                contentMultiplier = 0.62;
+            } else if (normalizedUrl.includes('/ear')) {
+                contentMultiplier = 0.7;
+            } else if (normalizedUrl.includes('/hair/')) {
+                contentMultiplier = 0.92;
+            }
+
+            const adaptiveTarget = Math.ceil(viewportLongSide * dpr * contentMultiplier * 1.35);
+            return Math.max(1024, Math.min(2048, adaptiveTarget));
         }
 
         function createTextureFromRasterSource(source) {
@@ -7016,8 +7040,11 @@
         // Función para cargar SVG a alta resolución con colores correctos y cache
         // Convierte SVG vectorial a imagen de alta calidad antes de usarlo como textura
         function loadSVGAsHighResTexture(url, onLoad, onError) {
+            const targetLongSide = getAdaptiveRasterLongSide(url);
+            const cacheKey = `${url}::${targetLongSide}`;
+
             // Verificar cache primero
-            const cachedRaster = getCachedRasterSource(url);
+            const cachedRaster = getCachedRasterSource(cacheKey);
             if (cachedRaster) {
                 if (onLoad) onLoad(createTextureFromRasterSource(cachedRaster));
                 return;
@@ -7029,7 +7056,6 @@
             img.onload = function () {
                 // Subimos resolución en móvil, pero usando el aspect ratio real del SVG para no
                 // reservar memoria cuadrada innecesaria en cada textura.
-                const targetLongSide = isLowPowerMobile ? 2048 : 2048;
                 const sourceWidth = img.naturalWidth || img.width || 1024;
                 const sourceHeight = img.naturalHeight || img.height || 1024;
                 const scale = targetLongSide / Math.max(sourceWidth, sourceHeight, 1);
@@ -7048,7 +7074,7 @@
                 ctx.imageSmoothingQuality = 'high';
                 ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                registerRasterSource(url, canvas);
+                registerRasterSource(cacheKey, canvas);
 
                 if (onLoad) onLoad(createTextureFromRasterSource(canvas));
             };
@@ -10625,8 +10651,68 @@
             });
         }
 
+        let presetApplicationVersion = 0;
+
+        function collectPresetTextureUrls({ eyeTexture, eyebrowTexture, noseTexture, hairTexture, torsoTexture, armTexture, legTexture }) {
+            const urls = [];
+            const pushIfValid = (value) => {
+                if (typeof value === 'string' && value.trim()) urls.push(value);
+            };
+
+            pushIfValid(eyeTexture?.url);
+            pushIfValid(eyebrowTexture?.url);
+            pushIfValid(noseTexture?.url);
+            pushIfValid(hairTexture?.frontUrl);
+            pushIfValid(hairTexture?.backUrl);
+            pushIfValid(hairTexture?.leftUrl);
+            pushIfValid(hairTexture?.rightUrl);
+            pushIfValid(hairTexture?.upUrl);
+            pushIfValid(torsoTexture?.frontUrl);
+            pushIfValid(torsoTexture?.backUrl);
+            pushIfValid(armTexture?.leftUrl);
+            pushIfValid(armTexture?.rightUrl);
+            pushIfValid(legTexture?.leftUrl);
+            pushIfValid(legTexture?.rightUrl);
+
+            return Array.from(new Set(urls));
+        }
+
+        function loadOptimizedTextureAsync(url) {
+            return new Promise((resolve, reject) => {
+                loadOptimizedTexture(
+                    url,
+                    (texture) => {
+                        try {
+                            if (texture?.dispose) texture.dispose();
+                        } catch (disposeError) {
+                            console.warn('No se pudo liberar textura temporal de precarga:', disposeError);
+                        }
+                        resolve();
+                    },
+                    reject
+                );
+            });
+        }
+
+        async function preloadPresetTextures(urls, runVersion) {
+            if (!Array.isArray(urls) || urls.length === 0) return;
+
+            // En móvil: precarga serial para evitar picos de memoria por múltiples rasterizaciones 2K simultáneas.
+            if (isLowPowerMobile) {
+                for (const url of urls) {
+                    if (runVersion !== presetApplicationVersion) return;
+                    await loadOptimizedTextureAsync(url);
+                }
+                return;
+            }
+
+            await Promise.all(urls.map((url) => loadOptimizedTextureAsync(url)));
+        }
+
         // Función para aplicar personaje preestablecido (OPTIMIZADA PARA MÓVIL)
         async function applyPresetCharacter(characterName) {
+            const runVersion = ++presetApplicationVersion;
+
             // Aplicar color de piel más claro (#F7D5CF) a todos los personajes preestablecidos
             const lightestSkinColor = new THREE.Color('#F7D5CF');
 
@@ -10923,8 +11009,29 @@
                 if (armTexture) tasks.push(async () => { currentArmLeftURL = armTexture.leftUrl; currentArmRightURL = armTexture.rightUrl; changeArmClothing('left', armTexture.leftUrl); changeArmClothing('right', armTexture.rightUrl); });
                 if (legTexture) tasks.push(async () => { currentLegLeftURL = legTexture.leftUrl; currentLegRightURL = legTexture.rightUrl; changeLegClothing('left', legTexture.leftUrl); changeLegClothing('right', legTexture.rightUrl); });
 
-                await Promise.all(tasks.map(t => t()));
+                if (isMobile) {
+                    for (const task of tasks) {
+                        if (runVersion !== presetApplicationVersion) return;
+                        await task();
+                        await new Promise((resolve) => requestAnimationFrame(resolve));
+                    }
+                } else {
+                    await Promise.all(tasks.map(t => t()));
+                }
             };
+
+            const textureUrls = collectPresetTextureUrls({
+                eyeTexture,
+                eyebrowTexture,
+                noseTexture,
+                hairTexture,
+                torsoTexture,
+                armTexture,
+                legTexture
+            });
+
+            await preloadPresetTextures(textureUrls, runVersion);
+            if (runVersion !== presetApplicationVersion) return;
 
             await applyTextures();
         }
