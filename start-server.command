@@ -1,2 +1,3 @@
 #!/bin/bash
-python3 -m http.server 3000
+cd "$(dirname "$0")"
+node dev-server.mjs

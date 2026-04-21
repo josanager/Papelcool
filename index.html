@@ -2605,6 +2605,7 @@
             color: #111111;
             font-family: 'Fredoka', sans-serif;
             pointer-events: auto;
+            overflow: hidden;
         }
 
         .preset-template-download.active {
@@ -2620,6 +2621,8 @@
             width: 20px;
             height: 20px;
             flex-shrink: 0;
+            position: relative;
+            z-index: 1;
         }
 
         .preset-template-download-copy {
@@ -2628,6 +2631,8 @@
             align-items: flex-start;
             gap: 0.1rem;
             line-height: 1;
+            position: relative;
+            z-index: 1;
         }
 
         .preset-template-download-label {
@@ -2641,6 +2646,25 @@
             font-size: 0.73rem;
             font-weight: 700;
             color: rgba(17, 17, 17, 0.7);
+        }
+
+        .preset-template-download-progress {
+            position: absolute;
+            inset: auto 0 0 0;
+            height: 6px;
+            background: rgba(17, 17, 17, 0.08);
+            display: none;
+        }
+
+        .preset-template-download-progress.active {
+            display: block;
+        }
+
+        .preset-template-download-progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #41d1ff 0%, #20b65f 100%);
+            transition: width 0.18s ease;
         }
 
         @media (max-width: 768px) {
@@ -6037,6 +6061,9 @@
         <span class="preset-template-download-copy">
             <span class="preset-template-download-label" data-i18n="download-preset-template-btn">Descargar plantilla</span>
             <span class="preset-template-download-meta" data-i18n="download-preset-template-meta">PDF listo para imprimir</span>
+        </span>
+        <span class="preset-template-download-progress" aria-hidden="true">
+            <span class="preset-template-download-progress-bar"></span>
         </span>
     </button>
 
@@ -10448,7 +10475,6 @@
 
         let globalPresetSearchQuery = '';
 
-        const R2_PDF_BASE_URL = 'https://pub-9432515251e743b7979ceb8e264f80ec.r2.dev/presets-pdfs/';
         const availablePresetPdfs = Object.freeze({
             Abby: 'Abby.pdf',
             Baby: 'Baby.pdf',
@@ -10457,6 +10483,13 @@
             Rumi: 'Rumi.pdf',
             Zoey: 'Zoey.pdf'
         });
+        const presetTemplateDownloadState = {
+            phase: 'idle',
+            characterName: null,
+            filename: null,
+            progress: 0,
+            progressTimer: null
+        };
 
         function getPresetSearchText(name, fandomKey) {
             const fandomLabel = (fandomLabels[fandomKey] || 'Papelcool Original').toLowerCase();
@@ -10477,7 +10510,197 @@
         function getPresetPdfUrl(characterName) {
             const fileName = availablePresetPdfs[characterName];
             if (!fileName) return null;
-            return `${R2_PDF_BASE_URL}${fileName}`;
+            const downloadUrl = new URL('/api/preset-template-download', window.location.origin);
+            downloadUrl.searchParams.set('character', characterName);
+            return downloadUrl.toString();
+        }
+
+        function isTabletLikeDevice() {
+            const ua = navigator.userAgent || '';
+            const isIPadOSDesktopMode = navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1;
+            return /iPad|Tablet|Android(?!.*Mobile)/i.test(ua) || isIPadOSDesktopMode;
+        }
+
+        function isTouchDownloadDevice() {
+            return isMobileDevice || isTabletLikeDevice();
+        }
+
+        function clearReadyPresetTemplateBlob() {
+            presetTemplateDownloadState.phase = 'idle';
+            presetTemplateDownloadState.characterName = null;
+            presetTemplateDownloadState.filename = null;
+            presetTemplateDownloadState.progress = 0;
+            if (presetTemplateDownloadState.progressTimer) {
+                clearInterval(presetTemplateDownloadState.progressTimer);
+                presetTemplateDownloadState.progressTimer = null;
+            }
+        }
+
+        function getPresetTemplatePhaseText(phase, progress = 0) {
+            const isSpanish = langManager.currentLang === 'es';
+
+            if (phase === 'loading') {
+                return {
+                    label: isSpanish ? `PREPARANDO ${progress}%` : `PREPARING ${progress}%`,
+                    meta: isSpanish ? 'Descargando plantilla...' : 'Downloading template...'
+                };
+            }
+
+            if (phase === 'ready') {
+                return {
+                    label: isSpanish ? 'GUARDANDO PLANTILLA' : 'SAVING TEMPLATE',
+                    meta: isSpanish ? 'Elige nombre y carpeta en tu dispositivo' : 'Choose a name and folder on your device'
+                };
+            }
+
+            if (phase === 'saving') {
+                return {
+                    label: isSpanish ? 'GUARDANDO...' : 'SAVING...',
+                    meta: isSpanish ? 'Esperando a que el sistema termine de guardar' : 'Waiting for the system to finish saving'
+                };
+            }
+
+            return {
+                label: langManager.get('download-preset-template-btn'),
+                meta: langManager.get('download-preset-template-meta')
+            };
+        }
+
+        function updatePresetTemplateButtonBusyState(isBusy, phase = 'loading', progress = presetTemplateDownloadState.progress) {
+            const presetTemplateDownloadBtn = document.getElementById('preset-template-download');
+            if (!presetTemplateDownloadBtn) return;
+
+            const labelEl = presetTemplateDownloadBtn.querySelector('.preset-template-download-label');
+            const metaEl = presetTemplateDownloadBtn.querySelector('.preset-template-download-meta');
+            const progressEl = presetTemplateDownloadBtn.querySelector('.preset-template-download-progress');
+            const progressBarEl = presetTemplateDownloadBtn.querySelector('.preset-template-download-progress-bar');
+            const hasTemplate = Boolean(currentPresetCharacter && getPresetPdfUrl(currentPresetCharacter));
+            const phaseText = getPresetTemplatePhaseText(phase, progress);
+            const showProgress = phase === 'loading' || phase === 'ready' || phase === 'saving';
+
+            presetTemplateDownloadBtn.disabled = isBusy || !hasTemplate;
+            presetTemplateDownloadBtn.setAttribute('aria-busy', isBusy ? 'true' : 'false');
+            presetTemplateDownloadBtn.dataset.phase = phase;
+
+            if (labelEl) {
+                labelEl.textContent = isBusy
+                    ? phaseText.label
+                    : hasTemplate
+                        ? langManager.get('download-preset-template-btn')
+                        : (langManager.currentLang === 'es' ? 'PDF no disponible' : 'PDF unavailable');
+            }
+
+            if (metaEl) {
+                metaEl.textContent = isBusy
+                    ? phaseText.meta
+                    : hasTemplate
+                        ? langManager.get('download-preset-template-meta')
+                        : langManager.get('preset-template-missing');
+            }
+
+            if (progressEl) {
+                progressEl.classList.toggle('active', showProgress);
+            }
+
+            if (progressBarEl) {
+                progressBarEl.style.width = `${Math.max(0, Math.min(100, progress))}%`;
+            }
+        }
+
+        async function fetchPresetTemplateBlob(templateUrl, onProgress) {
+            const response = await fetch(templateUrl, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/pdf'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`Template download failed with status ${response.status}`);
+            }
+
+            const contentLength = Number(response.headers.get('Content-Length')) || 0;
+            if (!response.body || !contentLength) {
+                const fallbackBlob = await response.blob();
+                if (onProgress) onProgress(100);
+                return fallbackBlob;
+            }
+
+            const reader = response.body.getReader();
+            const chunks = [];
+            let receivedLength = 0;
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                if (value) {
+                    chunks.push(value);
+                    receivedLength += value.length;
+                    if (onProgress) {
+                        const progress = Math.min(100, Math.max(1, Math.round((receivedLength / contentLength) * 100)));
+                        onProgress(progress);
+                    }
+                }
+            }
+
+            return new Blob(chunks, { type: response.headers.get('Content-Type') || 'application/pdf' });
+        }
+
+        async function requestSystemSaveHandle(filename) {
+            return window.showSaveFilePicker({
+                suggestedName: filename,
+                types: [{
+                    description: 'PDF Document',
+                    accept: { 'application/pdf': ['.pdf'] }
+                }]
+            });
+        }
+
+        async function saveBlobToHandle(handle, blob) {
+            const writable = await handle.createWritable();
+            await writable.write(blob);
+            await writable.close();
+        }
+
+        async function shareBlobOnTouchDevices(blob, filename) {
+            if (!isTouchDownloadDevice() || typeof navigator.share !== 'function') {
+                return false;
+            }
+
+            try {
+                const pdfFile = new File([blob], filename, { type: 'application/pdf' });
+                if (typeof navigator.canShare === 'function' && !navigator.canShare({ files: [pdfFile] })) {
+                    return false;
+                }
+
+                await navigator.share({
+                    title: filename,
+                    files: [pdfFile]
+                });
+                return true;
+            } catch (error) {
+                if (error?.name === 'AbortError') {
+                    throw error;
+                }
+
+                console.warn('Native share unavailable for preset PDF download:', error);
+                return false;
+            }
+        }
+
+        function triggerBrowserBlobDownload(blob, filename) {
+            const objectUrl = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = objectUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            setTimeout(() => {
+                URL.revokeObjectURL(objectUrl);
+            }, 1000);
         }
 
         function updatePresetTemplateDownloadButton() {
@@ -10486,6 +10709,8 @@
 
             const labelEl = presetTemplateDownloadBtn.querySelector('.preset-template-download-label');
             const metaEl = presetTemplateDownloadBtn.querySelector('.preset-template-download-meta');
+            const progressEl = presetTemplateDownloadBtn.querySelector('.preset-template-download-progress');
+            const progressBarEl = presetTemplateDownloadBtn.querySelector('.preset-template-download-progress-bar');
 
             const shouldShow = activeAppView === 'preset-preview' && Boolean(currentPresetCharacter);
             presetTemplateDownloadBtn.classList.toggle('active', shouldShow);
@@ -10499,7 +10724,9 @@
 
             presetTemplateDownloadBtn.disabled = !hasTemplate;
             presetTemplateDownloadBtn.setAttribute('aria-disabled', hasTemplate ? 'false' : 'true');
+            presetTemplateDownloadBtn.setAttribute('aria-busy', 'false');
             presetTemplateDownloadBtn.dataset.pdfUrl = templateUrl || '';
+            presetTemplateDownloadBtn.dataset.phase = hasTemplate ? 'idle' : 'unavailable';
             presetTemplateDownloadBtn.title = hasTemplate ? '' : langManager.get('preset-template-missing');
 
             if (labelEl) {
@@ -10513,9 +10740,46 @@
                     ? defaultMeta
                     : langManager.get('preset-template-missing');
             }
+
+            if (progressEl) {
+                progressEl.classList.remove('active');
+            }
+
+            if (progressBarEl) {
+                progressBarEl.style.width = '0%';
+            }
         }
 
-        function downloadPresetTemplate() {
+        function startPresetTemplateProgressFallback() {
+            if (presetTemplateDownloadState.progressTimer) {
+                clearInterval(presetTemplateDownloadState.progressTimer);
+            }
+
+            presetTemplateDownloadState.progressTimer = setInterval(() => {
+                if (presetTemplateDownloadState.phase !== 'loading') {
+                    clearInterval(presetTemplateDownloadState.progressTimer);
+                    presetTemplateDownloadState.progressTimer = null;
+                    return;
+                }
+
+                if (presetTemplateDownloadState.progress < 94) {
+                    presetTemplateDownloadState.progress += 3;
+                    updatePresetTemplateButtonBusyState(true, 'loading', presetTemplateDownloadState.progress);
+                }
+            }, 140);
+        }
+
+        function finishPresetTemplateProgress() {
+            if (presetTemplateDownloadState.progressTimer) {
+                clearInterval(presetTemplateDownloadState.progressTimer);
+                presetTemplateDownloadState.progressTimer = null;
+            }
+
+            presetTemplateDownloadState.progress = 100;
+            updatePresetTemplateButtonBusyState(true, 'ready', 100);
+        }
+
+        async function downloadPresetTemplate() {
             if (!currentPresetCharacter) {
                 alert(langManager.get('alert-select-preset'));
                 return;
@@ -10527,18 +10791,53 @@
                 return;
             }
 
+            const filename = availablePresetPdfs[currentPresetCharacter] || `Papelcool-${currentPresetCharacter}.pdf`;
+            const shouldUseSystemPicker = typeof window.showSaveFilePicker === 'function' && !isTouchDownloadDevice();
+            let saveHandle = null;
+
             try {
-                const link = document.createElement('a');
-                link.href = templateUrl;
-                link.target = '_blank';
-                link.rel = 'noopener noreferrer';
-                link.download = availablePresetPdfs[currentPresetCharacter] || `Papelcool-${currentPresetCharacter}.pdf`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                clearReadyPresetTemplateBlob();
+                presetTemplateDownloadState.phase = 'loading';
+                presetTemplateDownloadState.characterName = currentPresetCharacter;
+                presetTemplateDownloadState.filename = filename;
+                presetTemplateDownloadState.progress = 1;
+                updatePresetTemplateButtonBusyState(true, 'loading', 1);
+                startPresetTemplateProgressFallback();
+
+                if (shouldUseSystemPicker) {
+                    saveHandle = await requestSystemSaveHandle(filename);
+                }
+
+                const pdfBlob = await fetchPresetTemplateBlob(templateUrl, (progress) => {
+                    if (presetTemplateDownloadState.progressTimer) {
+                        clearInterval(presetTemplateDownloadState.progressTimer);
+                        presetTemplateDownloadState.progressTimer = null;
+                    }
+                    presetTemplateDownloadState.progress = progress;
+                    updatePresetTemplateButtonBusyState(true, 'loading', progress);
+                });
+                finishPresetTemplateProgress();
+
+                presetTemplateDownloadState.phase = 'saving';
+                updatePresetTemplateButtonBusyState(true, 'saving', 100);
+
+                if (shouldUseSystemPicker) {
+                    await saveBlobToHandle(saveHandle, pdfBlob);
+                } else {
+                    const sharedFromTouchDevice = await shareBlobOnTouchDevices(pdfBlob, filename);
+                    if (!sharedFromTouchDevice) {
+                        triggerBrowserBlobDownload(pdfBlob, filename);
+                    }
+                }
             } catch (error) {
-                console.error('Preset template download failed:', error);
-                alert(langManager.get('preset-template-download-error'));
+                clearReadyPresetTemplateBlob();
+                if (error?.name !== 'AbortError') {
+                    console.error('Preset template download failed:', error);
+                    alert(langManager.get('preset-template-download-error'));
+                }
+            } finally {
+                clearReadyPresetTemplateBlob();
+                updatePresetTemplateDownloadButton();
             }
         }
 
@@ -11098,6 +11397,7 @@
 
         // Función unificada para cargar personajes preestablecidos
         async function setPresetCharacter(name) {
+            clearReadyPresetTemplateBlob();
             currentPresetCharacter = name;
             await applyPresetCharacter(name);
             showCharacterName(name);
