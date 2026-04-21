@@ -7013,6 +7013,9 @@
         // No requieren redimensionamiento ni compresión
         // Esto ahorra memoria RAM y mejora el rendimiento
 
+        // Cola global para escalonar la rasterización en CPU/RAM y evitar picos de memoria (OOM) en Safari iOS
+        let rasterizationQueue = Promise.resolve();
+
         // Función para cargar SVG a alta resolución con colores correctos y cache
         // Convierte SVG vectorial a imagen de alta calidad antes de usarlo como textura
         function loadSVGAsHighResTexture(url, onLoad, onError) {
@@ -7027,30 +7030,45 @@
             img.crossOrigin = 'anonymous';
 
             img.onload = function () {
-                // Subimos resolución en móvil, pero usando el aspect ratio real del SVG para no
-                // reservar memoria cuadrada innecesaria en cada textura.
-                const targetLongSide = isLowPowerMobile ? 2048 : 2048;
-                const sourceWidth = img.naturalWidth || img.width || 1024;
-                const sourceHeight = img.naturalHeight || img.height || 1024;
-                const scale = targetLongSide / Math.max(sourceWidth, sourceHeight, 1);
-                const canvas = document.createElement('canvas');
-                canvas.width = Math.max(1, Math.round(sourceWidth * scale));
-                canvas.height = Math.max(1, Math.round(sourceHeight * scale));
+                rasterizationQueue = rasterizationQueue.then(() => {
+                    return new Promise(resolve => {
+                        try {
+                            // Subimos resolución en móvil, pero usando el aspect ratio real del SVG para no
+                            // reservar memoria cuadrada innecesaria en cada textura.
+                            const targetLongSide = isLowPowerMobile ? 2048 : 2048;
+                            const sourceWidth = img.naturalWidth || img.width || 1024;
+                            const sourceHeight = img.naturalHeight || img.height || 1024;
+                            const scale = targetLongSide / Math.max(sourceWidth, sourceHeight, 1);
+                            const canvas = document.createElement('canvas');
+                            canvas.width = Math.max(1, Math.round(sourceWidth * scale));
+                            canvas.height = Math.max(1, Math.round(sourceHeight * scale));
 
-                // Contexto optimizado
-                const ctx = canvas.getContext('2d', {
-                    alpha: true,
-                    willReadFrequently: false
+                            // Contexto optimizado
+                            const ctx = canvas.getContext('2d', {
+                                alpha: true,
+                                willReadFrequently: false
+                            });
+
+                            // Dibujar SVG a alta resolución con calidad máxima
+                            if (ctx) {
+                                ctx.imageSmoothingEnabled = true;
+                                ctx.imageSmoothingQuality = 'high';
+                                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                                registerRasterSource(url, canvas);
+                                if (onLoad) onLoad(createTextureFromRasterSource(canvas));
+                            } else {
+                                console.error('Failed to get canvas 2d context for SVG rasterization');
+                            }
+                        } catch (error) {
+                            console.error('Error rasterizing SVG:', error);
+                        } finally {
+                            // Pequeña pausa para permitir que el hilo principal se limpie (Garbage Collection y GPU upload)
+                            setTimeout(resolve, 50);
+                        }
+                    });
+                }).catch(error => {
+                    console.error('Error in rasterization queue:', error);
                 });
-
-                // Dibujar SVG a alta resolución con calidad máxima
-                ctx.imageSmoothingEnabled = true;
-                ctx.imageSmoothingQuality = 'high';
-                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-                registerRasterSource(url, canvas);
-
-                if (onLoad) onLoad(createTextureFromRasterSource(canvas));
             };
 
             img.onerror = function (error) {
@@ -7513,6 +7531,16 @@
             if (!modelParts.head) return;
             currentEyeTextureURL = url;
 
+            // En móviles, eliminar meshes antiguos completamente antes de crear nuevos
+            if (isMobileDevice && !isInitialLoad && eyesMesh) {
+                modelParts.head.remove(eyesMesh);
+                if (eyesMesh.material.map) eyesMesh.material.map.dispose();
+                eyesMesh.material.dispose();
+                eyesMesh.geometry.dispose();
+                eyesMesh = null;
+                forceMemoryCleanup();
+            }
+
             loadOptimizedTexture(url,
                 (texture) => {
                     if (currentEyeTextureURL !== url) {
@@ -7572,6 +7600,16 @@
             if (!modelParts.head) return;
             currentEyebrowTextureURL = url;
 
+            // En móviles, eliminar meshes antiguos completamente antes de crear nuevos
+            if (isMobileDevice && !isInitialLoad && eyebrowsMesh) {
+                modelParts.head.remove(eyebrowsMesh);
+                if (eyebrowsMesh.material.map) eyebrowsMesh.material.map.dispose();
+                eyebrowsMesh.material.dispose();
+                eyebrowsMesh.geometry.dispose();
+                eyebrowsMesh = null;
+                forceMemoryCleanup();
+            }
+
             loadOptimizedTexture(url,
                 (texture) => {
                     if (currentEyebrowTextureURL !== url) {
@@ -7629,6 +7667,16 @@
         function changeNoseTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
             currentNoseTextureURL = url;
+
+            // En móviles, eliminar meshes antiguos completamente antes de crear nuevos
+            if (isMobileDevice && !isInitialLoad && noseMesh) {
+                modelParts.head.remove(noseMesh);
+                if (noseMesh.material.map) noseMesh.material.map.dispose();
+                noseMesh.material.dispose();
+                noseMesh.geometry.dispose();
+                noseMesh = null;
+                forceMemoryCleanup();
+            }
 
             loadOptimizedTexture(url,
                 (texture) => {
@@ -7723,6 +7771,23 @@
             if (!modelParts.head) return;
             currentEarTextureURL = url;
 
+            const targetEarBefore = side === 'left' ? modelParts.ears[1] : modelParts.ears[0];
+            const liveMeshBefore = side === 'left' ? earLeftMesh : earRightMesh;
+
+            // En móviles, eliminar meshes antiguos completamente antes de crear nuevos
+            if (isMobileDevice && !isInitialLoad && liveMeshBefore) {
+                modelParts.head.remove(liveMeshBefore);
+                if (liveMeshBefore.material.map) liveMeshBefore.material.map.dispose();
+                liveMeshBefore.material.dispose();
+                liveMeshBefore.geometry.dispose();
+                if (side === 'left') {
+                    earLeftMesh = null;
+                } else {
+                    earRightMesh = null;
+                }
+                forceMemoryCleanup();
+            }
+
             loadOptimizedTexture(url,
                 (texture) => {
                     if (currentEarTextureURL !== url) {
@@ -7802,6 +7867,46 @@
             currentHairLeftURL = leftUrl;
             currentHairRightURL = rightUrl;
             currentHairUpURL = upUrl;
+
+            // En móviles, eliminar meshes antiguos completamente antes de crear nuevos
+            if (isMobileDevice && !isInitialLoad && frontUrl !== null) {
+                if (hairFrontMesh) {
+                    modelParts.head.remove(hairFrontMesh);
+                    if (hairFrontMesh.material.map) hairFrontMesh.material.map.dispose();
+                    hairFrontMesh.material.dispose();
+                    hairFrontMesh.geometry.dispose();
+                    hairFrontMesh = null;
+                }
+                if (hairBackMesh) {
+                    modelParts.head.remove(hairBackMesh);
+                    if (hairBackMesh.material.map) hairBackMesh.material.map.dispose();
+                    hairBackMesh.material.dispose();
+                    hairBackMesh.geometry.dispose();
+                    hairBackMesh = null;
+                }
+                if (hairLeftMesh) {
+                    modelParts.head.remove(hairLeftMesh);
+                    if (hairLeftMesh.material.map) hairLeftMesh.material.map.dispose();
+                    hairLeftMesh.material.dispose();
+                    hairLeftMesh.geometry.dispose();
+                    hairLeftMesh = null;
+                }
+                if (hairRightMesh) {
+                    modelParts.head.remove(hairRightMesh);
+                    if (hairRightMesh.material.map) hairRightMesh.material.map.dispose();
+                    hairRightMesh.material.dispose();
+                    hairRightMesh.geometry.dispose();
+                    hairRightMesh = null;
+                }
+                if (hairUpMesh) {
+                    modelParts.head.remove(hairUpMesh);
+                    if (hairUpMesh.material.map) hairUpMesh.material.map.dispose();
+                    hairUpMesh.material.dispose();
+                    hairUpMesh.geometry.dispose();
+                    hairUpMesh = null;
+                }
+                forceMemoryCleanup();
+            }
 
             // Si frontUrl es null, significa "None" - remover todo el cabello
             if (frontUrl === null) {
