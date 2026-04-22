@@ -324,9 +324,56 @@ function updateAuthUI(user) {
     }
 }
 
+/**
+ * Recover an OAuth session when Supabase redirects back with tokens in the URL hash.
+ * This makes the callback flow resilient across static hosting environments.
+ * @returns {Promise<Object|null>} The recovered user, if any
+ */
+async function recoverSessionFromHash() {
+    const client = getSupabaseClient();
+    if (!client) return null;
+    if (!window.location.hash) return null;
+
+    const hash = window.location.hash.startsWith('#')
+        ? window.location.hash.slice(1)
+        : window.location.hash;
+    const params = new URLSearchParams(hash);
+    const accessToken = params.get('access_token');
+    const refreshToken = params.get('refresh_token');
+
+    if (!accessToken || !refreshToken) return null;
+
+    try {
+        const { data, error } = await client.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken
+        });
+
+        if (error) {
+            console.error('Hash session recovery error:', error.message);
+            return null;
+        }
+
+        // Remove OAuth tokens from the address bar once they have been consumed.
+        const cleanUrl = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+        window.history.replaceState({}, document.title, cleanUrl);
+
+        if (data?.user) {
+            await upsertUserProfile(data.user);
+            return data.user;
+        }
+    } catch (err) {
+        console.error('Hash session recovery exception:', err);
+    }
+
+    return null;
+}
+
 // Initialize auth state listener on load
 document.addEventListener('DOMContentLoaded', async () => {
     if (!isSupabaseConfigured()) return;
+
+    await recoverSessionFromHash();
 
     // Check initial auth state
     const user = await getCurrentUser();
@@ -353,3 +400,4 @@ window.upsertUserProfile = upsertUserProfile;
 window.searchCreators = searchCreators;
 window.isNicknameAvailable = isNicknameAvailable;
 window.updateAuthUI = updateAuthUI;
+window.recoverSessionFromHash = recoverSessionFromHash;

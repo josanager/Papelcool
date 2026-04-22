@@ -1006,6 +1006,79 @@
             cursor: grabbing;
         }
 
+        #preset-preview-stage {
+            position: fixed;
+            inset: 0;
+            z-index: 3;
+            display: none;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at top, rgba(255, 230, 0, 0.22), transparent 34%),
+                linear-gradient(180deg, #e0f2fe 0%, #f7fbff 58%, #eef6ff 100%);
+            pointer-events: auto;
+        }
+
+        #preset-preview-stage.active {
+            display: block;
+        }
+
+        #preset-preview-stage::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(90deg, rgba(0, 0, 0, 0.035) 1px, transparent 1px),
+                linear-gradient(rgba(0, 0, 0, 0.035) 1px, transparent 1px);
+            background-size: 24px 24px;
+            pointer-events: none;
+        }
+
+        #preset-preview-scene {
+            position: absolute;
+            inset: 0;
+            touch-action: none;
+        }
+
+        #preset-preview-scene canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .preset-preview-shell {
+            position: absolute;
+            left: 50%;
+            bottom: calc(env(safe-area-inset-bottom, 0px) + 1.1rem);
+            transform: translateX(-50%);
+            width: min(92vw, 420px);
+            padding: 0.9rem 1rem;
+            background: rgba(255, 255, 255, 0.92);
+            border: 3px solid #000;
+            border-radius: 16px;
+            box-shadow: 5px 5px 0 rgba(0, 0, 0, 1);
+            pointer-events: none;
+        }
+
+        .preset-preview-shell strong,
+        .preset-preview-shell span {
+            display: block;
+            color: #000;
+            text-align: center;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .preset-preview-shell strong {
+            font-size: 0.96rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .preset-preview-shell span {
+            margin-top: 0.2rem;
+            font-size: 0.8rem;
+            opacity: 0.72;
+        }
+
         .ui-panel {
             background: white;
             border: 4px solid black;
@@ -1654,6 +1727,21 @@
 
             #canvas-container {
                 height: 100vh;
+            }
+
+            .preset-preview-shell {
+                bottom: calc(env(safe-area-inset-bottom, 0px) + 0.9rem);
+                width: min(94vw, 360px);
+                padding: 0.78rem 0.9rem;
+                border-radius: 14px;
+            }
+
+            .preset-preview-shell strong {
+                font-size: 0.88rem;
+            }
+
+            .preset-preview-shell span {
+                font-size: 0.76rem;
             }
 
             /* Ocultar el botón de modo dentro del panel en móvil */
@@ -5815,9 +5903,9 @@
                                     <label for="auth-terms"
                                         style="font-family: 'Fredoka', sans-serif; font-size: 0.85rem; font-weight: 600; color: #374151; cursor: pointer;"
                                         data-i18n="auth-terms-label-html">
-                                        I agree to the <a href="#"
+                                        I agree to the <a href="/terms/"
                                             style="color: #407BFF; text-decoration: underline; font-weight: 700;">Sticker
-                                            Rules</a> & <a href="#"
+                                            Rules</a> & <a href="/privacy/"
                                             style="color: #407BFF; text-decoration: underline; font-weight: 700;">Privacy</a>
                                     </label>
                                 </div>
@@ -6001,6 +6089,13 @@
     </div>
 
     <div id="canvas-container"></div>
+    <div id="preset-preview-stage" aria-hidden="true">
+        <div id="preset-preview-scene"></div>
+        <div class="preset-preview-shell">
+            <strong>Vista previa ligera para colecciones</strong>
+            <span>Arrastra para girar. Pellizca para acercar.</span>
+        </div>
+    </div>
     <div id="loading-indicator">
         <img src="logo.svg" alt="Papelcool Logo" class="loading-logo">
 
@@ -6394,7 +6489,7 @@
                 'search-presets': 'Search Presets...',
                 'auth-step-1': 'Step 01/02',
                 'auth-step-2': 'Step 02/02',
-                'auth-terms-label-html': 'I agree to the <a href="#" style="color: #407BFF; text-decoration: underline; font-weight: 700;">Sticker Rules</a> & <a href="#" style="color: #407BFF; text-decoration: underline; font-weight: 700;">Privacy</a>',
+                'auth-terms-label-html': 'I agree to the <a href="/terms/" target="_blank" rel="noopener noreferrer" style="color: #407BFF; text-decoration: underline; font-weight: 700;">Sticker Rules</a> & <a href="/privacy/" target="_blank" rel="noopener noreferrer" style="color: #407BFF; text-decoration: underline; font-weight: 700;">Privacy</a>',
                 'prof-level-prefix': 'Level',
                 'prof-joined-prefix': 'Joined',
                 'cat-load-btn': 'Load',
@@ -6489,7 +6584,7 @@
                 'search-presets': 'Buscar Ajustes...',
                 'auth-step-1': 'Paso 01/02',
                 'auth-step-2': 'Paso 02/02',
-                'auth-terms-label-html': 'Acepto las <a href="#" style="color: #407BFF; text-decoration: underline; font-weight: 700;">Reglas de Stickers</a> y la <a href="#" style="color: #407BFF; text-decoration: underline; font-weight: 700;">Privacidad</a>',
+                'auth-terms-label-html': 'Acepto las <a href="/terms/" target="_blank" rel="noopener noreferrer" style="color: #407BFF; text-decoration: underline; font-weight: 700;">Reglas de Stickers</a> y la <a href="/privacy/" target="_blank" rel="noopener noreferrer" style="color: #407BFF; text-decoration: underline; font-weight: 700;">Privacidad</a>',
                 'prof-level-prefix': 'Nivel',
                 'prof-joined-prefix': 'Se unió en',
                 'cat-load-btn': 'Cargar',
@@ -7235,6 +7330,764 @@
         let legRightFrontMesh = null;
         let legRightBackMesh = null;
 
+        const presetPreviewTextureCache = new Map();
+        const MAX_PRESET_PREVIEW_TEXTURES = isLowPowerMobile ? 4 : 10;
+        const presetPreviewRuntime = {
+            stageEl: null,
+            mountEl: null,
+            scene: null,
+            camera: null,
+            renderer: null,
+            controls: null,
+            modelRoot: null,
+            parts: null,
+            overlays: {},
+            rafId: 0,
+            requestedFrames: 0,
+            interacting: false,
+            isInitialized: false,
+            activeCharacter: null,
+            pendingCharacter: null
+        };
+
+        function rememberPresetPreviewTexture(cacheKey, source) {
+            if (!cacheKey || !source) return;
+            if (presetPreviewTextureCache.has(cacheKey)) {
+                presetPreviewTextureCache.delete(cacheKey);
+            }
+            presetPreviewTextureCache.set(cacheKey, source);
+
+            while (presetPreviewTextureCache.size > MAX_PRESET_PREVIEW_TEXTURES) {
+                const firstKey = presetPreviewTextureCache.keys().next().value;
+                presetPreviewTextureCache.delete(firstKey);
+            }
+        }
+
+        function getPresetPreviewTextureSource(cacheKey) {
+            if (!presetPreviewTextureCache.has(cacheKey)) return null;
+            const source = presetPreviewTextureCache.get(cacheKey);
+            presetPreviewTextureCache.delete(cacheKey);
+            presetPreviewTextureCache.set(cacheKey, source);
+            return source;
+        }
+
+        function getPresetPreviewRasterLongSide(url) {
+            const longSide = Math.max(window.innerWidth || 360, window.innerHeight || 640);
+            const dpr = Math.min(window.devicePixelRatio || 1, isLowPowerMobile ? 1.1 : 1.4);
+            const normalizedUrl = (url || '').toLowerCase();
+            let multiplier = 0.8;
+
+            if (normalizedUrl.includes('/eyes/') || normalizedUrl.includes('/eyebrow') || normalizedUrl.includes('/nose/')) {
+                multiplier = 0.44;
+            } else if (normalizedUrl.includes('/hair/')) {
+                multiplier = 0.74;
+            } else if (normalizedUrl.includes('/arms/') || normalizedUrl.includes('/legs/') || normalizedUrl.includes('/torso/')) {
+                multiplier = 0.6;
+            }
+
+            const target = Math.round(longSide * dpr * multiplier);
+            return Math.max(320, Math.min(isLowPowerMobile ? 768 : 1024, target));
+        }
+
+        function createPresetPreviewTexture(source) {
+            const texture = new THREE.CanvasTexture(source);
+            texture.colorSpace = THREE.SRGBColorSpace;
+            texture.minFilter = THREE.LinearFilter;
+            texture.magFilter = THREE.LinearFilter;
+            texture.generateMipmaps = false;
+            texture.anisotropy = 1;
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        function loadPresetPreviewTexture(url) {
+            return new Promise((resolve, reject) => {
+                if (!url) {
+                    resolve(null);
+                    return;
+                }
+
+                const targetLongSide = getPresetPreviewRasterLongSide(url);
+                const cacheKey = `${url}::${targetLongSide}`;
+                const cachedSource = getPresetPreviewTextureSource(cacheKey);
+                if (cachedSource) {
+                    resolve(createPresetPreviewTexture(cachedSource));
+                    return;
+                }
+
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+
+                img.onload = () => {
+                    const sourceWidth = img.naturalWidth || img.width || 512;
+                    const sourceHeight = img.naturalHeight || img.height || 512;
+                    const scale = targetLongSide / Math.max(sourceWidth, sourceHeight, 1);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.max(1, Math.round(sourceWidth * scale));
+                    canvas.height = Math.max(1, Math.round(sourceHeight * scale));
+
+                    const ctx = canvas.getContext('2d', {
+                        alpha: true,
+                        willReadFrequently: false
+                    });
+
+                    if (!ctx) {
+                        reject(new Error('No se pudo crear canvas para preset preview.'));
+                        return;
+                    }
+
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    rememberPresetPreviewTexture(cacheKey, canvas);
+                    resolve(createPresetPreviewTexture(canvas));
+                };
+
+                img.onerror = (error) => reject(error);
+                img.src = url;
+            });
+        }
+
+        function extractModelPartsFromRoot(root) {
+            const parts = {
+                head: null,
+                torso: null,
+                arms: [],
+                legs: []
+            };
+
+            root.traverse((child) => {
+                if (!child.isMesh) return;
+                const name = (child.name || '').toLowerCase();
+                if (name.includes('head')) parts.head = child;
+                else if (name.includes('torso')) parts.torso = child;
+                else if (name.includes('arm')) parts.arms.push(child);
+                else if (name.includes('leg')) parts.legs.push(child);
+            });
+
+            return parts;
+        }
+
+        function cloneCleanPresetPreviewModel(sourceModel) {
+            const clone = sourceModel.clone(true);
+            const disposablePlaneMeshes = [];
+
+            clone.traverse((child) => {
+                if (!child.isMesh) return;
+
+                if (child.geometry?.type === 'PlaneGeometry') {
+                    disposablePlaneMeshes.push(child);
+                    return;
+                }
+
+                if (Array.isArray(child.material)) {
+                    child.material = child.material.map((material) => {
+                        const nextMaterial = material.clone();
+                        if (nextMaterial.color) nextMaterial.color.setHex(0xffffff);
+                        nextMaterial.map = null;
+                        nextMaterial.transparent = false;
+                        nextMaterial.needsUpdate = true;
+                        return nextMaterial;
+                    });
+                } else if (child.material) {
+                    child.material = child.material.clone();
+                    if (child.material.color) child.material.color.setHex(0xffffff);
+                    child.material.map = null;
+                    child.material.transparent = false;
+                    child.material.needsUpdate = true;
+                }
+            });
+
+            disposablePlaneMeshes.forEach((mesh) => {
+                if (mesh.parent) mesh.parent.remove(mesh);
+            });
+
+            clone.position.set(0, groundY + 0.02, 0);
+            clone.rotation.set(0, 0, 0);
+            clone.scale.copy(sourceModel.scale);
+
+            return clone;
+        }
+
+        function disposePresetPreviewOverlayMesh(mesh) {
+            if (!mesh) return;
+            if (mesh.material?.map) mesh.material.map.dispose();
+            if (mesh.material?.dispose) mesh.material.dispose();
+            if (mesh.geometry?.dispose) mesh.geometry.dispose();
+        }
+
+        function clearPresetPreviewOverlay(key) {
+            const mesh = presetPreviewRuntime.overlays[key];
+            if (!mesh) return;
+            if (mesh.parent) mesh.parent.remove(mesh);
+            disposePresetPreviewOverlayMesh(mesh);
+            presetPreviewRuntime.overlays[key] = null;
+        }
+
+        function clearPresetPreviewOverlays() {
+            Object.keys(presetPreviewRuntime.overlays).forEach((key) => {
+                clearPresetPreviewOverlay(key);
+            });
+        }
+
+        function requestPresetPreviewRender(frames = 1) {
+            if (!presetPreviewRuntime.isInitialized) return;
+            presetPreviewRuntime.requestedFrames = Math.max(presetPreviewRuntime.requestedFrames, frames);
+            if (!presetPreviewRuntime.rafId) {
+                presetPreviewRuntime.rafId = requestAnimationFrame(renderPresetPreviewFrame);
+            }
+        }
+
+        function renderPresetPreviewFrame() {
+            presetPreviewRuntime.rafId = 0;
+
+            if (!presetPreviewRuntime.isInitialized || activeAppView !== 'preset-preview') {
+                return;
+            }
+
+            if (presetPreviewRuntime.controls) {
+                presetPreviewRuntime.controls.update();
+            }
+
+            presetPreviewRuntime.renderer.render(presetPreviewRuntime.scene, presetPreviewRuntime.camera);
+
+            if (presetPreviewRuntime.requestedFrames > 0) {
+                presetPreviewRuntime.requestedFrames -= 1;
+            }
+
+            if (presetPreviewRuntime.interacting || presetPreviewRuntime.requestedFrames > 0) {
+                presetPreviewRuntime.rafId = requestAnimationFrame(renderPresetPreviewFrame);
+            }
+        }
+
+        function resizePresetPreviewRuntime() {
+            if (!presetPreviewRuntime.isInitialized || !presetPreviewRuntime.mountEl) return;
+            const width = presetPreviewRuntime.mountEl.clientWidth || window.innerWidth;
+            const height = presetPreviewRuntime.mountEl.clientHeight || window.innerHeight;
+            presetPreviewRuntime.camera.aspect = width / height;
+            presetPreviewRuntime.camera.updateProjectionMatrix();
+            presetPreviewRuntime.renderer.setSize(width, height);
+            requestPresetPreviewRender(2);
+        }
+
+        function disposePresetPreviewRuntime() {
+            if (!presetPreviewRuntime.isInitialized) return;
+
+            if (presetPreviewRuntime.rafId) {
+                cancelAnimationFrame(presetPreviewRuntime.rafId);
+                presetPreviewRuntime.rafId = 0;
+            }
+
+            clearPresetPreviewOverlays();
+
+            if (presetPreviewRuntime.modelRoot) {
+                presetPreviewRuntime.modelRoot.traverse((child) => {
+                    if (!child.isMesh) return;
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach((material) => {
+                            if (material.map) material.map.dispose();
+                            material.dispose?.();
+                        });
+                    } else if (child.material) {
+                        if (child.material.map) child.material.map.dispose();
+                        child.material.dispose?.();
+                    }
+                });
+                if (presetPreviewRuntime.scene) {
+                    presetPreviewRuntime.scene.remove(presetPreviewRuntime.modelRoot);
+                }
+            }
+
+            presetPreviewRuntime.controls?.dispose();
+            presetPreviewRuntime.renderer?.dispose();
+
+            if (presetPreviewRuntime.mountEl) {
+                presetPreviewRuntime.mountEl.innerHTML = '';
+            }
+
+            presetPreviewRuntime.scene = null;
+            presetPreviewRuntime.camera = null;
+            presetPreviewRuntime.renderer = null;
+            presetPreviewRuntime.controls = null;
+            presetPreviewRuntime.modelRoot = null;
+            presetPreviewRuntime.parts = null;
+            presetPreviewRuntime.overlays = {};
+            presetPreviewRuntime.isInitialized = false;
+            presetPreviewRuntime.activeCharacter = null;
+            presetPreviewRuntime.pendingCharacter = null;
+
+            if (presetPreviewRuntime.stageEl) {
+                presetPreviewRuntime.stageEl.classList.remove('active');
+                presetPreviewRuntime.stageEl.setAttribute('aria-hidden', 'true');
+            }
+        }
+
+        function ensurePresetPreviewRuntime() {
+            if (presetPreviewRuntime.isInitialized) return true;
+            if (!loadedModel) return false;
+
+            presetPreviewRuntime.stageEl = document.getElementById('preset-preview-stage');
+            presetPreviewRuntime.mountEl = document.getElementById('preset-preview-scene');
+            if (!presetPreviewRuntime.stageEl || !presetPreviewRuntime.mountEl) return false;
+
+            const runtimeScene = new THREE.Scene();
+            const runtimeCamera = new THREE.PerspectiveCamera(36, window.innerWidth / window.innerHeight, 0.1, 100);
+            runtimeCamera.position.set(0, 1.48, isLowPowerMobile ? 5.15 : 5.55);
+
+            const runtimeRenderer = new THREE.WebGLRenderer({
+                antialias: false,
+                alpha: true,
+                powerPreference: isLowPowerMobile ? 'low-power' : 'high-performance'
+            });
+            runtimeRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isLowPowerMobile ? 1 : 1.35));
+            runtimeRenderer.setClearColor(0x000000, 0);
+            runtimeRenderer.outputColorSpace = THREE.SRGBColorSpace;
+            presetPreviewRuntime.mountEl.innerHTML = '';
+            presetPreviewRuntime.mountEl.appendChild(runtimeRenderer.domElement);
+
+            const runtimeControls = new OrbitControls(runtimeCamera, runtimeRenderer.domElement);
+            runtimeControls.enableDamping = !isLowPowerMobile;
+            runtimeControls.dampingFactor = 0.08;
+            runtimeControls.enablePan = false;
+            runtimeControls.rotateSpeed = isLowPowerMobile ? 0.82 : 0.96;
+            runtimeControls.zoomSpeed = isLowPowerMobile ? 0.72 : 0.9;
+            runtimeControls.minDistance = 3.8;
+            runtimeControls.maxDistance = 8.2;
+            runtimeControls.minPolarAngle = 0.48;
+            runtimeControls.maxPolarAngle = Math.PI - 0.48;
+            runtimeControls.target.set(0, 1.18, 0);
+            runtimeControls.addEventListener('change', () => {
+                requestPresetPreviewRender(isLowPowerMobile ? 12 : 6);
+            });
+
+            runtimeRenderer.domElement.addEventListener('pointerdown', () => {
+                presetPreviewRuntime.interacting = true;
+                requestPresetPreviewRender(isLowPowerMobile ? 18 : 10);
+            });
+            runtimeRenderer.domElement.addEventListener('pointerup', () => {
+                presetPreviewRuntime.interacting = false;
+                requestPresetPreviewRender(isLowPowerMobile ? 10 : 4);
+            });
+            runtimeRenderer.domElement.addEventListener('pointercancel', () => {
+                presetPreviewRuntime.interacting = false;
+            });
+            runtimeRenderer.domElement.addEventListener('pointerleave', () => {
+                presetPreviewRuntime.interacting = false;
+            });
+
+            runtimeScene.add(new THREE.HemisphereLight(0xffffff, 0xc4d7eb, 1.55));
+            const runtimeFrontLight = new THREE.DirectionalLight(0xffffff, 1.05);
+            runtimeFrontLight.position.set(2.8, 4.5, 4.6);
+            runtimeScene.add(runtimeFrontLight);
+            const runtimeSideLight = new THREE.DirectionalLight(0xffffff, 0.38);
+            runtimeSideLight.position.set(-3.4, 2.8, 1.2);
+            runtimeScene.add(runtimeSideLight);
+
+            const floorShadow = createFootShadow(isLowPowerMobile ? 1.5 : 1.75);
+            floorShadow.visible = true;
+            floorShadow.position.y = -0.03;
+            runtimeScene.add(floorShadow);
+
+            const runtimeModel = cloneCleanPresetPreviewModel(loadedModel);
+            runtimeScene.add(runtimeModel);
+
+            presetPreviewRuntime.scene = runtimeScene;
+            presetPreviewRuntime.camera = runtimeCamera;
+            presetPreviewRuntime.renderer = runtimeRenderer;
+            presetPreviewRuntime.controls = runtimeControls;
+            presetPreviewRuntime.modelRoot = runtimeModel;
+            presetPreviewRuntime.parts = extractModelPartsFromRoot(runtimeModel);
+            presetPreviewRuntime.overlays = {};
+            presetPreviewRuntime.isInitialized = true;
+
+            resizePresetPreviewRuntime();
+            return true;
+        }
+
+        function applyColorToPresetPreviewPart(mesh, color, excluded = []) {
+            if (!mesh) return;
+            mesh.traverse((child) => {
+                if (!child.isMesh || excluded.includes(child)) return;
+                if (Array.isArray(child.material)) {
+                    child.material.forEach((material) => {
+                        if (material.color) material.color.copy(color);
+                    });
+                } else if (child.material?.color) {
+                    child.material.color.copy(color);
+                }
+            });
+        }
+
+        function getPresetPreviewAppendage(parts, type, side) {
+            const items = parts[type];
+            if (!Array.isArray(items)) return null;
+            return items.find((item) => (item.name || '').toLowerCase().includes(side));
+        }
+
+        function setPresetPreviewOverlay(key, parent, url, options = {}) {
+            const existingMesh = presetPreviewRuntime.overlays[key];
+
+            if (!parent || !url) {
+                clearPresetPreviewOverlay(key);
+                return Promise.resolve();
+            }
+
+            return loadPresetPreviewTexture(url)
+                .then((texture) => {
+                    if (!texture || activeAppView !== 'preset-preview' || (options.characterName && presetPreviewRuntime.pendingCharacter !== options.characterName)) {
+                        texture?.dispose?.();
+                        return;
+                    }
+
+                    const planeHeight = options.planeHeight || 2;
+                    const aspect = texture.image.width / Math.max(texture.image.height, 1);
+                    const planeWidth = planeHeight * aspect;
+
+                    if (!existingMesh || !existingMesh.parent) {
+                        const material = new THREE.MeshBasicMaterial({
+                            map: texture,
+                            transparent: true,
+                            side: THREE.DoubleSide,
+                            alphaTest: 0.45
+                        });
+                        const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                        const mesh = new THREE.Mesh(geometry, material);
+                        mesh.position.set(options.position?.[0] || 0, options.position?.[1] || 0, options.position?.[2] || 0);
+                        mesh.rotation.set(options.rotation?.[0] || 0, options.rotation?.[1] || 0, options.rotation?.[2] || 0);
+                        mesh.scale.set(options.scale?.[0] || 1, options.scale?.[1] || 1, options.scale?.[2] || 1);
+                        parent.add(mesh);
+                        presetPreviewRuntime.overlays[key] = mesh;
+                    } else {
+                        const oldMap = existingMesh.material.map;
+                        existingMesh.material.map = texture;
+                        existingMesh.material.needsUpdate = true;
+                        existingMesh.scale.set(options.scale?.[0] || 1, options.scale?.[1] || 1, options.scale?.[2] || 1);
+                        existingMesh.rotation.set(options.rotation?.[0] || 0, options.rotation?.[1] || 0, options.rotation?.[2] || 0);
+                        existingMesh.position.set(options.position?.[0] || 0, options.position?.[1] || 0, options.position?.[2] || 0);
+                        if (oldMap && oldMap !== texture) oldMap.dispose();
+                    }
+
+                    requestPresetPreviewRender(isLowPowerMobile ? 14 : 6);
+                })
+                .catch((error) => {
+                    console.warn('Preset preview texture error:', url, error);
+                });
+        }
+
+        function clearPresetPreviewGroup(keys) {
+            keys.forEach((key) => clearPresetPreviewOverlay(key));
+        }
+
+        function buildPresetCharacterConfig(characterName) {
+            const baseSkin = '#F7D5CF';
+            const config = {
+                characterName,
+                colors: {
+                    head: baseSkin,
+                    torso: baseSkin,
+                    arms: baseSkin,
+                    legs: baseSkin
+                },
+                eyeTexture: eyeTextures.find((texture) => texture.name === characterName) || null,
+                eyebrowTexture: eyebrowTextures.find((texture) => texture.name === characterName) || null,
+                noseTexture: characterName === 'Steve'
+                    ? noseTextures.find((texture) => texture.name === 'Steve')
+                    : noseTextures.find((texture) => texture.name === 'Default'),
+                hairTexture: hairTextures.find((texture) => texture.name === characterName) || null,
+                torsoTexture: torsoClothingTextures.find((texture) => texture.name === characterName) || null,
+                armTexture: armTextures.find((texture) => texture.name === characterName) || null,
+                legTexture: legTextures.find((texture) => texture.name === characterName) || null,
+                hiddenOverlays: [],
+                hideArms: false
+            };
+
+            if (characterName === 'Baby') {
+                config.colors.head = '#FFEBE8';
+                config.colors.torso = '#6A68E9';
+                config.colors.legs = '#6A68E9';
+            } else if (characterName === 'Mystery') {
+                config.colors.head = '#91C9FA';
+            } else if (characterName === 'Steve') {
+                config.colors.head = '#AF7E5C';
+                config.colors.torso = '#00A9AF';
+                config.colors.arms = '#AF7E5C';
+                config.colors.legs = '#4332A0';
+                config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
+            } else if (characterName === 'Enderman') {
+                config.colors.head = '#000000';
+                config.colors.torso = '#000000';
+                config.colors.arms = '#000000';
+                config.colors.legs = '#000000';
+                config.armTexture = null;
+                config.legTexture = null;
+                config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
+            } else if (characterName === 'Creeper') {
+                config.colors.head = '#08C21F';
+                config.colors.torso = '#08C21F';
+                config.colors.arms = '#08C21F';
+                config.colors.legs = '#08C21F';
+                config.armTexture = null;
+                config.hideArms = true;
+                config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
+            }
+
+            if (characterName === 'Alex') {
+                config.eyeTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/eyes/Alex-eyes.svg' };
+                config.noseTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/nose/Alex-nose.svg' };
+                config.hairTexture = {
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-front.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-back.svg',
+                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-left.svg',
+                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-right.svg',
+                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-up.svg'
+                };
+                config.torsoTexture = {
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/torso/Alex-torso-front.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/torso/Alex-torso-back.svg'
+                };
+                config.armTexture = {
+                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/arms/Alex-arm-left.svg',
+                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/arms/Alex-arm-right.svg'
+                };
+                config.legTexture = {
+                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/legs/Alex-leg-left.svg',
+                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/legs/Alex-leg-right.svg'
+                };
+                config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
+            } else if (characterName === 'Zombie') {
+                config.eyeTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/eyes/Zombie-eyes.svg' };
+                config.noseTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/nose/Zombie-nose.svg' };
+                config.hairTexture = {
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-front.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-back.svg',
+                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-left.svg',
+                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-right.svg',
+                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-up.svg'
+                };
+                config.torsoTexture = {
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/torso/Zombie-torso-front.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/torso/Zombie-torso-back.svg'
+                };
+                config.armTexture = {
+                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/arms/Zombie-arm-left.svg',
+                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/arms/Zombie-arm-right.svg'
+                };
+                config.legTexture = {
+                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/legs/Zombie-leg-left.svg',
+                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/legs/Zombie-leg-right.svg'
+                };
+                config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
+            } else if (characterName === 'Creeper') {
+                config.eyeTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/eyes/Creeper-eyes.svg' };
+                config.noseTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/nose/Creeper-nose.svg' };
+                config.hairTexture = {
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-front.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-back.svg',
+                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-left.svg',
+                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-right.svg',
+                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-up.svg'
+                };
+                config.torsoTexture = {
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/torso/Creeper-torso-front.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/torso/Creeper-torso-back.svg'
+                };
+                config.legTexture = {
+                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/legs/Creeper-leg-left.svg',
+                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/legs/Creeper-leg-right.svg'
+                };
+            } else if (characterName === 'Skeleton') {
+                config.eyeTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/eyes/Skeleton-eyes.svg' };
+                config.noseTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/nose/Skeleton-nose.svg' };
+                config.torsoTexture = {
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/torso/Skeleton-torso-front.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/torso/Skeleton-torso-back.svg'
+                };
+                config.armTexture = {
+                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/arms/Skeleton-arm-left.svg',
+                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/arms/Skeleton-arm-right.svg'
+                };
+                config.legTexture = {
+                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/legs/Skeleton-leg-left.svg',
+                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/legs/Skeleton-leg-right.svg'
+                };
+                config.hairTexture = null;
+                config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
+            } else if (characterName === 'Enderman') {
+                config.eyeTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/eyes/Enderman-eyes.svg' };
+                config.noseTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/nose/Enderman-nose.svg' };
+                config.hairTexture = {
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-front.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-back.svg',
+                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-left.svg',
+                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-right.svg',
+                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-up.svg'
+                };
+                config.torsoTexture = {
+                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/torso/Enderman-torso-front.svg',
+                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/torso/Enderman-torso-back.svg'
+                };
+            } else if (characterName === 'Romance') {
+                config.hiddenOverlays.push('ear-left', 'ear-right');
+            } else if (characterName === 'Mystery') {
+                config.eyeTexture = null;
+                config.eyebrowTexture = null;
+                config.hiddenOverlays.push('eyes', 'eyebrows');
+            }
+
+            return config;
+        }
+
+        async function applyPresetCharacterToPreview(characterName) {
+            if (!ensurePresetPreviewRuntime()) return;
+
+            const runtime = presetPreviewRuntime;
+            const config = buildPresetCharacterConfig(characterName);
+            runtime.pendingCharacter = characterName;
+            const parts = runtime.parts;
+            const leftArm = getPresetPreviewAppendage(parts, 'arms', 'l');
+            const rightArm = getPresetPreviewAppendage(parts, 'arms', 'r');
+            const leftLeg = getPresetPreviewAppendage(parts, 'legs', 'l');
+            const rightLeg = getPresetPreviewAppendage(parts, 'legs', 'r');
+            const overlay = (key, parent, url, options = {}) => setPresetPreviewOverlay(key, parent, url, {
+                ...options,
+                characterName
+            });
+
+            clearPresetPreviewOverlays();
+
+            if (parts.head) applyColorToPresetPreviewPart(parts.head, new THREE.Color(config.colors.head));
+            if (parts.torso) applyColorToPresetPreviewPart(parts.torso, new THREE.Color(config.colors.torso));
+            if (leftArm) applyColorToPresetPreviewPart(leftArm, new THREE.Color(config.colors.arms));
+            if (rightArm) applyColorToPresetPreviewPart(rightArm, new THREE.Color(config.colors.arms));
+            if (leftLeg) applyColorToPresetPreviewPart(leftLeg, new THREE.Color(config.colors.legs));
+            if (rightLeg) applyColorToPresetPreviewPart(rightLeg, new THREE.Color(config.colors.legs));
+
+            if (leftArm) leftArm.visible = !config.hideArms;
+            if (rightArm) rightArm.visible = !config.hideArms;
+            if (leftLeg) leftLeg.visible = true;
+            if (rightLeg) rightLeg.visible = true;
+
+            const textureTasks = [];
+
+            if (config.eyeTexture?.url && !config.hiddenOverlays.includes('eyes')) {
+                textureTasks.push(overlay('eyes', parts.head, config.eyeTexture.url, {
+                    position: [0, 1.029, 1.129],
+                    planeHeight: 2.256
+                }));
+            }
+
+            if (config.eyebrowTexture?.url && !config.hiddenOverlays.includes('eyebrows')) {
+                textureTasks.push(overlay('eyebrows', parts.head, config.eyebrowTexture.url, {
+                    position: [0, 1.029, 1.129],
+                    planeHeight: 2.256
+                }));
+            }
+
+            if (config.noseTexture?.url && !config.hiddenOverlays.includes('nose')) {
+                textureTasks.push(overlay('nose', parts.head, config.noseTexture.url, {
+                    position: [0, 1.029, 1.129],
+                    planeHeight: 2.256
+                }));
+            }
+
+            if (config.hairTexture?.frontUrl) {
+                textureTasks.push(overlay('hair-front', parts.head, config.hairTexture.frontUrl, {
+                    position: [0, 0.563, 1.1285],
+                    planeHeight: 5.556
+                }));
+                textureTasks.push(overlay('hair-back', parts.head, config.hairTexture.backUrl, {
+                    position: [0, 0.563, -1.1285],
+                    planeHeight: 5.556
+                }));
+                textureTasks.push(overlay('hair-left', parts.head, config.hairTexture.leftUrl, {
+                    position: [-1.1285, 0.563, 0],
+                    rotation: [0, Math.PI / 2, 0],
+                    scale: [-1, 1, 1],
+                    planeHeight: 5.556
+                }));
+                textureTasks.push(overlay('hair-right', parts.head, config.hairTexture.rightUrl, {
+                    position: [1.1285, 0.563, 0],
+                    rotation: [0, -Math.PI / 2, 0],
+                    planeHeight: 5.556
+                }));
+                textureTasks.push(overlay('hair-up', parts.head, config.hairTexture.upUrl, {
+                    position: [0, 1.692, 0],
+                    rotation: [-Math.PI / 2, 0, 0],
+                    planeHeight: 2.256
+                }));
+            } else {
+                clearPresetPreviewGroup(['hair-front', 'hair-back', 'hair-left', 'hair-right', 'hair-up']);
+            }
+
+            if (config.torsoTexture?.frontUrl) {
+                textureTasks.push(overlay('torso-front', parts.torso, config.torsoTexture.frontUrl, {
+                    position: [0, 0, 0.627],
+                    planeHeight: 3.33
+                }));
+                textureTasks.push(overlay('torso-back', parts.torso, config.torsoTexture.backUrl, {
+                    position: [0, 0, -0.627],
+                    rotation: [0, Math.PI, 0],
+                    planeHeight: 3.33
+                }));
+            } else {
+                clearPresetPreviewGroup(['torso-front', 'torso-back']);
+            }
+
+            if (config.armTexture && !config.hideArms) {
+                textureTasks.push(overlay('arm-left-front', rightArm, config.armTexture.leftUrl, {
+                    position: [-1.288, -0.934, -0.001],
+                    rotation: [0, Math.PI, 0],
+                    planeHeight: 1.677
+                }));
+                textureTasks.push(overlay('arm-left-back', rightArm, config.armTexture.leftUrl, {
+                    position: [-1.288, -0.934, 0.006],
+                    rotation: [0, Math.PI, 0],
+                    planeHeight: 1.677
+                }));
+                textureTasks.push(overlay('arm-right-front', leftArm, config.armTexture.rightUrl, {
+                    position: [-1.288, -0.934, 0.001],
+                    planeHeight: 1.677
+                }));
+                textureTasks.push(overlay('arm-right-back', leftArm, config.armTexture.rightUrl, {
+                    position: [-1.288, -0.934, -0.006],
+                    planeHeight: 1.677
+                }));
+            } else {
+                clearPresetPreviewGroup(['arm-left-front', 'arm-left-back', 'arm-right-front', 'arm-right-back']);
+            }
+
+            if (config.legTexture) {
+                textureTasks.push(overlay('leg-left-front', leftLeg, config.legTexture.leftUrl, {
+                    position: [0, -1.176, 0.452],
+                    planeHeight: 2.145
+                }));
+                textureTasks.push(overlay('leg-left-back', leftLeg, config.legTexture.leftUrl, {
+                    position: [0, -1.176, -0.452],
+                    planeHeight: 2.145
+                }));
+                textureTasks.push(overlay('leg-right-front', rightLeg, config.legTexture.rightUrl, {
+                    position: [0, -1.176, 0.452],
+                    rotation: [0, Math.PI, 0],
+                    planeHeight: 2.145
+                }));
+                textureTasks.push(overlay('leg-right-back', rightLeg, config.legTexture.rightUrl, {
+                    position: [0, -1.176, -0.452],
+                    rotation: [0, Math.PI, 0],
+                    planeHeight: 2.145
+                }));
+            } else {
+                clearPresetPreviewGroup(['leg-left-front', 'leg-left-back', 'leg-right-front', 'leg-right-back']);
+            }
+
+            await Promise.all(textureTasks);
+            runtime.activeCharacter = characterName;
+            runtime.camera.position.set(0, 1.48, isLowPowerMobile ? 5.15 : 5.55);
+            runtime.controls.target.set(0, 1.18, 0);
+            runtime.controls.update();
+            requestPresetPreviewRender(isLowPowerMobile ? 20 : 10);
+        }
+
         loader.load(
             modelURL,
             function (gltf) {
@@ -7306,6 +8159,11 @@
                 }
 
                 applyInitialViewFromRoute();
+
+                if (activeAppView === 'preset-preview' && currentPresetCharacter) {
+                    ensurePresetPreviewRuntime();
+                    applyPresetCharacterToPreview(currentPresetCharacter);
+                }
 
                 // Ocultar loading después de que showcase esté listo
                 setTimeout(() => {
@@ -8925,6 +9783,7 @@
         function onWindowResize() {
             const isMobile = window.innerWidth <= 1024;
             const isCustomizationActive = document.body.classList.contains('customization-active');
+            resizePresetPreviewRuntime();
 
             // Ajustar visibilidad de paneles según modo y tamaño
             if (appMode === 'play' && isMobile) {
@@ -10156,6 +11015,7 @@
             document.body.classList.remove('showcase-mode');
             const authContainer = document.getElementById('auth-container');
             updatePresetTemplateDownloadButton();
+            disposePresetPreviewRuntime();
 
             if (!authenticatedHomeView) {
                 setTimeout(() => openAuthenticatedHome(show), 50);
@@ -10204,6 +11064,7 @@
             openAuthenticatedHome(false);
             document.body.classList.remove('showcase-mode');
             setGlobalTopbarVisible(false);
+            disposePresetPreviewRuntime();
             if (userProfileView) userProfileView.style.display = 'none';
             stopShowcase();
             if (fandomsOverlay) fandomsOverlay.classList.remove('active');
@@ -10247,6 +11108,7 @@
         function openPresetsView() {
             ensureDeferredViews();
             document.body.classList.remove('showcase-mode');
+            disposePresetPreviewRuntime();
             if (userProfileView) userProfileView.style.display = 'none';
             stopShowcase();
             document.body.classList.remove('customization-active');
@@ -10286,13 +11148,13 @@
             if (presetsSection) presetsSection.classList.add('hidden');
             if (customizeSection) customizeSection.classList.add('hidden');
             if (canvasContainer) {
-                canvasContainer.style.display = '';
+                canvasContainer.style.display = 'none';
                 canvasContainer.classList.remove('showcase-active');
                 canvasContainer.style.cursor = 'grab';
                 canvasContainer.style.pointerEvents = 'auto';
             }
 
-            shouldRenderScene = true;
+            shouldRenderScene = false;
             setGlobalTopbarVisible(false);
             activeAppView = 'preset-preview';
 
@@ -10303,18 +11165,16 @@
                 showCharacterName(currentPresetCharacter);
             }
 
-            controls.enabled = true;
-            controls.enableZoom = true;
-            controls.enablePan = !isLowPowerMobile;
-            controls.enableDamping = !isLowPowerMobile;
-            controls.dampingFactor = isLowPowerMobile ? 0.04 : 0.1;
-            controls.minPolarAngle = 0;
-            controls.maxPolarAngle = Math.PI;
-            camera.position.set(0, 1.5, 5);
-            controls.target.copy(modelCenter);
-            controls.update();
-            applyPresetPreviewPerformanceProfile();
-            requestCustomRender(isLowPowerMobile ? 18 : 24);
+            const runtimeReady = ensurePresetPreviewRuntime();
+            if (runtimeReady && presetPreviewRuntime.stageEl) {
+                presetPreviewRuntime.stageEl.classList.add('active');
+                presetPreviewRuntime.stageEl.setAttribute('aria-hidden', 'false');
+                if (currentPresetCharacter) {
+                    applyPresetCharacterToPreview(currentPresetCharacter);
+                } else {
+                    requestPresetPreviewRender(isLowPowerMobile ? 12 : 6);
+                }
+            }
 
             setTimeout(() => {
                 onWindowResize();
@@ -11399,7 +12259,11 @@
         async function setPresetCharacter(name) {
             clearReadyPresetTemplateBlob();
             currentPresetCharacter = name;
-            await applyPresetCharacter(name);
+            if (activeAppView === 'preset-preview') {
+                await applyPresetCharacterToPreview(name);
+            } else {
+                await applyPresetCharacter(name);
+            }
             showCharacterName(name);
             updatePresetTemplateDownloadButton();
         }
