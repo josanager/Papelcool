@@ -1045,40 +1045,6 @@
             height: 100%;
         }
 
-        .preset-preview-shell {
-            position: absolute;
-            left: 50%;
-            bottom: calc(env(safe-area-inset-bottom, 0px) + 1.1rem);
-            transform: translateX(-50%);
-            width: min(92vw, 420px);
-            padding: 0.9rem 1rem;
-            background: rgba(255, 255, 255, 0.92);
-            border: 3px solid #000;
-            border-radius: 16px;
-            box-shadow: 5px 5px 0 rgba(0, 0, 0, 1);
-            pointer-events: none;
-        }
-
-        .preset-preview-shell strong,
-        .preset-preview-shell span {
-            display: block;
-            color: #000;
-            text-align: center;
-            font-family: 'Fredoka', sans-serif;
-        }
-
-        .preset-preview-shell strong {
-            font-size: 0.96rem;
-            font-weight: 700;
-            letter-spacing: 0.02em;
-        }
-
-        .preset-preview-shell span {
-            margin-top: 0.2rem;
-            font-size: 0.8rem;
-            opacity: 0.72;
-        }
-
         .ui-panel {
             background: white;
             border: 4px solid black;
@@ -1727,21 +1693,6 @@
 
             #canvas-container {
                 height: 100vh;
-            }
-
-            .preset-preview-shell {
-                bottom: calc(env(safe-area-inset-bottom, 0px) + 0.9rem);
-                width: min(94vw, 360px);
-                padding: 0.78rem 0.9rem;
-                border-radius: 14px;
-            }
-
-            .preset-preview-shell strong {
-                font-size: 0.88rem;
-            }
-
-            .preset-preview-shell span {
-                font-size: 0.76rem;
             }
 
             /* Ocultar el botón de modo dentro del panel en móvil */
@@ -2716,24 +2667,23 @@
         .preset-template-download-copy {
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            gap: 0.1rem;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
             line-height: 1;
             position: relative;
             z-index: 1;
         }
 
         .preset-template-download-label {
-            font-size: 0.98rem;
-            font-weight: 700;
+            font-size: 1.16rem;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 0.02em;
         }
 
         .preset-template-download-meta {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 0.73rem;
-            font-weight: 700;
-            color: rgba(17, 17, 17, 0.7);
+            display: none;
         }
 
         .preset-template-download-progress {
@@ -2773,11 +2723,7 @@
             }
 
             .preset-template-download-label {
-                font-size: 0.9rem;
-            }
-
-            .preset-template-download-meta {
-                font-size: 0.68rem;
+                font-size: 1.04rem;
             }
         }
 
@@ -5307,6 +5253,7 @@
                 url('output/generated/hero-banner-square-heads.png') center center / cover no-repeat;
             border-bottom: 5px solid #000; position: relative; overflow: hidden;
             display: flex; align-items: center; justify-content: center;
+            min-height: 440px;
         }
         .funko-hero-wrapper::before {
             content: "";
@@ -5318,8 +5265,39 @@
         }
         .funko-showcase-slot {
             width: 100vw; margin-left: calc(-50vw + 50%);
-            min-height: 56vh; background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%);
+            min-height: 64vh; background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%);
             border-bottom: 5px solid #000; position: relative; overflow: hidden;
+        }
+        .funko-showcase-stage {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: auto;
+        }
+        .funko-showcase-stage::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at top, rgba(255, 230, 0, 0.18), transparent 35%),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+            background-size: auto, 24px 24px, 24px 24px;
+            pointer-events: none;
+        }
+        .funko-showcase-scene {
+            position: absolute;
+            inset: 0;
+        }
+        .funko-showcase-scene canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+            touch-action: none;
+        }
+        .funko-showcase-scene canvas.is-dragging {
+            cursor: grabbing;
         }
         .funko-hero-inner {
             width: min(1400px, 100%); display: flex; min-height: 480px; align-items: center; justify-content: flex-start; padding: 2.5rem 2rem;
@@ -5519,16 +5497,16 @@
             }
             .funko-hero-content p { font-size: 0.95rem; padding: 0.8rem; margin-bottom: 1.5rem; }
             .funko-hero-label { font-size: 0.9rem; margin-bottom: 1rem; padding: 0.3rem 0.8rem; }
-            .funko-hero-inner { flex-direction: column; text-align: center; justify-content: center; padding: 1.5rem 1rem; min-height: 420px; }
+            .funko-hero-inner { flex-direction: column; text-align: center; justify-content: center; padding: 1.25rem 1rem; min-height: 388px; }
             .funko-hero-content {
                 margin-top: 1rem;
                 width: min(320px, 100%);
                 margin-left: auto;
                 margin-right: auto;
             }
-            .funko-showcase-slot { min-height: 52vh; }
+            .funko-showcase-slot { min-height: 60vh; }
             #canvas-container.showcase-active {
-                height: 100% !important; max-height: none !important; min-height: 52vh !important;
+                height: 100% !important; max-height: none !important; min-height: 60vh !important;
             }
             
             /* Section Paddings & Grid */
@@ -6091,10 +6069,6 @@
     <div id="canvas-container"></div>
     <div id="preset-preview-stage" aria-hidden="true">
         <div id="preset-preview-scene"></div>
-        <div class="preset-preview-shell">
-            <strong>Vista previa ligera para colecciones</strong>
-            <span>Arrastra para girar. Pellizca para acercar.</span>
-        </div>
     </div>
     <div id="loading-indicator">
         <img src="logo.svg" alt="Papelcool Logo" class="loading-logo">
@@ -6714,12 +6688,54 @@
             return params.get('view') || getViewFromPathname() || 'showcase';
         }
 
+        const PRESET_PREVIEW_STORAGE_KEY = 'papelcool_last_preset_preview';
+
+        function getRequestedPresetCharacter() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('preset');
+        }
+
+        function rememberPresetCharacter(name) {
+            if (!name) return;
+            try {
+                sessionStorage.setItem(PRESET_PREVIEW_STORAGE_KEY, name);
+            } catch (error) {
+                console.warn('Could not persist preset preview character:', error);
+            }
+        }
+
+        function clearRememberedPresetCharacter() {
+            try {
+                sessionStorage.removeItem(PRESET_PREVIEW_STORAGE_KEY);
+            } catch (error) {
+                console.warn('Could not clear preset preview character:', error);
+            }
+        }
+
+        function getRememberedPresetCharacter() {
+            const requestedPreset = getRequestedPresetCharacter();
+            if (requestedPreset) return requestedPreset;
+
+            try {
+                return sessionStorage.getItem(PRESET_PREVIEW_STORAGE_KEY);
+            } catch (error) {
+                console.warn('Could not read preset preview character:', error);
+                return null;
+            }
+        }
+
         function syncViewInUrl(view, replaceHistory = false) {
             const url = new URL(window.location.href);
             if (view === 'showcase') {
                 url.searchParams.delete('view');
             } else {
                 url.searchParams.set('view', view);
+            }
+
+             if (view === 'preset-preview' && currentPresetCharacter) {
+                url.searchParams.set('preset', currentPresetCharacter);
+            } else {
+                url.searchParams.delete('preset');
             }
 
             const method = replaceHistory ? 'replaceState' : 'pushState';
@@ -6788,10 +6804,6 @@
         // Variables para showcase inicial
         let isShowcaseActive = false;
         let showcaseRotationSpeed = 0.3;
-        let showcaseCharacterIndex = 0;
-        const showcaseCharacters = ['Mira', 'Rumi', 'Zoey'];
-        let showcaseCharacterTimer = 0;
-        const showcaseCharacterInterval = 4000; // Cambiar cada 4 segundos
 
         // Variables para cambio de colores aleatorios en showcase
         let showcaseColorTimers = {
@@ -6811,38 +6823,14 @@
             rightLeg: 1000
         };
 
-        // Variables para cambio de texturas aleatorias en showcase
-        let showcaseTextureTimers = {
-            eyes: 0,
-            eyebrows: 0,
-            nose: 0,
-            ears: 0,
-            hair: 0,
-            torso: 0,
-            leftArm: 0,
-            rightArm: 0,
-            leftLeg: 0,
-            rightLeg: 0
-        };
-        const showcaseTextureIntervals = {
-            eyes: 2500,      // Cambiar cada 2.5 segundos
-            eyebrows: 3000,   // Cambiar cada 3 segundos
-            nose: 3200,       // Cambiar cada 3.2 segundos
-            ears: 3500,       // Cambiar cada 3.5 segundos
-            hair: 4000,       // Cambiar cada 4 segundos
-            torso: 4500,      // Cambiar cada 4.5 segundos
-            leftArm: 2800,    // Cambiar cada 2.8 segundos
-            rightArm: 3200,   // Cambiar cada 3.2 segundos
-            leftLeg: 2700,    // Cambiar cada 2.7 segundos
-            rightLeg: 3100    // Cambiar cada 3.1 segundos
-        };
+        // El showcase debe refrescar todas las texturas a la vez, con un ritmo fijo.
+        let showcaseTextureBatchTimer = 0;
+        let showcaseTextureBatchInFlight = false;
+        const showcaseTextureBatchInterval = window.innerWidth <= 768 ? 2200 : 1650;
 
         if ((/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) || window.innerWidth <= 768) {
             Object.keys(showcaseColorIntervals).forEach(key => {
                 showcaseColorIntervals[key] *= 2.4;
-            });
-            Object.keys(showcaseTextureIntervals).forEach(key => {
-                showcaseTextureIntervals[key] *= 3.2;
             });
             showcaseRotationSpeed = 0.18;
         }
@@ -6905,7 +6893,6 @@
         const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         const isLowPowerMobile = isMobileDevice || window.innerWidth <= 768;
         const pixelRatio = isLowPowerMobile ? Math.min(window.devicePixelRatio || 1, 1.2) : Math.min(window.devicePixelRatio || 1, 1.8);
-        const showcaseTextureUpdateMode = isLowPowerMobile ? 'lite' : 'full';
         let shouldRenderScene = true;
         let lastFrameTimestamp = 0;
         let customRenderBurstFrames = 0;
@@ -7332,6 +7319,8 @@
 
         const presetPreviewTextureCache = new Map();
         const MAX_PRESET_PREVIEW_TEXTURES = isLowPowerMobile ? 4 : 10;
+        const showcaseTextureCache = new Map();
+        const MAX_SHOWCASE_TEXTURES = isLowPowerMobile ? 5 : 14;
         const presetPreviewRuntime = {
             stageEl: null,
             mountEl: null,
@@ -7348,6 +7337,24 @@
             isInitialized: false,
             activeCharacter: null,
             pendingCharacter: null
+        };
+        const showcaseRuntime = {
+            stageEl: null,
+            mountEl: null,
+            scene: null,
+            camera: null,
+            renderer: null,
+            modelRoot: null,
+            parts: null,
+            overlays: {},
+            shadow: null,
+            rafId: 0,
+            isInitialized: false,
+            lastFrameAt: 0,
+            currentCharacter: null,
+            isDragging: false,
+            activePointerId: null,
+            lastPointerX: 0
         };
 
         function rememberPresetPreviewTexture(cacheKey, source) {
@@ -7368,6 +7375,27 @@
             const source = presetPreviewTextureCache.get(cacheKey);
             presetPreviewTextureCache.delete(cacheKey);
             presetPreviewTextureCache.set(cacheKey, source);
+            return source;
+        }
+
+        function rememberShowcaseTexture(cacheKey, source) {
+            if (!cacheKey || !source) return;
+            if (showcaseTextureCache.has(cacheKey)) {
+                showcaseTextureCache.delete(cacheKey);
+            }
+            showcaseTextureCache.set(cacheKey, source);
+
+            while (showcaseTextureCache.size > MAX_SHOWCASE_TEXTURES) {
+                const firstKey = showcaseTextureCache.keys().next().value;
+                showcaseTextureCache.delete(firstKey);
+            }
+        }
+
+        function getShowcaseTextureSource(cacheKey) {
+            if (!showcaseTextureCache.has(cacheKey)) return null;
+            const source = showcaseTextureCache.get(cacheKey);
+            showcaseTextureCache.delete(cacheKey);
+            showcaseTextureCache.set(cacheKey, source);
             return source;
         }
 
@@ -7442,6 +7470,85 @@
 
                     rememberPresetPreviewTexture(cacheKey, canvas);
                     resolve(createPresetPreviewTexture(canvas));
+                };
+
+                img.onerror = (error) => reject(error);
+                img.src = url;
+            });
+        }
+
+        function getShowcaseRasterLongSide(url) {
+            const stage = showcaseRuntime.mountEl;
+            const longSide = Math.max(stage?.clientWidth || window.innerWidth || 640, stage?.clientHeight || window.innerHeight || 640);
+            const dpr = Math.min(window.devicePixelRatio || 1, isLowPowerMobile ? 1 : 1.35);
+            const normalizedUrl = (url || '').toLowerCase();
+            let multiplier = 0.78;
+
+            if (normalizedUrl.includes('/eyes/') || normalizedUrl.includes('/eyebrow') || normalizedUrl.includes('/nose/')) {
+                multiplier = 0.42;
+            } else if (normalizedUrl.includes('/hair/')) {
+                multiplier = 0.7;
+            } else if (normalizedUrl.includes('/arms/') || normalizedUrl.includes('/legs/') || normalizedUrl.includes('/torso/')) {
+                multiplier = 0.58;
+            }
+
+            const target = Math.round(longSide * dpr * multiplier);
+            return Math.max(256, Math.min(isLowPowerMobile ? 640 : 960, target));
+        }
+
+        function createShowcaseTexture(source) {
+            const texture = new THREE.CanvasTexture(source);
+            texture.colorSpace = THREE.SRGBColorSpace;
+            texture.minFilter = THREE.LinearFilter;
+            texture.magFilter = THREE.LinearFilter;
+            texture.generateMipmaps = false;
+            texture.anisotropy = 1;
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        function loadShowcaseTexture(url) {
+            return new Promise((resolve, reject) => {
+                if (!url) {
+                    resolve(null);
+                    return;
+                }
+
+                const targetLongSide = getShowcaseRasterLongSide(url);
+                const cacheKey = `${url}::${targetLongSide}`;
+                const cachedSource = getShowcaseTextureSource(cacheKey);
+                if (cachedSource) {
+                    resolve(createShowcaseTexture(cachedSource));
+                    return;
+                }
+
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+
+                img.onload = () => {
+                    const sourceWidth = img.naturalWidth || img.width || 512;
+                    const sourceHeight = img.naturalHeight || img.height || 512;
+                    const scale = targetLongSide / Math.max(sourceWidth, sourceHeight, 1);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = Math.max(1, Math.round(sourceWidth * scale));
+                    canvas.height = Math.max(1, Math.round(sourceHeight * scale));
+
+                    const ctx = canvas.getContext('2d', {
+                        alpha: true,
+                        willReadFrequently: false
+                    });
+
+                    if (!ctx) {
+                        reject(new Error('No se pudo crear canvas para showcase.'));
+                        return;
+                    }
+
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                    rememberShowcaseTexture(cacheKey, canvas);
+                    resolve(createShowcaseTexture(canvas));
                 };
 
                 img.onerror = (error) => reject(error);
@@ -8001,18 +8108,17 @@
                     planeHeight: 5.556
                 }));
                 textureTasks.push(overlay('hair-left', parts.head, config.hairTexture.leftUrl, {
-                    position: [-1.1285, 0.563, 0],
-                    rotation: [0, Math.PI / 2, 0],
-                    scale: [-1, 1, 1],
-                    planeHeight: 5.556
+                    position: [-1.1285, 1.029, 0],
+                    rotation: [0, -Math.PI / 2, 0],
+                    planeHeight: 2.256
                 }));
                 textureTasks.push(overlay('hair-right', parts.head, config.hairTexture.rightUrl, {
-                    position: [1.1285, 0.563, 0],
-                    rotation: [0, -Math.PI / 2, 0],
-                    planeHeight: 5.556
+                    position: [1.1285, 1.029, 0],
+                    rotation: [0, Math.PI / 2, 0],
+                    planeHeight: 2.256
                 }));
                 textureTasks.push(overlay('hair-up', parts.head, config.hairTexture.upUrl, {
-                    position: [0, 1.692, 0],
+                    position: [0, 2.157, 0],
                     rotation: [-Math.PI / 2, 0, 0],
                     planeHeight: 2.256
                 }));
@@ -8022,13 +8128,13 @@
 
             if (config.torsoTexture?.frontUrl) {
                 textureTasks.push(overlay('torso-front', parts.torso, config.torsoTexture.frontUrl, {
-                    position: [0, 0, 0.627],
-                    planeHeight: 3.33
+                    position: [0, -1.176, 0.453],
+                    planeHeight: 2.145
                 }));
                 textureTasks.push(overlay('torso-back', parts.torso, config.torsoTexture.backUrl, {
-                    position: [0, 0, -0.627],
+                    position: [0, -1.176, -0.453],
                     rotation: [0, Math.PI, 0],
-                    planeHeight: 3.33
+                    planeHeight: 2.145
                 }));
             } else {
                 clearPresetPreviewGroup(['torso-front', 'torso-back']);
@@ -8086,6 +8192,452 @@
             runtime.controls.target.set(0, 1.18, 0);
             runtime.controls.update();
             requestPresetPreviewRender(isLowPowerMobile ? 20 : 10);
+        }
+
+        function getRandomShowcaseCharacter() {
+            const nextCharacter = showcaseCharacters[showcaseCharacterIndex % showcaseCharacters.length];
+            showcaseCharacterIndex = (showcaseCharacterIndex + 1) % showcaseCharacters.length;
+            return nextCharacter;
+        }
+
+        function disposeShowcaseOverlayMesh(mesh) {
+            if (!mesh) return;
+            if (mesh.material?.map) mesh.material.map.dispose();
+            mesh.material?.dispose?.();
+            mesh.geometry?.dispose?.();
+        }
+
+        function clearShowcaseOverlay(key) {
+            const mesh = showcaseRuntime.overlays[key];
+            if (!mesh) return;
+            if (mesh.parent) mesh.parent.remove(mesh);
+            disposeShowcaseOverlayMesh(mesh);
+            showcaseRuntime.overlays[key] = null;
+        }
+
+        function clearAllShowcaseOverlays() {
+            Object.keys(showcaseRuntime.overlays).forEach((key) => clearShowcaseOverlay(key));
+        }
+
+        function resizeShowcaseRuntime() {
+            if (!showcaseRuntime.isInitialized || !showcaseRuntime.mountEl) return;
+            const width = showcaseRuntime.mountEl.clientWidth || window.innerWidth;
+            const height = showcaseRuntime.mountEl.clientHeight || Math.max(320, Math.round(window.innerHeight * 0.56));
+            showcaseRuntime.camera.aspect = width / height;
+            showcaseRuntime.camera.updateProjectionMatrix();
+            showcaseRuntime.renderer.setSize(width, height);
+        }
+
+        function applyShowcaseColorToPart(mesh, color, { isHead = false } = {}) {
+            if (!mesh) return;
+            const excludedMeshes = Object.values(showcaseRuntime.overlays).filter(Boolean);
+
+            mesh.traverse((child) => {
+                if (!child.isMesh || excludedMeshes.includes(child)) return;
+                if (Array.isArray(child.material)) {
+                    child.material.forEach((material) => {
+                        if (material.color) material.color.copy(color);
+                    });
+                } else if (child.material?.color) {
+                    child.material.color.copy(color);
+                }
+            });
+
+            excludedMeshes.forEach((overlayMesh) => {
+                if (overlayMesh.material?.color) {
+                    overlayMesh.material.color.setHex(0xffffff);
+                    overlayMesh.material.needsUpdate = true;
+                }
+            });
+
+            if (isHead && showcaseRuntime.overlays.nose?.material?.color) {
+                showcaseRuntime.overlays.nose.material.color.copy(new THREE.Color(
+                    color.r * 0.5,
+                    color.g * 0.5,
+                    color.b * 0.5
+                ));
+                showcaseRuntime.overlays.nose.material.needsUpdate = true;
+            }
+        }
+
+        function setShowcaseOverlay(key, parent, url, options = {}) {
+            const existingMesh = showcaseRuntime.overlays[key];
+
+            if (!parent || !url) {
+                clearShowcaseOverlay(key);
+                return Promise.resolve();
+            }
+
+            return loadShowcaseTexture(url)
+                .then((texture) => {
+                    if (!texture || !isShowcaseActive || !showcaseRuntime.isInitialized) {
+                        texture?.dispose?.();
+                        return;
+                    }
+
+                    const planeHeight = options.planeHeight || 2;
+                    const aspect = texture.image.width / Math.max(texture.image.height, 1);
+                    const planeWidth = planeHeight * aspect;
+
+                    if (!existingMesh || !existingMesh.parent) {
+                        const material = new THREE.MeshBasicMaterial({
+                            map: texture,
+                            transparent: true,
+                            side: THREE.DoubleSide,
+                            alphaTest: 0.45
+                        });
+                        const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                        const mesh = new THREE.Mesh(geometry, material);
+                        mesh.position.set(options.position?.[0] || 0, options.position?.[1] || 0, options.position?.[2] || 0);
+                        mesh.rotation.set(options.rotation?.[0] || 0, options.rotation?.[1] || 0, options.rotation?.[2] || 0);
+                        mesh.scale.set(options.scale?.[0] || 1, options.scale?.[1] || 1, options.scale?.[2] || 1);
+                        parent.add(mesh);
+                        showcaseRuntime.overlays[key] = mesh;
+                    } else {
+                        const oldMap = existingMesh.material.map;
+                        existingMesh.material.map = texture;
+                        existingMesh.material.needsUpdate = true;
+                        existingMesh.position.set(options.position?.[0] || 0, options.position?.[1] || 0, options.position?.[2] || 0);
+                        existingMesh.rotation.set(options.rotation?.[0] || 0, options.rotation?.[1] || 0, options.rotation?.[2] || 0);
+                        existingMesh.scale.set(options.scale?.[0] || 1, options.scale?.[1] || 1, options.scale?.[2] || 1);
+                        if (oldMap && oldMap !== texture) oldMap.dispose();
+                    }
+                })
+                .catch((error) => {
+                    console.warn('Showcase texture error:', url, error);
+                });
+        }
+
+        function createShowcaseTexturePlan(parts) {
+            const leftArm = getPresetPreviewAppendage(parts, 'arms', 'l');
+            const rightArm = getPresetPreviewAppendage(parts, 'arms', 'r');
+            const leftLeg = getPresetPreviewAppendage(parts, 'legs', 'l');
+            const rightLeg = getPresetPreviewAppendage(parts, 'legs', 'r');
+            const eyeTexture = getRandomTexture(eyeTextures);
+            const eyebrowTexture = getRandomTexture(eyebrowTextures);
+            const noseTexture = getRandomTexture(noseTextures);
+            const hairTexture = getRandomTexture(hairTextures);
+            const torsoTexture = getRandomTexture(torsoClothingTextures);
+            const armTextureLeft = getRandomTexture(armTextures);
+            const armTextureRight = getRandomTexture(armTextures);
+            const legTextureLeft = getRandomTexture(legTextures);
+            const legTextureRight = getRandomTexture(legTextures);
+            const plan = [];
+
+            if (eyeTexture?.url && parts.head) {
+                plan.push({ key: 'eyes', parent: parts.head, url: eyeTexture.url, options: { position: [0, 1.029, 1.129], planeHeight: 2.256 } });
+            }
+            if (eyebrowTexture?.url && parts.head) {
+                plan.push({ key: 'eyebrows', parent: parts.head, url: eyebrowTexture.url, options: { position: [0, 1.029, 1.129], planeHeight: 2.256 } });
+            }
+            if (noseTexture?.url && parts.head) {
+                plan.push({ key: 'nose', parent: parts.head, url: noseTexture.url, options: { position: [0, 1.029, 1.129], planeHeight: 2.256 } });
+            }
+            if (hairTexture?.frontUrl && parts.head) {
+                plan.push(
+                    { key: 'hair-front', parent: parts.head, url: hairTexture.frontUrl, options: { position: [0, 0.563, 1.1285], planeHeight: 5.556 } },
+                    { key: 'hair-back', parent: parts.head, url: hairTexture.backUrl, options: { position: [0, 0.563, -1.1285], planeHeight: 5.556 } },
+                    { key: 'hair-left', parent: parts.head, url: hairTexture.leftUrl, options: { position: [-1.1285, 1.029, 0], rotation: [0, -Math.PI / 2, 0], planeHeight: 2.256 } },
+                    { key: 'hair-right', parent: parts.head, url: hairTexture.rightUrl, options: { position: [1.1285, 1.029, 0], rotation: [0, Math.PI / 2, 0], planeHeight: 2.256 } },
+                    { key: 'hair-up', parent: parts.head, url: hairTexture.upUrl, options: { position: [0, 2.157, 0], rotation: [-Math.PI / 2, 0, 0], planeHeight: 2.256 } }
+                );
+            }
+            if (torsoTexture?.frontUrl && parts.torso) {
+                plan.push(
+                    { key: 'torso-front', parent: parts.torso, url: torsoTexture.frontUrl, options: { position: [0, -1.176, 0.453], planeHeight: 2.145 } },
+                    { key: 'torso-back', parent: parts.torso, url: torsoTexture.backUrl, options: { position: [0, -1.176, -0.453], rotation: [0, Math.PI, 0], planeHeight: 2.145 } }
+                );
+            }
+            if (armTextureLeft && rightArm) {
+                plan.push(
+                    { key: 'arm-left-front', parent: rightArm, url: armTextureLeft.leftUrl, options: { position: [-1.288, -0.934, -0.001], rotation: [0, Math.PI, 0], planeHeight: 1.677 } },
+                    { key: 'arm-left-back', parent: rightArm, url: armTextureLeft.leftUrl, options: { position: [-1.288, -0.934, 0.006], rotation: [0, Math.PI, 0], planeHeight: 1.677 } }
+                );
+            }
+            if (armTextureRight && leftArm) {
+                plan.push(
+                    { key: 'arm-right-front', parent: leftArm, url: armTextureRight.rightUrl, options: { position: [-1.288, -0.934, 0.001], planeHeight: 1.677 } },
+                    { key: 'arm-right-back', parent: leftArm, url: armTextureRight.rightUrl, options: { position: [-1.288, -0.934, -0.006], planeHeight: 1.677 } }
+                );
+            }
+            if (legTextureLeft && leftLeg) {
+                plan.push(
+                    { key: 'leg-left-front', parent: leftLeg, url: legTextureLeft.leftUrl, options: { position: [0, -1.176, 0.452], planeHeight: 2.145 } },
+                    { key: 'leg-left-back', parent: leftLeg, url: legTextureLeft.leftUrl, options: { position: [0, -1.176, -0.452], planeHeight: 2.145 } }
+                );
+            }
+            if (legTextureRight && rightLeg) {
+                plan.push(
+                    { key: 'leg-right-front', parent: rightLeg, url: legTextureRight.rightUrl, options: { position: [0, -1.176, 0.452], rotation: [0, Math.PI, 0], planeHeight: 2.145 } },
+                    { key: 'leg-right-back', parent: rightLeg, url: legTextureRight.rightUrl, options: { position: [0, -1.176, -0.452], rotation: [0, Math.PI, 0], planeHeight: 2.145 } }
+                );
+            }
+
+            return plan;
+        }
+
+        async function preloadShowcaseTexturePlan(plan) {
+            const uniqueUrls = [...new Set(plan.map((item) => item.url).filter(Boolean))];
+            await Promise.all(uniqueUrls.map((url) =>
+                loadShowcaseTexture(url)
+                    .then((texture) => {
+                        texture?.dispose?.();
+                    })
+                    .catch((error) => {
+                        console.warn('Showcase preload error:', url, error);
+                    })
+            ));
+        }
+
+        async function applyShowcaseTexturePlan(plan) {
+            if (!plan.length) return;
+            await preloadShowcaseTexturePlan(plan);
+            if (!isShowcaseActive || !showcaseRuntime.isInitialized) return;
+            await Promise.all(plan.map((item) => setShowcaseOverlay(item.key, item.parent, item.url, item.options)));
+        }
+
+        async function applyShowcaseCharacter() {
+            if (!showcaseRuntime.isInitialized) return;
+
+            const parts = showcaseRuntime.parts;
+            const leftArm = getPresetPreviewAppendage(parts, 'arms', 'l');
+            const rightArm = getPresetPreviewAppendage(parts, 'arms', 'r');
+            const leftLeg = getPresetPreviewAppendage(parts, 'legs', 'l');
+            const rightLeg = getPresetPreviewAppendage(parts, 'legs', 'r');
+
+            clearAllShowcaseOverlays();
+
+            const white = new THREE.Color(0xffffff);
+            if (parts.head) applyShowcaseColorToPart(parts.head, white, { isHead: true });
+            if (parts.torso) applyShowcaseColorToPart(parts.torso, white);
+            if (leftArm) applyShowcaseColorToPart(leftArm, white);
+            if (rightArm) applyShowcaseColorToPart(rightArm, white);
+            if (leftLeg) applyShowcaseColorToPart(leftLeg, white);
+            if (rightLeg) applyShowcaseColorToPart(rightLeg, white);
+
+            if (leftArm) leftArm.visible = true;
+            if (rightArm) rightArm.visible = true;
+            if (leftLeg) leftLeg.visible = true;
+            if (rightLeg) rightLeg.visible = true;
+
+            await applyShowcaseTexturePlan(createShowcaseTexturePlan(parts));
+        }
+
+        function cycleShowcaseColors(now) {
+            const parts = showcaseRuntime.parts;
+            const leftArm = getPresetPreviewAppendage(parts, 'arms', 'l');
+            const rightArm = getPresetPreviewAppendage(parts, 'arms', 'r');
+            const leftLeg = getPresetPreviewAppendage(parts, 'legs', 'l');
+            const rightLeg = getPresetPreviewAppendage(parts, 'legs', 'r');
+
+            if (now - showcaseColorTimers.head > showcaseColorIntervals.head) {
+                if (parts.head) applyShowcaseColorToPart(parts.head, getRandomColor(), { isHead: true });
+                showcaseColorTimers.head = now;
+            }
+            if (now - showcaseColorTimers.torso > showcaseColorIntervals.torso) {
+                if (parts.torso) applyShowcaseColorToPart(parts.torso, getRandomColor());
+                showcaseColorTimers.torso = now;
+            }
+            if (now - showcaseColorTimers.leftArm > showcaseColorIntervals.leftArm) {
+                if (leftArm) applyShowcaseColorToPart(leftArm, getRandomColor());
+                showcaseColorTimers.leftArm = now;
+            }
+            if (now - showcaseColorTimers.rightArm > showcaseColorIntervals.rightArm) {
+                if (rightArm) applyShowcaseColorToPart(rightArm, getRandomColor());
+                showcaseColorTimers.rightArm = now;
+            }
+            if (now - showcaseColorTimers.leftLeg > showcaseColorIntervals.leftLeg) {
+                if (leftLeg) applyShowcaseColorToPart(leftLeg, getRandomColor());
+                showcaseColorTimers.leftLeg = now;
+            }
+            if (now - showcaseColorTimers.rightLeg > showcaseColorIntervals.rightLeg) {
+                if (rightLeg) applyShowcaseColorToPart(rightLeg, getRandomColor());
+                showcaseColorTimers.rightLeg = now;
+            }
+        }
+
+        function cycleShowcaseTextures(now) {
+            if (showcaseTextureBatchInFlight || now - showcaseTextureBatchTimer <= showcaseTextureBatchInterval) {
+                return;
+            }
+
+            showcaseTextureBatchTimer = now;
+            showcaseTextureBatchInFlight = true;
+
+            const plan = createShowcaseTexturePlan(showcaseRuntime.parts);
+            applyShowcaseTexturePlan(plan)
+                .catch((error) => {
+                    console.warn('Showcase batch texture error:', error);
+                })
+                .finally(() => {
+                    showcaseTextureBatchInFlight = false;
+                });
+        }
+
+        function renderShowcaseFrame(now = performance.now()) {
+            showcaseRuntime.rafId = 0;
+            if (!isShowcaseActive || !showcaseRuntime.isInitialized) return;
+
+            const frameBudget = isLowPowerMobile ? (1000 / 24) : (1000 / 36);
+            if (now - showcaseRuntime.lastFrameAt < frameBudget) {
+                showcaseRuntime.rafId = requestAnimationFrame(renderShowcaseFrame);
+                return;
+            }
+            showcaseRuntime.lastFrameAt = now;
+
+            if (showcaseRuntime.modelRoot && !showcaseRuntime.isDragging) {
+                showcaseRuntime.modelRoot.rotation.y = (showcaseRuntime.modelRoot.rotation.y + showcaseRotationSpeed * 0.01) % (Math.PI * 2);
+            }
+
+            const timestamp = Date.now();
+            cycleShowcaseColors(timestamp);
+            cycleShowcaseTextures(timestamp);
+
+            showcaseRuntime.renderer.render(showcaseRuntime.scene, showcaseRuntime.camera);
+            showcaseRuntime.rafId = requestAnimationFrame(renderShowcaseFrame);
+        }
+
+        function stopShowcaseDrag(pointerId = null) {
+            if (!showcaseRuntime.renderer) return;
+
+            const canvas = showcaseRuntime.renderer.domElement;
+            if (pointerId !== null && typeof canvas.releasePointerCapture === 'function') {
+                try {
+                    canvas.releasePointerCapture(pointerId);
+                } catch (error) {
+                    // Ignorar si el puntero ya no estaba capturado.
+                }
+            }
+
+            showcaseRuntime.isDragging = false;
+            showcaseRuntime.activePointerId = null;
+            showcaseRuntime.lastPointerX = 0;
+            canvas.classList.remove('is-dragging');
+        }
+
+        function ensureShowcaseRuntime() {
+            if (showcaseRuntime.isInitialized) return true;
+            if (!loadedModel) return false;
+
+            showcaseRuntime.stageEl = document.getElementById('home-showcase-stage');
+            showcaseRuntime.mountEl = document.getElementById('home-showcase-scene');
+            if (!showcaseRuntime.stageEl || !showcaseRuntime.mountEl) return false;
+
+            const runtimeScene = new THREE.Scene();
+            const runtimeCamera = new THREE.PerspectiveCamera(window.innerWidth <= 768 ? 58 : 60, 1, 0.1, 100);
+            runtimeCamera.position.copy(originalCameraPos);
+
+            const runtimeRenderer = new THREE.WebGLRenderer({
+                antialias: false,
+                alpha: true,
+                powerPreference: isLowPowerMobile ? 'low-power' : 'high-performance'
+            });
+            runtimeRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isLowPowerMobile ? 1 : 1.4));
+            runtimeRenderer.setClearColor(0x000000, 0);
+            runtimeRenderer.outputColorSpace = THREE.SRGBColorSpace;
+            showcaseRuntime.mountEl.innerHTML = '';
+            showcaseRuntime.mountEl.appendChild(runtimeRenderer.domElement);
+            runtimeRenderer.domElement.addEventListener('pointerdown', (event) => {
+                if (!showcaseRuntime.modelRoot) return;
+                showcaseRuntime.isDragging = true;
+                showcaseRuntime.activePointerId = event.pointerId;
+                showcaseRuntime.lastPointerX = event.clientX;
+                runtimeRenderer.domElement.classList.add('is-dragging');
+                if (typeof runtimeRenderer.domElement.setPointerCapture === 'function') {
+                    runtimeRenderer.domElement.setPointerCapture(event.pointerId);
+                }
+            });
+            runtimeRenderer.domElement.addEventListener('pointermove', (event) => {
+                if (!showcaseRuntime.isDragging || showcaseRuntime.activePointerId !== event.pointerId || !showcaseRuntime.modelRoot) return;
+                const deltaX = event.clientX - showcaseRuntime.lastPointerX;
+                showcaseRuntime.lastPointerX = event.clientX;
+                showcaseRuntime.modelRoot.rotation.y = (showcaseRuntime.modelRoot.rotation.y + deltaX * 0.015) % (Math.PI * 2);
+            });
+            runtimeRenderer.domElement.addEventListener('pointerup', (event) => {
+                if (showcaseRuntime.activePointerId !== event.pointerId) return;
+                stopShowcaseDrag(event.pointerId);
+            });
+            runtimeRenderer.domElement.addEventListener('pointercancel', (event) => {
+                if (showcaseRuntime.activePointerId !== event.pointerId) return;
+                stopShowcaseDrag(event.pointerId);
+            });
+
+            runtimeScene.add(new THREE.HemisphereLight(0xffffff, 0xdce8f8, 1.6));
+            const frontLight = new THREE.DirectionalLight(0xffffff, 1.08);
+            frontLight.position.set(0, 9, 8);
+            runtimeScene.add(frontLight);
+            const sideLight = new THREE.DirectionalLight(0xffffff, 0.34);
+            sideLight.position.set(-4, 4, 3);
+            runtimeScene.add(sideLight);
+
+            const shadow = createFootShadow(window.innerWidth <= 768 ? 2.2 : 2.05);
+            shadow.visible = true;
+            shadow.position.y = -0.03;
+            runtimeScene.add(shadow);
+
+            const runtimeModel = cloneCleanPresetPreviewModel(loadedModel);
+            const showcaseScaleBoost = window.innerWidth <= 768 ? 1.42 : 1.52;
+            const showcaseFocusY = baseGroundY * showcaseScaleBoost * (window.innerWidth <= 768 ? 1.06 : 1.02);
+            runtimeModel.scale.multiplyScalar(showcaseScaleBoost);
+            runtimeModel.position.set(0, (baseGroundY * showcaseScaleBoost) + 0.015, 0);
+            runtimeScene.add(runtimeModel);
+            runtimeCamera.lookAt(0, showcaseFocusY, 0);
+
+            showcaseRuntime.scene = runtimeScene;
+            showcaseRuntime.camera = runtimeCamera;
+            showcaseRuntime.renderer = runtimeRenderer;
+            showcaseRuntime.modelRoot = runtimeModel;
+            showcaseRuntime.parts = extractModelPartsFromRoot(runtimeModel);
+            showcaseRuntime.shadow = shadow;
+            showcaseRuntime.overlays = {};
+            showcaseRuntime.isInitialized = true;
+            showcaseRuntime.lastFrameAt = 0;
+
+            resizeShowcaseRuntime();
+            return true;
+        }
+
+        function disposeShowcaseRuntime() {
+            if (!showcaseRuntime.isInitialized) return;
+
+            if (showcaseRuntime.rafId) {
+                cancelAnimationFrame(showcaseRuntime.rafId);
+                showcaseRuntime.rafId = 0;
+            }
+
+            clearAllShowcaseOverlays();
+
+            if (showcaseRuntime.modelRoot) {
+                showcaseRuntime.modelRoot.traverse((child) => {
+                    if (!child.isMesh) return;
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach((material) => {
+                            if (material.map) material.map.dispose();
+                            material.dispose?.();
+                        });
+                    } else if (child.material) {
+                        if (child.material.map) child.material.map.dispose();
+                        child.material.dispose?.();
+                    }
+                });
+                showcaseRuntime.scene?.remove(showcaseRuntime.modelRoot);
+            }
+
+            showcaseRuntime.renderer?.dispose();
+            if (showcaseRuntime.mountEl) showcaseRuntime.mountEl.innerHTML = '';
+
+            showcaseRuntime.scene = null;
+            showcaseRuntime.camera = null;
+            showcaseRuntime.renderer = null;
+            showcaseRuntime.modelRoot = null;
+            showcaseRuntime.parts = null;
+            showcaseRuntime.shadow = null;
+            showcaseRuntime.overlays = {};
+            showcaseRuntime.isInitialized = false;
+            showcaseRuntime.currentCharacter = null;
+            showcaseRuntime.isDragging = false;
+            showcaseRuntime.activePointerId = null;
+            showcaseRuntime.lastPointerX = 0;
         }
 
         loader.load(
@@ -8163,6 +8715,15 @@
                 if (activeAppView === 'preset-preview' && currentPresetCharacter) {
                     ensurePresetPreviewRuntime();
                     applyPresetCharacterToPreview(currentPresetCharacter);
+                }
+
+                if (isShowcaseActive) {
+                    ensureShowcaseRuntime();
+                    resizeShowcaseRuntime();
+                    initializeShowcaseModel();
+                    if (!showcaseRuntime.rafId) {
+                        showcaseRuntime.rafId = requestAnimationFrame(renderShowcaseFrame);
+                    }
                 }
 
                 // Ocultar loading después de que showcase esté listo
@@ -9784,6 +10345,7 @@
             const isMobile = window.innerWidth <= 1024;
             const isCustomizationActive = document.body.classList.contains('customization-active');
             resizePresetPreviewRuntime();
+            resizeShowcaseRuntime();
 
             // Ajustar visibilidad de paneles según modo y tamaño
             if (appMode === 'play' && isMobile) {
@@ -9801,15 +10363,7 @@
                 // En modo customización, el CSS controla el tamaño del contenedor
                 // Usamos resizeToCanvasContainer para ajustar el renderer a ese tamaño
                 resizeToCanvasContainer();
-            } else if (isShowcaseActive) {
-                // Canvas is now a relative section; use its actual size
-                const container = document.getElementById('canvas-container');
-                const rect = container ? container.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight * 0.8 };
-                camera.fov = window.innerWidth <= 768 ? 50 : 60;
-                camera.aspect = rect.width / rect.height;
-                camera.updateProjectionMatrix();
-                renderer.setSize(rect.width, rect.height);
-            } else {
+            } else if (!isShowcaseActive) {
                 camera.fov = 75;
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
@@ -9824,30 +10378,19 @@
 
         window.addEventListener('pointerdown', (e) => {
             if (!isShowcaseActive) return;
-            if (e.target.closest('button') || e.target.closest('a') || e.target.closest('input')) return;
-            isShowcaseDragging = true;
-            const _container = document.getElementById('canvas-container');
-            if (_container) _container.style.cursor = 'grabbing';
-            previousShowcasePointerX = e.clientX;
+            return;
         });
 
         window.addEventListener('pointermove', (e) => {
-            if (!isShowcaseActive || !isShowcaseDragging || !loadedModel) return;
-            const deltaX = e.clientX - previousShowcasePointerX;
-            loadedModel.rotation.y += deltaX * 0.01;
-            previousShowcasePointerX = e.clientX;
+            if (!isShowcaseActive) return;
         });
 
         window.addEventListener('pointerup', () => {
             isShowcaseDragging = false;
-            const _container = document.getElementById('canvas-container');
-            if (isShowcaseActive && _container) _container.style.cursor = 'grab';
         });
 
         window.addEventListener('pointercancel', () => {
             isShowcaseDragging = false;
-            const _container = document.getElementById('canvas-container');
-            if (isShowcaseActive && _container) _container.style.cursor = 'grab';
         });
 
         window.addEventListener('resize', () => {
@@ -10289,77 +10832,26 @@
         }
 
         function initializeShowcaseModel() {
-            if (!loadedModel) {
-                console.warn('initializeShowcaseModel: No model loaded yet.');
+            if (!ensureShowcaseRuntime()) {
+                console.warn('initializeShowcaseModel: No showcase runtime available yet.');
                 return;
             }
-
-            console.log('Initializing showcase model visibility...');
-            const showcaseScaleBoost = window.innerWidth <= 768 ? 1.08 : 1.0;
-            const showcaseScale = baseModelScale * showcaseScaleBoost;
-            const showcaseGround = baseGroundY * showcaseScaleBoost;
-            loadedModel.visible = true;
-            loadedModel.scale.set(showcaseScale, showcaseScale, showcaseScale);
-            loadedModel.position.set(0, showcaseGround + 0.02, 0);
-            loadedModel.rotation.set(0, 0, 0);
-            modelCenter.set(0, showcaseGround + 0.02, 0);
-
-            if (camera && originalCameraPos) camera.position.copy(originalCameraPos);
-            if (controls && modelCenter) controls.target.copy(modelCenter);
-            if (camera && modelCenter) camera.lookAt(modelCenter);
-
-            // Force update
-            if (renderer && scene && camera) renderer.render(scene, camera);
-
-            if (modelParts.head) applyRandomColorToPart(modelParts.head, true);
-            if (modelParts.torso) applyRandomColorToPart(modelParts.torso);
-
-            const leftArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('l'));
-            const rightArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('r'));
-            const leftLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('l'));
-            const rightLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('r'));
-
-            if (leftArm) applyRandomColorToPart(leftArm);
-            if (rightArm) applyRandomColorToPart(rightArm);
-            if (leftLeg) applyRandomColorToPart(leftLeg);
-            if (rightLeg) applyRandomColorToPart(rightLeg);
-
-            applyRandomEyeTexture();
-            applyRandomHairTexture();
-            applyRandomTorsoTexture();
-
-            if (showcaseTextureUpdateMode === 'lite') {
-                return;
-            }
-
-            applyRandomEyebrowTexture();
-            applyRandomNoseTexture();
-            applyRandomEarTexture();
-            applyRandomArmTexture('left');
-            applyRandomArmTexture('right');
-            applyRandomLegTexture('left');
-            applyRandomLegTexture('right');
+            showcaseRuntime.camera.position.copy(originalCameraPos);
+            showcaseRuntime.modelRoot.rotation.set(0, 0, 0);
+            applyShowcaseCharacter();
         }
 
         function startShowcase() {
             isShowcaseActive = true;
-            shouldRenderScene = true;
-            if (loadedModel) loadedModel.visible = true;
+            shouldRenderScene = false;
 
             // Activar fondo degradado azul
             const showcaseBackground = document.getElementById('showcase-background');
             if (showcaseBackground) showcaseBackground.classList.add('active');
 
-            // Agregar clase al canvas para ajustar su altura y moverlo al DOM del landing page
-            const canvasContainer = document.getElementById('canvas-container');
-            const homeShowcaseSlot = document.getElementById('home-showcase-slot');
-            
-            // In showcase, keep pointer-events: none so scroll passes through and touch is disabled
-            if (canvasContainer) { 
-                if (homeShowcaseSlot) homeShowcaseSlot.appendChild(canvasContainer);
-                canvasContainer.classList.add('showcase-active'); 
-                canvasContainer.style.cursor = 'default'; 
-                canvasContainer.style.pointerEvents = 'none'; 
+            const homeShowcaseStage = document.getElementById('home-showcase-stage');
+            if (homeShowcaseStage) {
+                homeShowcaseStage.style.display = 'block';
             }
 
             // Mostrar logo del showcase
@@ -10373,30 +10865,8 @@
             const showcaseFilterCta = document.getElementById('showcase-filter-cta');
             if (showcaseFilterCta) showcaseFilterCta.classList.add('active');
 
-            // Ocultar grid y mostrar sombra
-            if (typeof gridHelper !== 'undefined') gridHelper.visible = false;
-            if (footShadow) footShadow.visible = true;
-
-            // Desactivar controles de cámara (zoom, pan, rotate)
-            controls.enabled = false;
-
-            // Ajustar FOV para tamaño óptimo del modelo en showcase
-            if (window.innerWidth <= 768) {
-                camera.fov = 58;
-            } else {
-                camera.fov = 60;
-            }
-
-            // Ajustar el renderer al tamaño del contenedor (ahora es sección relativa)
-            setTimeout(() => {
-                const container = document.getElementById('canvas-container');
-                const rect = container ? container.getBoundingClientRect() : { width: window.innerWidth, height: window.innerHeight * 0.8 };
-                camera.aspect = rect.width / rect.height;
-                camera.updateProjectionMatrix();
-                renderer.setSize(rect.width, rect.height);
-                console.log(`Renderer resized to: ${rect.width}x${rect.height}`);
-                if (renderer && scene && camera) renderer.render(scene, camera);
-            }, 500);
+            if (!ensureShowcaseRuntime()) return;
+            resizeShowcaseRuntime();
 
             // Inicializar timers de colores
             const now = Date.now();
@@ -10404,13 +10874,13 @@
                 showcaseColorTimers[key] = now;
             });
 
-            // Inicializar timers de texturas
-            Object.keys(showcaseTextureTimers).forEach(key => {
-                showcaseTextureTimers[key] = now;
-            });
+            showcaseTextureBatchTimer = now;
+            showcaseTextureBatchInFlight = false;
 
-            showcaseCharacterTimer = now;
             initializeShowcaseModel();
+            if (!showcaseRuntime.rafId) {
+                showcaseRuntime.rafId = requestAnimationFrame(renderShowcaseFrame);
+            }
         }
 
         function stopShowcase() {
@@ -10420,18 +10890,10 @@
             const showcaseBackground = document.getElementById('showcase-background');
             if (showcaseBackground) showcaseBackground.classList.remove('active');
 
-            // Re-acoplar el canvas al body y restaurar configuración para modo edición interactivo
-            const canvasContainer = document.getElementById('canvas-container');
-            // Re-enable pointer-events so user can interact with the 3D model in edit mode
-            if (canvasContainer) { 
-                document.body.prepend(canvasContainer); // Devolverlo a su lugar original
-                canvasContainer.classList.remove('showcase-active'); 
-                canvasContainer.style.cursor = 'grab'; 
-                canvasContainer.style.pointerEvents = 'auto'; 
+            const homeShowcaseStage = document.getElementById('home-showcase-stage');
+            if (homeShowcaseStage) {
+                homeShowcaseStage.style.display = 'none';
             }
-
-            // Mostrar sombra bajo los pies cuando se sale del showcase
-            if (footShadow) footShadow.visible = true;
 
             // Ocultar logo del showcase
             const showcaseLogoContainer = document.getElementById('showcase-logo-container');
@@ -10447,158 +10909,7 @@
             // Ocultar botones de acciones de presets
             const presetActionButtons = document.getElementById('preset-action-buttons');
             if (presetActionButtons) presetActionButtons.classList.remove('active');
-
-            // Detener rotación del modelo y resetear a 0
-            if (loadedModel) {
-                loadedModel.rotation.y = 0;
-            }
-
-            // NUEVO: Resetear colores del modelo 3D a blanco
-            const whiteColor = new THREE.Color(0xffffff);
-            if (modelParts.head) {
-                modelParts.head.traverse((child) => {
-                    if (child.isMesh && child.material && child.material.color) {
-                        if (Array.isArray(child.material)) {
-                            child.material.forEach(mat => {
-                                if (mat.color) mat.color.copy(whiteColor);
-                            });
-                        } else {
-                            child.material.color.copy(whiteColor);
-                        }
-                    }
-                });
-            }
-            if (modelParts.torso) {
-                modelParts.torso.traverse((child) => {
-                    if (child.isMesh && child.material && child.material.color) {
-                        if (Array.isArray(child.material)) {
-                            child.material.forEach(mat => {
-                                if (mat.color) mat.color.copy(whiteColor);
-                            });
-                        } else {
-                            child.material.color.copy(whiteColor);
-                        }
-                    }
-                });
-            }
-            modelParts.arms.forEach(arm => {
-                if (arm) {
-                    arm.traverse((child) => {
-                        if (child.isMesh && child.material && child.material.color) {
-                            if (Array.isArray(child.material)) {
-                                child.material.forEach(mat => {
-                                    if (mat.color) mat.color.copy(whiteColor);
-                                });
-                            } else {
-                                child.material.color.copy(whiteColor);
-                            }
-                        }
-                    });
-                }
-            });
-            modelParts.legs.forEach(leg => {
-                if (leg) {
-                    leg.traverse((child) => {
-                        if (child.isMesh && child.material && child.material.color) {
-                            if (Array.isArray(child.material)) {
-                                child.material.forEach(mat => {
-                                    if (mat.color) mat.color.copy(whiteColor);
-                                });
-                            } else {
-                                child.material.color.copy(whiteColor);
-                            }
-                        }
-                    });
-                }
-            });
-
-            // NUEVO: Resetear todas las texturas SVG faciales a "None" (modelo totalmente en blanco)
-            // Ojos: eliminar mesh y limpiar referencia/URL
-            currentEyeTextureURL = null;
-            if (eyesMesh && modelParts.head) {
-                modelParts.head.remove(eyesMesh);
-                if (eyesMesh.material && eyesMesh.material.map) eyesMesh.material.map.dispose();
-                if (eyesMesh.material) eyesMesh.material.dispose();
-                if (eyesMesh.geometry) eyesMesh.geometry.dispose();
-                eyesMesh = null;
-            }
-
-            // Cejas: eliminar mesh y limpiar referencia/URL
-            currentEyebrowTextureURL = null;
-            if (eyebrowsMesh && modelParts.head) {
-                modelParts.head.remove(eyebrowsMesh);
-                if (eyebrowsMesh.material && eyebrowsMesh.material.map) eyebrowsMesh.material.map.dispose();
-                if (eyebrowsMesh.material) eyebrowsMesh.material.dispose();
-                if (eyebrowsMesh.geometry) eyebrowsMesh.geometry.dispose();
-                eyebrowsMesh = null;
-            }
-
-            // Nariz: eliminar mesh y limpiar referencia/URL
-            currentNoseTextureURL = null;
-            if (noseMesh && modelParts.head) {
-                modelParts.head.remove(noseMesh);
-                if (noseMesh.material && noseMesh.material.map) noseMesh.material.map.dispose();
-                if (noseMesh.material) noseMesh.material.dispose();
-                if (noseMesh.geometry) noseMesh.geometry.dispose();
-                noseMesh = null;
-            }
-
-            // Orejas: eliminar meshes izquierdo/derecho y limpiar referencia/URL
-            currentEarTextureURL = null;
-            if (earLeftMesh && modelParts.head) {
-                modelParts.head.remove(earLeftMesh);
-                if (earLeftMesh.material && earLeftMesh.material.map) earLeftMesh.material.map.dispose();
-                if (earLeftMesh.material) earLeftMesh.material.dispose();
-                if (earLeftMesh.geometry) earLeftMesh.geometry.dispose();
-                earLeftMesh = null;
-            }
-            if (earRightMesh && modelParts.head) {
-                modelParts.head.remove(earRightMesh);
-                if (earRightMesh.material && earRightMesh.material.map) earRightMesh.material.map.dispose();
-                if (earRightMesh.material) earRightMesh.material.dispose();
-                if (earRightMesh.geometry) earRightMesh.geometry.dispose();
-                earRightMesh = null;
-            }
-
-            // Resetear cabello a "None"
-            currentHairFrontURL = null;
-            currentHairBackURL = null;
-            currentHairLeftURL = null;
-            currentHairRightURL = null;
-            currentHairUpURL = null;
-            changeHairTexture(null, null, null, null, null);
-
-            // Resetear ropa del torso a "None"
-            currentTorsoFrontURL = null;
-            currentTorsoBackURL = null;
-            changeTorsoClothing(null, null);
-
-            // Resetear brazos a "None"
-            currentArmLeftURL = null;
-            currentArmRightURL = null;
-            changeArmClothing('left', null);
-            changeArmClothing('right', null);
-
-            // Resetear piernas a "None"
-            currentLegLeftURL = null;
-            currentLegRightURL = null;
-            changeLegClothing('left', null);
-            changeLegClothing('right', null);
-
-            // Restaurar grid y ocultar sombra
-            if (typeof gridHelper !== 'undefined') gridHelper.visible = true;
-            if (footShadow) footShadow.visible = false;
-
-            // Reactivar controles de cámara
-            controls.enabled = true;
-
-            // Restaurar FOV original
-            camera.fov = 75;
-
-            // Restaurar el renderer al tamaño completo
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
+            disposeShowcaseRuntime();
         }
 
         function resetModelAppearanceToWhite() {
@@ -10633,127 +10944,7 @@
         }
 
         function updateShowcaseRotation() {
-            if (isShowcaseActive && loadedModel) {
-                // Rotación automática suave y continua (normalizada para evitar overflow)
-                // Solo rotar automáticamente si no se está arrastrando manualmente
-                if (!isShowcaseDragging) {
-                    loadedModel.rotation.y = (loadedModel.rotation.y + (showcaseRotationSpeed * 0.01)) % (Math.PI * 2);
-                }
-
-                // Cambio de colores aleatorios en diferentes partes
-                const now = Date.now();
-
-                // Cabeza
-                if (now - showcaseColorTimers.head > showcaseColorIntervals.head) {
-                    if (modelParts.head) applyRandomColorToPart(modelParts.head, true);
-                    showcaseColorTimers.head = now;
-                }
-
-                // Torso
-                if (now - showcaseColorTimers.torso > showcaseColorIntervals.torso) {
-                    if (modelParts.torso) applyRandomColorToPart(modelParts.torso);
-                    showcaseColorTimers.torso = now;
-                }
-
-                // Brazos
-                if (now - showcaseColorTimers.leftArm > showcaseColorIntervals.leftArm) {
-                    const leftArm = (modelParts.arms || []).find(arm => arm.name.toLowerCase().includes('l'));
-                    if (leftArm) applyRandomColorToPart(leftArm);
-                    showcaseColorTimers.leftArm = now;
-                }
-
-                if (now - showcaseColorTimers.rightArm > showcaseColorIntervals.rightArm) {
-                    const rightArm = (modelParts.arms || []).find(arm => arm.name.toLowerCase().includes('r'));
-                    if (rightArm) applyRandomColorToPart(rightArm);
-                    showcaseColorTimers.rightArm = now;
-                }
-
-                // Piernas
-                if (now - showcaseColorTimers.leftLeg > showcaseColorIntervals.leftLeg) {
-                    const leftLeg = (modelParts.legs || []).find(leg => leg.name.toLowerCase().includes('l'));
-                    if (leftLeg) applyRandomColorToPart(leftLeg);
-                    showcaseColorTimers.leftLeg = now;
-                }
-
-                if (now - showcaseColorTimers.rightLeg > showcaseColorIntervals.rightLeg) {
-                    const rightLeg = (modelParts.legs || []).find(leg => leg.name.toLowerCase().includes('r'));
-                    if (rightLeg) applyRandomColorToPart(rightLeg);
-                    showcaseColorTimers.rightLeg = now;
-                }
-
-                // Cambio de texturas aleatorias en diferentes partes
-                // Ojos
-                if (now - showcaseTextureTimers.eyes > showcaseTextureIntervals.eyes) {
-                    applyRandomEyeTexture();
-                    showcaseTextureTimers.eyes = now;
-                }
-
-                if (showcaseTextureUpdateMode === 'lite') {
-                    if (now - showcaseTextureTimers.hair > showcaseTextureIntervals.hair) {
-                        applyRandomHairTexture();
-                        showcaseTextureTimers.hair = now;
-                    }
-
-                    if (now - showcaseTextureTimers.torso > showcaseTextureIntervals.torso) {
-                        applyRandomTorsoTexture();
-                        showcaseTextureTimers.torso = now;
-                    }
-
-                    return;
-                }
-
-                // Cejas
-                if (now - showcaseTextureTimers.eyebrows > showcaseTextureIntervals.eyebrows) {
-                    applyRandomEyebrowTexture();
-                    showcaseTextureTimers.eyebrows = now;
-                }
-
-                // Nariz
-                if (now - showcaseTextureTimers.nose > showcaseTextureIntervals.nose) {
-                    applyRandomNoseTexture();
-                    showcaseTextureTimers.nose = now;
-                }
-
-                // Orejas
-                if (now - showcaseTextureTimers.ears > showcaseTextureIntervals.ears) {
-                    applyRandomEarTexture();
-                    showcaseTextureTimers.ears = now;
-                }
-
-                // Cabello
-                if (now - showcaseTextureTimers.hair > showcaseTextureIntervals.hair) {
-                    applyRandomHairTexture();
-                    showcaseTextureTimers.hair = now;
-                }
-
-                // Torso (texturas)
-                if (now - showcaseTextureTimers.torso > showcaseTextureIntervals.torso) {
-                    applyRandomTorsoTexture();
-                    showcaseTextureTimers.torso = now;
-                }
-
-                // Brazos izquierdo y derecho
-                if (now - showcaseTextureTimers.leftArm > showcaseTextureIntervals.leftArm) {
-                    applyRandomArmTexture('left');
-                    showcaseTextureTimers.leftArm = now;
-                }
-
-                if (now - showcaseTextureTimers.rightArm > showcaseTextureIntervals.rightArm) {
-                    applyRandomArmTexture('right');
-                    showcaseTextureTimers.rightArm = now;
-                }
-
-                // Piernas izquierda y derecha
-                if (now - showcaseTextureTimers.leftLeg > showcaseTextureIntervals.leftLeg) {
-                    applyRandomLegTexture('left');
-                    showcaseTextureTimers.leftLeg = now;
-                }
-
-                if (now - showcaseTextureTimers.rightLeg > showcaseTextureIntervals.rightLeg) {
-                    applyRandomLegTexture('right');
-                    showcaseTextureTimers.rightLeg = now;
-                }
-            }
+            return;
         }
 
         // Sistema de edición móvil optimizado
@@ -10902,6 +11093,11 @@
             return 'Seleccionar personaje';
         }
 
+        function getLatestPresetNames(limit = 6) {
+            if (typeof presetIcons === 'undefined') return [];
+            return Object.keys(presetIcons).slice(-limit);
+        }
+
         function scrollFunkoCollection(direction) {
             const viewport = document.querySelector('.funko-carousel-viewport');
             if (!viewport) return;
@@ -10930,19 +11126,24 @@
                             </div>
                         </div>
                     </div>
-                    <div class="funko-showcase-slot" id="home-showcase-slot"></div>
+                    <div class="funko-showcase-slot" id="home-showcase-slot">
+                        <div class="funko-showcase-stage" id="home-showcase-stage">
+                            <div class="funko-showcase-scene" id="home-showcase-scene"></div>
+                        </div>
+                    </div>
                 `;
             }
 
             if (collectionGrid) {
+                const latestPresets = getLatestPresetNames(6);
                 collectionGrid.className = 'funko-new-picks-grid';
-                collectionGrid.innerHTML = authenticatedHomeCollections.slice(0, 6).map((name, index) => {
+                collectionGrid.innerHTML = latestPresets.map((name, index) => {
                     const fandomKey = characterFandoms[name] || 'other';
                     const fandomLabel = fandomLabels[fandomKey] || 'Papelcool Original';
                     const isFav = isFavorite(name);
 
                     return `
-                    <article class="fandom-card" onclick="window.setPresetCharacter && window.setPresetCharacter('${name}'); navigateToView('custom')">
+                    <article class="fandom-card" onclick="if (window.setPresetCharacter) { navigateToView('preset-preview'); window.setPresetCharacter('${name}'); }">
                         <div class="fandom-badge">${getCollectionBadgeText(name, index)}</div>
                         <button class="fandom-heart material-symbols-outlined ${isFav ? 'active' : ''}" data-favorite-name="${name}" onclick="event.stopPropagation(); toggleFavorite('${name}', this)">star</button>
                         <div class="fandom-image-container">
@@ -11032,11 +11233,11 @@
                 hideCharacterName();
 
                 if (canvasContainer) {
-                    canvasContainer.style.display = '';
-                    canvasContainer.classList.add('showcase-active');
+                    canvasContainer.style.display = 'none';
+                    canvasContainer.classList.remove('showcase-active');
                 }
 
-                shouldRenderScene = true;
+                shouldRenderScene = false;
                 activeAppView = 'home';
                 applyPresetPreviewPerformanceProfile();
                 authenticatedHomeView.classList.add('active');
@@ -11138,6 +11339,9 @@
             ensureDeferredViews();
             document.body.classList.remove('showcase-mode');
             document.body.classList.remove('customization-active');
+            if (!currentPresetCharacter) {
+                currentPresetCharacter = getRememberedPresetCharacter();
+            }
             if (userProfileView) userProfileView.style.display = 'none';
             stopShowcase();
             if (fandomsOverlay) fandomsOverlay.classList.remove('active');
@@ -11187,6 +11391,11 @@
             initialViewApplied = true;
 
             const requestedView = getRequestedView();
+            const requestedPreset = getRememberedPresetCharacter();
+
+            if (requestedView === 'preset-preview' && requestedPreset) {
+                currentPresetCharacter = requestedPreset;
+            }
 
             if (requestedView === 'home') {
                 navigateToView('home', { updateHistory: false, replaceHistory: true });
@@ -11233,6 +11442,9 @@
         }
 
         window.addEventListener('popstate', () => {
+            if (getRequestedView() === 'preset-preview') {
+                currentPresetCharacter = getRememberedPresetCharacter();
+            }
             navigateToView(getRequestedView(), { updateHistory: false });
         });
 
@@ -12259,6 +12471,10 @@
         async function setPresetCharacter(name) {
             clearReadyPresetTemplateBlob();
             currentPresetCharacter = name;
+            rememberPresetCharacter(name);
+            if (activeAppView === 'preset-preview') {
+                syncViewInUrl('preset-preview', true);
+            }
             if (activeAppView === 'preset-preview') {
                 await applyPresetCharacterToPreview(name);
             } else {
@@ -14396,7 +14612,7 @@
             <!-- New Picks For You -->
             <section class="funko-section" style="padding-top: 3rem;">
                 <div class="funko-carousel-header">
-                    <h2>Ediciones del momento</h2>
+                    <h2>Últimos añadidos</h2>
                     <div class="funko-carousel-controls" aria-label="Controles del carrusel">
                         <button type="button" class="funko-carousel-btn" onclick="scrollFunkoCollection('prev')" aria-label="Anterior">
                             <span class="material-symbols-outlined">arrow_back</span>
