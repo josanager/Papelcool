@@ -126,78 +126,6 @@
 
 
     <style>
-        /* Custom Navigation Buttons (Eyes, Mouth, etc.) */
-        .custom-nav-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 64px;
-            height: 64px;
-            background: white;
-            border: 3px solid black;
-            border-radius: 50%;
-            margin-right: 12px;
-            cursor: pointer;
-            flex-shrink: 0;
-            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
-            transition: all 0.18s ease;
-        }
-
-        .custom-nav-btn:hover {
-            transform: translate(-1px, -1px);
-            box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 1);
-        }
-
-        .custom-nav-btn.active {
-            background: #FFE600;
-            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-            border-width: 4px;
-            transform: translate(-1px, -1px);
-        }
-
-        .custom-nav-btn .btn-icon svg {
-            width: 28px;
-            height: 28px;
-            color: black;
-        }
-
-        .custom-nav-btn span {
-            font-family: 'Fredoka', sans-serif;
-            font-weight: 700;
-            font-size: 0.7rem;
-            color: black;
-            text-transform: uppercase;
-        }
-
-        /* Part Selection Buttons (Head, Torso, etc.) */
-        .part-btn {
-            padding: 10px 18px;
-            background: white;
-            border: 3px solid black;
-            border-radius: 20px;
-            font-family: 'Fredoka', sans-serif;
-            font-weight: 700;
-            font-size: 0.85rem;
-            color: black;
-            cursor: pointer;
-            text-transform: uppercase;
-            transition: all 0.18s ease;
-            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
-        }
-
-        .part-btn:hover {
-            background: #f9fafb;
-            transform: translate(-1px, -1px);
-            box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 1);
-        }
-
-        .part-btn.active {
-            background: #FFE600;
-            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-            transform: translate(-1px, -1px);
-        }
-
         /* Preset Character Buttons overrides */
         :root {
             --pc-character-card-width: 100px;
@@ -3545,159 +3473,378 @@
 
 
 
-        /* --- Customization UI Redesign --- */
-
-        /* Desktop Layout (Default) */
-        @media (min-width: 1025px) {
-            body.customization-active #editor-panel-wrapper {
-                display: block !important;
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 292px;
-                height: 100vh;
-                height: 100dvh;
-                background: linear-gradient(180deg, rgba(246, 250, 255, 0.98) 0%, rgba(236, 243, 255, 0.98) 100%);
-                border-right: 4px solid #111111;
-                box-shadow: 8px 0 24px rgba(0, 0, 0, 0.18);
-                z-index: 40;
-                padding: 0;
-                pointer-events: auto;
-            }
-
-            /* Canvas Adjustment Desktop */
-            body.customization-active #canvas-container {
-                width: calc(100vw - 292px);
-                margin-left: 292px;
-                transition: width 0.3s ease, margin-left 0.3s ease;
-            }
-
-            /* Ensure panel content fits */
-            #editor-panel-wrapper .ui-panel {
-                height: 100%;
-                overflow-y: auto;
-                pointer-events: auto;
-                touch-action: pan-y;
-                border-radius: 0;
-                background: transparent;
-                padding: 18px 16px 20px !important;
-                border: 0;
-                box-shadow: none;
-                transition: none;
-                animation: none;
-                transform: none !important;
-            }
+        /* --- Custom Builder Rewrite --- */
+        body.customization-active {
+            --custom-editor-width: clamp(320px, 25vw, 420px);
         }
 
-        /* Mobile Layout */
-        @media (max-width: 1024px) {
-            body.customization-active #editor-panel-wrapper {
-                display: block !important;
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                height: 46vh;
-                height: 46dvh;
-                background: linear-gradient(180deg, rgba(246, 250, 255, 0.98) 0%, rgba(234, 242, 255, 0.98) 100%);
-                border-top: 4px solid #111111;
-                box-shadow: 0 -10px 28px rgba(0, 0, 0, 0.18);
-                border-top-left-radius: 18px;
-                border-top-right-radius: 18px;
-                z-index: 40;
-                padding: 0;
-                pointer-events: auto;
-            }
-
-            /* Canvas Adjustment Mobile */
-            body.customization-active #canvas-container {
-                height: 50vh !important;
-                height: 50dvh !important;
-                bottom: auto;
-                top: 0;
-                transition: height 0.3s ease;
-            }
-
-            /* Ensure panel content fits */
-            #editor-panel-wrapper .ui-panel {
-                height: 100%;
-                overflow-y: auto;
-                pointer-events: auto;
-                touch-action: pan-y;
-                border-radius: 18px 18px 0 0;
-                background: transparent;
-                padding: 14px 14px calc(26px + env(safe-area-inset-bottom, 0px)) !important;
-                border: 0;
-                box-shadow: none;
-                transition: none;
-                animation: none;
-                transform: none !important;
-            }
+        body.customization-active #canvas-container {
+            display: none !important;
+            pointer-events: none !important;
         }
 
-        /* --- New Customization UI Styles --- */
+        #editor-panel-wrapper {
+            display: none;
+        }
+
+        #custom-builder-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 44;
+            pointer-events: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.24s ease, visibility 0.24s ease;
+        }
+
+        body.customization-active #custom-builder-overlay {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #custom-builder-stage-veil {
+            position: absolute;
+            inset: 0;
+            background: #ffffff;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.56s ease;
+        }
+
+        #custom-builder-stage-veil.active {
+            opacity: 1;
+        }
+
+        .custom-builder-floating {
+            position: fixed;
+            left: 50%;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(-50%, 18px);
+            transition: opacity 0.28s ease, transform 0.28s ease;
+        }
+
+        .custom-builder-floating.active {
+            pointer-events: auto;
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        #custom-builder-intro {
+            bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+        }
+
+        #custom-builder-finished-actions {
+            top: calc(18px + env(safe-area-inset-top, 0px));
+            right: 16px;
+            left: auto;
+            display: flex;
+            gap: 10px;
+            transform: translate(0, -16px);
+        }
+
+        #custom-builder-finished-actions.active {
+            transform: translate(0, 0);
+        }
+
+        .custom-builder-cta,
+        .custom-builder-mini-btn,
+        .custom-builder-header-btn,
+        .custom-builder-part-btn,
+        .custom-builder-swatch,
+        .custom-builder-option-btn {
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #000000;
+            background: #ffffff;
+            border: 4px solid #000000;
+            box-shadow: 4px 4px 0 0 rgba(0, 0, 0, 1);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+        }
+
+        .custom-builder-cta:hover,
+        .custom-builder-mini-btn:hover,
+        .custom-builder-header-btn:hover,
+        .custom-builder-part-btn:hover,
+        .custom-builder-swatch:hover,
+        .custom-builder-option-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 6px 6px 0 0 rgba(0, 0, 0, 1);
+        }
+
+        .custom-builder-cta:active,
+        .custom-builder-mini-btn:active,
+        .custom-builder-header-btn:active,
+        .custom-builder-part-btn:active,
+        .custom-builder-swatch:active,
+        .custom-builder-option-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 0 rgba(0, 0, 0, 1);
+        }
+
+        .custom-builder-cta {
+            min-width: min(320px, calc(100vw - 40px));
+            min-height: 64px;
+            padding: 14px 26px;
+            border-radius: 22px;
+            background: #FFE600;
+            font-size: 1.15rem;
+            letter-spacing: 0.02em;
+        }
+
+        .custom-builder-mini-btn {
+            min-height: 48px;
+            padding: 10px 16px;
+            border-radius: 14px;
+            font-size: 0.9rem;
+        }
+
+        .custom-builder-mini-btn--primary {
+            background: #FFE600;
+        }
+
         #customize-section {
-            min-height: 0;
-            color: #111111;
-            flex: 1 1 auto;
-            overflow: visible;
-        }
-
-        .customize-panel-scroll {
             display: flex;
             flex-direction: column;
+            flex: 1 1 auto;
             min-height: 0;
             height: 100%;
-            overflow-y: auto;
-            overflow-x: visible;
-            padding-bottom: 20px;
-            pointer-events: auto;
-            touch-action: pan-y;
+            overflow: hidden;
+            color: #111111;
         }
 
-        .custom-nav-btn {
+        .custom-builder-panel {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 0;
+            overflow: hidden;
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(242, 248, 255, 0.98) 100%);
+            pointer-events: auto;
+        }
+
+        #editor-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 auto;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .custom-builder-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex: 0 0 auto;
+            gap: 10px;
+            padding: 16px 16px 12px;
+            border-bottom: 4px solid #000000;
+            background: rgba(255, 255, 255, 0.96);
+        }
+
+        .custom-builder-header-btn {
+            min-width: 108px;
+            min-height: 48px;
+            padding: 0 14px;
+            border-radius: 14px;
+            font-size: 0.86rem;
+        }
+
+        .custom-builder-header-btn[disabled] {
+            opacity: 0.4;
+            cursor: default;
+            transform: none;
+            box-shadow: 2px 2px 0 0 rgba(0, 0, 0, 1);
+        }
+
+        .custom-builder-step-meta {
+            min-width: 0;
+            flex: 1;
+            text-align: center;
+        }
+
+        .custom-builder-step-count {
+            display: block;
+            margin-bottom: 4px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+        }
+
+        .custom-builder-step-title {
+            margin: 0;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.04rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            line-height: 1;
+        }
+
+        .custom-builder-step-content {
+            min-height: 0;
+            flex: 1 1 auto;
+            overflow-y: auto;
+            overflow-x: hidden;
+            overscroll-behavior: contain;
+            -webkit-overflow-scrolling: touch;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .custom-builder-step-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .custom-builder-section {
+            background: #ffffff;
+            border: 4px solid #000000;
+            border-radius: 18px;
+            box-shadow: 5px 5px 0 0 rgba(0, 0, 0, 1);
+            padding: 14px;
+        }
+
+        .custom-builder-section-label {
+            display: block;
+            margin-bottom: 10px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.74rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .custom-builder-note {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.84rem;
+            line-height: 1.45;
+        }
+
+        .custom-builder-tones {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .custom-builder-swatch {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 999px;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .custom-builder-swatch.active {
+            background: #FFE600;
+            box-shadow: 0 0 0 3px #000000, 4px 4px 0 0 rgba(0, 0, 0, 1);
+        }
+
+        .custom-builder-swatch-chip {
+            width: 100%;
+            height: 100%;
+            border-radius: 999px;
+            border: 2px solid #000000;
+        }
+
+        .custom-builder-parts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .custom-builder-part-btn {
+            min-height: 50px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .custom-builder-part-btn.active {
+            background: #FFE600;
+        }
+
+        .custom-builder-sliders {
+            display: grid;
+            gap: 12px;
+        }
+
+        .custom-builder-slider-row {
+            display: grid;
+            gap: 8px;
+        }
+
+        .custom-builder-slider-row span {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .custom-builder-slider-row input[type="range"] {
+            width: 100%;
+            margin: 0;
+            accent-color: #000000;
+        }
+
+        .custom-builder-options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .custom-builder-option-btn {
+            aspect-ratio: 1 / 1;
+            min-height: 0;
+            padding: 0;
+            border-radius: 18px;
+            overflow: hidden;
+            cursor: pointer;
+            display: block;
+        }
+
+        .custom-builder-option-btn.active {
+            background: #FFE600;
+        }
+
+        .custom-builder-option-preview {
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 60px;
-            min-width: 60px;
-            height: 60px;
-            padding: 0;
-            border-radius: 14px;
-            background: #ffffff;
-            border: 3px solid black;
-            color: #111111;
-            cursor: pointer;
-            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
-            transition: all 0.18s ease;
-            flex: 0 0 60px;
+            background: #f3f8ff;
+            padding: 12px;
         }
 
-        .custom-nav-btn:hover {
-            background: #f9fafb;
-            transform: translate(-1px, -1px);
-            box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 1);
+        .custom-builder-option-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
-        .custom-nav-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 1);
+        .custom-builder-option-empty {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            min-height: 88px;
+            padding: 10px;
+            font-size: 0.72rem;
+            text-align: center;
         }
 
-        .custom-nav-btn.active {
-            background: #FFE600;
-            border-color: black;
-            color: #111111;
-            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-            transform: translate(-1px, -1px);
-        }
-
-        .custom-nav-btn .btn-icon {
-            width: 30px;
-            height: 30px;
-        }
-
-        .custom-nav-btn span {
+        .custom-builder-option-label {
             display: none;
         }
 
@@ -3710,226 +3857,82 @@
             scrollbar-width: none;
         }
 
-        .grid-item-btn {
-            aspect-ratio: 1;
-            min-height: 0;
-            border-radius: 14px;
-            background: white;
-            border: 3px solid black;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            justify-content: flex-start;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
-            transition: all 0.18s ease;
-        }
+        @media (min-width: 1025px) {
+            body.customization-active.custom-editor-open #editor-panel-wrapper {
+                display: block !important;
+                position: fixed;
+                inset: 0 auto 0 0;
+                width: var(--custom-editor-width);
+                height: 100vh;
+                height: 100dvh;
+                z-index: 40;
+                pointer-events: auto;
+            }
 
-        .grid-item-btn:hover {
-            border-color: black;
-            box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 1);
-            transform: translate(-1px, -1px);
-        }
+            body.customization-active.custom-editor-open #preset-preview-stage {
+                inset: 0 0 0 var(--custom-editor-width);
+            }
 
-        .grid-item-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 1);
-        }
-
-        .grid-item-btn.active {
-            background: #FFF8E0;
-            border-color: black;
-            box-shadow: 0 0 0 3px #FFE600, 4px 4px 0px 0px rgba(0, 0, 0, 1);
-        }
-
-        .grid-item-btn img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            filter: none;
-        }
-
-        .grid-item-btn-media {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-            min-height: 100%;
-            background: linear-gradient(180deg, #f4f8ff 0%, #eef3fc 100%);
-        }
-
-        .grid-item-btn-label {
-            display: none;
-        }
-
-        .color-swatch-circle {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: 3px solid black;
-            flex-shrink: 0;
-            cursor: pointer;
-            box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 1);
-            transition: all 0.18s ease;
-        }
-
-        .color-swatch-circle:hover {
-            transform: translate(-1px, -1px);
-            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-        }
-
-        .color-swatch-circle:active {
-            transform: translate(1px, 1px);
-            box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 1);
-        }
-
-        .color-swatch-circle.active {
-            border-color: black;
-            box-shadow: 0 0 0 3px #FFE600, 3px 3px 0px 0px rgba(0, 0, 0, 1);
-            transform: scale(1.1);
-        }
-
-        .custom-options-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 12px;
-            padding: 8px 4px 12px;
-            overflow: visible;
-        }
-
-        .part-selection-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 10px;
-            margin-top: 12px;
-            overflow: visible;
-            padding: 4px;
-        }
-
-        .part-btn {
-            min-height: 48px;
-            padding: 10px 18px;
-            background: white;
-            border: 3px solid black;
-            border-radius: 14px;
-            color: #111111;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            transition: all 0.18s ease;
-            box-shadow: 3px 3px 0px 0px rgba(0, 0, 0, 1);
-            font-family: 'Fredoka', sans-serif;
-            font-weight: 700;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-        }
-
-        .part-btn:hover {
-            border-color: black;
-            background: #f9fafb;
-            transform: translate(-1px, -1px);
-            box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 1);
-        }
-
-        .part-btn:active {
-            transform: translate(2px, 2px);
-            box-shadow: 1px 1px 0px 0px rgba(0, 0, 0, 1);
-        }
-
-        .part-btn.active {
-            background: #FFE600;
-            border-color: black;
-            color: #111111;
-            box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
-            transform: translate(-1px, -1px);
-        }
-
-        .part-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .custom-editor-block {
-            border-top: 1px solid rgba(17, 17, 17, 0.12);
-            padding-top: 12px;
-            margin-bottom: 14px;
-        }
-
-        .custom-editor-block:first-of-type {
-            border-top: 0;
-            padding-top: 0;
-        }
-
-        .custom-slider-stack {
-            display: grid;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .custom-slider-row {
-            display: grid;
-            grid-template-columns: 1fr;
-            align-items: center;
-            gap: 0;
-        }
-
-        .custom-slider-row input[type="range"] {
-            border: 0 !important;
-            box-shadow: none !important;
-            outline: none;
-        }
-
-        .custom-slider-icon {
-            width: 18px;
-            height: 18px;
-            color: #111111;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .custom-panel-section {
-            background: rgba(255, 255, 255, 0.85);
-            border: 2px solid rgba(0, 0, 0, 0.1);
-            border-radius: 16px;
-            padding: 14px;
-            margin-bottom: 14px;
-            overflow: visible;
-        }
-
-        .custom-panel-title {
-            margin: 0 0 10px;
-            font-family: 'Fredoka', sans-serif;
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #334155;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        .custom-panel-section #global-color-palette {
-            margin-bottom: 0;
-            padding: 6px 8px;
-            gap: 12px;
-        }
-
-        .custom-panel-section .part-selection-grid,
-        .custom-panel-section .custom-slider-stack,
-        .custom-panel-section .custom-options-grid {
-            margin-top: 0;
+            .custom-builder-panel {
+                border-right: 4px solid #000000;
+            }
         }
 
         @media (max-width: 1024px) {
-            .custom-options-grid {
+            body.customization-active.custom-editor-open #editor-panel-wrapper {
+                display: block !important;
+                position: fixed;
+                inset: auto 0 0 0;
+                height: 48vh;
+                height: 48dvh;
+                z-index: 40;
+                pointer-events: auto;
+            }
+
+            body.customization-active.custom-editor-open #preset-preview-stage {
+                inset: 0 0 48vh 0;
+                inset: 0 0 48dvh 0;
+            }
+
+            .custom-builder-panel {
+                border-top: 4px solid #000000;
+                border-radius: 22px 22px 0 0;
+                box-shadow: 0 -8px 0 0 rgba(0, 0, 0, 1);
+            }
+
+            .custom-builder-header {
+                padding-top: 14px;
+            }
+
+            .custom-builder-header-btn {
+                min-width: 92px;
+            }
+
+            .custom-builder-options-grid {
                 grid-template-columns: repeat(3, minmax(0, 1fr));
             }
 
-            .part-selection-grid {
-                grid-template-columns: repeat(4, 1fr);
+            .custom-builder-parts-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            #custom-builder-finished-actions {
+                left: 50%;
+                right: auto;
+                top: auto;
+                bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+                width: min(calc(100vw - 24px), 360px);
+                transform: translate(-50%, 18px);
+                flex-direction: column;
+            }
+
+            #custom-builder-finished-actions.active {
+                transform: translate(-50%, 0);
+            }
+
+            .custom-builder-mini-btn {
+                width: 100%;
+                justify-content: center;
             }
         }
 
@@ -6200,152 +6203,41 @@
 
     <!-- Panel del editor (responsivo) -->
     <div id="editor-panel-wrapper" class="pointer-events-none">
-        <div class="ui-panel p-4 space-y-4" style="padding-top: 8px; padding-bottom: 4px;">
+        <div class="custom-builder-panel">
             <div id="editor-container">
-                <!-- Botones de personajes preestablecidos -->
-                <!-- ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético) -->
-                <!-- Para añadir nuevos personajes: agregar al INICIO de la lista -->
                 <div id="presets-section" class="pt-2 mb-4 hidden" style="padding-top: 4px; padding-bottom: 2px;">
                     <div class="mb-3 pointer-events-auto">
                         <input type="text" id="preset-search-input" placeholder="Search presets..."
                             class="w-full px-4 py-3 text-sm bg-white text-black placeholder-gray-500 focus:outline-none focus:ring-0"
                             style="border-radius: 16px; border: 4px solid black; font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1rem; box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.1);" />
-                        <!-- Main Category Carousel moved to customize-section -->
                     </div>
                     <div id="presets-container" class="presets-grid pointer-events-auto">
-                        <!-- Presets dynamically loaded in Fandoms Grid -->
                     </div>
                 </div>
 
-                <div id="customize-section" class="hidden h-full flex flex-col">
-                    <div class="customize-panel-scroll">
-                    <!-- Main Category Carousel -->
-                    <div class="custom-editor-block custom-panel-section flex gap-3 overflow-x-auto py-2 px-1 mb-2 pointer-events-auto flex-none no-scrollbar"
-                        id="main-category-carousel">
-                        <button class="custom-nav-btn active" data-category="eyes">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
-                                </svg>
-                            </div>
-                        </button>
-                        <button class="custom-nav-btn" data-category="eyebrows">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
-                                </svg>
-                            </div>
-                        </button>
-                        <button class="custom-nav-btn" data-category="nose">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 15c-2.33 0-4.31-1.46-5.11-3.5h10.22c-.8 2.04-2.78 3.5-5.11 3.5z" />
-                                </svg>
-                            </div>
-                        </button>
-                        <button class="custom-nav-btn" data-category="ears">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M5 9c-2 0-3 3-3 6 0 3 2 4 3 4 1 0 1-1 1-1 0-2-1-3-1-5 0-2 1-3 0-4zm14 0c2 0 3 3 3 6 0 3-2 4-3 4-1 0-1-1-1-1 0-2 1-3 1-5 0-2-1-3 0-4z" />
-                                </svg>
-                            </div>
-                        </button>
-                        <button class="custom-nav-btn" data-category="hair">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M12 3c-5 0-9 4-9 9 0 3 2 5 2 5s2-2 2-5c0-2.5 2-4 5-4s5 1.5 5 4c0 3 2 5 2 5s2-2 2-5c0-5-4-9-9-9z" />
-                                </svg>
-                            </div>
-                        </button>
-                        <button class="custom-nav-btn" data-category="torso">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 2L4 5v11h16V5l-8-3zm0 2.5c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2z" />
-                                </svg>
-                            </div>
-                        </button>
-                        <button class="custom-nav-btn" data-category="arms">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 2L4 5v11h16V5l-8-3zm0 2.5c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2z" />
-                                </svg>
-                            </div>
-                        </button>
-                        <button class="custom-nav-btn" data-category="legs">
-                            <div class="btn-icon">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h4v-6h6v6h4c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" />
-                                </svg>
-                            </div>
-                        </button>
-                    </div>
-
-                    <div class="custom-editor-block custom-panel-section flex-none mb-4">
-                        <p class="custom-panel-title">Tonos de piel</p>
-                        <div id="global-color-palette"
-                            class="flex space-x-2 overflow-x-auto py-2 mb-2 pointer-events-auto no-scrollbar">
+                <div id="customize-section" class="hidden h-full">
+                    <div class="custom-builder-header">
+                        <button type="button" id="custom-builder-prev-btn" class="custom-builder-header-btn" onclick="window.stepCustomBuilderFlow && window.stepCustomBuilderFlow(-1)">Anterior</button>
+                        <div class="custom-builder-step-meta">
+                            <span id="custom-builder-step-count" class="custom-builder-step-count">1 / 11</span>
+                            <p id="custom-builder-step-title" class="custom-builder-step-title">Color base</p>
                         </div>
+                        <button type="button" id="custom-builder-next-btn" class="custom-builder-header-btn" onclick="window.stepCustomBuilderFlow && window.stepCustomBuilderFlow(1)">Siguiente</button>
                     </div>
-
-                    <div class="custom-editor-block custom-panel-section flex-none mb-4">
-                        <p class="custom-panel-title">Ajustes de color</p>
-                        <div class="custom-slider-stack pointer-events-auto">
-                            <div class="custom-slider-row">
-                                <input type="range" id="hue-slider" min="0" max="360" value="0"
-                                    class="w-full h-4 rounded-lg appearance-none cursor-pointer"
-                                    style="background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); border: 0;">
-                            </div>
-                            <div class="custom-slider-row">
-                                <input type="range" id="lightness-slider" min="0" max="100" value="50"
-                                    class="w-full h-4 rounded-lg appearance-none cursor-pointer"
-                                    style="background: linear-gradient(to right, #000000, #888888, #ffffff); border: 0;">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="custom-editor-block custom-panel-section flex-none mb-4">
-                        <p class="custom-panel-title">Aplicar color a</p>
-                        <div class="part-selection-grid pointer-events-auto">
-                            <button type="button" class="part-btn active" data-part="all" aria-label="Total">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"/></svg>
-                            </button>
-                            <button type="button" class="part-btn" data-part="head" aria-label="Cabeza">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a6 6 0 0 0-6 6v4.5A3.5 3.5 0 0 0 9.5 16H10v2h4v-2h.5A3.5 3.5 0 0 0 18 12.5V8a6 6 0 0 0-6-6z"/></svg>
-                            </button>
-                            <button type="button" class="part-btn" data-part="torso" aria-label="Torso">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 3h6l2 4-2 4v10H9V11L7 7l2-4z"/></svg>
-                            </button>
-                            <button type="button" class="part-btn" data-part="arm-l" aria-label="Brazo izquierdo">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5 4 7v10l4 2 2-2V7L8 5z"/></svg>
-                            </button>
-                            <button type="button" class="part-btn" data-part="arm-r" aria-label="Brazo derecho">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="m16 5-2 2v10l2 2 4-2V7l-4-2z"/></svg>
-                            </button>
-                            <button type="button" class="part-btn" data-part="leg-l" aria-label="Pierna izquierda">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 11h4v10H7l1-10z"/></svg>
-                            </button>
-                            <button type="button" class="part-btn" data-part="leg-r" aria-label="Pierna derecha">
-                                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 11h4l1 10h-5V11z"/></svg>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="custom-editor-block custom-panel-section flex-grow mb-4">
-                        <p class="custom-panel-title">Opciones disponibles</p>
-                        <div id="custom-options-grid"
-                            class="custom-options-grid pointer-events-auto flex-grow overflow-y-auto no-scrollbar">
-                        </div>
-                    </div>
-                    </div>
-
-                </div><!-- Cierre de customize-section -->
+                    <div id="custom-builder-step-content" class="custom-builder-step-content"></div>
+                </div>
             </div>
+        </div>
+    </div>
+
+    <div id="custom-builder-overlay" aria-hidden="true">
+        <div id="custom-builder-stage-veil"></div>
+        <div id="custom-builder-intro" class="custom-builder-floating hidden">
+            <button type="button" id="custom-builder-start-btn" class="custom-builder-cta" onclick="window.startCustomBuilderFlow && window.startCustomBuilderFlow()">Empezar</button>
+        </div>
+        <div id="custom-builder-finished-actions" class="custom-builder-floating hidden">
+            <button type="button" id="custom-builder-edit-btn" class="custom-builder-mini-btn" onclick="window.resumeCustomBuilderFlow && window.resumeCustomBuilderFlow()">Editar otra vez</button>
+            <button type="button" id="download-pdf-custom-btn" class="custom-builder-mini-btn custom-builder-mini-btn--primary">Descargar PDF</button>
         </div>
     </div>
 
@@ -6606,13 +6498,9 @@
                 localStorage.setItem('papelcool_lang', lang);
                 this.updateUI();
 
-                // Trigger grid repopulation if customize section is visible
-                const activeNav = document.querySelector('.custom-nav-btn.active');
-                if (activeNav) {
-                    const category = activeNav.dataset.category;
-                    if (typeof populateOptionsGrid === 'function') {
-                        populateOptionsGrid(category);
-                    }
+                if (activeAppView === 'custom' && typeof renderCustomBuilderStep === 'function') {
+                    syncCustomBuilderLabels();
+                    renderCustomBuilderStep();
                 }
             }
 
@@ -6932,6 +6820,10 @@
         });
 
         function requestCustomRender(frames = 12) {
+            if (activeAppView === 'custom' && customPreviewRuntime.isInitialized) {
+                requestCustomPreviewRender(frames);
+                return;
+            }
             customRenderBurstFrames = Math.max(customRenderBurstFrames, frames);
             shouldRenderScene = true;
         }
@@ -7294,6 +7186,10 @@
             head: null, torso: null, arms: [], legs: [],
             eyebrows: [], nose: null, ears: [], hair: null
         };
+        const loadedModelParts = {
+            head: null, torso: null, arms: [], legs: [],
+            eyebrows: [], nose: null, ears: [], hair: null
+        };
         const initialTransforms = new Map();
         let modelCenter = new THREE.Vector3();
         let eyesMesh = null;
@@ -7338,6 +7234,20 @@
             activeCharacter: null,
             pendingCharacter: null
         };
+        const customPreviewRuntime = {
+            stageEl: null,
+            mountEl: null,
+            scene: null,
+            camera: null,
+            renderer: null,
+            controls: null,
+            modelRoot: null,
+            parts: null,
+            rafId: 0,
+            requestedFrames: 0,
+            interacting: false,
+            isInitialized: false
+        };
         const showcaseRuntime = {
             stageEl: null,
             mountEl: null,
@@ -7356,6 +7266,64 @@
             activePointerId: null,
             lastPointerX: 0
         };
+
+        function syncModelPartsBindings(sourceParts) {
+            modelParts.head = sourceParts?.head || null;
+            modelParts.torso = sourceParts?.torso || null;
+            modelParts.nose = sourceParts?.nose || null;
+            modelParts.hair = sourceParts?.hair || null;
+
+            modelParts.arms.length = 0;
+            (sourceParts?.arms || []).forEach((part) => modelParts.arms.push(part));
+
+            modelParts.legs.length = 0;
+            (sourceParts?.legs || []).forEach((part) => modelParts.legs.push(part));
+
+            modelParts.eyebrows.length = 0;
+            (sourceParts?.eyebrows || []).forEach((part) => modelParts.eyebrows.push(part));
+
+            modelParts.ears.length = 0;
+            (sourceParts?.ears || []).forEach((part) => modelParts.ears.push(part));
+        }
+
+        function captureLoadedModelParts() {
+            loadedModelParts.head = modelParts.head;
+            loadedModelParts.torso = modelParts.torso;
+            loadedModelParts.nose = modelParts.nose;
+            loadedModelParts.hair = modelParts.hair;
+            loadedModelParts.arms = [...modelParts.arms];
+            loadedModelParts.legs = [...modelParts.legs];
+            loadedModelParts.eyebrows = [...modelParts.eyebrows];
+            loadedModelParts.ears = [...modelParts.ears];
+        }
+
+        function clearCustomizationOverlayGlobals() {
+            eyesMesh = null;
+            eyebrowsMesh = null;
+            noseMesh = null;
+            earLeftMesh = null;
+            earRightMesh = null;
+            hairFrontMesh = null;
+            hairBackMesh = null;
+            hairLeftMesh = null;
+            hairRightMesh = null;
+            hairUpMesh = null;
+            torsoFrontMesh = null;
+            torsoBackMesh = null;
+            armLeftFrontMesh = null;
+            armLeftBackMesh = null;
+            armRightFrontMesh = null;
+            armRightBackMesh = null;
+            legLeftFrontMesh = null;
+            legLeftBackMesh = null;
+            legRightFrontMesh = null;
+            legRightBackMesh = null;
+        }
+
+        function useLoadedModelPartsBindings() {
+            syncModelPartsBindings(loadedModelParts);
+            clearCustomizationOverlayGlobals();
+        }
 
         function rememberPresetPreviewTexture(cacheKey, source) {
             if (!cacheKey || !source) return;
@@ -7561,7 +7529,11 @@
                 head: null,
                 torso: null,
                 arms: [],
-                legs: []
+                legs: [],
+                eyebrows: [],
+                nose: null,
+                ears: [],
+                hair: null
             };
 
             root.traverse((child) => {
@@ -7571,6 +7543,10 @@
                 else if (name.includes('torso')) parts.torso = child;
                 else if (name.includes('arm')) parts.arms.push(child);
                 else if (name.includes('leg')) parts.legs.push(child);
+                else if (name.includes('eyebrow')) parts.eyebrows.push(child);
+                else if (name.includes('nose')) parts.nose = child;
+                else if (name.includes('ear')) parts.ears.push(child);
+                else if (name.includes('hair')) parts.hair = child;
             });
 
             return parts;
@@ -7728,6 +7704,180 @@
                 presetPreviewRuntime.stageEl.classList.remove('active');
                 presetPreviewRuntime.stageEl.setAttribute('aria-hidden', 'true');
             }
+        }
+
+        function requestCustomPreviewRender(frames = 1) {
+            if (!customPreviewRuntime.isInitialized) return;
+            customPreviewRuntime.requestedFrames = Math.max(customPreviewRuntime.requestedFrames, frames);
+            if (!customPreviewRuntime.rafId) {
+                customPreviewRuntime.rafId = requestAnimationFrame(renderCustomPreviewFrame);
+            }
+        }
+
+        function renderCustomPreviewFrame() {
+            customPreviewRuntime.rafId = 0;
+
+            if (!customPreviewRuntime.isInitialized || activeAppView !== 'custom') {
+                return;
+            }
+
+            customPreviewRuntime.controls?.update();
+            customPreviewRuntime.renderer.render(customPreviewRuntime.scene, customPreviewRuntime.camera);
+
+            if (customPreviewRuntime.requestedFrames > 0) {
+                customPreviewRuntime.requestedFrames -= 1;
+            }
+
+            if (customPreviewRuntime.interacting || customPreviewRuntime.requestedFrames > 0) {
+                customPreviewRuntime.rafId = requestAnimationFrame(renderCustomPreviewFrame);
+            }
+        }
+
+        function resizeCustomPreviewRuntime() {
+            if (!customPreviewRuntime.isInitialized || !customPreviewRuntime.mountEl) return;
+            const width = customPreviewRuntime.mountEl.clientWidth || window.innerWidth;
+            const height = customPreviewRuntime.mountEl.clientHeight || window.innerHeight;
+            customPreviewRuntime.camera.aspect = width / height;
+            customPreviewRuntime.camera.updateProjectionMatrix();
+            customPreviewRuntime.renderer.setSize(width, height);
+            requestCustomPreviewRender(2);
+        }
+
+        function disposeCustomPreviewRuntime() {
+            if (!customPreviewRuntime.isInitialized) return;
+
+            if (customPreviewRuntime.rafId) {
+                cancelAnimationFrame(customPreviewRuntime.rafId);
+                customPreviewRuntime.rafId = 0;
+            }
+
+            if (customPreviewRuntime.modelRoot) {
+                customPreviewRuntime.modelRoot.traverse((child) => {
+                    if (!child.isMesh) return;
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach((material) => {
+                            if (material.map) material.map.dispose();
+                            material.dispose?.();
+                        });
+                    } else if (child.material) {
+                        if (child.material.map) child.material.map.dispose();
+                        child.material.dispose?.();
+                    }
+                });
+
+                customPreviewRuntime.scene?.remove(customPreviewRuntime.modelRoot);
+            }
+
+            customPreviewRuntime.controls?.dispose();
+            customPreviewRuntime.renderer?.dispose();
+
+            if (customPreviewRuntime.mountEl) {
+                customPreviewRuntime.mountEl.innerHTML = '';
+            }
+
+            customPreviewRuntime.scene = null;
+            customPreviewRuntime.camera = null;
+            customPreviewRuntime.renderer = null;
+            customPreviewRuntime.controls = null;
+            customPreviewRuntime.modelRoot = null;
+            customPreviewRuntime.parts = null;
+            customPreviewRuntime.isInitialized = false;
+            customPreviewRuntime.interacting = false;
+            customPreviewRuntime.requestedFrames = 0;
+
+            clearCustomizationOverlayGlobals();
+            useLoadedModelPartsBindings();
+
+            if (customPreviewRuntime.stageEl) {
+                customPreviewRuntime.stageEl.classList.remove('active');
+                customPreviewRuntime.stageEl.setAttribute('aria-hidden', 'true');
+            }
+        }
+
+        function ensureCustomPreviewRuntime() {
+            if (customPreviewRuntime.isInitialized) return true;
+            if (!loadedModel) return false;
+
+            customPreviewRuntime.stageEl = document.getElementById('preset-preview-stage');
+            customPreviewRuntime.mountEl = document.getElementById('preset-preview-scene');
+            if (!customPreviewRuntime.stageEl || !customPreviewRuntime.mountEl) return false;
+
+            const runtimeScene = new THREE.Scene();
+            const runtimeCamera = new THREE.PerspectiveCamera(36, window.innerWidth / window.innerHeight, 0.1, 100);
+            runtimeCamera.position.set(0, 1.48, isLowPowerMobile ? 5.15 : 5.55);
+
+            const runtimeRenderer = new THREE.WebGLRenderer({
+                antialias: false,
+                alpha: true,
+                powerPreference: isLowPowerMobile ? 'low-power' : 'high-performance'
+            });
+            runtimeRenderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isLowPowerMobile ? 1 : 1.35));
+            runtimeRenderer.setClearColor(0x000000, 0);
+            runtimeRenderer.outputColorSpace = THREE.SRGBColorSpace;
+            customPreviewRuntime.mountEl.innerHTML = '';
+            customPreviewRuntime.mountEl.appendChild(runtimeRenderer.domElement);
+
+            const runtimeControls = new OrbitControls(runtimeCamera, runtimeRenderer.domElement);
+            runtimeControls.enableDamping = !isLowPowerMobile;
+            runtimeControls.dampingFactor = 0.08;
+            runtimeControls.enablePan = false;
+            runtimeControls.rotateSpeed = isLowPowerMobile ? 0.82 : 0.96;
+            runtimeControls.zoomSpeed = isLowPowerMobile ? 0.72 : 0.9;
+            runtimeControls.minDistance = 3.8;
+            runtimeControls.maxDistance = 8.2;
+            runtimeControls.minPolarAngle = 0.48;
+            runtimeControls.maxPolarAngle = Math.PI - 0.48;
+            runtimeControls.target.set(0, 1.18, 0);
+            runtimeControls.addEventListener('change', () => {
+                requestCustomPreviewRender(isLowPowerMobile ? 12 : 6);
+            });
+
+            runtimeRenderer.domElement.addEventListener('pointerdown', () => {
+                customPreviewRuntime.interacting = true;
+                requestCustomPreviewRender(isLowPowerMobile ? 18 : 10);
+            });
+            runtimeRenderer.domElement.addEventListener('pointerup', () => {
+                customPreviewRuntime.interacting = false;
+                requestCustomPreviewRender(isLowPowerMobile ? 10 : 4);
+            });
+            runtimeRenderer.domElement.addEventListener('pointercancel', () => {
+                customPreviewRuntime.interacting = false;
+            });
+            runtimeRenderer.domElement.addEventListener('pointerleave', () => {
+                customPreviewRuntime.interacting = false;
+            });
+
+            runtimeScene.add(new THREE.HemisphereLight(0xffffff, 0xc4d7eb, 1.55));
+            const runtimeFrontLight = new THREE.DirectionalLight(0xffffff, 1.05);
+            runtimeFrontLight.position.set(2.8, 4.5, 4.6);
+            runtimeScene.add(runtimeFrontLight);
+            const runtimeSideLight = new THREE.DirectionalLight(0xffffff, 0.38);
+            runtimeSideLight.position.set(-3.4, 2.8, 1.2);
+            runtimeScene.add(runtimeSideLight);
+
+            const floorShadow = createFootShadow(isLowPowerMobile ? 1.5 : 1.75);
+            floorShadow.visible = true;
+            floorShadow.position.y = -0.03;
+            runtimeScene.add(floorShadow);
+
+            const runtimeModel = cloneCleanPresetPreviewModel(loadedModel);
+            runtimeScene.add(runtimeModel);
+
+            customPreviewRuntime.scene = runtimeScene;
+            customPreviewRuntime.camera = runtimeCamera;
+            customPreviewRuntime.renderer = runtimeRenderer;
+            customPreviewRuntime.controls = runtimeControls;
+            customPreviewRuntime.modelRoot = runtimeModel;
+            customPreviewRuntime.parts = extractModelPartsFromRoot(runtimeModel);
+            customPreviewRuntime.isInitialized = true;
+
+            customPreviewRuntime.stageEl.classList.add('active');
+            customPreviewRuntime.stageEl.setAttribute('aria-hidden', 'false');
+            syncModelPartsBindings(customPreviewRuntime.parts);
+            clearCustomizationOverlayGlobals();
+            resizeCustomPreviewRuntime();
+            requestCustomPreviewRender(isLowPowerMobile ? 18 : 8);
+            return true;
         }
 
         function ensurePresetPreviewRuntime() {
@@ -8668,6 +8818,7 @@
                         });
                     }
                 });
+                captureLoadedModelParts();
 
                 const box = new THREE.Box3().setFromObject(loadedModel);
                 const size = box.getSize(new THREE.Vector3());
@@ -10097,127 +10248,16 @@
         // updatePaletteDOM removed
 
 
-        // Sliders de personalización de color
-        const hueSlider = document.getElementById('hue-slider');
-        const lightnessSlider = document.getElementById('lightness-slider');
+        // Estado del panel custom reescrito
+        let hueSlider = null;
+        let lightnessSlider = null;
         const customizeSectionRoot = document.getElementById('customize-section');
-        let colorTargetPart = 'all';
 
         if (customizeSectionRoot) {
             customizeSectionRoot.addEventListener('pointerdown', () => {
                 requestCustomRender(isLowPowerMobile ? 10 : 16);
             }, { passive: true });
         }
-
-        // Part selection logic
-        const partButtons = document.querySelectorAll('.part-btn');
-        partButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                partButtons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                colorTargetPart = btn.dataset.part;
-            });
-        });
-
-        function applyCustomColor() {
-            isCustomSkinColorSelected = true;
-            const hue = hueSlider.value;
-            const lightness = lightnessSlider.value;
-            const saturation = 70; // Saturación fija para colores vibrantes
-
-            // Convertir HSL a Hex
-            const hslToHex = (h, s, l) => {
-                l /= 100;
-                const a = s * Math.min(l, 1 - l) / 100;
-                const f = n => {
-                    const k = (n + h / 30) % 12;
-                    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-                    return Math.round(255 * color).toString(16).padStart(2, '0');
-                };
-                return `#${f(0)}${f(8)}${f(4)}`;
-            };
-
-            const customColor = hslToHex(hue, saturation, lightness);
-            const colorHex = parseInt(customColor.replace('#', '0x'), 16);
-            const colorObj = new THREE.Color(colorHex);
-            requestCustomRender(isLowPowerMobile ? 14 : 20);
-
-            if (!loadedModel) return;
-
-            // Helper to apply color to a mesh and its children, excluding textures
-            const applyToPart = (mesh) => {
-                if (!mesh) return;
-                const textureMeshes = [
-                    eyesMesh, eyebrowsMesh, noseMesh, earLeftMesh, earRightMesh,
-                    hairFrontMesh, hairBackMesh, hairLeftMesh, hairRightMesh, hairUpMesh,
-                    torsoFrontMesh, torsoBackMesh,
-                    armLeftFrontMesh, armLeftBackMesh, armRightFrontMesh, armRightBackMesh,
-                    legLeftFrontMesh, legLeftBackMesh, legRightFrontMesh, legRightBackMesh
-                ];
-
-                mesh.traverse((child) => {
-                    if (child.isMesh && child.material && child.material.color) {
-                        if (textureMeshes.includes(child)) return;
-                        if (Array.isArray(child.material)) {
-                            child.material.forEach(mat => { if (mat.color) mat.color.copy(colorObj); });
-                        } else {
-                            child.material.color.copy(colorObj);
-                        }
-                    }
-                });
-            };
-
-            // Aplicar el color según la parte seleccionada
-            switch (colorTargetPart) {
-                case 'all':
-                    if (modelParts.head) {
-                        applyToPart(modelParts.head);
-                        applyNoseColor(colorHex);
-                    }
-                    if (modelParts.torso) applyToPart(modelParts.torso);
-                    if (modelParts.arms) modelParts.arms.forEach(arm => applyToPart(arm));
-                    if (modelParts.legs) modelParts.legs.forEach(leg => applyToPart(leg));
-                    if (modelParts.ears) modelParts.ears.forEach(ear => applyToPart(ear));
-                    break;
-                case 'head':
-                    if (modelParts.head) {
-                        applyToPart(modelParts.head);
-                        applyNoseColor(colorHex);
-                    }
-                    if (modelParts.ears) modelParts.ears.forEach(ear => applyToPart(ear));
-                    break;
-                case 'torso':
-                    if (modelParts.torso) applyToPart(modelParts.torso);
-                    break;
-                case 'arm-l':
-                    if (modelParts.arms) {
-                        const leftArm = modelParts.arms.find(a => a.name.toLowerCase().includes('l'));
-                        if (leftArm) applyToPart(leftArm);
-                    }
-                    break;
-                case 'arm-r':
-                    if (modelParts.arms) {
-                        const rightArm = modelParts.arms.find(a => a.name.toLowerCase().includes('r'));
-                        if (rightArm) applyToPart(rightArm);
-                    }
-                    break;
-                case 'leg-l':
-                    if (modelParts.legs) {
-                        const leftLeg = modelParts.legs.find(l => l.name.toLowerCase().includes('l'));
-                        if (leftLeg) applyToPart(leftLeg);
-                    }
-                    break;
-                case 'leg-r':
-                    if (modelParts.legs) {
-                        const rightLeg = modelParts.legs.find(l => l.name.toLowerCase().includes('r'));
-                        if (rightLeg) applyToPart(rightLeg);
-                    }
-                    break;
-            }
-        }
-
-        hueSlider.addEventListener('input', applyCustomColor);
-        lightnessSlider.addEventListener('input', applyCustomColor);
 
         window.addEventListener('keydown', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = true; });
         window.addEventListener('keyup', e => { if (keys.hasOwnProperty(e.key)) keys[e.key] = false; });
@@ -10345,6 +10385,7 @@
             const isMobile = window.innerWidth <= 1024;
             const isCustomizationActive = document.body.classList.contains('customization-active');
             resizePresetPreviewRuntime();
+            resizeCustomPreviewRuntime();
             resizeShowcaseRuntime();
 
             // Ajustar visibilidad de paneles según modo y tamaño
@@ -10359,9 +10400,9 @@
             }
 
             // Ajustar cámara y renderer según contexto
-            if (isCustomizationActive) {
-                // En modo customización, el CSS controla el tamaño del contenedor
-                // Usamos resizeToCanvasContainer para ajustar el renderer a ese tamaño
+            if (activeAppView === 'custom') {
+                requestCustomPreviewRender(2);
+            } else if (isCustomizationActive) {
                 resizeToCanvasContainer();
             } else if (!isShowcaseActive) {
                 camera.fov = 75;
@@ -11217,6 +11258,10 @@
             const authContainer = document.getElementById('auth-container');
             updatePresetTemplateDownloadButton();
             disposePresetPreviewRuntime();
+            disposeCustomPreviewRuntime();
+            if (window.__papelcoolCustomBuilderReady === true) {
+                resetCustomBuilderView();
+            }
 
             if (!authenticatedHomeView) {
                 setTimeout(() => openAuthenticatedHome(show), 50);
@@ -11266,6 +11311,7 @@
             document.body.classList.remove('showcase-mode');
             setGlobalTopbarVisible(false);
             disposePresetPreviewRuntime();
+            disposeCustomPreviewRuntime();
             if (userProfileView) userProfileView.style.display = 'none';
             stopShowcase();
             if (fandomsOverlay) fandomsOverlay.classList.remove('active');
@@ -11275,16 +11321,14 @@
             if (editorPanelWrapper) editorPanelWrapper.style.display = 'block';
             if (presetsSection) presetsSection.classList.add('hidden');
             if (customizeSection) customizeSection.classList.remove('hidden');
+            if (canvasContainer) {
+                canvasContainer.style.display = 'none';
+                canvasContainer.classList.remove('showcase-active');
+            }
 
             hideCharacterName();
             hasCustomizationInteracted = false;
-            const downloadPdfCustomBtn = document.getElementById('download-pdf-custom-btn');
-            if (downloadPdfCustomBtn) downloadPdfCustomBtn.style.display = 'none';
             activeAppView = 'custom';
-
-            if (typeof initNewCustomizationUI === 'function') {
-                initNewCustomizationUI();
-            }
 
             controls.enableDamping = !isLowPowerMobile;
             controls.dampingFactor = isLowPowerMobile ? 0.04 : 0.1;
@@ -11296,9 +11340,22 @@
                 camera.position.copy(desktopCustomizationCameraPos);
                 controls.target.copy(modelCenter);
             }
-            resetModelAppearanceToWhite();
-            requestCustomRender(isLowPowerMobile ? 18 : 24);
-            applyPresetPreviewPerformanceProfile();
+            shouldRenderScene = false;
+            customRenderBurstFrames = 0;
+
+            if (ensureCustomPreviewRuntime()) {
+                resetCustomBuilderModelState();
+                if (window.__papelcoolCustomBuilderReady === true) {
+                    launchCustomBuilderExperience();
+                } else {
+                    setTimeout(() => {
+                        if (window.__papelcoolCustomBuilderReady === true && activeAppView === 'custom') {
+                            launchCustomBuilderExperience();
+                        }
+                    }, 0);
+                }
+                requestCustomPreviewRender(isLowPowerMobile ? 18 : 24);
+            }
 
             setTimeout(() => {
                 onWindowResize();
@@ -11310,6 +11367,10 @@
             ensureDeferredViews();
             document.body.classList.remove('showcase-mode');
             disposePresetPreviewRuntime();
+            disposeCustomPreviewRuntime();
+            if (window.__papelcoolCustomBuilderReady === true) {
+                resetCustomBuilderView();
+            }
             if (userProfileView) userProfileView.style.display = 'none';
             stopShowcase();
             document.body.classList.remove('customization-active');
@@ -11339,6 +11400,10 @@
             ensureDeferredViews();
             document.body.classList.remove('showcase-mode');
             document.body.classList.remove('customization-active');
+            disposeCustomPreviewRuntime();
+            if (window.__papelcoolCustomBuilderReady === true) {
+                resetCustomBuilderView();
+            }
             if (!currentPresetCharacter) {
                 currentPresetCharacter = getRememberedPresetCharacter();
             }
@@ -13498,243 +13563,313 @@
         }
         animate();
 
-        // --- NEW CUSTOMIZATION UI LOGIC ---
+        // --- CUSTOM BUILDER UI LOGIC ---
 
-        function initNewCustomizationUI() {
-            const navButtons = document.querySelectorAll('.custom-nav-btn');
+        const CUSTOM_SKIN_TONES = ['#FFE0BD', '#FFCD94', '#EAC086', '#A1665E', '#503335'];
+        const CUSTOM_COLOR_TARGETS = ['all', 'head', 'torso', 'arm-l', 'arm-r', 'leg-l', 'leg-r'];
+        const customBuilderState = {
+            initialized: false,
+            phase: 'hidden',
+            currentStepIndex: 0,
+            lastStepIndex: 0,
+            colorTarget: 'all',
+            colorSource: 'none',
+            activeToneHex: null,
+            sliderHue: 32,
+            sliderLightness: 74,
+            timers: [],
+            elements: {}
+        };
 
-            navButtons.forEach(btn => {
-                if (btn.dataset.customUiBound === 'true') return;
+        function getCustomBuilderCopy() {
+            const lang = (localStorage.getItem('papelcool_lang') || 'es').toLowerCase().startsWith('es') ? 'es' : 'en';
 
-                btn.addEventListener('click', (e) => {
-                    // Remove active class from all
-                    navButtons.forEach(b => b.classList.remove('active'));
-                    // Add active class to clicked
-                    e.currentTarget.classList.add('active');
-
-                    const category = e.currentTarget.dataset.category;
-                    populateOptionsGrid(category);
-                });
-
-                btn.dataset.customUiBound = 'true';
-            });
-
-            // Initialize with Eyes
-            populateOptionsGrid('eyes');
-            populateGlobalColorPalette();
-        }
-
-        function isCustomizationItemSelected(category, item) {
-            switch (category) {
-                case 'eyes':
-                    return currentEyeTextureURL === item.url;
-                case 'eyebrows':
-                    return currentEyebrowTextureURL === item.url;
-                case 'ears':
-                    return currentEarTextureURL === item.url;
-                case 'nose':
-                    return currentNoseTextureURL === item.url;
-                case 'hair':
-                    return currentHairFrontURL === item.frontUrl && currentHairBackURL === item.backUrl;
-                case 'torso':
-                    return currentTorsoFrontURL === item.frontUrl && currentTorsoBackURL === item.backUrl;
-                case 'legs':
-                    return currentLegLeftURL === item.leftUrl && currentLegRightURL === item.rightUrl;
-                case 'arms':
-                    return currentArmLeftURL === item.leftUrl && currentArmRightURL === item.rightUrl;
-                default:
-                    return false;
-            }
-        }
-
-        function populateOptionsGrid(category) {
-            const grid = document.getElementById('custom-options-grid');
-            if (!grid) return;
-            grid.innerHTML = '';
-
-            let items = [];
-            let clickHandler = null;
-            let type = 'texture';
-
-            switch (category) {
-                case 'eyes':
-                    items = eyeTextures || [];
-                    clickHandler = (item) => {
-                        currentEyeTextureURL = item.url;
-                        changeEyeTexture(item.url);
-                    };
-                    break;
-                case 'eyebrows':
-                    items = eyebrowTextures || [];
-                    clickHandler = (item) => {
-                        currentEyebrowTextureURL = item.url;
-                        changeEyebrowTexture(item.url);
-                    };
-                    break;
-                case 'ears':
-                    items = earTextures || [];
-                    clickHandler = (item) => {
-                        // Apply to both ears
-                        changeEarTexture('left', item.url);
-                        changeEarTexture('right', item.url);
-                    };
-                    break;
-                case 'nose':
-                    items = noseTextures || [];
-                    clickHandler = (item) => {
-                        currentNoseTextureURL = item.url;
-                        changeNoseTexture(item.url);
-                    };
-                    break;
-                case 'hair':
-                    items = hairTextures || [];
-                    clickHandler = (item) => {
-                        currentHairFrontURL = item.frontUrl;
-                        currentHairBackURL = item.backUrl;
-                        currentHairLeftURL = item.leftUrl;
-                        currentHairRightURL = item.rightUrl;
-                        currentHairUpURL = item.upUrl;
-                        changeHairTexture(item.frontUrl, item.backUrl, item.leftUrl, item.rightUrl, item.upUrl);
-                    };
-                    break;
-                case 'torso':
-                    items = torsoClothingTextures || [];
-                    type = 'clothing';
-                    clickHandler = (item) => {
-                        currentTorsoFrontURL = item.frontUrl;
-                        currentTorsoBackURL = item.backUrl;
-                        changeTorsoClothing(item.frontUrl, item.backUrl);
-                    };
-                    break;
-                case 'legs':
-                    items = legTextures || [];
-                    type = 'clothing';
-                    clickHandler = (item) => {
-                        currentLegLeftURL = item.leftUrl;
-                        currentLegRightURL = item.rightUrl;
-                        changeLegClothing('left', item.leftUrl);
-                        changeLegClothing('right', item.rightUrl);
-                    };
-                    break;
-                case 'arms':
-                    items = armTextures || [];
-                    type = 'clothing';
-                    clickHandler = (item) => {
-                        currentArmLeftURL = item.leftUrl;
-                        currentArmRightURL = item.rightUrl;
-                        changeArmClothing('left', item.leftUrl);
-                        changeArmClothing('right', item.rightUrl);
-                    };
-                    break;
+            if (lang === 'en') {
+                return {
+                    start: 'Start',
+                    prev: 'Previous',
+                    next: 'Next',
+                    finish: 'Finish',
+                    editAgain: 'Edit again',
+                    download: 'Download PDF',
+                    skin: 'Base color',
+                    eyes: 'Eyes',
+                    eyebrows: 'Eyebrows',
+                    nose: 'Nose',
+                    ears: 'Ears',
+                    hair: 'Hair',
+                    torso: 'Torso',
+                    armLeft: 'Left arm',
+                    armRight: 'Right arm',
+                    legLeft: 'Left leg',
+                    legRight: 'Right leg',
+                    skinNote: 'The model starts blank. Paint the body first, then move through each feature.',
+                    tones: 'Skin tones',
+                    manual: 'Manual sliders',
+                    target: 'Apply color to',
+                    hue: 'Color',
+                    lightness: 'Light',
+                    options: 'Available styles',
+                    all: 'All',
+                    head: 'Head',
+                    torsoPart: 'Torso',
+                    armL: 'Left arm',
+                    armR: 'Right arm',
+                    legL: 'Left leg',
+                    legR: 'Right leg'
+                };
             }
 
-            items.forEach(item => {
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'grid-item-btn';
-                const displayName = langManager.get('name-' + item.name.toLowerCase()) || item.name;
-                btn.title = displayName;
-                btn.setAttribute('aria-label', displayName);
-
-                const media = document.createElement('div');
-                media.className = 'grid-item-btn-media';
-
-                const img = document.createElement('img');
-                const imgSrc = item.preview || item.url || item.frontUrl || item.leftUrl;
-
-                if (imgSrc) {
-                    img.src = imgSrc;
-                    img.loading = 'lazy';
-                    img.onerror = () => {
-                        img.style.display = 'none';
-                        media.textContent = displayName;
-                    };
-                    media.appendChild(img);
-                } else {
-                    media.textContent = displayName;
-                }
-
-                const label = document.createElement('span');
-                label.className = 'grid-item-btn-label';
-                label.textContent = displayName;
-
-                btn.appendChild(media);
-                btn.appendChild(label);
-
-                if (isCustomizationItemSelected(category, item)) {
-                    btn.classList.add('active');
-                }
-
-                btn.addEventListener('click', () => {
-                    grid.querySelectorAll('.grid-item-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    if (clickHandler) clickHandler(item);
-
-                    // Enable download button
-                    hasCustomizationInteracted = true;
-                    const downloadPdfCustomBtn = document.getElementById('download-pdf-custom-btn');
-                    if (downloadPdfCustomBtn) downloadPdfCustomBtn.style.display = '';
-                });
-
-                grid.appendChild(btn);
-            });
-        }
-
-        function populateGlobalColorPalette() {
-            const container = document.getElementById('global-color-palette');
-            if (!container) return;
-            container.innerHTML = '';
-
-            const colors = [
-                '#ffcd94', '#eac086', '#ffad60', '#ffe0bd', '#d1a3a4',
-                '#a1665e', '#503335', '#592f2a', '#302e2e', '#472422'
-            ];
-
-            colors.forEach(color => {
-                const swatch = document.createElement('button');
-                swatch.type = 'button';
-                swatch.className = 'color-swatch-circle';
-                swatch.style.backgroundColor = color;
-                swatch.setAttribute('aria-label', `Skin color ${color}`);
-
-                swatch.addEventListener('click', () => {
-                    container.querySelectorAll('.color-swatch-circle').forEach(s => s.classList.remove('active'));
-                    swatch.classList.add('active');
-                    changeSkinColor(color);
-
-                    // Enable download button
-                    hasCustomizationInteracted = true;
-                    const downloadPdfCustomBtn = document.getElementById('download-pdf-custom-btn');
-                    if (downloadPdfCustomBtn) downloadPdfCustomBtn.style.display = ''; // or 'flex' depending on CSS
-                });
-
-                container.appendChild(swatch);
-            });
-
-            if (!isCustomSkinColorSelected && container.firstElementChild) {
-                container.firstElementChild.classList.add('active');
-                changeSkinColor(colors[0]);
-            }
-        }
-
-        function changeSkinColor(hexColor) {
-            isCustomSkinColorSelected = true;
-            const color = new THREE.Color(hexColor);
-
-            const applyToMesh = (mesh, excludeList) => {
-                if (!mesh) return;
-                mesh.traverse((child) => {
-                    if (child.isMesh && child.material && child.material.color) {
-                        if (excludeList.includes(child)) return;
-
-                        if (Array.isArray(child.material)) {
-                            child.material.forEach(mat => { if (mat.color) mat.color.copy(color); });
-                        } else {
-                            child.material.color.copy(color);
-                        }
-                    }
-                });
+            return {
+                start: 'Empezar',
+                prev: 'Anterior',
+                next: 'Siguiente',
+                finish: 'Finalizar',
+                editAgain: 'Editar otra vez',
+                download: 'Descargar PDF',
+                skin: 'Color base',
+                eyes: 'Ojos',
+                eyebrows: 'Cejas',
+                nose: 'Nariz',
+                ears: 'Orejas',
+                hair: 'Cabello',
+                torso: 'Torso',
+                armLeft: 'Brazo izquierdo',
+                armRight: 'Brazo derecho',
+                legLeft: 'Pierna izquierda',
+                legRight: 'Pierna derecha',
+                skinNote: 'El modelo arranca en blanco. Primero pinta el cuerpo y luego pasa por cada detalle.',
+                tones: 'Tonos de piel',
+                manual: 'Ajustes manuales',
+                target: 'Aplicar color a',
+                hue: 'Color',
+                lightness: 'Iluminación',
+                options: 'Opciones disponibles',
+                all: 'Todo',
+                head: 'Cabeza',
+                torsoPart: 'Torso',
+                armL: 'Brazo izq.',
+                armR: 'Brazo der.',
+                legL: 'Pierna izq.',
+                legR: 'Pierna der.'
             };
+        }
+
+        function getCustomBuilderSteps() {
+            const copy = getCustomBuilderCopy();
+
+            return [
+                { id: 'skin', title: copy.skin },
+                { id: 'eyes', title: copy.eyes, items: eyeTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentEyeTextureURL === item.url, apply: (item) => { currentEyeTextureURL = item.url; changeEyeTexture(item.url); } },
+                { id: 'eyebrows', title: copy.eyebrows, items: eyebrowTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentEyebrowTextureURL === item.url, apply: (item) => { currentEyebrowTextureURL = item.url; changeEyebrowTexture(item.url); } },
+                { id: 'nose', title: copy.nose, items: noseTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentNoseTextureURL === item.url, apply: (item) => { currentNoseTextureURL = item.url; changeNoseTexture(item.url); } },
+                { id: 'ears', title: copy.ears, items: earTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentEarTextureURL === item.url, apply: (item) => { currentEarTextureURL = item.url; changeEarTexture('left', item.url); changeEarTexture('right', item.url); } },
+                { id: 'hair', title: copy.hair, items: hairTextures || [], preview: (item) => item.preview || item.frontUrl || item.leftUrl, isSelected: (item) => currentHairFrontURL === item.frontUrl && currentHairBackURL === item.backUrl && currentHairLeftURL === item.leftUrl && currentHairRightURL === item.rightUrl && currentHairUpURL === item.upUrl, apply: (item) => { currentHairFrontURL = item.frontUrl; currentHairBackURL = item.backUrl; currentHairLeftURL = item.leftUrl; currentHairRightURL = item.rightUrl; currentHairUpURL = item.upUrl; changeHairTexture(item.frontUrl, item.backUrl, item.leftUrl, item.rightUrl, item.upUrl); } },
+                { id: 'torso', title: copy.torso, items: torsoClothingTextures || [], preview: (item) => item.preview || item.frontUrl, isSelected: (item) => currentTorsoFrontURL === item.frontUrl && currentTorsoBackURL === item.backUrl, apply: (item) => { currentTorsoFrontURL = item.frontUrl; currentTorsoBackURL = item.backUrl; changeTorsoClothing(item.frontUrl, item.backUrl); } },
+                { id: 'arm-left', title: copy.armLeft, items: armTextures || [], preview: (item) => item.preview || item.leftUrl, isSelected: (item) => currentArmLeftURL === item.leftUrl, apply: (item) => { currentArmLeftURL = item.leftUrl; changeArmClothing('left', item.leftUrl); } },
+                { id: 'arm-right', title: copy.armRight, items: armTextures || [], preview: (item) => item.preview || item.rightUrl, isSelected: (item) => currentArmRightURL === item.rightUrl, apply: (item) => { currentArmRightURL = item.rightUrl; changeArmClothing('right', item.rightUrl); } },
+                { id: 'leg-left', title: copy.legLeft, items: legTextures || [], preview: (item) => item.preview || item.leftUrl, isSelected: (item) => currentLegLeftURL === item.leftUrl, apply: (item) => { currentLegLeftURL = item.leftUrl; changeLegClothing('left', item.leftUrl); } },
+                { id: 'leg-right', title: copy.legRight, items: legTextures || [], preview: (item) => item.preview || item.rightUrl, isSelected: (item) => currentLegRightURL === item.rightUrl, apply: (item) => { currentLegRightURL = item.rightUrl; changeLegClothing('right', item.rightUrl); } }
+            ];
+        }
+
+        function getCustomBuilderItemLabel(item) {
+            const translated = typeof langManager?.get === 'function'
+                ? langManager.get(`name-${String(item?.name || '').toLowerCase()}`)
+                : null;
+            return translated || item?.name || 'Option';
+        }
+
+        function clearCustomBuilderTimers() {
+            customBuilderState.timers.forEach((timerId) => window.clearTimeout(timerId));
+            customBuilderState.timers = [];
+        }
+
+        function queueCustomBuilderTimer(callback, delay) {
+            const timerId = window.setTimeout(callback, delay);
+            customBuilderState.timers.push(timerId);
+            return timerId;
+        }
+
+        function setCustomBuilderPhase(phase) {
+            customBuilderState.phase = phase;
+            document.body.classList.remove('custom-editor-intro', 'custom-editor-open', 'custom-editor-finished');
+
+            if (phase === 'intro') {
+                document.body.classList.add('custom-editor-intro');
+                if (editorPanelWrapper) editorPanelWrapper.style.display = 'none';
+            } else if (phase === 'editing') {
+                document.body.classList.add('custom-editor-open');
+                if (editorPanelWrapper) editorPanelWrapper.style.display = 'block';
+            } else if (phase === 'finished') {
+                document.body.classList.add('custom-editor-finished');
+                if (editorPanelWrapper) editorPanelWrapper.style.display = 'none';
+            } else if (editorPanelWrapper) {
+                editorPanelWrapper.style.display = 'none';
+            }
+        }
+
+        function hideCustomBuilderFloating(element) {
+            if (!element) return;
+            element.classList.remove('active');
+            element.classList.add('hidden');
+        }
+
+        function showCustomBuilderFloating(element) {
+            if (!element) return;
+            element.classList.remove('hidden');
+            requestAnimationFrame(() => element.classList.add('active'));
+        }
+
+        function initializeCustomBuilder() {
+            if (customBuilderState.initialized) return;
+
+            const elements = customBuilderState.elements;
+            elements.overlay = document.getElementById('custom-builder-overlay');
+            elements.stageVeil = document.getElementById('custom-builder-stage-veil');
+            elements.intro = document.getElementById('custom-builder-intro');
+            elements.finishedActions = document.getElementById('custom-builder-finished-actions');
+            elements.startBtn = document.getElementById('custom-builder-start-btn');
+            elements.editBtn = document.getElementById('custom-builder-edit-btn');
+            elements.downloadBtn = document.getElementById('download-pdf-custom-btn');
+            elements.prevBtn = document.getElementById('custom-builder-prev-btn');
+            elements.nextBtn = document.getElementById('custom-builder-next-btn');
+            elements.stepCount = document.getElementById('custom-builder-step-count');
+            elements.stepTitle = document.getElementById('custom-builder-step-title');
+            elements.stepContent = document.getElementById('custom-builder-step-content');
+
+            customBuilderState.initialized = true;
+            syncCustomBuilderLabels();
+        }
+
+        function syncCustomBuilderLabels() {
+            if (!customBuilderState.initialized) return;
+
+            const copy = getCustomBuilderCopy();
+            const { startBtn, editBtn, downloadBtn } = customBuilderState.elements;
+
+            if (startBtn) startBtn.textContent = copy.start;
+            if (editBtn) editBtn.textContent = copy.editAgain;
+            if (downloadBtn) downloadBtn.textContent = copy.download;
+        }
+
+        function removeOverlayMesh(parent, mesh) {
+            if (!mesh) return null;
+            if (parent) parent.remove(mesh);
+
+            if (Array.isArray(mesh.material)) {
+                mesh.material.forEach((material) => {
+                    if (material?.map) material.map.dispose();
+                    material?.dispose?.();
+                });
+            } else if (mesh.material) {
+                if (mesh.material.map) mesh.material.map.dispose();
+                mesh.material.dispose();
+            }
+
+            mesh.geometry?.dispose?.();
+            return null;
+        }
+
+        function resetCustomBuilderModelState() {
+            if (!modelParts.head && !modelParts.torso && !modelParts.arms.length && !modelParts.legs.length) return;
+
+            eyesMesh = removeOverlayMesh(modelParts.head, eyesMesh);
+            eyebrowsMesh = removeOverlayMesh(modelParts.head, eyebrowsMesh);
+            noseMesh = removeOverlayMesh(modelParts.head, noseMesh);
+            earLeftMesh = removeOverlayMesh(modelParts.head, earLeftMesh);
+            earRightMesh = removeOverlayMesh(modelParts.head, earRightMesh);
+            hairFrontMesh = removeOverlayMesh(modelParts.head, hairFrontMesh);
+            hairBackMesh = removeOverlayMesh(modelParts.head, hairBackMesh);
+            hairLeftMesh = removeOverlayMesh(modelParts.head, hairLeftMesh);
+            hairRightMesh = removeOverlayMesh(modelParts.head, hairRightMesh);
+            hairUpMesh = removeOverlayMesh(modelParts.head, hairUpMesh);
+
+            currentEyeTextureURL = null;
+            currentEyebrowTextureURL = null;
+            currentNoseTextureURL = null;
+            currentEarTextureURL = null;
+            currentEarSide = null;
+            currentHairFrontURL = null;
+            currentHairBackURL = null;
+            currentHairLeftURL = null;
+            currentHairRightURL = null;
+            currentHairUpURL = null;
+
+            changeTorsoClothing(null, null);
+            changeArmClothing('left', null);
+            changeArmClothing('right', null);
+            changeLegClothing('left', null);
+            changeLegClothing('right', null);
+
+            currentTorsoFrontURL = null;
+            currentTorsoBackURL = null;
+            currentArmLeftURL = null;
+            currentArmRightURL = null;
+            currentLegLeftURL = null;
+            currentLegRightURL = null;
+
+            resetModelAppearanceToWhite();
+            forceMemoryCleanup();
+            requestCustomRender(isLowPowerMobile ? 20 : 28);
+        }
+
+        function hslToHex(h, s, l) {
+            l /= 100;
+            const a = (s * Math.min(l, 1 - l)) / 100;
+            const f = (n) => {
+                const k = (n + h / 30) % 12;
+                const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+                return Math.round(255 * color).toString(16).padStart(2, '0');
+            };
+            return `#${f(0)}${f(8)}${f(4)}`;
+        }
+
+        function hexToHsl(hexColor) {
+            let hex = hexColor.replace('#', '');
+            if (hex.length === 3) {
+                hex = hex.split('').map((char) => char + char).join('');
+            }
+
+            const r = parseInt(hex.substring(0, 2), 16) / 255;
+            const g = parseInt(hex.substring(2, 4), 16) / 255;
+            const b = parseInt(hex.substring(4, 6), 16) / 255;
+
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h;
+            let s;
+            const l = (max + min) / 2;
+
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const delta = max - min;
+                s = l > 0.5 ? delta / (2 - max - min) : delta / (max + min);
+
+                switch (max) {
+                    case r:
+                        h = (g - b) / delta + (g < b ? 6 : 0);
+                        break;
+                    case g:
+                        h = (b - r) / delta + 2;
+                        break;
+                    default:
+                        h = (r - g) / delta + 4;
+                        break;
+                }
+
+                h /= 6;
+            }
+
+            return {
+                hue: Math.round((h || 0) * 360),
+                lightness: Math.round(l * 100)
+            };
+        }
+
+        function applyColorToMeshWithoutTextures(mesh, colorObject) {
+            if (!mesh) return;
 
             const textureMeshes = [
                 eyesMesh, eyebrowsMesh, noseMesh, earLeftMesh, earRightMesh,
@@ -13744,20 +13879,358 @@
                 legLeftFrontMesh, legLeftBackMesh, legRightFrontMesh, legRightBackMesh
             ];
 
-            if (modelParts.head) {
-                applyToMesh(modelParts.head, textureMeshes);
-                applyNoseColor(color.getHex());
-            }
+            mesh.traverse((child) => {
+                if (!child.isMesh || !child.material || !child.material.color) return;
+                if (textureMeshes.includes(child)) return;
 
-            if (modelParts.torso) applyToMesh(modelParts.torso, textureMeshes);
-
-            if (modelParts.arms) modelParts.arms.forEach(arm => applyToMesh(arm, textureMeshes));
-            if (modelParts.legs) modelParts.legs.forEach(leg => applyToMesh(leg, textureMeshes));
-            if (modelParts.ears) modelParts.ears.forEach(ear => applyToMesh(ear, textureMeshes));
+                if (Array.isArray(child.material)) {
+                    child.material.forEach((material) => {
+                        if (material?.color) material.color.copy(colorObject);
+                    });
+                } else {
+                    child.material.color.copy(colorObject);
+                }
+            });
         }
 
-        // Initialize after a short delay to ensure DOM is ready
-        setTimeout(initNewCustomizationUI, 500);
+        function applyColorToCustomizationTarget(target, hexColor) {
+            if (!modelParts.head && !modelParts.torso && !modelParts.arms.length && !modelParts.legs.length) return;
+
+            isCustomSkinColorSelected = true;
+            hasCustomizationInteracted = true;
+
+            const colorHex = parseInt(hexColor.replace('#', '0x'), 16);
+            const colorObject = new THREE.Color(colorHex);
+
+            switch (target) {
+                case 'all':
+                    if (modelParts.head) {
+                        applyColorToMeshWithoutTextures(modelParts.head, colorObject);
+                        applyNoseColor(colorHex);
+                    }
+                    if (modelParts.torso) applyColorToMeshWithoutTextures(modelParts.torso, colorObject);
+                    if (modelParts.arms) modelParts.arms.forEach((arm) => applyColorToMeshWithoutTextures(arm, colorObject));
+                    if (modelParts.legs) modelParts.legs.forEach((leg) => applyColorToMeshWithoutTextures(leg, colorObject));
+                    if (modelParts.ears) modelParts.ears.forEach((ear) => applyColorToMeshWithoutTextures(ear, colorObject));
+                    break;
+                case 'head':
+                    if (modelParts.head) {
+                        applyColorToMeshWithoutTextures(modelParts.head, colorObject);
+                        applyNoseColor(colorHex);
+                    }
+                    if (modelParts.ears) modelParts.ears.forEach((ear) => applyColorToMeshWithoutTextures(ear, colorObject));
+                    break;
+                case 'torso':
+                    if (modelParts.torso) applyColorToMeshWithoutTextures(modelParts.torso, colorObject);
+                    break;
+                case 'arm-l': {
+                    const leftArm = modelParts.arms?.find((arm) => arm.name.toLowerCase().includes('l'));
+                    if (leftArm) applyColorToMeshWithoutTextures(leftArm, colorObject);
+                    break;
+                }
+                case 'arm-r': {
+                    const rightArm = modelParts.arms?.find((arm) => arm.name.toLowerCase().includes('r'));
+                    if (rightArm) applyColorToMeshWithoutTextures(rightArm, colorObject);
+                    break;
+                }
+                case 'leg-l': {
+                    const leftLeg = modelParts.legs?.find((leg) => leg.name.toLowerCase().includes('l'));
+                    if (leftLeg) applyColorToMeshWithoutTextures(leftLeg, colorObject);
+                    break;
+                }
+                case 'leg-r': {
+                    const rightLeg = modelParts.legs?.find((leg) => leg.name.toLowerCase().includes('r'));
+                    if (rightLeg) applyColorToMeshWithoutTextures(rightLeg, colorObject);
+                    break;
+                }
+            }
+
+            requestCustomRender(isLowPowerMobile ? 14 : 22);
+        }
+
+        function applyCustomBuilderTone(hexColor) {
+            customBuilderState.colorSource = 'tone';
+            customBuilderState.activeToneHex = hexColor;
+
+            const hsl = hexToHsl(hexColor);
+            customBuilderState.sliderHue = hsl.hue;
+            customBuilderState.sliderLightness = hsl.lightness;
+
+            applyColorToCustomizationTarget(customBuilderState.colorTarget, hexColor);
+            renderCustomBuilderStep();
+        }
+
+        function applyCustomBuilderSliderColor() {
+            customBuilderState.colorSource = 'manual';
+            customBuilderState.activeToneHex = null;
+            const hexColor = hslToHex(customBuilderState.sliderHue, 70, customBuilderState.sliderLightness);
+            applyColorToCustomizationTarget(customBuilderState.colorTarget, hexColor);
+        }
+
+        function renderCustomBuilderSkinStep(container) {
+            const copy = getCustomBuilderCopy();
+
+            container.innerHTML = `
+                <div class="custom-builder-section">
+                    <p class="custom-builder-note">${copy.skinNote}</p>
+                </div>
+                <div class="custom-builder-section">
+                    <span class="custom-builder-section-label">${copy.tones}</span>
+                    <div id="custom-builder-tones" class="custom-builder-tones"></div>
+                </div>
+                <div class="custom-builder-section">
+                    <span class="custom-builder-section-label">${copy.target}</span>
+                    <div id="custom-builder-parts" class="custom-builder-parts-grid"></div>
+                </div>
+                <div class="custom-builder-section">
+                    <span class="custom-builder-section-label">${copy.manual}</span>
+                    <div class="custom-builder-sliders">
+                        <label class="custom-builder-slider-row">
+                            <span>${copy.hue}</span>
+                            <input type="range" id="custom-builder-hue-slider" min="0" max="360" value="${customBuilderState.sliderHue}" style="background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000); border: 0;">
+                        </label>
+                        <label class="custom-builder-slider-row">
+                            <span>${copy.lightness}</span>
+                            <input type="range" id="custom-builder-lightness-slider" min="18" max="92" value="${customBuilderState.sliderLightness}" style="background: linear-gradient(to right, #0f172a, #94a3b8, #ffffff); border: 0;">
+                        </label>
+                    </div>
+                </div>
+            `;
+
+            const tonesContainer = container.querySelector('#custom-builder-tones');
+            const partsContainer = container.querySelector('#custom-builder-parts');
+
+            const partLabels = {
+                all: copy.all,
+                head: copy.head,
+                torso: copy.torsoPart,
+                'arm-l': copy.armL,
+                'arm-r': copy.armR,
+                'leg-l': copy.legL,
+                'leg-r': copy.legR
+            };
+
+            CUSTOM_SKIN_TONES.forEach((hexColor) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = `custom-builder-swatch${customBuilderState.activeToneHex === hexColor ? ' active' : ''}`;
+                button.setAttribute('aria-label', hexColor);
+                button.style.background = hexColor;
+                button.innerHTML = `<span class="custom-builder-swatch-chip" style="background:${hexColor}" title="${hexColor}"></span>`;
+                button.addEventListener('click', () => {
+                    applyCustomBuilderTone(hexColor);
+                });
+                tonesContainer.appendChild(button);
+            });
+
+            CUSTOM_COLOR_TARGETS.forEach((partKey) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = `custom-builder-part-btn${customBuilderState.colorTarget === partKey ? ' active' : ''}`;
+                button.textContent = partLabels[partKey];
+                button.addEventListener('click', () => {
+                    customBuilderState.colorTarget = partKey;
+
+                    if (customBuilderState.colorSource === 'tone' && customBuilderState.activeToneHex) {
+                        applyColorToCustomizationTarget(partKey, customBuilderState.activeToneHex);
+                    } else if (customBuilderState.colorSource === 'manual') {
+                        applyCustomBuilderSliderColor();
+                    }
+
+                    renderCustomBuilderStep();
+                });
+                partsContainer.appendChild(button);
+            });
+
+            hueSlider = container.querySelector('#custom-builder-hue-slider');
+            lightnessSlider = container.querySelector('#custom-builder-lightness-slider');
+
+            if (hueSlider) {
+                hueSlider.addEventListener('input', () => {
+                    customBuilderState.sliderHue = Number(hueSlider.value);
+                    applyCustomBuilderSliderColor();
+                    renderCustomBuilderStep();
+                });
+            }
+
+            if (lightnessSlider) {
+                lightnessSlider.addEventListener('input', () => {
+                    customBuilderState.sliderLightness = Number(lightnessSlider.value);
+                    applyCustomBuilderSliderColor();
+                    renderCustomBuilderStep();
+                });
+            }
+        }
+
+        function renderCustomBuilderOptionsStep(container, step) {
+            const copy = getCustomBuilderCopy();
+            const section = document.createElement('div');
+            section.className = 'custom-builder-section';
+
+            const label = document.createElement('span');
+            label.className = 'custom-builder-section-label';
+            label.textContent = copy.options;
+            section.appendChild(label);
+
+            const grid = document.createElement('div');
+            grid.className = 'custom-builder-options-grid';
+
+            step.items.forEach((item) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = `custom-builder-option-btn${step.isSelected(item) ? ' active' : ''}`;
+                button.setAttribute('aria-label', getCustomBuilderItemLabel(item));
+
+                const preview = document.createElement('div');
+                preview.className = 'custom-builder-option-preview';
+                const previewUrl = step.preview(item);
+
+                if (previewUrl) {
+                    const image = document.createElement('img');
+                    image.src = previewUrl;
+                    image.loading = 'lazy';
+                    image.alt = getCustomBuilderItemLabel(item);
+                    image.onerror = () => {
+                        preview.innerHTML = `<div class="custom-builder-option-empty">${getCustomBuilderItemLabel(item)}</div>`;
+                    };
+                    preview.appendChild(image);
+                } else {
+                    preview.innerHTML = `<div class="custom-builder-option-empty">${getCustomBuilderItemLabel(item)}</div>`;
+                }
+
+                button.appendChild(preview);
+                button.title = getCustomBuilderItemLabel(item);
+                button.addEventListener('click', () => {
+                    step.apply(item);
+                    hasCustomizationInteracted = true;
+                    customBuilderState.lastStepIndex = customBuilderState.currentStepIndex;
+                    requestCustomRender(isLowPowerMobile ? 12 : 18);
+                    renderCustomBuilderStep();
+                });
+
+                grid.appendChild(button);
+            });
+
+            section.appendChild(grid);
+            container.appendChild(section);
+        }
+
+        function renderCustomBuilderStep() {
+            initializeCustomBuilder();
+            syncCustomBuilderLabels();
+
+            const steps = getCustomBuilderSteps();
+            const step = steps[customBuilderState.currentStepIndex];
+            const { stepCount, stepTitle, prevBtn, nextBtn, stepContent } = customBuilderState.elements;
+
+            if (!step || !stepContent) return;
+
+            customBuilderState.lastStepIndex = customBuilderState.currentStepIndex;
+
+            if (stepCount) stepCount.textContent = `${customBuilderState.currentStepIndex + 1} / ${steps.length}`;
+            if (stepTitle) stepTitle.textContent = step.title;
+            if (prevBtn) prevBtn.disabled = customBuilderState.currentStepIndex === 0;
+            if (nextBtn) nextBtn.textContent = customBuilderState.currentStepIndex === steps.length - 1
+                ? getCustomBuilderCopy().finish
+                : getCustomBuilderCopy().next;
+
+            stepContent.innerHTML = '';
+
+            if (step.id === 'skin') {
+                renderCustomBuilderSkinStep(stepContent);
+            } else {
+                renderCustomBuilderOptionsStep(stepContent, step);
+            }
+        }
+
+        function openCustomBuilderEditor(stepIndex = 0) {
+            clearCustomBuilderTimers();
+            hideCustomBuilderFloating(customBuilderState.elements.finishedActions);
+            hideCustomBuilderFloating(customBuilderState.elements.intro);
+            setCustomBuilderPhase('editing');
+            customBuilderState.currentStepIndex = Math.max(0, Math.min(stepIndex, getCustomBuilderSteps().length - 1));
+            renderCustomBuilderStep();
+            queueCustomBuilderTimer(() => onWindowResize(), 40);
+        }
+
+        function stepCustomBuilderFlow(direction = 1) {
+            const steps = getCustomBuilderSteps();
+
+            if (direction < 0) {
+                if (customBuilderState.currentStepIndex === 0) return;
+                customBuilderState.currentStepIndex -= 1;
+                renderCustomBuilderStep();
+                return;
+            }
+
+            if (customBuilderState.currentStepIndex >= steps.length - 1) {
+                finishCustomBuilderFlow();
+                return;
+            }
+
+            customBuilderState.currentStepIndex += 1;
+            customBuilderState.lastStepIndex = customBuilderState.currentStepIndex;
+            renderCustomBuilderStep();
+        }
+
+        function finishCustomBuilderFlow() {
+            clearCustomBuilderTimers();
+            customBuilderState.lastStepIndex = customBuilderState.currentStepIndex;
+            setCustomBuilderPhase('finished');
+            hideCustomBuilderFloating(customBuilderState.elements.intro);
+            showCustomBuilderFloating(customBuilderState.elements.finishedActions);
+            queueCustomBuilderTimer(() => onWindowResize(), 40);
+        }
+
+        function launchCustomBuilderExperience() {
+            initializeCustomBuilder();
+            syncCustomBuilderLabels();
+            clearCustomBuilderTimers();
+
+            customBuilderState.currentStepIndex = 0;
+            customBuilderState.lastStepIndex = 0;
+            customBuilderState.colorTarget = 'all';
+            customBuilderState.colorSource = 'none';
+            customBuilderState.activeToneHex = null;
+            customBuilderState.sliderHue = 32;
+            customBuilderState.sliderLightness = 74;
+
+            renderCustomBuilderStep();
+            hideCustomBuilderFloating(customBuilderState.elements.finishedActions);
+            hideCustomBuilderFloating(customBuilderState.elements.intro);
+            setCustomBuilderPhase('intro');
+
+            const veil = customBuilderState.elements.stageVeil;
+            if (veil) {
+                veil.classList.add('active');
+                queueCustomBuilderTimer(() => {
+                    veil.classList.remove('active');
+                }, 30);
+            }
+
+            queueCustomBuilderTimer(() => {
+                showCustomBuilderFloating(customBuilderState.elements.intro);
+            }, 360);
+
+            queueCustomBuilderTimer(() => onWindowResize(), 40);
+        }
+
+        function resetCustomBuilderView() {
+            clearCustomBuilderTimers();
+            hideCustomBuilderFloating(customBuilderState.elements.intro);
+            hideCustomBuilderFloating(customBuilderState.elements.finishedActions);
+            customBuilderState.elements.stageVeil?.classList.remove('active');
+            setCustomBuilderPhase('hidden');
+        }
+
+        window.startCustomBuilderFlow = () => openCustomBuilderEditor(0);
+        window.resumeCustomBuilderFlow = () => openCustomBuilderEditor(customBuilderState.lastStepIndex);
+        window.stepCustomBuilderFlow = stepCustomBuilderFlow;
+        window.__papelcoolCustomBuilderReady = true;
+
+        if (activeAppView === 'custom' && document.body.classList.contains('customization-active')) {
+            launchCustomBuilderExperience();
+        }
 
         // ============================================
         // AUTHENTICATION UI HANDLERS
