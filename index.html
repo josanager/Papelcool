@@ -5636,8 +5636,8 @@
 
             <!-- Nav (Center) -->
             <nav class="funko-nav-center" aria-label="Navegación principal">
-                <button type="button" class="funko-nav-link" onclick="navigateToView('custom')">Crea el tuyo</button>
-                <button type="button" class="funko-nav-link" onclick="navigateToView('presets')">Colecciones</button>
+                <button type="button" class="funko-nav-link" onclick="navigateToView('presets')">Personajes</button>
+                <button type="button" class="funko-nav-link" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-collection-grid'), 0)">Colecciones</button>
                 <button type="button" class="funko-nav-link" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-banner-grid'), 0)">Novedades</button>
                 <button type="button" class="funko-nav-link" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-groups'), 0)">Fan Clubs</button>
                 <button type="button" class="funko-nav-link" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-community-notes'), 0)">Club Papel</button>
@@ -5673,8 +5673,8 @@
 
             <!-- Mobile Dropdown -->
             <div id="app-mobile-dropdown-menu" class="pc-home-mobile-dropdown" style="display: none; flex-direction: column; gap: 0.85rem; padding: 1.5rem; background: #fff; border: 4px solid #000; border-radius: 24px; box-shadow: 8px 8px 0 rgba(0,0,0,1); position: absolute; top: calc(100% + 12px); left: 1rem; right: 1rem; z-index: 10000;">
-                <button type="button" class="pc-home-chip" onclick="navigateToView('custom'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center;">Crea el tuyo</button>
-                <button type="button" class="pc-home-chip" onclick="navigateToView('presets'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center;">Colecciones</button>
+                <button type="button" class="pc-home-chip" onclick="navigateToView('presets'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center;">Personajes</button>
+                <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-collection-grid'), 0)" style="width: 100%; justify-content: center;">Colecciones</button>
                 <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-banner-grid'), 0)" style="width: 100%; justify-content: center;">Novedades</button>
                 <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-groups'), 0)" style="width: 100%; justify-content: center;">Fan Clubs</button>
                 <div style="height: 4px; background: #000; width: 100%; margin: 0.5rem 0; border-radius: 4px;"></div>
@@ -6562,7 +6562,7 @@
 
         function getViewFromPathname() {
             const path = window.location.pathname.toLowerCase();
-            if (path.includes('/studio/custom')) return 'custom';
+            if (path.includes('/studio/custom')) return 'presets';
             if (path.includes('/studio/presets')) return 'presets';
             if (path.includes('/studio/preset-preview')) return 'preset-preview';
             if (path.includes('/auth/login')) return 'login';
@@ -6571,9 +6571,19 @@
             return null;
         }
 
+        function normalizeLegacyView(view) {
+            return view === 'custom' ? 'presets' : view;
+        }
+
+        function isLegacyCustomRouteRequested() {
+            const params = new URLSearchParams(window.location.search);
+            const path = window.location.pathname.toLowerCase();
+            return params.get('view') === 'custom' || path.includes('/studio/custom');
+        }
+
         function getRequestedView() {
             const params = new URLSearchParams(window.location.search);
-            return params.get('view') || getViewFromPathname() || 'showcase';
+            return normalizeLegacyView(params.get('view') || getViewFromPathname() || 'showcase');
         }
 
         const PRESET_PREVIEW_STORAGE_KEY = 'papelcool_last_preset_preview';
@@ -6613,6 +6623,7 @@
         }
 
         function syncViewInUrl(view, replaceHistory = false) {
+            view = normalizeLegacyView(view);
             const url = new URL(window.location.href);
             if (view === 'showcase') {
                 url.searchParams.delete('view');
@@ -6631,6 +6642,7 @@
         }
 
         function navigateToView(view, options = {}) {
+            view = normalizeLegacyView(view);
             const { updateHistory = true, replaceHistory = false } = options;
 
             if (updateHistory) {
@@ -6639,11 +6651,6 @@
 
             if (view === 'home') {
                 openAuthenticatedHome(true);
-                return;
-            }
-
-            if (view === 'custom') {
-                openCustomizationView();
                 return;
             }
 
@@ -6950,12 +6957,12 @@
         }
 
         // Cargar iconos de presets dinámicamente
-        setPresetIcon('steve-icon', presetIcons['Steve'] || 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/Minecraft/Steve/Steve-icon.svg');
-        setPresetIcon('alex-icon', presetIcons['Alex'] || 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/Alex-icon.svg');
-        setPresetIcon('zombie-icon', presetIcons['Zombie'] || 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/Zombie-icon.svg');
-        setPresetIcon('creeper-icon', presetIcons['Creeper'] || 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/Creeper-icon.svg');
-        setPresetIcon('skeleton-icon', presetIcons['Skeleton'] || 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/Skeleton-icon.svg');
-        setPresetIcon('enderman-icon', presetIcons['Enderman'] || 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/Enderman-icon.svg');
+        setPresetIcon('steve-icon', presetIcons['Steve'] || minecraftTextureUrl('Steve', 'Steve-icon.svg'));
+        setPresetIcon('alex-icon', presetIcons['Alex'] || minecraftTextureUrl('Alex', 'Alex-icon.svg'));
+        setPresetIcon('zombie-icon', presetIcons['Zombie'] || minecraftTextureUrl('Zombie', 'Zombie-icon.svg'));
+        setPresetIcon('creeper-icon', presetIcons['Creeper'] || minecraftTextureUrl('Creeper', 'Creeper-icon.svg'));
+        setPresetIcon('skeleton-icon', presetIcons['Skeleton'] || minecraftTextureUrl('Skeleton', 'Skeleton-icon.svg'));
+        setPresetIcon('enderman-icon', presetIcons['Enderman'] || minecraftTextureUrl('Enderman', 'Enderman-icon.svg'));
         setPresetIcon('baby-icon', presetIcons['Baby']);
         setPresetIcon('mystery-icon', presetIcons['Mystery']);
         setPresetIcon('romance-icon', presetIcons['Romance']);
@@ -8038,6 +8045,7 @@
 
         function buildPresetCharacterConfig(characterName) {
             const baseSkin = '#F7D5CF';
+            const characterTextures = getPresetCharacterTextures(characterName);
             const config = {
                 characterName,
                 colors: {
@@ -8046,15 +8054,7 @@
                     arms: baseSkin,
                     legs: baseSkin
                 },
-                eyeTexture: eyeTextures.find((texture) => texture.name === characterName) || null,
-                eyebrowTexture: eyebrowTextures.find((texture) => texture.name === characterName) || null,
-                noseTexture: characterName === 'Steve'
-                    ? noseTextures.find((texture) => texture.name === 'Steve')
-                    : noseTextures.find((texture) => texture.name === 'Default'),
-                hairTexture: hairTextures.find((texture) => texture.name === characterName) || null,
-                torsoTexture: torsoClothingTextures.find((texture) => texture.name === characterName) || null,
-                armTexture: armTextures.find((texture) => texture.name === characterName) || null,
-                legTexture: legTextures.find((texture) => texture.name === characterName) || null,
+                ...characterTextures,
                 hiddenOverlays: [],
                 hideArms: false
             };
@@ -8090,100 +8090,16 @@
             }
 
             if (characterName === 'Alex') {
-                config.eyeTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/eyes/Alex-eyes.svg' };
-                config.noseTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/nose/Alex-nose.svg' };
-                config.hairTexture = {
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-back.svg',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-right.svg',
-                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-up.svg'
-                };
-                config.torsoTexture = {
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/torso/Alex-torso-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/torso/Alex-torso-back.svg'
-                };
-                config.armTexture = {
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/arms/Alex-arm-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/arms/Alex-arm-right.svg'
-                };
-                config.legTexture = {
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/legs/Alex-leg-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/legs/Alex-leg-right.svg'
-                };
                 config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
             } else if (characterName === 'Zombie') {
-                config.eyeTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/eyes/Zombie-eyes.svg' };
-                config.noseTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/nose/Zombie-nose.svg' };
-                config.hairTexture = {
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-back.svg',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-right.svg',
-                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-up.svg'
-                };
-                config.torsoTexture = {
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/torso/Zombie-torso-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/torso/Zombie-torso-back.svg'
-                };
-                config.armTexture = {
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/arms/Zombie-arm-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/arms/Zombie-arm-right.svg'
-                };
-                config.legTexture = {
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/legs/Zombie-leg-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/legs/Zombie-leg-right.svg'
-                };
                 config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
             } else if (characterName === 'Creeper') {
-                config.eyeTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/eyes/Creeper-eyes.svg' };
-                config.noseTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/nose/Creeper-nose.svg' };
-                config.hairTexture = {
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-back.svg',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-right.svg',
-                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-up.svg'
-                };
-                config.torsoTexture = {
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/torso/Creeper-torso-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/torso/Creeper-torso-back.svg'
-                };
-                config.legTexture = {
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/legs/Creeper-leg-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/legs/Creeper-leg-right.svg'
-                };
+                config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
             } else if (characterName === 'Skeleton') {
-                config.eyeTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/eyes/Skeleton-eyes.svg' };
-                config.noseTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/nose/Skeleton-nose.svg' };
-                config.torsoTexture = {
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/torso/Skeleton-torso-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/torso/Skeleton-torso-back.svg'
-                };
-                config.armTexture = {
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/arms/Skeleton-arm-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/arms/Skeleton-arm-right.svg'
-                };
-                config.legTexture = {
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/legs/Skeleton-leg-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/legs/Skeleton-leg-right.svg'
-                };
                 config.hairTexture = null;
                 config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
             } else if (characterName === 'Enderman') {
-                config.eyeTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/eyes/Enderman-eyes.svg' };
-                config.noseTexture = { url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/nose/Enderman-nose.svg' };
-                config.hairTexture = {
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-back.svg',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-right.svg',
-                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-up.svg'
-                };
-                config.torsoTexture = {
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/torso/Enderman-torso-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/torso/Enderman-torso-back.svg'
-                };
+                config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
             } else if (characterName === 'Romance') {
                 config.hiddenOverlays.push('ear-left', 'ear-right');
             } else if (characterName === 'Mystery') {
@@ -8246,6 +8162,22 @@
                     position: [0, 1.029, 1.129],
                     planeHeight: 2.256
                 }));
+            }
+
+            if (config.earTexture?.url && !config.hiddenOverlays.includes('ear-left') && !config.hiddenOverlays.includes('ear-right')) {
+                textureTasks.push(overlay('ear-left', parts.head, config.earTexture.url, {
+                    position: [-1.13, 1.029, 0],
+                    rotation: [0, Math.PI / 2, 0],
+                    scale: [-1, 1, 1],
+                    planeHeight: 2.256
+                }));
+                textureTasks.push(overlay('ear-right', parts.head, config.earTexture.url, {
+                    position: [1.13, 1.029, 0],
+                    rotation: [0, -Math.PI / 2, 0],
+                    planeHeight: 2.256
+                }));
+            } else {
+                clearPresetPreviewGroup(['ear-left', 'ear-right']);
             }
 
             if (config.hairTexture?.frontUrl) {
@@ -8901,9 +8833,9 @@
         // Array de imágenes para el botón de cabello animado
         // Puedes añadir más URLs aquí para incluir más imágenes en la rotación
         const hairButtonImages = [
-            'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/icon%20buttons/hair%20buttons/Mira-hair-button.png',
-            'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/icon%20buttons/hair%20buttons/Rumi-hair-button.png',
-            'https://raw.githubusercontent.com/josanager/Textures-Papelcool/refs/heads/main/icon%20buttons/hair%20buttons/Zoey-hair-button.png'
+            textureUiAssetUrl('icon buttons', 'hair buttons', 'Mira-hair-button.png'),
+            textureUiAssetUrl('icon buttons', 'hair buttons', 'Rumi-hair-button.png'),
+            textureUiAssetUrl('icon buttons', 'hair buttons', 'Zoey-hair-button.png')
             // Añade más URLs aquí si quieres más imágenes
         ];
 
@@ -11163,7 +11095,7 @@
                         <div class="funko-hero-inner">
                             <div class="funko-hero-content">
                                 <h1>Crear nunca fue tan divertido</h1>
-                                <button type="button" class="funko-hero-cta" onclick="navigateToView('custom')">Crea el tuyo ahora</button>
+                                <button type="button" class="funko-hero-cta" onclick="navigateToView('presets')">Ver colecciones</button>
                             </div>
                         </div>
                     </div>
@@ -11306,61 +11238,9 @@
         }
 
         function openCustomizationView() {
-            ensureDeferredViews();
-            openAuthenticatedHome(false);
-            document.body.classList.remove('showcase-mode');
-            setGlobalTopbarVisible(false);
-            disposePresetPreviewRuntime();
-            disposeCustomPreviewRuntime();
-            if (userProfileView) userProfileView.style.display = 'none';
-            stopShowcase();
-            if (fandomsOverlay) fandomsOverlay.classList.remove('active');
-            const authContainer = document.getElementById('auth-container');
-            if (authContainer) authContainer.style.display = 'none';
-            document.body.classList.add('customization-active');
-            if (editorPanelWrapper) editorPanelWrapper.style.display = 'block';
-            if (presetsSection) presetsSection.classList.add('hidden');
-            if (customizeSection) customizeSection.classList.remove('hidden');
-            if (canvasContainer) {
-                canvasContainer.style.display = 'none';
-                canvasContainer.classList.remove('showcase-active');
-            }
-
-            hideCharacterName();
-            hasCustomizationInteracted = false;
-            activeAppView = 'custom';
-
-            controls.enableDamping = !isLowPowerMobile;
-            controls.dampingFactor = isLowPowerMobile ? 0.04 : 0.1;
-            controls.enablePan = !isLowPowerMobile;
-            if (isLowPowerMobile) {
-                camera.position.copy(mobileCustomizationCameraPos);
-                controls.target.copy(modelCenter);
-            } else {
-                camera.position.copy(desktopCustomizationCameraPos);
-                controls.target.copy(modelCenter);
-            }
-            shouldRenderScene = false;
-            customRenderBurstFrames = 0;
-
-            if (ensureCustomPreviewRuntime()) {
-                resetCustomBuilderModelState();
-                if (window.__papelcoolCustomBuilderReady === true) {
-                    launchCustomBuilderExperience();
-                } else {
-                    setTimeout(() => {
-                        if (window.__papelcoolCustomBuilderReady === true && activeAppView === 'custom') {
-                            launchCustomBuilderExperience();
-                        }
-                    }, 0);
-                }
-                requestCustomPreviewRender(isLowPowerMobile ? 18 : 24);
-            }
-
-            setTimeout(() => {
-                onWindowResize();
-            }, 350);
-            updatePresetTemplateDownloadButton();
+            // Legacy custom builder route removed: keep stale links alive by redirecting to presets.
+            syncViewInUrl('presets', true);
+            openPresetsView();
         }
 
         function openPresetsView() {
@@ -11467,8 +11347,8 @@
                 return;
             }
 
-            if (requestedView === 'custom') {
-                navigateToView('custom', { updateHistory: false, replaceHistory: true });
+            if (requestedView === 'presets' && isLegacyCustomRouteRequested()) {
+                navigateToView('presets', { updateHistory: true, replaceHistory: true });
                 return;
             }
 
@@ -11509,6 +11389,10 @@
         window.addEventListener('popstate', () => {
             if (getRequestedView() === 'preset-preview') {
                 currentPresetCharacter = getRememberedPresetCharacter();
+            }
+            if (isLegacyCustomRouteRequested()) {
+                navigateToView('presets', { updateHistory: true, replaceHistory: true });
+                return;
             }
             navigateToView(getRequestedView(), { updateHistory: false });
         });
@@ -12330,117 +12214,30 @@
             }
 
             // Buscar texturas
-            let eyeTexture = eyeTextures.find(t => t.name === characterName);
-            let eyebrowTexture = eyebrowTextures.find(t => t.name === characterName);
-            let noseTexture = (characterName === 'Steve') ? noseTextures.find(t => t.name === 'Steve') : noseTextures.find(t => t.name === 'Default');
-            let hairTexture = hairTextures.find(t => t.name === characterName);
-            let torsoTexture = torsoClothingTextures.find(t => t.name === characterName);
-            let armTexture = armTextures.find(t => t.name === characterName);
-            let legTexture = legTextures.find(t => t.name === characterName);
-            let earTexture = null;
+            let {
+                eyeTexture,
+                eyebrowTexture,
+                noseTexture,
+                hairTexture,
+                torsoTexture,
+                armTexture,
+                legTexture,
+                earTexture
+            } = getPresetCharacterTextures(characterName);
 
             // Manejo de características especiales y fallbacks
             if (characterName === 'Alex') {
-                eyeTexture = { name: 'Alex', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/eyes/Alex-eyes.svg' };
-                noseTexture = { name: 'Alex', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/nose/Alex-nose.svg' };
-                hairTexture = {
-                    name: 'Alex',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-back.svg',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-right.svg',
-                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/hair/Alex-hair-up.svg'
-                };
-                torsoTexture = {
-                    name: 'Alex',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/torso/Alex-torso-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/torso/Alex-torso-back.svg'
-                };
-                armTexture = {
-                    name: 'Alex',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/arms/Alex-arm-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/arms/Alex-arm-right.svg'
-                };
-                legTexture = {
-                    name: 'Alex',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/legs/Alex-leg-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Alex/legs/Alex-leg-right.svg'
-                };
-
                 // Remover orejas y cejas
                 [earLeftMesh, earRightMesh, eyebrowsMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
             } else if (characterName === 'Zombie') {
-                eyeTexture = { name: 'Zombie', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/eyes/Zombie-eyes.svg' };
-                noseTexture = { name: 'Zombie', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/nose/Zombie-nose.svg' };
-                hairTexture = {
-                    name: 'Zombie',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-back.svg',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-right.svg',
-                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/hair/Zombie-hair-up.svg'
-                };
-                torsoTexture = {
-                    name: 'Zombie',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/torso/Zombie-torso-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/torso/Zombie-torso-back.svg'
-                };
-                armTexture = {
-                    name: 'Zombie',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/arms/Zombie-arm-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/arms/Zombie-arm-right.svg'
-                };
-                legTexture = {
-                    name: 'Zombie',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/legs/Zombie-leg-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Zombie/legs/Zombie-leg-right.svg'
-                };
                 [earLeftMesh, earRightMesh, eyebrowsMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
             } else if (characterName === 'Creeper') {
-                eyeTexture = { name: 'Creeper', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/eyes/Creeper-eyes.svg' };
-                noseTexture = { name: 'Creeper', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/nose/Creeper-nose.svg' };
-                hairTexture = {
-                    name: 'Creeper',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-back.svg',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-right.svg',
-                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/hair/Creeper-hair-up.svg'
-                };
-                torsoTexture = {
-                    name: 'Creeper',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/torso/Creeper-torso-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/torso/Creeper-torso-back.svg'
-                };
-                legTexture = {
-                    name: 'Creeper',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/legs/Creeper-leg-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Creeper/legs/Creeper-leg-right.svg'
-                };
                 armTexture = null;
 
                 // Creeper no tiene brazos
                 modelParts.arms.forEach(arm => { if (arm) arm.visible = false; });
                 [earLeftMesh, earRightMesh, eyebrowsMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
             } else if (characterName === 'Skeleton') {
-                eyeTexture = { name: 'Skeleton', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/eyes/Skeleton-eyes.svg' };
-                noseTexture = { name: 'Skeleton', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/nose/Skeleton-nose.svg' };
-                torsoTexture = {
-                    name: 'Skeleton',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/torso/Skeleton-torso-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/torso/Skeleton-torso-back.svg'
-                };
-                armTexture = {
-                    name: 'Skeleton',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/arms/Skeleton-arm-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/arms/Skeleton-arm-right.svg'
-                };
-                legTexture = {
-                    name: 'Skeleton',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/legs/Skeleton-leg-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Skeleton/legs/Skeleton-leg-right.svg'
-                };
-
                 // Asegurar visibilidad de brazos y piernas para Skeleton
                 modelParts.arms.forEach(arm => { if (arm) arm.visible = true; });
                 modelParts.legs.forEach(leg => { if (leg) leg.visible = true; });
@@ -12448,21 +12245,6 @@
                 // Skeleton no tiene orejas, cejas ni pelo
                 [earLeftMesh, earRightMesh, eyebrowsMesh, hairFrontMesh, hairBackMesh, hairLeftMesh, hairRightMesh, hairUpMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
             } else if (characterName === 'Enderman') {
-                eyeTexture = { name: 'Enderman', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/eyes/Enderman-eyes.svg' };
-                noseTexture = { name: 'Enderman', url: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/nose/Enderman-nose.svg' };
-                hairTexture = {
-                    name: 'Enderman',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-back.svg',
-                    leftUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-left.svg',
-                    rightUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-right.svg',
-                    upUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/hair/Enderman-hair-up.svg'
-                };
-                torsoTexture = {
-                    name: 'Enderman',
-                    frontUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/torso/Enderman-torso-front.svg',
-                    backUrl: 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main/Minecraft/Enderman/torso/Enderman-torso-back.svg'
-                };
                 armTexture = null;
                 legTexture = null;
 
@@ -12490,6 +12272,7 @@
                 if (eyeTexture) tasks.push(async () => { currentEyeTextureURL = eyeTexture.url; changeEyeTexture(eyeTexture.url); });
                 if (eyebrowTexture) tasks.push(async () => { currentEyebrowTextureURL = eyebrowTexture.url; changeEyebrowTexture(eyebrowTexture.url); });
                 if (noseTexture) tasks.push(async () => { currentNoseTextureURL = noseTexture.url; changeNoseTexture(noseTexture.url); });
+                if (earTexture) tasks.push(async () => { currentEarTextureURL = earTexture.url; changeEarTexture('left', earTexture.url); changeEarTexture('right', earTexture.url); });
                 if (hairTexture) tasks.push(async () => {
                     currentHairFrontURL = hairTexture.frontUrl; currentHairBackURL = hairTexture.backUrl;
                     currentHairLeftURL = hairTexture.leftUrl; currentHairRightURL = hairTexture.rightUrl;
@@ -12515,6 +12298,7 @@
                 eyeTexture,
                 eyebrowTexture,
                 noseTexture,
+                earTexture,
                 hairTexture,
                 torsoTexture,
                 armTexture,
@@ -14327,7 +14111,7 @@
                 if (activeAppView === 'presets') {
                     openPresetsView();
                 } else if (activeAppView === 'custom') {
-                    openCustomizationView();
+                    openPresetsView();
                 } else if (activeAppView === 'home') {
                     openAuthenticatedHome(true);
                 } else {
@@ -14947,7 +14731,7 @@
             if (favoritesView) favoritesView.style.display = 'none';
             if (userProfileView) userProfileView.style.display = 'none';
             if (window.setPresetCharacter) window.setPresetCharacter(name);
-            navigateToView('custom');
+            navigateToView('preset-preview');
         }
 
         function showFavoritesView() {
@@ -15044,8 +14828,8 @@
                 <div style="text-align: center; padding: 3rem 1rem; color: #666; font-family: 'Fredoka', sans-serif;">
                     <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block;">brush</span>
                     <p>Todavía no has creado ningún Papelcool.</p>
-                    <button type="button" class="pc-home-chip" onclick="document.getElementById('user-profile-view').style.display='none'; navigateToView('custom');" style="margin-top: 1rem; border: 2px solid #000; box-shadow: 2px 2px 0px rgba(0,0,0,1);">
-                        Crear ahora
+                    <button type="button" class="pc-home-chip" onclick="document.getElementById('user-profile-view').style.display='none'; navigateToView('presets');" style="margin-top: 1rem; border: 2px solid #000; box-shadow: 2px 2px 0px rgba(0,0,0,1);">
+                        Ver colecciones
                     </button>
                 </div>
             `;
