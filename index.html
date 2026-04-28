@@ -3024,6 +3024,34 @@
             gap: 1.5rem;
         }
 
+        .pdf-progress-close {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 4px solid #000;
+            border-radius: 999px;
+            background: #FF4D94;
+            color: #fff;
+            box-shadow: 4px 4px 0 #000;
+            cursor: pointer;
+            transition: transform 0.16s ease, box-shadow 0.16s ease;
+        }
+
+        .pdf-progress-close:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 6px 6px 0 #000;
+        }
+
+        .pdf-progress-close:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #000;
+        }
+
         .pdf-progress-overlay.hidden {
             display: none !important;
         }
@@ -5331,6 +5359,68 @@
         }
         .funko-hero-cta:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 #000; }
         .funko-hero-cta:active { transform: translate(3px, 3px); box-shadow: 3px 3px 0 #000; }
+        .funko-create-strip {
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+            background: #FFF7BF;
+            border-bottom: 5px solid #000;
+        }
+        .funko-create-strip-inner {
+            width: min(1400px, 100%);
+            margin: 0 auto;
+            padding: 1.6rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+        }
+        .funko-create-strip-copy {
+            max-width: 760px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+        .funko-create-strip-title {
+            margin: 0;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #000;
+            line-height: 1;
+        }
+        .funko-create-strip-copy p {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.45;
+            color: #1F2937;
+        }
+        .funko-create-strip-cta {
+            flex: 0 0 auto;
+            background: #fff;
+            border: 4px solid #000;
+            border-radius: 999px;
+            padding: 1rem 1.8rem;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #000;
+            box-shadow: 5px 5px 0 #000;
+            transition: all 0.18s ease;
+        }
+        .funko-create-strip-cta:hover {
+            background: #FFE600;
+            transform: translate(-1px, -1px);
+            box-shadow: 7px 7px 0 #000;
+        }
+        .funko-create-strip-cta:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 #000;
+        }
         /* NEW PICKS FOR YOU SECTION */
         .funko-section { width: min(1400px, 100%); margin: 4rem auto 2rem; padding: 0 2rem; }
         .funko-section:first-of-type {
@@ -5470,6 +5560,7 @@
             .funko-banners-grid { grid-template-columns: repeat(2, 1fr); }
             .funko-hero-inner { flex-direction: column; text-align: center; padding: 2rem; }
             .funko-hero-content { margin-top: 2rem; }
+            .funko-create-strip-inner { align-items: flex-start; flex-direction: column; }
         }
         @media (max-width: 768px) {
             /* Navbar Mobile Adaptations */
@@ -5510,6 +5601,21 @@
             .funko-showcase-slot { min-height: 60vh; }
             #canvas-container.showcase-active {
                 height: 100% !important; max-height: none !important; min-height: 60vh !important;
+            }
+            .funko-create-strip-inner {
+                padding: 1.25rem 1rem 1.5rem;
+                gap: 1rem;
+            }
+            .funko-create-strip-title {
+                font-size: 1.6rem;
+            }
+            .funko-create-strip-copy p {
+                font-size: 0.95rem;
+            }
+            .funko-create-strip-cta {
+                width: 100%;
+                text-align: center;
+                justify-content: center;
             }
             
             /* Section Paddings & Grid */
@@ -6050,6 +6156,12 @@
     <!-- Barra de progreso (oculta inicialmente) -->
     <div id="pdf-progress-container" class="pdf-progress-overlay hidden">
         <div class="pdf-progress-modal">
+            <button type="button" id="pdf-progress-close" class="pdf-progress-close" aria-label="Cerrar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 6 6 18"></path>
+                    <path d="m6 6 12 12"></path>
+                </svg>
+            </button>
             <div id="pdf-preparing-text" class="pdf-preparing-text" data-i18n="preparing-pdf">Preparing PDF...</div>
             <div id="pdf-progress-bar-container" class="pdf-progress-bar-container">
                 <div id="pdf-progress-bar" class="pdf-progress-bar"></div>
@@ -6562,7 +6674,7 @@
 
         function getViewFromPathname() {
             const path = window.location.pathname.toLowerCase();
-            if (path.includes('/studio/custom')) return 'presets';
+            if (path.includes('/studio/custom')) return 'custom';
             if (path.includes('/studio/presets')) return 'presets';
             if (path.includes('/studio/preset-preview')) return 'preset-preview';
             if (path.includes('/auth/login')) return 'login';
@@ -6572,7 +6684,7 @@
         }
 
         function normalizeLegacyView(view) {
-            return view === 'custom' ? 'presets' : view;
+            return view;
         }
 
         function isLegacyCustomRouteRequested() {
@@ -6656,6 +6768,11 @@
 
             if (view === 'presets') {
                 openPresetsView();
+                return;
+            }
+
+            if (view === 'custom') {
+                openCustomizationView();
                 return;
             }
 
@@ -9103,6 +9220,7 @@
         function changeEyeTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
             currentEyeTextureURL = url;
+            notifyCustomPdfStateChanged('eyes-texture');
 
             loadOptimizedTexture(url,
                 (texture) => {
@@ -9162,6 +9280,7 @@
         function changeEyebrowTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
             currentEyebrowTextureURL = url;
+            notifyCustomPdfStateChanged('eyebrows-texture');
 
             loadOptimizedTexture(url,
                 (texture) => {
@@ -9220,6 +9339,7 @@
         function changeNoseTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
             currentNoseTextureURL = url;
+            notifyCustomPdfStateChanged('nose-texture');
 
             loadOptimizedTexture(url,
                 (texture) => {
@@ -9313,6 +9433,7 @@
         function changeEarTexture(side, url, isInitialLoad = false) {
             if (!modelParts.head) return;
             currentEarTextureURL = url;
+            notifyCustomPdfStateChanged(`ear-${side}-texture`);
 
             loadOptimizedTexture(url,
                 (texture) => {
@@ -9393,6 +9514,7 @@
             currentHairLeftURL = leftUrl;
             currentHairRightURL = rightUrl;
             currentHairUpURL = upUrl;
+            notifyCustomPdfStateChanged('hair-texture');
 
             // Si frontUrl es null, significa "None" - remover todo el cabello
             if (frontUrl === null) {
@@ -9682,6 +9804,7 @@
             if (!modelParts.torso) return;
             currentTorsoFrontURL = frontUrl;
             currentTorsoBackURL = backUrl;
+            notifyCustomPdfStateChanged('torso-texture');
 
             // Si frontUrl es null, significa "None" - remover la ropa
             if (frontUrl === null) {
@@ -9800,6 +9923,7 @@
             } else {
                 currentLegRightURL = url;
             }
+            notifyCustomPdfStateChanged(`leg-${side}-texture`);
 
             const leftLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('l'));
             const rightLeg = modelParts.legs.find(leg => leg.name.toLowerCase().includes('r'));
@@ -9988,6 +10112,7 @@
             } else {
                 currentArmRightURL = url;
             }
+            notifyCustomPdfStateChanged(`arm-${side}-texture`);
 
             const leftArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('l'));
             const rightArm = modelParts.arms.find(arm => arm.name.toLowerCase().includes('r'));
@@ -11104,6 +11229,15 @@
                             <div class="funko-showcase-scene" id="home-showcase-scene"></div>
                         </div>
                     </div>
+                    <section class="funko-create-strip" aria-labelledby="home-create-strip-title">
+                        <div class="funko-create-strip-inner">
+                            <div class="funko-create-strip-copy">
+                                <h2 id="home-create-strip-title" class="funko-create-strip-title">Crea el tuyo</h2>
+                                <p>¿Quieres montar tu propio Papelcool? Entra al editor nuevo y empieza desde cero con tu personaje.</p>
+                            </div>
+                            <button type="button" class="funko-create-strip-cta" onclick="navigateToView('custom')">Crea el tuyo</button>
+                        </div>
+                    </section>
                 `;
             }
 
@@ -11186,6 +11320,9 @@
 
         function openAuthenticatedHome(show = true) {
             ensureDeferredViews();
+            if (show) {
+                stopActiveCustomPdfGeneration();
+            }
             document.body.classList.remove('showcase-mode');
             const authContainer = document.getElementById('auth-container');
             updatePresetTemplateDownloadButton();
@@ -11238,13 +11375,54 @@
         }
 
         function openCustomizationView() {
-            // Legacy custom builder route removed: keep stale links alive by redirecting to presets.
-            syncViewInUrl('presets', true);
-            openPresetsView();
+            ensureDeferredViews();
+            document.body.classList.remove('showcase-mode');
+            disposePresetPreviewRuntime();
+            stopShowcase();
+            if (fandomsOverlay) fandomsOverlay.classList.remove('active');
+            if (userProfileView) userProfileView.style.display = 'none';
+            hideCharacterName();
+
+            const authContainer = document.getElementById('auth-container');
+            if (authContainer) authContainer.style.display = 'none';
+            if (authenticatedHomeView) authenticatedHomeView.classList.remove('active');
+
+            document.body.classList.add('customization-active');
+            if (presetsSection) presetsSection.classList.add('hidden');
+            if (customizeSection) customizeSection.classList.remove('hidden');
+
+            if (canvasContainer) {
+                canvasContainer.style.display = 'none';
+                canvasContainer.classList.remove('showcase-active');
+            }
+
+            shouldRenderScene = false;
+            customRenderBurstFrames = 0;
+            forceMemoryCleanup();
+            setGlobalTopbarVisible(false);
+            activeAppView = 'custom';
+
+            if (window.__papelcoolCustomBuilderReady === true) {
+                launchCustomBuilderExperience();
+            }
+
+            const runtimeReady = ensureCustomPreviewRuntime();
+            if (runtimeReady && customPreviewRuntime.stageEl) {
+                customPreviewRuntime.stageEl.classList.add('active');
+                customPreviewRuntime.stageEl.setAttribute('aria-hidden', 'false');
+                requestCustomPreviewRender(isLowPowerMobile ? 18 : 8);
+            }
+
+            notifyCustomPdfStateChanged('custom-view-open', true);
+
+            setTimeout(() => {
+                onWindowResize();
+            }, 120);
         }
 
         function openPresetsView() {
             ensureDeferredViews();
+            stopActiveCustomPdfGeneration();
             document.body.classList.remove('showcase-mode');
             disposePresetPreviewRuntime();
             disposeCustomPreviewRuntime();
@@ -11278,6 +11456,7 @@
 
         function openPresetPreviewView() {
             ensureDeferredViews();
+            stopActiveCustomPdfGeneration();
             document.body.classList.remove('showcase-mode');
             document.body.classList.remove('customization-active');
             disposeCustomPreviewRuntime();
@@ -11347,8 +11526,8 @@
                 return;
             }
 
-            if (requestedView === 'presets' && isLegacyCustomRouteRequested()) {
-                navigateToView('presets', { updateHistory: true, replaceHistory: true });
+            if (requestedView === 'custom') {
+                navigateToView('custom', { updateHistory: false, replaceHistory: true });
                 return;
             }
 
@@ -11389,10 +11568,6 @@
         window.addEventListener('popstate', () => {
             if (getRequestedView() === 'preset-preview') {
                 currentPresetCharacter = getRememberedPresetCharacter();
-            }
-            if (isLegacyCustomRouteRequested()) {
-                navigateToView('presets', { updateHistory: true, replaceHistory: true });
-                return;
             }
             navigateToView(getRequestedView(), { updateHistory: false });
         });
@@ -11724,6 +11899,596 @@
             }, 1000);
         }
 
+        const PDF_PAGE_LAYER_CONFIG = Object.freeze({
+            page1: [
+                { file: 'template-head-1.svg', colorKey: 'headColor', textureName: null, layer: 1 },
+                { file: 'template-arm-left.svg', colorKey: 'armLeftColor', textureName: null, layer: 2 },
+                { file: 'template-arm-right.svg', colorKey: 'armRightColor', textureName: null, layer: 2 },
+                { file: 'template-leg-left.svg', colorKey: 'legLeftColor', textureName: null, layer: 3 },
+                { file: 'template-leg-right.svg', colorKey: 'legRightColor', textureName: null, layer: 3 },
+                { file: 'template-torso.svg', colorKey: 'torsoColor', textureName: null, layer: 4 },
+                { file: 'template-border-logo.svg', colorKey: null, textureName: null, layer: 5 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'arm-left-front', layer: 6 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'arm-left-back', layer: 6 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'arm-right-front', layer: 6 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'arm-right-back', layer: 6 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'leg-left-front', layer: 6 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'leg-left-back', layer: 6 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'leg-right-front', layer: 6 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'leg-right-back', layer: 6 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'torso-front', layer: 7 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'torso-back', layer: 7 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'hair-left', layer: 7 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'hair-right', layer: 7 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'hair-up', layer: 7 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'ear-left', layer: 8 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'ear-right', layer: 8 }
+            ],
+            page2: [
+                { file: 'template-head-2.svg', colorKey: 'headColor', textureName: null, layer: 1 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'eyes', layer: 2 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'eyebrows', layer: 2 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'nose', layer: 2 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'hair-front', layer: 2 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'hair-back', layer: 2 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'hair-back-2', layer: 2 }
+            ]
+        });
+
+        const PDF_TEXTURE_OFFSETS = Object.freeze({
+            'eyes': { offsetX: 1413.9, offsetY: 759.9, width: 680.1, height: 680.1, rotation: 0, flipX: false },
+            'eyebrows': { offsetX: 1413.9, offsetY: 759.9, width: 680.1, height: 680.1, rotation: 0, flipX: false },
+            'nose': { offsetX: 1413.9, offsetY: 759.9, width: 680.1, height: 680.1, rotation: 0, flipX: false },
+            'ear-left': { offsetX: 2023.6, offsetY: 999.7, width: 680.1, height: 680.1, rotation: 45, flipX: true },
+            'ear-right': { offsetX: 580.9, offsetY: 2442.4, width: 680.1, height: 680.1, rotation: -135, flipX: false },
+            'hair-front': { offsetX: 916.8, offsetY: 403, width: 1674.2, height: 1674.2, rotation: 0, flipX: false },
+            'hair-back': { offsetX: 2046.2, offsetY: 403, width: 1674.2, height: 1674.2, rotation: 0, flipX: false },
+            'hair-back-2': { offsetX: 1461.7, offsetY: 403, width: 1674.2, height: 1674.2, rotation: 0, flipX: true },
+            'hair-left': { offsetX: 2023.6, offsetY: 999.7, width: 680.1, height: 680.1, rotation: 45, flipX: true },
+            'hair-right': { offsetX: 100, offsetY: 1961.4, width: 680.1, height: 680.1, rotation: -135, flipX: true },
+            'hair-up': { offsetX: 2504.4, offsetY: 518.8, width: 680.1, height: 680.1, rotation: 135, flipX: false },
+            'arm-left-front': { offsetX: 2969.6, offsetY: 960.6, width: 492.9, height: 492.9, rotation: 135, flipX: false },
+            'arm-left-back': { offsetX: 3159.2, offsetY: 771, width: 492.9, height: 492.9, rotation: 135, flipX: true },
+            'arm-right-front': { offsetX: 75.9, offsetY: 100, width: 492.9, height: 492.9, rotation: 0, flipX: false },
+            'arm-right-back': { offsetX: 1329.9, offsetY: 100, width: 492.9, height: 492.9, rotation: 0, flipX: true },
+            'leg-left-front': { offsetX: 2556.6, offsetY: 1979.7, width: 637.3, height: 637.3, rotation: -45, flipX: false },
+            'leg-left-back': { offsetX: 2817.6, offsetY: 1339.3, width: 637.3, height: 637.3, rotation: 135, flipX: false },
+            'leg-right-front': { offsetX: 2556.6, offsetY: 1979.7, width: 637.3, height: 637.3, rotation: -45, flipX: false },
+            'leg-right-back': { offsetX: 2817.6, offsetY: 1339.3, width: 637.3, height: 637.3, rotation: 135, flipX: false },
+            'torso-front': { offsetX: 2556.6, offsetY: 1979.7, width: 637.3, height: 637.3, rotation: -45, flipX: false },
+            'torso-back': { offsetX: 2817.6, offsetY: 1339.3, width: 637.3, height: 637.3, rotation: 135, flipX: false }
+        });
+
+        const pdfTemplateSourceCache = new Map();
+        const pdfTextureSourceCache = new Map();
+        const customPdfPrepState = {
+            version: 0,
+            pendingTimer: null,
+            idleHandle: null,
+            snapshot: null,
+            snapshotKey: null,
+            preparedKey: null,
+            pageSvgs: null,
+            isPreparing: false,
+            preparePromise: null,
+            lastError: null
+        };
+        let activePdfJobController = null;
+
+        function createPdfJobController() {
+            return {
+                cancelled: false,
+                cancel() {
+                    this.cancelled = true;
+                },
+                throwIfCancelled() {
+                    if (!this.cancelled) return;
+                    const error = new Error('PDF generation cancelled');
+                    error.name = 'AbortError';
+                    throw error;
+                }
+            };
+        }
+
+        function yieldForUiFrame() {
+            return new Promise((resolve) => requestAnimationFrame(() => resolve()));
+        }
+
+        function deferIdlePdfPreparation(callback) {
+            if (typeof window.requestIdleCallback === 'function') {
+                return {
+                    kind: 'idle',
+                    id: window.requestIdleCallback(() => callback(), {
+                        timeout: isLowPowerMobile ? 1400 : 900
+                    })
+                };
+            }
+
+            return {
+                kind: 'timeout',
+                id: window.setTimeout(callback, isLowPowerMobile ? 220 : 80)
+            };
+        }
+
+        function clearDeferredPdfPreparation(handle) {
+            if (!handle) return;
+            if (handle.kind === 'idle' && typeof window.cancelIdleCallback === 'function') {
+                window.cancelIdleCallback(handle.id);
+                return;
+            }
+            window.clearTimeout(handle.id);
+        }
+
+        function cancelQueuedCustomPdfPreparation() {
+            if (customPdfPrepState.pendingTimer) {
+                window.clearTimeout(customPdfPrepState.pendingTimer);
+                customPdfPrepState.pendingTimer = null;
+            }
+            if (customPdfPrepState.idleHandle) {
+                clearDeferredPdfPreparation(customPdfPrepState.idleHandle);
+                customPdfPrepState.idleHandle = null;
+            }
+        }
+
+        function resetCustomPdfPreparedAssets() {
+            cancelQueuedCustomPdfPreparation();
+            customPdfPrepState.version = 0;
+            customPdfPrepState.snapshot = null;
+            customPdfPrepState.snapshotKey = null;
+            customPdfPrepState.preparedKey = null;
+            customPdfPrepState.pageSvgs = null;
+            customPdfPrepState.isPreparing = false;
+            customPdfPrepState.preparePromise = null;
+            customPdfPrepState.lastError = null;
+        }
+
+        function getCustomPreviewColorsSnapshot() {
+            const armLeft = modelParts.arms.find((arm) => arm.name.toLowerCase().includes('l'));
+            const armRight = modelParts.arms.find((arm) => arm.name.toLowerCase().includes('r'));
+            const legLeft = modelParts.legs.find((leg) => leg.name.toLowerCase().includes('l'));
+            const legRight = modelParts.legs.find((leg) => leg.name.toLowerCase().includes('r'));
+
+            return {
+                headColor: getPartColor(modelParts.head),
+                torsoColor: getPartColor(modelParts.torso),
+                armLeftColor: armLeft ? getPartColor(armLeft) : '#FFFFFF',
+                armRightColor: armRight ? getPartColor(armRight) : '#FFFFFF',
+                legLeftColor: legLeft ? getPartColor(legLeft) : '#FFFFFF',
+                legRightColor: legRight ? getPartColor(legRight) : '#FFFFFF'
+            };
+        }
+
+        function buildCurrentCustomPdfSnapshot() {
+            return {
+                colors: getCustomPreviewColorsSnapshot(),
+                textureUrls: {
+                    eyes: currentEyeTextureURL,
+                    eyebrows: currentEyebrowTextureURL,
+                    nose: currentNoseTextureURL,
+                    'torso-front': currentTorsoFrontURL,
+                    'torso-back': currentTorsoBackURL,
+                    'hair-front': currentHairFrontURL,
+                    'hair-back': currentHairBackURL,
+                    'hair-back-2': currentHairBackURL,
+                    'hair-left': currentHairLeftURL,
+                    'hair-right': currentHairRightURL,
+                    'hair-up': currentHairUpURL,
+                    'arm-left-front': currentArmLeftURL,
+                    'arm-left-back': currentArmLeftURL,
+                    'arm-right-front': currentArmRightURL,
+                    'arm-right-back': currentArmRightURL,
+                    'leg-left-front': currentLegLeftURL,
+                    'leg-left-back': currentLegLeftURL,
+                    'leg-right-front': currentLegRightURL,
+                    'leg-right-back': currentLegRightURL,
+                    'ear-left': currentEarTextureURL,
+                    'ear-right': currentEarTextureURL
+                }
+            };
+        }
+
+        function buildCustomPdfSnapshotKey(snapshot) {
+            return JSON.stringify(snapshot);
+        }
+
+        async function loadCachedSvgTemplate(filename) {
+            if (!pdfTemplateSourceCache.has(filename)) {
+                pdfTemplateSourceCache.set(filename, loadSVGFile(filename));
+            }
+            return pdfTemplateSourceCache.get(filename);
+        }
+
+        async function loadCachedTextureSvg(textureURL) {
+            if (!textureURL) return null;
+            if (!pdfTextureSourceCache.has(textureURL)) {
+                pdfTextureSourceCache.set(textureURL, (async () => {
+                    try {
+                        const response = await fetch(textureURL);
+                        if (!response.ok) return null;
+                        return await response.text();
+                    } catch (error) {
+                        console.warn('No se pudo precargar textura SVG para PDF:', textureURL, error);
+                        return null;
+                    }
+                })());
+            }
+            return pdfTextureSourceCache.get(textureURL);
+        }
+
+        function darkenHexColor(hexColor, factor = 0.75) {
+            const hex = hexColor.replace('#', '');
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+            return `#${Math.floor(r * factor).toString(16).padStart(2, '0')}${Math.floor(g * factor).toString(16).padStart(2, '0')}${Math.floor(b * factor).toString(16).padStart(2, '0')}`;
+        }
+
+        function overlayTextureSvgOnTemplate(templateSVG, textureSVG, offsetX = 0, offsetY = 0, width = null, height = null, rotation = 0, flipX = false) {
+            if (!textureSVG) return templateSVG;
+
+            try {
+                const parser = new DOMParser();
+                const templateDoc = parser.parseFromString(templateSVG, 'image/svg+xml');
+                const textureDoc = parser.parseFromString(textureSVG, 'image/svg+xml');
+
+                const templateElement = templateDoc.documentElement;
+                const textureElement = textureDoc.documentElement;
+                const textureGroup = templateDoc.createElementNS('http://www.w3.org/2000/svg', 'g');
+                textureGroup.setAttribute('id', 'texture-overlay');
+
+                const transforms = [];
+                if (offsetX !== 0 || offsetY !== 0) {
+                    transforms.push(`translate(${offsetX}, ${offsetY})`);
+                }
+                if (rotation !== 0) {
+                    transforms.push(`rotate(${rotation})`);
+                }
+
+                if (width !== null || height !== null || flipX) {
+                    const originalViewBox = textureElement.getAttribute('viewBox');
+                    const originalWidth = textureElement.getAttribute('width');
+                    const originalHeight = textureElement.getAttribute('height');
+
+                    let origW = parseFloat(originalWidth) || 100;
+                    let origH = parseFloat(originalHeight) || 100;
+
+                    if (originalViewBox) {
+                        const vbParts = originalViewBox.split(/\s+/);
+                        if (vbParts.length === 4) {
+                            origW = parseFloat(vbParts[2]);
+                            origH = parseFloat(vbParts[3]);
+                        }
+                    }
+
+                    let scaleX = width !== null ? width / origW : 1.0;
+                    const scaleY = height !== null ? height / origH : 1.0;
+                    if (flipX) scaleX = -scaleX;
+
+                    if (scaleX !== 1.0 || scaleY !== 1.0) {
+                        transforms.push(`scale(${scaleX}, ${scaleY})`);
+                    }
+                }
+
+                if (transforms.length > 0) {
+                    textureGroup.setAttribute('transform', transforms.join(' '));
+                }
+
+                Array.from(textureElement.children).forEach((child) => {
+                    textureGroup.appendChild(child.cloneNode(true));
+                });
+
+                templateElement.appendChild(textureGroup);
+                return new XMLSerializer().serializeToString(templateElement);
+            } catch (error) {
+                console.warn('Error superponiendo textura SVG precargada:', error);
+                return templateSVG;
+            }
+        }
+
+        function mergeSvgLayers(layerSvgs) {
+            const validLayers = layerSvgs.filter(Boolean);
+            if (!validLayers.length) return null;
+
+            const parser = new DOMParser();
+            const mergedDoc = parser.parseFromString(validLayers[0], 'image/svg+xml');
+            const mergedRoot = mergedDoc.documentElement;
+
+            for (let index = 1; index < validLayers.length; index += 1) {
+                const layerDoc = parser.parseFromString(validLayers[index], 'image/svg+xml');
+                Array.from(layerDoc.documentElement.children).forEach((child) => {
+                    mergedRoot.appendChild(child.cloneNode(true));
+                });
+            }
+
+            return new XMLSerializer().serializeToString(mergedRoot);
+        }
+
+        async function resolvePdfLayerSvg(layerConfig, snapshot, controller) {
+            controller?.throwIfCancelled?.();
+            let svgContent = await loadCachedSvgTemplate(layerConfig.file);
+            if (!svgContent) return null;
+
+            if (layerConfig.colorKey) {
+                svgContent = colorSVG(svgContent, snapshot.colors[layerConfig.colorKey]);
+            }
+
+            if (!layerConfig.textureName) {
+                return svgContent;
+            }
+
+            const textureURL = snapshot.textureUrls[layerConfig.textureName];
+            if (!textureURL) {
+                return svgContent;
+            }
+
+            let textureSvg = await loadCachedTextureSvg(textureURL);
+            controller?.throwIfCancelled?.();
+            if (!textureSvg) {
+                return svgContent;
+            }
+
+            if (layerConfig.textureName === 'nose') {
+                textureSvg = colorSVG(textureSvg, darkenHexColor(snapshot.colors.headColor));
+            }
+
+            const config = PDF_TEXTURE_OFFSETS[layerConfig.textureName] || {
+                offsetX: 0,
+                offsetY: 0,
+                width: null,
+                height: null,
+                rotation: 0,
+                flipX: false
+            };
+
+            return overlayTextureSvgOnTemplate(
+                svgContent,
+                textureSvg,
+                config.offsetX,
+                config.offsetY,
+                config.width,
+                config.height,
+                config.rotation,
+                config.flipX
+            );
+        }
+
+        async function composeCustomPdfPages(snapshot, controller, onProgress) {
+            const pageKeys = ['page1', 'page2'];
+            const pages = {};
+            const totalLayers = pageKeys.reduce((sum, key) => sum + PDF_PAGE_LAYER_CONFIG[key].length, 0);
+            let processedLayers = 0;
+
+            for (const pageKey of pageKeys) {
+                const layerSvgs = [];
+                const orderedLayers = [...PDF_PAGE_LAYER_CONFIG[pageKey]].sort((a, b) => a.layer - b.layer);
+
+                for (const layerConfig of orderedLayers) {
+                    controller?.throwIfCancelled?.();
+                    layerSvgs.push(await resolvePdfLayerSvg(layerConfig, snapshot, controller));
+                    processedLayers += 1;
+                    if (typeof onProgress === 'function') {
+                        onProgress(Math.round((processedLayers / totalLayers) * 100));
+                    }
+                    if (processedLayers % 2 === 0) {
+                        await yieldForUiFrame();
+                    }
+                }
+
+                pages[pageKey] = mergeSvgLayers(layerSvgs);
+            }
+
+            return pages;
+        }
+
+        async function ensurePreparedCustomPdfPages(snapshot, controller = null, onProgress = null) {
+            const snapshotKey = buildCustomPdfSnapshotKey(snapshot);
+            if (customPdfPrepState.preparedKey === snapshotKey && customPdfPrepState.pageSvgs?.page1 && customPdfPrepState.pageSvgs?.page2) {
+                if (typeof onProgress === 'function') onProgress(100);
+                return customPdfPrepState.pageSvgs;
+            }
+
+            customPdfPrepState.isPreparing = true;
+            try {
+                const pages = await composeCustomPdfPages(snapshot, controller, onProgress);
+                controller?.throwIfCancelled?.();
+                customPdfPrepState.preparedKey = snapshotKey;
+                customPdfPrepState.pageSvgs = pages;
+                customPdfPrepState.lastError = null;
+                return pages;
+            } catch (error) {
+                if (error?.name !== 'AbortError') {
+                    customPdfPrepState.lastError = error;
+                }
+                throw error;
+            } finally {
+                customPdfPrepState.isPreparing = false;
+                customPdfPrepState.preparePromise = null;
+            }
+        }
+
+        function queueCustomPdfPreparation(reason = 'change', immediate = false) {
+            if (activeAppView !== 'custom' || !document.body.classList.contains('customization-active')) return;
+            if (!modelParts.head && !modelParts.torso && !modelParts.arms.length && !modelParts.legs.length) return;
+
+            const snapshot = buildCurrentCustomPdfSnapshot();
+            const snapshotKey = buildCustomPdfSnapshotKey(snapshot);
+
+            customPdfPrepState.version += 1;
+            customPdfPrepState.snapshot = snapshot;
+            customPdfPrepState.snapshotKey = snapshotKey;
+
+            cancelQueuedCustomPdfPreparation();
+
+            if (customPdfPrepState.preparedKey === snapshotKey && customPdfPrepState.pageSvgs?.page1 && customPdfPrepState.pageSvgs?.page2) {
+                return;
+            }
+
+            const prepareVersion = customPdfPrepState.version;
+            const runPreparation = () => {
+                customPdfPrepState.idleHandle = deferIdlePdfPreparation(async () => {
+                    if (prepareVersion !== customPdfPrepState.version) return;
+                    try {
+                        customPdfPrepState.preparePromise = ensurePreparedCustomPdfPages(snapshot, null, null);
+                        await customPdfPrepState.preparePromise;
+                    } catch (error) {
+                        if (error?.name !== 'AbortError') {
+                            console.warn(`Background custom PDF preparation failed (${reason}):`, error);
+                        }
+                    }
+                });
+            };
+
+            if (immediate) {
+                runPreparation();
+                return;
+            }
+
+            customPdfPrepState.pendingTimer = window.setTimeout(() => {
+                customPdfPrepState.pendingTimer = null;
+                runPreparation();
+            }, isLowPowerMobile ? 320 : 180);
+        }
+
+        function notifyCustomPdfStateChanged(reason = 'change', immediate = false) {
+            queueCustomPdfPreparation(reason, immediate);
+        }
+
+        function resetPdfProgressModal() {
+            const pdfProgress = document.getElementById('pdf-progress-container');
+            const preparingText = document.getElementById('pdf-preparing-text');
+            const progressBarContainer = document.getElementById('pdf-progress-bar-container');
+            const progressBar = document.getElementById('pdf-progress-bar');
+            const progressText = document.getElementById('pdf-progress-text');
+            const downloadMessage = document.getElementById('pdf-download-message');
+            const downloadBtn = document.getElementById('final-download-btn');
+
+            if (pdfProgress) pdfProgress.classList.add('hidden');
+            if (preparingText) preparingText.classList.remove('hidden');
+            if (progressBarContainer) progressBarContainer.classList.remove('hidden');
+            if (progressBar) progressBar.style.width = '0%';
+            if (progressText) progressText.textContent = '0%';
+            if (downloadMessage) downloadMessage.classList.add('hidden');
+            if (downloadBtn) downloadBtn.classList.add('hidden');
+        }
+
+        function updatePdfProgressModal(percent) {
+            const progressBar = document.getElementById('pdf-progress-bar');
+            const progressText = document.getElementById('pdf-progress-text');
+            const safePercent = Math.max(0, Math.min(100, Math.round(percent)));
+
+            if (progressBar) progressBar.style.width = `${safePercent}%`;
+            if (progressText) progressText.textContent = `${safePercent}%`;
+
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({ type: 'PDF_PROGRESS', percent: safePercent }, '*');
+                }
+            } catch (error) {
+                console.warn('No se pudo propagar el progreso del PDF al contenedor padre:', error);
+            }
+        }
+
+        async function saveGeneratedPdfBlob(blob, filename) {
+            const shouldUseSystemPicker = typeof window.showSaveFilePicker === 'function' && !isTouchDownloadDevice();
+
+            if (shouldUseSystemPicker) {
+                try {
+                    const saveHandle = await requestSystemSaveHandle(filename);
+                    await saveBlobToHandle(saveHandle, blob);
+                    return;
+                } catch (error) {
+                    if (error?.name === 'AbortError') {
+                        throw error;
+                    }
+
+                    console.warn('Fallo el diálogo nativo de guardado, usando flujo alternativo:', error);
+                }
+            }
+
+            const shared = await shareBlobOnTouchDevices(blob, filename);
+            if (!shared) {
+                triggerBrowserBlobDownload(blob, filename);
+            }
+        }
+
+        function stopActiveCustomPdfGeneration() {
+            cancelQueuedCustomPdfPreparation();
+            if (activePdfJobController) {
+                activePdfJobController.cancel();
+                activePdfJobController = null;
+            }
+            isGeneratingPDF = false;
+            resetPdfProgressModal();
+        }
+
+        async function generateCustomPdfBlobFromPreparedState(controller, onProgress) {
+            controller?.throwIfCancelled?.();
+
+            if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') {
+                throw new Error('PDF library not loaded correctly. Please reload the page.');
+            }
+
+            const snapshot = buildCurrentCustomPdfSnapshot();
+            const snapshotKey = buildCustomPdfSnapshotKey(snapshot);
+
+            const reportProgress = (percent) => {
+                if (typeof onProgress === 'function') {
+                    onProgress(Math.max(0, Math.min(100, percent)));
+                }
+            };
+
+            reportProgress(4);
+            let pageSvgs;
+
+            if (customPdfPrepState.preparedKey === snapshotKey && customPdfPrepState.pageSvgs?.page1 && customPdfPrepState.pageSvgs?.page2) {
+                pageSvgs = customPdfPrepState.pageSvgs;
+                reportProgress(68);
+            } else {
+                pageSvgs = await ensurePreparedCustomPdfPages(snapshot, controller, (percent) => {
+                    reportProgress(4 + (percent * 0.64));
+                });
+            }
+
+            controller?.throwIfCancelled?.();
+            await yieldForUiFrame();
+
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({
+                orientation: 'landscape',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const pageWidth = 297;
+            const pageHeight = 210;
+
+            reportProgress(72);
+            const page1Image = await svgToImageDataURL(pageSvgs.page1);
+            controller?.throwIfCancelled?.();
+            pdf.addImage(page1Image, 'PNG', 0, 0, pageWidth, pageHeight, undefined, 'FAST');
+
+            reportProgress(84);
+            await yieldForUiFrame();
+            pdf.addPage();
+
+            const page2Image = await svgToImageDataURL(pageSvgs.page2);
+            controller?.throwIfCancelled?.();
+            pdf.addImage(page2Image, 'PNG', 0, 0, pageWidth, pageHeight, undefined, 'FAST');
+
+            reportProgress(96);
+            await yieldForUiFrame();
+            const pdfBlob = pdf.output('blob');
+            controller?.throwIfCancelled?.();
+
+            customPdfPrepState.snapshot = snapshot;
+            customPdfPrepState.snapshotKey = snapshotKey;
+            customPdfPrepState.preparedKey = snapshotKey;
+            customPdfPrepState.pageSvgs = pageSvgs;
+
+            reportProgress(100);
+            return pdfBlob;
+        }
+
         function updatePresetTemplateDownloadButton() {
             const presetTemplateDownloadBtn = document.getElementById('preset-template-download');
             if (!presetTemplateDownloadBtn) return;
@@ -11991,10 +12756,21 @@
 
         const downloadPdfCustomBtn = document.getElementById('download-pdf-custom-btn');
         if (downloadPdfCustomBtn) {
-            downloadPdfCustomBtn.addEventListener('click', () => {
-                // Trigger PDF generation directly
+            downloadPdfCustomBtn.addEventListener('click', async () => {
                 currentPresetCharacter = 'Custom';
-                generatePDF();
+                await generatePDFAfterPayment('custom-download');
+            });
+        }
+
+        const pdfProgressCloseBtn = document.getElementById('pdf-progress-close');
+        if (pdfProgressCloseBtn) {
+            pdfProgressCloseBtn.addEventListener('click', () => {
+                if (activePdfJobController) {
+                    activePdfJobController.cancel();
+                    activePdfJobController = null;
+                }
+                isGeneratingPDF = false;
+                resetPdfProgressModal();
             });
         }
 
@@ -12448,78 +13224,67 @@
 
         // Función para generar PDF después del pago
         async function generatePDFAfterPayment(receiptId) {
-            const pdfProgress = document.getElementById('pdf-progress-container');
-            const downloadBtn = document.getElementById('final-download-btn');
-            const preparingText = document.getElementById('pdf-preparing-text');
-            const progressBarContainer = document.getElementById('pdf-progress-bar-container');
-            const progressText = document.getElementById('pdf-progress-text');
-            const downloadMessage = document.getElementById('pdf-download-message');
+            if (isGeneratingPDF) {
+                return;
+            }
 
-            // Mostrar barra de progreso
-            if (pdfProgress) pdfProgress.classList.remove('hidden');
+            const pdfProgress = document.getElementById('pdf-progress-container');
+            if (!pdfProgress) return;
+
+            resetPdfProgressModal();
+            pdfProgress.classList.remove('hidden');
+            updatePdfProgressModal(0);
+            isGeneratingPDF = true;
+            cancelQueuedCustomPdfPreparation();
+            activePdfJobController = createPdfJobController();
 
             try {
-                // Generar el PDF
-                generatedPdfBlob = await generatePDF(true);
+                generatedPdfBlob = await generateCustomPdfBlobFromPreparedState(activePdfJobController, updatePdfProgressModal);
+                activePdfJobController?.throwIfCancelled?.();
 
-                // Calcular tamaño en MB
-                const fileSizeMB = (generatedPdfBlob.size / (1024 * 1024)).toFixed(2) + ' MB';
+                const filename = 'Papelcool-Custom.pdf';
+                await saveGeneratedPdfBlob(generatedPdfBlob, filename);
+                activePdfJobController?.throwIfCancelled?.();
 
-                // NO cerrar el modal, sino reemplazar contenido
-                // Ocultar texto "Preparing PDF...", barra y porcentaje
-                if (preparingText) preparingText.classList.add('hidden');
-                if (progressBarContainer) progressBarContainer.classList.add('hidden');
-                if (progressText) progressText.classList.add('hidden');
-
-                // Mostrar botón de descarga DENTRO del modal
-                if (downloadBtn) {
-                    downloadBtn.classList.remove('hidden');
-                    // Force UI update to ensure button text is translated
-                    if (langManager) {
-                        langManager.currentLang = localStorage.getItem('papelcool_lang') || 'en';
-                        langManager.updateUI();
-                    }
-                }
-                if (downloadMessage) {
-                    downloadMessage.classList.remove('hidden');
-                    // Actualizar mensaje con el tamaño en MB
-                    let baseMessage = 'Your download will start through your browser.';
-                    if (langManager) {
-                        baseMessage = langManager.get('download-message');
-                    }
-                    downloadMessage.innerHTML = `${baseMessage}<br><span style="color:#ffee00;font-weight:bold;font-size:1rem;">Size: ${fileSizeMB}</span>`;
-                }
-
-                // Lanzar confetti
                 if (typeof confetti !== 'undefined') {
                     launchConfetti();
                 }
+
+                resetPdfProgressModal();
             } catch (error) {
-                console.error('Error al generar PDF:', error);
+                if (error?.name === 'AbortError') {
+                    resetPdfProgressModal();
+                    return;
+                }
+
+                console.error(`Error al generar PDF (${receiptId}):`, error);
+                resetPdfProgressModal();
                 alert('Hubo un error al generar el PDF. Por favor, intenta de nuevo.');
-                // Cerrar modal en caso de error
-                if (pdfProgress) pdfProgress.classList.add('hidden');
-                // Limpiar parámetros de URL
                 window.history.replaceState({}, document.title, window.location.pathname);
+            } finally {
+                activePdfJobController = null;
+                isGeneratingPDF = false;
             }
         }
 
         // Event listener para botón de descarga final
         const finalDownloadBtn = document.getElementById('final-download-btn');
         if (finalDownloadBtn) {
-            finalDownloadBtn.addEventListener('click', () => {
+            finalDownloadBtn.addEventListener('click', async () => {
                 if (generatedPdfBlob) {
-                    // Descargar el PDF ya generado usando link para asegurar el nombre
                     const isCustom = document.body.classList.contains('customization-active');
                     const filename = isCustom ? 'Papelcool-Custom.pdf' : `Papelcool-${currentPresetCharacter || 'Character'}.pdf`;
-                    const url = URL.createObjectURL(generatedPdfBlob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = filename;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(url);
+
+                    try {
+                        await saveGeneratedPdfBlob(generatedPdfBlob, filename);
+                    } catch (error) {
+                        if (error?.name === 'AbortError') {
+                            return;
+                        }
+                        console.error('Error saving generated PDF:', error);
+                        alert('No se pudo guardar el PDF. Inténtalo de nuevo.');
+                        return;
+                    }
 
                     // Cerrar el modal completamente
                     const pdfProgress = document.getElementById('pdf-progress-container');
@@ -12825,16 +13590,30 @@
 
                 img.onload = () => {
                     try {
-                        // ALTA RESOLUCIÓN: Multiplicar por 16 para calidad máxima absoluta
-                        // A4 horizontal: 297mm x 210mm a 300 DPI = 3507.9 x 2480.3 px
-                        // Usamos 16x para calidad suprema definitiva: ~56126 x 39685 px (equivalente a ~4800 DPI)
-                        const scaleFactor = 16;
-                        const baseWidth = img.width || 3508;  // A4 horizontal a 300 DPI
-                        const baseHeight = img.height || 2480;
+                        const parser = new DOMParser();
+                        const svgDoc = parser.parseFromString(svgContent, 'image/svg+xml');
+                        const svgElement = svgDoc.documentElement;
+                        const viewBox = svgElement.getAttribute('viewBox');
+
+                        let baseWidth = img.width || 3508;
+                        let baseHeight = img.height || 2481;
+                        if (viewBox) {
+                            const vbParts = viewBox.trim().split(/\s+/);
+                            if (vbParts.length === 4) {
+                                baseWidth = Math.round(parseFloat(vbParts[2])) || baseWidth;
+                                baseHeight = Math.round(parseFloat(vbParts[3])) || baseHeight;
+                            }
+                        }
+
+                        // Evitar canvases gigantes en móvil: ese sobrerender estaba generando PDFs vacíos.
+                        const maxPixels = isLowPowerMobile ? 4500000 : 9500000;
+                        const scaleFactor = Math.min(1, Math.sqrt(maxPixels / (baseWidth * baseHeight)));
+                        const renderWidth = Math.max(1, Math.round(baseWidth * scaleFactor));
+                        const renderHeight = Math.max(1, Math.round(baseHeight * scaleFactor));
 
                         const canvas = document.createElement('canvas');
-                        canvas.width = baseWidth * scaleFactor;
-                        canvas.height = baseHeight * scaleFactor;
+                        canvas.width = renderWidth;
+                        canvas.height = renderHeight;
 
                         const ctx = canvas.getContext('2d', {
                             alpha: true,
@@ -12852,7 +13631,7 @@
                         // NO agregar fondo blanco - mantener transparencia
                         // Los templates SVG tienen fondo transparente para verse superpuestos
 
-                        // Dibujar la imagen SVG escalada a alta resolución
+                        // Dibujar el SVG a resolución A4 estable sin desbordar memoria.
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
                         // Convertir a data URL
@@ -12891,7 +13670,7 @@
             // Crear botón de descarga
             const downloadBtn = document.createElement('button');
             downloadBtn.style.cssText = 'width:100%;padding:1.2rem 2rem;background:#FFE600;border:4px solid black;border-radius:16px;color:black;font-family:\'Fredoka\', sans-serif;font-size:1.2rem;font-weight:700;cursor:pointer;text-transform:uppercase;transition:all 0.2s ease;box-shadow:6px 6px 0px 0px rgba(0,0,0,1);margin-bottom:1rem;';
-            downloadBtn.textContent = 'DOWNLOAD PDF';
+            downloadBtn.textContent = langManager ? langManager.get('download-pdf-btn') : 'DOWNLOAD PDF';
             downloadBtn.onmouseover = () => {
                 downloadBtn.style.transform = 'scale(1.02)';
             };
@@ -12942,7 +13721,7 @@
             // Crear mensaje informativo
             const message = document.createElement('div');
             message.style.cssText = 'color:rgba(255,255,255,0.8);font-size:0.85rem;text-align:center;line-height:1.4;';
-            message.innerHTML = 'Your download will start through your browser.<br>Please check your downloads folder.';
+            message.innerHTML = langManager ? langManager.get('download-message') : 'Your download will start through your browser.<br>Please check your downloads folder.';
 
             // Agregar botón y mensaje al contenedor
             progressContainer.appendChild(downloadBtn);
@@ -13331,6 +14110,8 @@
                 console.error('❌ Error generating PDF:', error);
                 alert('Error generating PDF: ' + error.message);
                 throw error;
+            } finally {
+                isGeneratingPDF = false;
             }
         }
 
@@ -13557,6 +14338,7 @@
 
         function resetCustomBuilderModelState() {
             if (!modelParts.head && !modelParts.torso && !modelParts.arms.length && !modelParts.legs.length) return;
+            resetCustomPdfPreparedAssets();
 
             eyesMesh = removeOverlayMesh(modelParts.head, eyesMesh);
             eyebrowsMesh = removeOverlayMesh(modelParts.head, eyebrowsMesh);
@@ -13596,6 +14378,7 @@
             resetModelAppearanceToWhite();
             forceMemoryCleanup();
             requestCustomRender(isLowPowerMobile ? 20 : 28);
+            notifyCustomPdfStateChanged('custom-reset', true);
         }
 
         function hslToHex(h, s, l) {
@@ -13730,6 +14513,7 @@
             }
 
             requestCustomRender(isLowPowerMobile ? 14 : 22);
+            notifyCustomPdfStateChanged(`color-${target}`);
         }
 
         function applyCustomBuilderTone(hexColor) {
@@ -13833,7 +14617,6 @@
                 hueSlider.addEventListener('input', () => {
                     customBuilderState.sliderHue = Number(hueSlider.value);
                     applyCustomBuilderSliderColor();
-                    renderCustomBuilderStep();
                 });
             }
 
@@ -13841,7 +14624,6 @@
                 lightnessSlider.addEventListener('input', () => {
                     customBuilderState.sliderLightness = Number(lightnessSlider.value);
                     applyCustomBuilderSliderColor();
-                    renderCustomBuilderStep();
                 });
             }
         }
@@ -13997,6 +14779,7 @@
             }, 360);
 
             queueCustomBuilderTimer(() => onWindowResize(), 40);
+            notifyCustomPdfStateChanged('custom-builder-launch', true);
         }
 
         function resetCustomBuilderView() {
@@ -14111,7 +14894,7 @@
                 if (activeAppView === 'presets') {
                     openPresetsView();
                 } else if (activeAppView === 'custom') {
-                    openPresetsView();
+                    openCustomizationView();
                 } else if (activeAppView === 'home') {
                     openAuthenticatedHome(true);
                 } else {
