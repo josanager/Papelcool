@@ -7219,6 +7219,12 @@
         const svgRasterCache = new Map();
         const MAX_CACHED_RASTERS = isLowPowerMobile ? 3 : 12;
 
+        function releaseRasterSource(source) {
+            if (!source || typeof source.width !== 'number' || typeof source.height !== 'number') return;
+            source.width = 1;
+            source.height = 1;
+        }
+
         function registerRasterSource(cacheKey, source) {
             if (!cacheKey || !source) return;
 
@@ -7230,6 +7236,15 @@
 
             while (svgRasterCache.size > MAX_CACHED_RASTERS) {
                 const firstKey = svgRasterCache.keys().next().value;
+                releaseRasterSource(svgRasterCache.get(firstKey));
+                svgRasterCache.delete(firstKey);
+            }
+        }
+
+        function trimRasterCache(maxEntries = MAX_CACHED_RASTERS) {
+            while (svgRasterCache.size > maxEntries) {
+                const firstKey = svgRasterCache.keys().next().value;
+                releaseRasterSource(svgRasterCache.get(firstKey));
                 svgRasterCache.delete(firstKey);
             }
         }
@@ -7344,6 +7359,7 @@
             // No necesitamos forzar GC agresivamente
             if (isMobileDevice && renderer) {
                 renderer.renderLists.dispose();
+                trimRasterCache(isLowPowerMobile ? 2 : MAX_CACHED_RASTERS);
             }
         }
 
@@ -7420,6 +7436,32 @@
         let legLeftBackMesh = null;
         let legRightFrontMesh = null;
         let legRightBackMesh = null;
+        const customTextureVersions = {
+            eyes: 0,
+            eyebrows: 0,
+            nose: 0,
+            earLeft: 0,
+            earRight: 0,
+            hair: 0,
+            torso: 0,
+            armLeft: 0,
+            armRight: 0,
+            legLeft: 0,
+            legRight: 0
+        };
+
+        function nextCustomTextureVersion(key) {
+            customTextureVersions[key] = (customTextureVersions[key] || 0) + 1;
+            return customTextureVersions[key];
+        }
+
+        function isCurrentCustomTextureVersion(key, version) {
+            return customTextureVersions[key] === version;
+        }
+
+        function invalidateAllCustomTextureVersions() {
+            Object.keys(customTextureVersions).forEach(nextCustomTextureVersion);
+        }
 
         const presetPreviewTextureCache = new Map();
         const MAX_PRESET_PREVIEW_TEXTURES = isLowPowerMobile ? 4 : 10;
@@ -7470,6 +7512,8 @@
             isInitialized: false,
             lastFrameAt: 0,
             currentCharacter: null,
+            textureGeneration: 0,
+            headColor: null,
             isDragging: false,
             activePointerId: null,
             lastPointerX: 0
@@ -8508,6 +8552,15 @@
             Object.keys(showcaseRuntime.overlays).forEach((key) => clearShowcaseOverlay(key));
         }
 
+        function invalidateShowcaseTextureGeneration() {
+            showcaseRuntime.textureGeneration += 1;
+            return showcaseRuntime.textureGeneration;
+        }
+
+        function isCurrentShowcaseTextureGeneration(generation) {
+            return generation === showcaseRuntime.textureGeneration;
+        }
+
         function resizeShowcaseRuntime() {
             if (!showcaseRuntime.isInitialized || !showcaseRuntime.mountEl) return;
             const width = showcaseRuntime.mountEl.clientWidth || window.innerWidth;
@@ -8517,9 +8570,34 @@
             showcaseRuntime.renderer.setSize(width, height);
         }
 
+        function getShowcaseNoseColor() {
+            const color = showcaseRuntime.headColor || new THREE.Color(0xffffff);
+            return new THREE.Color(color.r * 0.5, color.g * 0.5, color.b * 0.5);
+        }
+
+        function applyShowcaseNoseColor() {
+            const nose = showcaseRuntime.overlays.nose;
+            if (!nose?.material?.color) return;
+            nose.material.color.copy(nose.userData?.colorWithHead ? getShowcaseNoseColor() : new THREE.Color(0xffffff));
+            nose.material.needsUpdate = true;
+        }
+
+        function normalizeShowcaseOverlayColor(overlayMesh) {
+            if (!overlayMesh?.material?.color) return;
+            if (overlayMesh === showcaseRuntime.overlays.nose) {
+                applyShowcaseNoseColor();
+                return;
+            }
+            overlayMesh.material.color.setHex(0xffffff);
+            overlayMesh.material.needsUpdate = true;
+        }
+
         function applyShowcaseColorToPart(mesh, color, { isHead = false } = {}) {
             if (!mesh) return;
             const excludedMeshes = Object.values(showcaseRuntime.overlays).filter(Boolean);
+            if (isHead) {
+                showcaseRuntime.headColor = color.clone();
+            }
 
             mesh.traverse((child) => {
                 if (!child.isMesh || excludedMeshes.includes(child)) return;
@@ -8532,26 +8610,12 @@
                 }
             });
 
-            excludedMeshes.forEach((overlayMesh) => {
-                if (overlayMesh.material?.color) {
-                    overlayMesh.material.color.setHex(0xffffff);
-                    overlayMesh.material.needsUpdate = true;
-                }
-            });
+            excludedMeshes.forEach(normalizeShowcaseOverlayColor);
 
-            if (isHead && showcaseRuntime.overlays.nose?.material?.color) {
-                showcaseRuntime.overlays.nose.material.color.copy(new THREE.Color(
-                    color.r * 0.5,
-                    color.g * 0.5,
-                    color.b * 0.5
-                ));
-                showcaseRuntime.overlays.nose.material.needsUpdate = true;
-            }
+            if (isHead) applyShowcaseNoseColor();
         }
 
-        function setShowcaseOverlay(key, parent, url, options = {}) {
-            const existingMesh = showcaseRuntime.overlays[key];
-
+        function setShowcaseOverlay(key, parent, url, options = {}, generation = showcaseRuntime.textureGeneration) {
             if (!parent || !url) {
                 clearShowcaseOverlay(key);
                 return Promise.resolve();
@@ -8559,7 +8623,14 @@
 
             return loadShowcaseTexture(url)
                 .then((texture) => {
-                    if (!texture || !isShowcaseActive || !showcaseRuntime.isInitialized) {
+                    if (
+                        !texture ||
+                        !isShowcaseActive ||
+                        !showcaseRuntime.isInitialized ||
+                        !isCurrentShowcaseTextureGeneration(generation) ||
+                        !showcaseRuntime.modelRoot ||
+                        !showcaseRuntime.modelRoot.getObjectById(parent.id)
+                    ) {
                         texture?.dispose?.();
                         return;
                     }
@@ -8567,6 +8638,8 @@
                     const planeHeight = options.planeHeight || 2;
                     const aspect = texture.image.width / Math.max(texture.image.height, 1);
                     const planeWidth = planeHeight * aspect;
+
+                    const existingMesh = showcaseRuntime.overlays[key];
 
                     if (!existingMesh || !existingMesh.parent) {
                         const material = new THREE.MeshBasicMaterial({
@@ -8577,6 +8650,7 @@
                         });
                         const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         const mesh = new THREE.Mesh(geometry, material);
+                        mesh.userData.colorWithHead = options.colorWithHead === true;
                         mesh.position.set(options.position?.[0] || 0, options.position?.[1] || 0, options.position?.[2] || 0);
                         mesh.rotation.set(options.rotation?.[0] || 0, options.rotation?.[1] || 0, options.rotation?.[2] || 0);
                         mesh.scale.set(options.scale?.[0] || 1, options.scale?.[1] || 1, options.scale?.[2] || 1);
@@ -8584,6 +8658,7 @@
                         showcaseRuntime.overlays[key] = mesh;
                     } else {
                         const oldMap = existingMesh.material.map;
+                        existingMesh.userData.colorWithHead = options.colorWithHead === true;
                         existingMesh.material.map = texture;
                         existingMesh.material.needsUpdate = true;
                         existingMesh.position.set(options.position?.[0] || 0, options.position?.[1] || 0, options.position?.[2] || 0);
@@ -8591,6 +8666,8 @@
                         existingMesh.scale.set(options.scale?.[0] || 1, options.scale?.[1] || 1, options.scale?.[2] || 1);
                         if (oldMap && oldMap !== texture) oldMap.dispose();
                     }
+
+                    normalizeShowcaseOverlayColor(showcaseRuntime.overlays[key]);
                 })
                 .catch((error) => {
                     console.warn('Showcase texture error:', url, error);
@@ -8605,6 +8682,7 @@
             const eyeTexture = getRandomTexture(eyeTextures);
             const eyebrowTexture = getRandomTexture(eyebrowTextures);
             const noseTexture = getRandomTexture(noseTextures);
+            const earTexture = getRandomTexture(earTextures);
             const hairTexture = getRandomTexture(hairTextures);
             const torsoTexture = getRandomTexture(torsoClothingTextures);
             const armTextureLeft = getRandomTexture(armTextures);
@@ -8620,7 +8698,22 @@
                 plan.push({ key: 'eyebrows', parent: parts.head, url: eyebrowTexture.url, options: { position: [0, 1.029, 1.129], planeHeight: 2.256 } });
             }
             if (noseTexture?.url && parts.head) {
-                plan.push({ key: 'nose', parent: parts.head, url: noseTexture.url, options: { position: [0, 1.029, 1.129], planeHeight: 2.256 } });
+                plan.push({
+                    key: 'nose',
+                    parent: parts.head,
+                    url: noseTexture.url,
+                    options: {
+                        position: [0, 1.029, 1.129],
+                        planeHeight: 2.256,
+                        colorWithHead: noseTexture.name === 'Default'
+                    }
+                });
+            }
+            if (earTexture?.url && parts.head) {
+                plan.push(
+                    { key: 'ear-left', parent: parts.head, url: earTexture.url, options: { position: [-1.13, 1.029, 0], rotation: [0, Math.PI / 2, 0], scale: [-1, 1, 1], planeHeight: 2.256 } },
+                    { key: 'ear-right', parent: parts.head, url: earTexture.url, options: { position: [1.13, 1.029, 0], rotation: [0, -Math.PI / 2, 0], planeHeight: 2.256 } }
+                );
             }
             if (hairTexture?.frontUrl && parts.head) {
                 plan.push(
@@ -8678,11 +8771,11 @@
             ));
         }
 
-        async function applyShowcaseTexturePlan(plan) {
+        async function applyShowcaseTexturePlan(plan, generation = showcaseRuntime.textureGeneration) {
             if (!plan.length) return;
             await preloadShowcaseTexturePlan(plan);
-            if (!isShowcaseActive || !showcaseRuntime.isInitialized) return;
-            await Promise.all(plan.map((item) => setShowcaseOverlay(item.key, item.parent, item.url, item.options)));
+            if (!isShowcaseActive || !showcaseRuntime.isInitialized || !isCurrentShowcaseTextureGeneration(generation)) return;
+            await Promise.all(plan.map((item) => setShowcaseOverlay(item.key, item.parent, item.url, item.options, generation)));
         }
 
         async function applyShowcaseCharacter() {
@@ -8694,6 +8787,7 @@
             const leftLeg = getPresetPreviewAppendage(parts, 'legs', 'l');
             const rightLeg = getPresetPreviewAppendage(parts, 'legs', 'r');
 
+            const textureGeneration = invalidateShowcaseTextureGeneration();
             clearAllShowcaseOverlays();
 
             const white = new THREE.Color(0xffffff);
@@ -8709,7 +8803,7 @@
             if (leftLeg) leftLeg.visible = true;
             if (rightLeg) rightLeg.visible = true;
 
-            await applyShowcaseTexturePlan(createShowcaseTexturePlan(parts));
+            await applyShowcaseTexturePlan(createShowcaseTexturePlan(parts), textureGeneration);
         }
 
         function cycleShowcaseColors(now) {
@@ -8753,8 +8847,10 @@
             showcaseTextureBatchTimer = now;
             showcaseTextureBatchInFlight = true;
 
+            const textureGeneration = invalidateShowcaseTextureGeneration();
+
             const plan = createShowcaseTexturePlan(showcaseRuntime.parts);
-            applyShowcaseTexturePlan(plan)
+            applyShowcaseTexturePlan(plan, textureGeneration)
                 .catch((error) => {
                     console.warn('Showcase batch texture error:', error);
                 })
@@ -8805,7 +8901,13 @@
         }
 
         function ensureShowcaseRuntime() {
-            if (showcaseRuntime.isInitialized) return true;
+            if (showcaseRuntime.isInitialized) {
+                const currentMount = document.getElementById('home-showcase-scene');
+                if (currentMount && showcaseRuntime.renderer && currentMount.contains(showcaseRuntime.renderer.domElement)) {
+                    return true;
+                }
+                disposeShowcaseRuntime();
+            }
             if (!loadedModel) return false;
 
             showcaseRuntime.stageEl = document.getElementById('home-showcase-stage');
@@ -8881,6 +8983,8 @@
             showcaseRuntime.overlays = {};
             showcaseRuntime.isInitialized = true;
             showcaseRuntime.lastFrameAt = 0;
+            showcaseRuntime.headColor = new THREE.Color(0xffffff);
+            invalidateShowcaseTextureGeneration();
 
             resizeShowcaseRuntime();
             return true;
@@ -8924,6 +9028,8 @@
             showcaseRuntime.overlays = {};
             showcaseRuntime.isInitialized = false;
             showcaseRuntime.currentCharacter = null;
+            showcaseRuntime.headColor = null;
+            invalidateShowcaseTextureGeneration();
             showcaseRuntime.isDragging = false;
             showcaseRuntime.activePointerId = null;
             showcaseRuntime.lastPointerX = 0;
@@ -9309,12 +9415,13 @@
 
         function changeEyeTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
+            const textureVersion = nextCustomTextureVersion('eyes');
             currentEyeTextureURL = url;
             notifyCustomPdfStateChanged('eyes-texture');
 
             loadOptimizedTexture(url,
                 (texture) => {
-                    if (currentEyeTextureURL !== url) {
+                    if (!isCurrentCustomTextureVersion('eyes', textureVersion) || currentEyeTextureURL !== url) {
                         texture.dispose();
                         return;
                     }
@@ -9369,12 +9476,13 @@
 
         function changeEyebrowTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
+            const textureVersion = nextCustomTextureVersion('eyebrows');
             currentEyebrowTextureURL = url;
             notifyCustomPdfStateChanged('eyebrows-texture');
 
             loadOptimizedTexture(url,
                 (texture) => {
-                    if (currentEyebrowTextureURL !== url) {
+                    if (!isCurrentCustomTextureVersion('eyebrows', textureVersion) || currentEyebrowTextureURL !== url) {
                         texture.dispose();
                         return;
                     }
@@ -9428,12 +9536,13 @@
 
         function changeNoseTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
+            const textureVersion = nextCustomTextureVersion('nose');
             currentNoseTextureURL = url;
             notifyCustomPdfStateChanged('nose-texture');
 
             loadOptimizedTexture(url,
                 (texture) => {
-                    if (currentNoseTextureURL !== url) {
+                    if (!isCurrentCustomTextureVersion('nose', textureVersion) || currentNoseTextureURL !== url) {
                         texture.dispose();
                         return;
                     }
@@ -9522,12 +9631,14 @@
 
         function changeEarTexture(side, url, isInitialLoad = false) {
             if (!modelParts.head) return;
+            const versionKey = side === 'left' ? 'earLeft' : 'earRight';
+            const textureVersion = nextCustomTextureVersion(versionKey);
             currentEarTextureURL = url;
             notifyCustomPdfStateChanged(`ear-${side}-texture`);
 
             loadOptimizedTexture(url,
                 (texture) => {
-                    if (currentEarTextureURL !== url) {
+                    if (!isCurrentCustomTextureVersion(versionKey, textureVersion) || currentEarTextureURL !== url) {
                         texture.dispose();
                         return;
                     }
@@ -9599,6 +9710,7 @@
 
         function changeHairTexture(frontUrl, backUrl, leftUrl, rightUrl, upUrl, isInitialLoad = false) {
             if (!modelParts.head) return;
+            const textureVersion = nextCustomTextureVersion('hair');
             currentHairFrontURL = frontUrl;
             currentHairBackURL = backUrl;
             currentHairLeftURL = leftUrl;
@@ -9690,7 +9802,7 @@
             // Cargar front hair
             loadOptimizedTexture(frontUrl,
                 (texture) => {
-                    if (currentHairFrontURL !== frontUrl || currentHairBackURL !== backUrl || currentHairLeftURL !== leftUrl || currentHairRightURL !== rightUrl || currentHairUpURL !== upUrl) {
+                    if (!isCurrentCustomTextureVersion('hair', textureVersion) || currentHairFrontURL !== frontUrl || currentHairBackURL !== backUrl || currentHairLeftURL !== leftUrl || currentHairRightURL !== rightUrl || currentHairUpURL !== upUrl) {
                         texture.dispose();
                         return;
                     }
@@ -9728,7 +9840,7 @@
             // Cargar back hair
             loadOptimizedTexture(backUrl,
                 (texture) => {
-                    if (currentHairFrontURL !== frontUrl || currentHairBackURL !== backUrl || currentHairLeftURL !== leftUrl || currentHairRightURL !== rightUrl || currentHairUpURL !== upUrl) {
+                    if (!isCurrentCustomTextureVersion('hair', textureVersion) || currentHairFrontURL !== frontUrl || currentHairBackURL !== backUrl || currentHairLeftURL !== leftUrl || currentHairRightURL !== rightUrl || currentHairUpURL !== upUrl) {
                         texture.dispose();
                         return;
                     }
@@ -9767,7 +9879,7 @@
             if (leftUrl) {
                 loadOptimizedTexture(leftUrl,
                     (texture) => {
-                        if (currentHairFrontURL !== frontUrl || currentHairBackURL !== backUrl || currentHairLeftURL !== leftUrl || currentHairRightURL !== rightUrl || currentHairUpURL !== upUrl) {
+                        if (!isCurrentCustomTextureVersion('hair', textureVersion) || currentHairFrontURL !== frontUrl || currentHairBackURL !== backUrl || currentHairLeftURL !== leftUrl || currentHairRightURL !== rightUrl || currentHairUpURL !== upUrl) {
                             texture.dispose();
                             return;
                         }
@@ -9808,7 +9920,7 @@
             if (rightUrl) {
                 loadOptimizedTexture(rightUrl,
                     (texture) => {
-                        if (currentHairFrontURL !== frontUrl || currentHairBackURL !== backUrl || currentHairLeftURL !== leftUrl || currentHairRightURL !== rightUrl || currentHairUpURL !== upUrl) {
+                        if (!isCurrentCustomTextureVersion('hair', textureVersion) || currentHairFrontURL !== frontUrl || currentHairBackURL !== backUrl || currentHairLeftURL !== leftUrl || currentHairRightURL !== rightUrl || currentHairUpURL !== upUrl) {
                             texture.dispose();
                             return;
                         }
@@ -9849,7 +9961,7 @@
             if (upUrl) {
                 loadOptimizedTexture(upUrl,
                     (texture) => {
-                        if (currentHairFrontURL !== frontUrl || currentHairBackURL !== backUrl || currentHairLeftURL !== leftUrl || currentHairRightURL !== rightUrl || currentHairUpURL !== upUrl) {
+                        if (!isCurrentCustomTextureVersion('hair', textureVersion) || currentHairFrontURL !== frontUrl || currentHairBackURL !== backUrl || currentHairLeftURL !== leftUrl || currentHairRightURL !== rightUrl || currentHairUpURL !== upUrl) {
                             texture.dispose();
                             return;
                         }
@@ -9892,6 +10004,7 @@
 
         function changeTorsoClothing(frontUrl, backUrl, isInitialLoad = false) {
             if (!modelParts.torso) return;
+            const textureVersion = nextCustomTextureVersion('torso');
             currentTorsoFrontURL = frontUrl;
             currentTorsoBackURL = backUrl;
             notifyCustomPdfStateChanged('torso-texture');
@@ -9938,7 +10051,7 @@
             // Cargar textura frontal del torso
             loadOptimizedTexture(frontUrl,
                 (texture) => {
-                    if (currentTorsoFrontURL !== frontUrl || currentTorsoBackURL !== backUrl) {
+                    if (!isCurrentCustomTextureVersion('torso', textureVersion) || currentTorsoFrontURL !== frontUrl || currentTorsoBackURL !== backUrl) {
                         texture.dispose();
                         return;
                     }
@@ -9973,7 +10086,7 @@
             // Cargar textura trasera del torso
             loadOptimizedTexture(backUrl,
                 (texture) => {
-                    if (currentTorsoFrontURL !== frontUrl || currentTorsoBackURL !== backUrl) {
+                    if (!isCurrentCustomTextureVersion('torso', textureVersion) || currentTorsoFrontURL !== frontUrl || currentTorsoBackURL !== backUrl) {
                         texture.dispose();
                         return;
                     }
@@ -10008,6 +10121,8 @@
 
         function changeLegClothing(side, url, isInitialLoad = false) {
             if (modelParts.legs.length < 2) return;
+            const versionKey = side === 'left' ? 'legLeft' : 'legRight';
+            const textureVersion = nextCustomTextureVersion(versionKey);
             if (side === 'left') {
                 currentLegLeftURL = url;
             } else {
@@ -10083,7 +10198,7 @@
             loadOptimizedTexture(url,
                 (texture) => {
                     const activeUrl = side === 'left' ? currentLegLeftURL : currentLegRightURL;
-                    if (activeUrl !== url) {
+                    if (!isCurrentCustomTextureVersion(versionKey, textureVersion) || activeUrl !== url) {
                         texture.dispose();
                         return;
                     }
@@ -10139,7 +10254,7 @@
             loadOptimizedTexture(url,
                 (texture) => {
                     const activeUrl = side === 'left' ? currentLegLeftURL : currentLegRightURL;
-                    if (activeUrl !== url) {
+                    if (!isCurrentCustomTextureVersion(versionKey, textureVersion) || activeUrl !== url) {
                         texture.dispose();
                         return;
                     }
@@ -10197,6 +10312,8 @@
 
         function changeArmClothing(side, url, isInitialLoad = false) {
             if (modelParts.arms.length < 2) return;
+            const versionKey = side === 'left' ? 'armLeft' : 'armRight';
+            const textureVersion = nextCustomTextureVersion(versionKey);
             if (side === 'left') {
                 currentArmLeftURL = url;
             } else {
@@ -10281,7 +10398,7 @@
             loadOptimizedTexture(url,
                 (texture) => {
                     const activeUrl = side === 'left' ? currentArmLeftURL : currentArmRightURL;
-                    if (activeUrl !== url) {
+                    if (!isCurrentCustomTextureVersion(versionKey, textureVersion) || activeUrl !== url) {
                         texture.dispose();
                         return;
                     }
@@ -10335,7 +10452,7 @@
             loadOptimizedTexture(url,
                 (texture) => {
                     const activeUrl = side === 'left' ? currentArmLeftURL : currentArmRightURL;
-                    if (activeUrl !== url) {
+                    if (!isCurrentCustomTextureVersion(versionKey, textureVersion) || activeUrl !== url) {
                         texture.dispose();
                         return;
                     }
@@ -11437,7 +11554,7 @@
             const tiktokGrid = document.getElementById('home-tiktok-grid');
             const bannerGrid = document.getElementById('home-banner-grid');
 
-            if (heroTop) {
+            if (heroTop && !heroTop.querySelector('#home-showcase-scene')) {
                 heroTop.innerHTML = `
                     <div class="funko-hero-wrapper">
                         <div class="funko-hero-inner">
@@ -12219,6 +12336,7 @@
 
         const pdfTemplateSourceCache = new Map();
         const pdfTextureSourceCache = new Map();
+        const MAX_CACHED_PDF_TEXTURE_SVGS = isLowPowerMobile ? 8 : 24;
         const customPdfPrepState = {
             version: 0,
             pendingTimer: null,
@@ -12369,8 +12487,16 @@
                         return null;
                     }
                 })());
+                while (pdfTextureSourceCache.size > MAX_CACHED_PDF_TEXTURE_SVGS) {
+                    const firstKey = pdfTextureSourceCache.keys().next().value;
+                    pdfTextureSourceCache.delete(firstKey);
+                }
             }
             return pdfTextureSourceCache.get(textureURL);
+        }
+
+        function shouldDeferCustomPdfPreparationUntilDownload() {
+            return isLowPowerMobile && !isGeneratingPDF;
         }
 
         function darkenHexColor(hexColor, factor = 0.75) {
@@ -12567,6 +12693,16 @@
         function queueCustomPdfPreparation(reason = 'change', immediate = false) {
             if (activeAppView !== 'custom' || !document.body.classList.contains('customization-active')) return;
             if (!modelParts.head && !modelParts.torso && !modelParts.arms.length && !modelParts.legs.length) return;
+            if (shouldDeferCustomPdfPreparationUntilDownload()) {
+                customPdfPrepState.version += 1;
+                customPdfPrepState.snapshot = null;
+                customPdfPrepState.snapshotKey = null;
+                customPdfPrepState.preparedKey = null;
+                customPdfPrepState.pageSvgs = null;
+                customPdfPrepState.lastError = null;
+                cancelQueuedCustomPdfPreparation();
+                return;
+            }
 
             const snapshot = buildCurrentCustomPdfSnapshot();
             const snapshotKey = buildCustomPdfSnapshotKey(snapshot);
@@ -12586,7 +12722,15 @@
                 customPdfPrepState.idleHandle = deferIdlePdfPreparation(async () => {
                     if (prepareVersion !== customPdfPrepState.version) return;
                     try {
-                        customPdfPrepState.preparePromise = ensurePreparedCustomPdfPages(snapshot, null, null);
+                        const backgroundController = {
+                            throwIfCancelled() {
+                                if (prepareVersion === customPdfPrepState.version && !shouldDeferCustomPdfPreparationUntilDownload()) return;
+                                const error = new Error('Background PDF preparation superseded');
+                                error.name = 'AbortError';
+                                throw error;
+                            }
+                        };
+                        customPdfPrepState.preparePromise = ensurePreparedCustomPdfPages(snapshot, backgroundController, null);
                         await customPdfPrepState.preparePromise;
                     } catch (error) {
                         if (error?.name !== 'AbortError') {
@@ -13540,11 +13684,17 @@
                 resetPdfProgressModal();
                 alert('Hubo un error al generar el PDF. Por favor, intenta de nuevo.');
                 window.history.replaceState({}, document.title, window.location.pathname);
-            } finally {
-                activePdfJobController = null;
-                isGeneratingPDF = false;
-            }
-        }
+	            } finally {
+	                activePdfJobController = null;
+	                isGeneratingPDF = false;
+	                if (isLowPowerMobile) {
+	                    customPdfPrepState.pageSvgs = null;
+	                    customPdfPrepState.preparedKey = null;
+	                    generatedPdfBlob = null;
+	                    forceMemoryCleanup();
+	                }
+	            }
+	        }
 
         // Event listener para botón de descarga final
         const finalDownloadBtn = document.getElementById('final-download-btn');
@@ -13913,16 +14063,20 @@
                         // Dibujar el SVG a resolución A4 estable sin desbordar memoria.
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-                        // Convertir a data URL
-                        const dataURL = canvas.toDataURL('image/png', 1.0);
+	                        // Convertir a data URL
+	                        const dataURL = canvas.toDataURL('image/png', 1.0);
 
-                        // Limpiar
-                        URL.revokeObjectURL(svgUrl);
+	                        // Limpiar
+	                        URL.revokeObjectURL(svgUrl);
+	                        canvas.width = 1;
+	                        canvas.height = 1;
+	                        img.onload = null;
+	                        img.onerror = null;
 
-                        resolve(dataURL);
-                    } catch (error) {
-                        URL.revokeObjectURL(svgUrl);
-                        reject(error);
+	                        resolve(dataURL);
+	                    } catch (error) {
+	                        URL.revokeObjectURL(svgUrl);
+	                        reject(error);
                     }
                 };
 
@@ -14617,6 +14771,7 @@
 
         function resetCustomBuilderModelState() {
             if (!modelParts.head && !modelParts.torso && !modelParts.arms.length && !modelParts.legs.length) return;
+            invalidateAllCustomTextureVersions();
             resetCustomPdfPreparedAssets();
 
             eyesMesh = removeOverlayMesh(modelParts.head, eyesMesh);
@@ -14960,6 +15115,17 @@
             container.appendChild(section);
         }
 
+        function clearCustomBuilderStepContent(stepContent) {
+            if (!stepContent) return;
+            stepContent.querySelectorAll('img').forEach((image) => {
+                image.onload = null;
+                image.onerror = null;
+                image.removeAttribute('src');
+                image.removeAttribute('srcset');
+            });
+            stepContent.replaceChildren();
+        }
+
         function renderCustomBuilderStep() {
             initializeCustomBuilder();
             syncCustomBuilderLabels();
@@ -14979,7 +15145,7 @@
                 ? getCustomBuilderCopy().finish
                 : getCustomBuilderCopy().next;
 
-            stepContent.innerHTML = '';
+            clearCustomBuilderStepContent(stepContent);
 
             if (step.id === 'skin') {
                 renderCustomBuilderSkinStep(stepContent);
@@ -15021,9 +15187,11 @@
         function finishCustomBuilderFlow() {
             clearCustomBuilderTimers();
             customBuilderState.lastStepIndex = customBuilderState.currentStepIndex;
+            clearCustomBuilderStepContent(customBuilderState.elements.stepContent);
             setCustomBuilderPhase('finished');
             hideCustomBuilderFloating(customBuilderState.elements.intro);
             showCustomBuilderFloating(customBuilderState.elements.finishedActions);
+            forceMemoryCleanup();
             queueCustomBuilderTimer(() => onWindowResize(), 40);
         }
 
@@ -15063,6 +15231,7 @@
 
         function resetCustomBuilderView() {
             clearCustomBuilderTimers();
+            clearCustomBuilderStepContent(customBuilderState.elements.stepContent);
             hideCustomBuilderFloating(customBuilderState.elements.intro);
             hideCustomBuilderFloating(customBuilderState.elements.finishedActions);
             customBuilderState.elements.stageVeil?.classList.remove('active');
