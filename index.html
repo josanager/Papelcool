@@ -3821,6 +3821,7 @@
         }
 
         .custom-builder-swatch-chip {
+            display: block;
             width: 100%;
             height: 100%;
             border-radius: 999px;
@@ -3955,8 +3956,12 @@
                 display: block !important;
                 position: fixed;
                 inset: auto 0 0 0;
+                width: 100vw;
+                max-width: 100vw;
                 height: 48vh;
                 height: 48dvh;
+                padding: 0;
+                margin: 0;
                 z-index: 40;
                 pointer-events: auto;
             }
@@ -3968,8 +3973,8 @@
 
             .custom-builder-panel {
                 border-top: 4px solid #000000;
-                border-radius: 22px 22px 0 0;
-                box-shadow: 0 -8px 0 0 rgba(0, 0, 0, 1);
+                border-radius: 0;
+                box-shadow: none;
             }
 
             .custom-builder-header {
@@ -5505,6 +5510,27 @@
         .funko-carousel-viewport::-webkit-scrollbar {
             display: none;
         }
+        .funko-tiktok-grid {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: minmax(320px, 420px);
+            gap: 1.25rem;
+            width: max-content;
+            align-items: stretch;
+        }
+        .funko-tiktok-item {
+            width: 100%;
+            min-width: 0;
+            scroll-snap-align: start;
+        }
+        .funko-tiktok-item .tiktok-embed {
+            margin: 0 !important;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            background: #ffffff !important;
+            border-radius: 18px !important;
+            overflow: hidden !important;
+        }
         .funko-new-picks-grid {
             display: grid; grid-auto-flow: column; grid-auto-columns: 240px; gap: 1.5rem; width: max-content;
         }
@@ -5669,6 +5695,7 @@
             .funko-carousel-header { align-items: flex-end; margin-bottom: 1rem; }
             .funko-carousel-controls { display: none; }
             .funko-new-picks-grid { grid-auto-columns: 200px; gap: 1rem; }
+            .funko-tiktok-grid { grid-auto-columns: minmax(280px, 86vw); gap: 1rem; }
             .funko-new-picks-grid .fandom-card {
                 min-width: 200px;
                 max-width: 200px;
@@ -11298,19 +11325,41 @@
             return `<button class="fandom-heart material-symbols-outlined ${isFav ? 'active' : ''}" data-favorite-name="${name}" onclick="event.stopPropagation(); toggleFavorite('${name}', this)">star</button>`;
         }
 
-        function getCollectionBadgeText(name, index) {
-            if (!shouldShowPresetNewBadge(name)) return '';
-            if ((characterFandoms[name] || 'other') === 'minecraft') return 'Nuevo';
-            return index % 3 === 0 ? 'Destacado' : 'Nuevo';
-        }
-
         function getCollectionButtonLabel() {
-            return 'Seleccionar personaje';
+            return 'Continuar';
         }
 
-        function getLatestPresetNames(limit = 6) {
-            return getOrderedPresetNames().slice(0, limit);
+        function getLatestPresetNames(limit = 6, sourceNames = getOrderedPresetNames()) {
+            return sourceNames.filter((name) => typeof presetIcons !== 'undefined' && presetIcons[name]).slice(0, limit);
         }
+
+        function getPresetCardMarkup(name, options = {}) {
+            const fandomKey = characterFandoms[name] || 'other';
+            const fandomLabel = fandomLabels[fandomKey] || 'Papelcool Original';
+            const isFav = isFavorite(name);
+            const badgeText = options.badgeText || (shouldShowPresetNewBadge(name) ? 'New' : '');
+            const imageLoading = options.lazyImage ? ' loading="lazy"' : '';
+
+            return `
+                ${badgeText ? `<div class="fandom-badge">${badgeText}</div>` : ''}
+                ${getPresetFavoriteButtonMarkup(name, isFav)}
+                <div class="fandom-image-container">
+                    <img src="${getPresetIconSource(name)}" alt="${getPresetDisplayName(name)}"${imageLoading} onerror="this.src='webclip.png'">
+                </div>
+                <div class="fandom-info">
+                    <span class="fandom-tag">${fandomLabel}</span>
+                    <h3 class="fandom-name">${getPresetDisplayName(name)}</h3>
+                    <button class="fandom-select-btn">${getCollectionButtonLabel()}</button>
+                </div>
+            `;
+        }
+
+        const homeTikTokEmbeds = [
+            `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@papel.cool/video/7540384374278147346" data-video-id="7540384374278147346" style="max-width: 605px;min-width: 325px;" ><section> <a target="_blank" title="@papel.cool" href="https://www.tiktok.com/@papel.cool?refer=embed">@papel.cool</a> Gracias a todos por usarlo 🫰 <a title="kpopdemonhunter" target="_blank" href="https://www.tiktok.com/tag/kpopdemonhunter?refer=embed">#kpopdemonhunter</a> <a title="rumi" target="_blank" href="https://www.tiktok.com/tag/rumi?refer=embed">#rumi</a> <a title="mira" target="_blank" href="https://www.tiktok.com/tag/mira?refer=embed">#mira</a> <a title="zoey" target="_blank" href="https://www.tiktok.com/tag/zoey?refer=embed">#zoey</a> <a title="papelcool" target="_blank" href="https://www.tiktok.com/tag/papelcool?refer=embed">#papelcool</a> <a target="_blank" title="♬ sonido original - papel.cool" href="https://www.tiktok.com/music/sonido-original-7539625171533515537?refer=embed">♬ sonido original - papel.cool</a> </section> </blockquote>`,
+            `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@papel.cool/video/7582269257799535890" data-video-id="7582269257799535890" style="max-width: 605px;min-width: 325px;" ><section> <a target="_blank" title="@papel.cool" href="https://www.tiktok.com/@papel.cool?refer=embed">@papel.cool</a> Hice mi mayor esfuerzo para bailar jaja <a title="fivenightsatfreddy" target="_blank" href="https://www.tiktok.com/tag/fivenightsatfreddy?refer=embed">#fivenightsatfreddy</a> <a title="fnaf" target="_blank" href="https://www.tiktok.com/tag/fnaf?refer=embed">#fnaf</a> <a title="papelcool" target="_blank" href="https://www.tiktok.com/tag/papelcool?refer=embed">#papelcool</a> <a target="_blank" title="♬ Join Us For A Bite - :D" href="https://www.tiktok.com/music/Join-Us-For-A-Bite-170023963467677696?refer=embed">♬ Join Us For A Bite - :D</a> </section> </blockquote>`,
+            `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@papel.cool/video/7549261946722340114" data-video-id="7549261946722340114" style="max-width: 605px;min-width: 325px;" ><section> <a target="_blank" title="@papel.cool" href="https://www.tiktok.com/@papel.cool?refer=embed">@papel.cool</a> Respuesta a @emanuel_oyuela_2006 La espera termino!! <a title="morat" target="_blank" href="https://www.tiktok.com/tag/morat?refer=embed">#morat</a> <a title="papelcool" target="_blank" href="https://www.tiktok.com/tag/papelcool?refer=embed">#papelcool</a> <a target="_blank" title="♬ Faltas Tú - Morat" href="https://www.tiktok.com/music/Faltas-Tú-7364509114942162960?refer=embed">♬ Faltas Tú - Morat</a> </section> </blockquote>`,
+            `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@papel.cool/video/7545184610938834184" data-video-id="7545184610938834184" style="max-width: 605px;min-width: 325px;" ><section> <a target="_blank" title="@papel.cool" href="https://www.tiktok.com/@papel.cool?refer=embed">@papel.cool</a> ya era hora 🫠 <a title="kpopdemonhunter" target="_blank" href="https://www.tiktok.com/tag/kpopdemonhunter?refer=embed">#kpopdemonhunter</a> <a title="sajaboys" target="_blank" href="https://www.tiktok.com/tag/sajaboys?refer=embed">#sajaboys</a> <a title="papelcool" target="_blank" href="https://www.tiktok.com/tag/papelcool?refer=embed">#papelcool</a> <a target="_blank" title="♬ Soda Pop - Saja Boys &#38; Andrew Choi &#38; Neckwav &#38; Danny Chung &#38; Kevin Woo &#38; samUIL Lee &#38; KPop Demon Hunters Cast" href="https://www.tiktok.com/music/Soda-Pop-7515250863508932609?refer=embed">♬ Soda Pop - Saja Boys &#38; Andrew Choi &#38; Neckwav &#38; Danny Chung &#38; Kevin Woo &#38; samUIL Lee &#38; KPop Demon Hunters Cast</a> </section> </blockquote>`
+        ];
 
         function scrollFunkoCollection(direction) {
             const viewport = document.querySelector('.funko-carousel-viewport');
@@ -11324,10 +11373,68 @@
 
         window.scrollFunkoCollection = scrollFunkoCollection;
 
+        function scrollHomeCarousel(viewportId, direction) {
+            const viewport = document.getElementById(viewportId);
+            if (!viewport) return;
+            const delta = Math.max(280, Math.floor(viewport.clientWidth * 0.82));
+            viewport.scrollBy({
+                left: direction === 'prev' ? -delta : delta,
+                behavior: 'smooth'
+            });
+        }
+
+        window.scrollHomeCarousel = scrollHomeCarousel;
+
+        function ensureTikTokEmbedScript() {
+            const existingScript = document.querySelector('script[data-papelcool-tiktok-embed="true"]');
+            if (existingScript) {
+                const pendingEmbeds = Array.from(document.querySelectorAll('blockquote.tiktok-embed'))
+                    .some((embed) => !embed.querySelector('iframe'));
+                if (pendingEmbeds) {
+                    existingScript.remove();
+                    document.getElementById('ttEmbedLibScript')?.remove();
+                    document.getElementById('ttEmbedLibCSS')?.remove();
+                    try {
+                        sessionStorage.removeItem('__tt_embed__mounting');
+                        sessionStorage.removeItem('__tt_embed__newmount');
+                    } catch (error) {}
+                    setTimeout(ensureTikTokEmbedScript, 0);
+                }
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://www.tiktok.com/embed.js';
+            script.setAttribute('data-papelcool-tiktok-embed', 'true');
+            script.onload = () => {
+                if (window.tiktokEmbedLoad) window.tiktokEmbedLoad();
+                setTimeout(() => {
+                    if (window.tiktokEmbedLoad) window.tiktokEmbedLoad();
+                }, 220);
+            };
+            document.head.appendChild(script);
+        }
+
+        function renderHomeTikTokEmbeds(tiktokGrid) {
+            if (!tiktokGrid) return;
+            const embedSignature = homeTikTokEmbeds
+                .map((embedHtml) => embedHtml.match(/data-video-id="([^"]+)"/)?.[1] || embedHtml)
+                .join('|');
+            const hasCurrentEmbeds = tiktokGrid.dataset.embedSignature === embedSignature
+                && tiktokGrid.querySelectorAll('blockquote.tiktok-embed').length === homeTikTokEmbeds.length;
+            if (!hasCurrentEmbeds) {
+                tiktokGrid.innerHTML = homeTikTokEmbeds.map((embedHtml) => `<div class="funko-tiktok-item">${embedHtml}</div>`).join('');
+                tiktokGrid.dataset.embedSignature = embedSignature;
+            }
+            ensureTikTokEmbedScript();
+        }
+
         function renderAuthenticatedHome() {
             ensureDeferredViews();
             const heroTop = document.getElementById('home-top');
             const collectionGrid = document.getElementById('home-collection-grid');
+            const tiktokGrid = document.getElementById('home-tiktok-grid');
             const bannerGrid = document.getElementById('home-banner-grid');
 
             if (heroTop) {
@@ -11360,37 +11467,26 @@
             if (collectionGrid) {
                 const latestPresets = getLatestPresetNames(6);
                 collectionGrid.className = 'funko-new-picks-grid';
-                collectionGrid.innerHTML = latestPresets.map((name, index) => {
-                    const fandomKey = characterFandoms[name] || 'other';
-                    const fandomLabel = fandomLabels[fandomKey] || 'Papelcool Original';
-                    const isFav = isFavorite(name);
-                    const badgeText = getCollectionBadgeText(name, index);
-
+                collectionGrid.innerHTML = latestPresets.map((name) => {
                     return `
                     <article class="fandom-card" onclick="if (window.setPresetCharacter) { navigateToView('preset-preview'); window.setPresetCharacter('${name}'); }">
-                        ${badgeText ? `<div class="fandom-badge">${badgeText}</div>` : ''}
-                        ${getPresetFavoriteButtonMarkup(name, isFav)}
-                        <div class="fandom-image-container">
-                            <img src="${getPresetIconSource(name)}" alt="${getPresetDisplayName(name)}" loading="lazy" onerror="this.src='webclip.png'">
-                        </div>
-                        <div class="fandom-info">
-                            <span class="fandom-tag">${fandomLabel}</span>
-                            <h3 class="fandom-name">${getPresetDisplayName(name)}</h3>
-                            <button class="fandom-select-btn">${getCollectionButtonLabel()}</button>
-                        </div>
+                        ${getPresetCardMarkup(name, { lazyImage: true })}
                     </article>
                 `;
                 }).join('');
                 syncFavoriteButtons();
             }
 
+            if (tiktokGrid) {
+                renderHomeTikTokEmbeds(tiktokGrid);
+            }
+
             if (bannerGrid) {
-                // Render the 4 columns
+                // Render the 3 collection banners
                 const banners = [
                     { title: "Kpop Demon Hunters", tag: "KPOP DEMON HUNTERS", body: "Reune a tus idols favoritos en una vitrina lista para escenario, fandom y coleccion.", color: "#B8860B", art: ["Mira", "Rumi"] },
                     { title: "Morat", tag: "MORAT", body: "Arma una coleccion con vibra acustica, amigos de gira y momentos para cantar juntos.", color: "#556B2F", art: ["Villamil-faltastu", "Isaza-faltastu-guitarra"] },
-                    { title: "Minecraft", tag: "MINECRAFT", body: "Construye una escena tranquila con personajes iconicos listos para compartir mundo.", color: "#8B4513", art: ["Steve", "Alex"] },
-                    { title: "One Direction", tag: "ONE DIRECTION", body: "Guarda una etapa de nostalgia pop con personajes pensados para fans de siempre.", color: "#8B0000", art: ["Baby", "Abby"] }
+                    { title: "Minecraft", tag: "MINECRAFT", body: "Construye una escena tranquila con personajes iconicos listos para compartir mundo.", color: "#8B4513", art: ["Steve", "Alex"] }
                 ];
                 bannerGrid.innerHTML = banners.map(b => `
                     <article class="funko-banner-card" style="background: ${b.color};">
@@ -12811,20 +12907,9 @@
 
                 const card = document.createElement('div');
                 card.className = 'fandom-card';
-                const isFav = isFavorite(name);
-                const shouldShowBadge = shouldShowPresetNewBadge(name);
 
                 card.innerHTML = `
-                    ${shouldShowBadge ? '<div class="fandom-badge">New</div>' : ''}
-                    ${getPresetFavoriteButtonMarkup(name, isFav)}
-                    <div class="fandom-image-container">
-                        <img src="${presetIcons[name]}" alt="${getPresetDisplayName(name)}">
-                    </div>
-                    <div class="fandom-info">
-                        <span class="fandom-tag">${fandomLabels[fandomKey] || 'Papelcool Original'}</span>
-                        <h3 class="fandom-name">${getPresetDisplayName(name)}</h3>
-                        <button class="fandom-select-btn">Seleccionar personaje</button>
-                    </div>
+                    ${getPresetCardMarkup(name)}
                 `;
 
                 card.addEventListener('click', async () => {
@@ -15860,6 +15945,23 @@
                 </div>
                 <div class="funko-carousel-viewport">
                     <div class="funko-new-picks-grid" id="home-collection-grid"></div>
+                </div>
+            </section>
+
+            <section class="funko-section">
+                <div class="funko-carousel-header">
+                    <h2>Filtros de TikTok</h2>
+                    <div class="funko-carousel-controls" aria-label="Controles del carrusel de TikTok">
+                        <button type="button" class="funko-carousel-btn" onclick="scrollHomeCarousel('home-tiktok-viewport', 'prev')" aria-label="Anterior">
+                            <span class="material-symbols-outlined">arrow_back</span>
+                        </button>
+                        <button type="button" class="funko-carousel-btn" onclick="scrollHomeCarousel('home-tiktok-viewport', 'next')" aria-label="Siguiente">
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="funko-carousel-viewport" id="home-tiktok-viewport">
+                    <div class="funko-tiktok-grid" id="home-tiktok-grid"></div>
                 </div>
             </section>
 
