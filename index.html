@@ -336,7 +336,8 @@
             color: #d4d4d8;
             transition: color 0.2s, transform 0.2s, font-variation-settings 0.2s;
             font-variation-settings: 'FILL' 0;
-            font-size: clamp(1rem, 8.2cqw, 1.65rem);
+            font-size: clamp(1.15rem, 9.1cqw, 1.95rem);
+            line-height: 1;
         }
 
         .fandom-heart:hover {
@@ -973,6 +974,45 @@
             height: 100%;
         }
 
+        #preset-preview-stage.preview-unavailable #preset-preview-scene {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #preset-preview-unavailable {
+            position: absolute;
+            inset: 0;
+            z-index: 4;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 2.5rem;
+            pointer-events: none;
+            text-align: center;
+        }
+
+        #preset-preview-unavailable.active {
+            display: flex;
+        }
+
+        .preset-preview-unavailable-card {
+            width: min(460px, 100%);
+        }
+
+        .preset-preview-unavailable-title {
+            margin: 0;
+            font-family: 'Fredoka', sans-serif;
+            font-size: clamp(1.35rem, 4vw, 2rem);
+            font-weight: 700;
+            color: #1f365a;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .preset-preview-unavailable-body {
+            display: none;
+        }
+
         .ui-panel {
             background: white;
             border: 4px solid black;
@@ -1141,7 +1181,7 @@
             }
 
             .fandom-heart {
-                font-size: 1.5rem;
+                font-size: 1.75rem;
             }
 
             .fandom-info {
@@ -1240,7 +1280,7 @@
             .fandom-heart {
                 top: 10px;
                 right: 10px;
-                font-size: 1.3rem;
+                font-size: 1.6rem;
             }
 
             .fandom-info {
@@ -1310,6 +1350,7 @@
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
+            width: min(calc(100vw - 2rem), 430px);
         }
 
         #character-name-display.active {
@@ -1322,13 +1363,16 @@
             font-weight: 700;
             letter-spacing: 0.05em;
             color: #FF4D94;
-            display: inline-block;
+            display: block;
             padding: 0.5rem 1.5rem;
             background-color: white;
             border: 4px solid black;
             border-radius: 20px;
             box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
             text-transform: uppercase;
+            text-align: center;
+            line-height: 1.15;
+            width: 100%;
         }
 
         @media (max-width: 1024px) {
@@ -5765,8 +5809,8 @@
                     <button type="button" id="auth-login-btn" onclick="navigateToView('login')"
                         class="pc-auth-motion px-4 py-2 hover:opacity-90 transition-opacity cursor-pointer flex items-center justify-center font-bold funko-auth-btn"
                         style="background: white; color: black;"
-                        aria-label="Login">
-                        Login
+                        aria-label="Inicia sesión">
+                        Inicia sesión
                     </button>
                     <div id="auth-user-menu" style="display: none; align-items: center; gap: 12px;">
                         <button id="auth-user-avatar" onclick="toggleUserDropdown()"
@@ -5784,8 +5828,8 @@
                 <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-banner-grid'), 0)" style="width: 100%; justify-content: center;">Novedades</button>
                 <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-groups'), 0)" style="width: 100%; justify-content: center;">Fan Clubs</button>
                 <div style="height: 4px; background: #000; width: 100%; margin: 0.5rem 0; border-radius: 4px;"></div>
-                <button type="button" class="pc-home-chip" onclick="navigateToView('login'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center; background: #E0F2FE;">Inicia sesión</button>
-                <button type="button" class="pc-home-chip" onclick="navigateToView('register'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center; background: #FFE600; color: #000;">¡Regístrate!</button>
+                <button type="button" id="mobile-auth-login-btn" class="pc-home-chip" onclick="navigateToView('login'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center; background: #E0F2FE;">Inicia sesión</button>
+                <button type="button" id="mobile-auth-register-btn" class="pc-home-chip" onclick="navigateToView('register'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center; background: #FFE600; color: #000;">¡Regístrate!</button>
             </div>
             
             <style>
@@ -6184,6 +6228,11 @@
     <div id="canvas-container"></div>
     <div id="preset-preview-stage" aria-hidden="true">
         <div id="preset-preview-scene"></div>
+        <div id="preset-preview-unavailable" aria-live="polite">
+            <div class="preset-preview-unavailable-card">
+                <p class="preset-preview-unavailable-title" data-i18n="preset-3d-unavailable-title">Modelo 3D no disponible</p>
+            </div>
+        </div>
     </div>
     <div id="loading-indicator">
         <img src="logo.svg" alt="Papelcool Logo" class="loading-logo">
@@ -6269,15 +6318,19 @@
             <div class="fandoms-filters">
                 <div class="fandoms-filter-group">
                     <span>Orden</span>
-                    <select>
-                        <option>Recomendados</option>
-                        <option>Nuevos</option>
+                    <select id="preset-sort-select">
+                        <option value="featured">Recomendados</option>
+                        <option value="newest">Más recientes</option>
+                        <option value="oldest">Más antiguos</option>
+                        <option value="name-asc">Nombre A-Z</option>
+                        <option value="name-desc">Nombre Z-A</option>
                     </select>
                 </div>
                 <div class="fandoms-filter-group">
                     <span>Fandom</span>
                     <select id="fandom-filter">
                         <option value="all">Todos</option>
+                        <option value="morat">Morat</option>
                         <option value="minecraft">Minecraft</option>
                         <option value="kpop">Kpop Demon Hunters</option>
                     </select>
@@ -6414,6 +6467,8 @@
                 'download-preset-template-meta': 'Print-ready PDF from Papelcool cloud',
                 'preset-template-missing': 'This preset does not have a PDF template available yet.',
                 'preset-template-download-error': 'We could not download this template right now. Please try again in a moment.',
+                'preset-3d-unavailable-title': '3D model unavailable',
+                'preset-3d-unavailable-body': 'We are still creating the textures for this character. You can already download the PDF template.',
                 'search-presets': 'Search presets...',
                 'alert-select-preset': 'Please select a preset character first.',
                 'unknown-character': 'Unknown Character',
@@ -6509,6 +6564,8 @@
                 'download-preset-template-meta': 'PDF listo para imprimir desde la nube de Papelcool',
                 'preset-template-missing': 'Este personaje aún no tiene una plantilla PDF disponible.',
                 'preset-template-download-error': 'No pudimos descargar esta plantilla en este momento. Inténtalo de nuevo en unos minutos.',
+                'preset-3d-unavailable-title': 'Modelo 3D no disponible',
+                'preset-3d-unavailable-body': 'Aún estamos creando las texturas de este personaje. Ya puedes descargar la plantilla PDF.',
                 'search-presets': 'Buscar modelos...',
                 'alert-select-preset': 'Por favor, selecciona un personaje preestablecido primero.',
                 'unknown-character': 'Personaje Desconocido',
@@ -7778,7 +7835,7 @@
             requestPresetPreviewRender(2);
         }
 
-        function disposePresetPreviewRuntime() {
+        function disposePresetPreviewRuntime(keepStageVisible = false) {
             if (!presetPreviewRuntime.isInitialized) return;
 
             if (presetPreviewRuntime.rafId) {
@@ -7824,7 +7881,7 @@
             presetPreviewRuntime.activeCharacter = null;
             presetPreviewRuntime.pendingCharacter = null;
 
-            if (presetPreviewRuntime.stageEl) {
+            if (presetPreviewRuntime.stageEl && !keepStageVisible) {
                 presetPreviewRuntime.stageEl.classList.remove('active');
                 presetPreviewRuntime.stageEl.setAttribute('aria-hidden', 'true');
             }
@@ -8229,6 +8286,11 @@
         }
 
         async function applyPresetCharacterToPreview(characterName) {
+            if (updatePresetPreviewUnavailableState(characterName)) {
+                disposePresetPreviewRuntime(true);
+                return;
+            }
+
             if (!ensurePresetPreviewRuntime()) return;
 
             const runtime = presetPreviewRuntime;
@@ -8245,6 +8307,7 @@
             });
 
             clearPresetPreviewOverlays();
+            updatePresetPreviewUnavailableState(characterName);
 
             if (parts.head) applyColorToPresetPreviewPart(parts.head, new THREE.Color(config.colors.head));
             if (parts.torso) applyColorToPresetPreviewPart(parts.torso, new THREE.Color(config.colors.torso));
@@ -11150,7 +11213,7 @@
                 title: 'Morat',
                 tag: 'Latino pop',
                 description: 'Perfecto para ediciones acústicas, portadas con textura papel y campañas por gira.',
-                art: ['Jinu', 'Mira', 'Zoey']
+                art: ['Villamil-faltastu', 'Simon-faltastu-bajo', 'Martin-faltastu-bateria']
             },
             {
                 title: 'One Direction',
@@ -11162,6 +11225,46 @@
 
         function getPresetIconSource(name) {
             return (typeof presetIcons !== 'undefined' && presetIcons[name]) ? presetIcons[name] : 'logo.svg';
+        }
+
+        function getPresetDisplayName(name) {
+            if (typeof presetCharacterDisplayNames !== 'undefined' && presetCharacterDisplayNames[name]) {
+                return presetCharacterDisplayNames[name];
+            }
+            return name;
+        }
+
+        function getOrderedPresetNames() {
+            if (typeof presetCharacterOrder !== 'undefined' && Array.isArray(presetCharacterOrder)) {
+                return presetCharacterOrder.filter((name) => typeof presetIcons !== 'undefined' && presetIcons[name]);
+            }
+            return (typeof presetIcons !== 'undefined') ? Object.keys(presetIcons) : [];
+        }
+
+        let currentPresetSort = 'featured';
+
+        function getSortedPresetNames() {
+            const names = getOrderedPresetNames().slice();
+
+            switch (currentPresetSort) {
+                case 'name-asc':
+                    return names.sort((a, b) => getPresetDisplayName(a).localeCompare(getPresetDisplayName(b), 'es', { sensitivity: 'base' }));
+                case 'name-desc':
+                    return names.sort((a, b) => getPresetDisplayName(b).localeCompare(getPresetDisplayName(a), 'es', { sensitivity: 'base' }));
+                case 'oldest':
+                    return names.reverse();
+                case 'newest':
+                case 'featured':
+                default:
+                    return names;
+            }
+        }
+
+        function presetHas3dModel(name) {
+            if (typeof hasPresetCharacter3dModel === 'function') {
+                return hasPresetCharacter3dModel(name);
+            }
+            return true;
         }
 
         function ensureDeferredViews() {
@@ -11177,12 +11280,26 @@
         function createPresetArtCluster(names, imageClass = '') {
             return `
                 <div class="pc-home-art-cluster">
-                    ${names.map(name => `<img class="${imageClass}" src="${getPresetIconSource(name)}" alt="${name}" loading="lazy">`).join('')}
+                    ${names.map(name => `<img class="${imageClass}" src="${getPresetIconSource(name)}" alt="${getPresetDisplayName(name)}" loading="lazy">`).join('')}
                 </div>
             `;
         }
 
+        function shouldShowPresetNewBadge(name) {
+            return (characterFandoms[name] || 'other') === 'morat';
+        }
+
+        function canUseFavorites() {
+            return document.body?.dataset?.authState === 'authenticated';
+        }
+
+        function getPresetFavoriteButtonMarkup(name, isFav) {
+            if (!canUseFavorites()) return '';
+            return `<button class="fandom-heart material-symbols-outlined ${isFav ? 'active' : ''}" data-favorite-name="${name}" onclick="event.stopPropagation(); toggleFavorite('${name}', this)">star</button>`;
+        }
+
         function getCollectionBadgeText(name, index) {
+            if (!shouldShowPresetNewBadge(name)) return '';
             if ((characterFandoms[name] || 'other') === 'minecraft') return 'Nuevo';
             return index % 3 === 0 ? 'Destacado' : 'Nuevo';
         }
@@ -11192,8 +11309,7 @@
         }
 
         function getLatestPresetNames(limit = 6) {
-            if (typeof presetIcons === 'undefined') return [];
-            return Object.keys(presetIcons).slice(-limit);
+            return getOrderedPresetNames().slice(0, limit);
         }
 
         function scrollFunkoCollection(direction) {
@@ -11248,17 +11364,18 @@
                     const fandomKey = characterFandoms[name] || 'other';
                     const fandomLabel = fandomLabels[fandomKey] || 'Papelcool Original';
                     const isFav = isFavorite(name);
+                    const badgeText = getCollectionBadgeText(name, index);
 
                     return `
                     <article class="fandom-card" onclick="if (window.setPresetCharacter) { navigateToView('preset-preview'); window.setPresetCharacter('${name}'); }">
-                        <div class="fandom-badge">${getCollectionBadgeText(name, index)}</div>
-                        <button class="fandom-heart material-symbols-outlined ${isFav ? 'active' : ''}" data-favorite-name="${name}" onclick="event.stopPropagation(); toggleFavorite('${name}', this)">star</button>
+                        ${badgeText ? `<div class="fandom-badge">${badgeText}</div>` : ''}
+                        ${getPresetFavoriteButtonMarkup(name, isFav)}
                         <div class="fandom-image-container">
-                            <img src="${getPresetIconSource(name)}" alt="${name}" loading="lazy" onerror="this.src='webclip.png'">
+                            <img src="${getPresetIconSource(name)}" alt="${getPresetDisplayName(name)}" loading="lazy" onerror="this.src='webclip.png'">
                         </div>
                         <div class="fandom-info">
                             <span class="fandom-tag">${fandomLabel}</span>
-                            <h3 class="fandom-name">${name}</h3>
+                            <h3 class="fandom-name">${getPresetDisplayName(name)}</h3>
                             <button class="fandom-select-btn">${getCollectionButtonLabel()}</button>
                         </div>
                     </article>
@@ -11271,7 +11388,7 @@
                 // Render the 4 columns
                 const banners = [
                     { title: "Kpop Demon Hunters", tag: "KPOP DEMON HUNTERS", body: "Reune a tus idols favoritos en una vitrina lista para escenario, fandom y coleccion.", color: "#B8860B", art: ["Mira", "Rumi"] },
-                    { title: "Morat", tag: "MORAT", body: "Arma una coleccion con vibra acustica, amigos de gira y momentos para cantar juntos.", color: "#556B2F", art: ["Jinu", "Zoey"] },
+                    { title: "Morat", tag: "MORAT", body: "Arma una coleccion con vibra acustica, amigos de gira y momentos para cantar juntos.", color: "#556B2F", art: ["Villamil-faltastu", "Isaza-faltastu-guitarra"] },
                     { title: "Minecraft", tag: "MINECRAFT", body: "Construye una escena tranquila con personajes iconicos listos para compartir mundo.", color: "#8B4513", art: ["Steve", "Alex"] },
                     { title: "One Direction", tag: "ONE DIRECTION", body: "Guarda una etapa de nostalgia pop con personajes pensados para fans de siempre.", color: "#8B0000", art: ["Baby", "Abby"] }
                 ];
@@ -11284,7 +11401,7 @@
                             <button type="button" class="funko-banner-shop-btn" onclick="navigateToView('presets')">VER COLECCIÓN</button>
                         </div>
                         <div class="funko-banner-card-art">
-                            ${b.art.map(name => `<img src="${getPresetIconSource(name)}" alt="${name}" onerror="this.src='webclip.png'">`).join('')}
+                            ${b.art.map(name => `<img src="${getPresetIconSource(name)}" alt="${getPresetDisplayName(name)}" onerror="this.src='webclip.png'">`).join('')}
                         </div>
                     </article>
                 `).join('');
@@ -11425,6 +11542,7 @@
             stopActiveCustomPdfGeneration();
             document.body.classList.remove('showcase-mode');
             disposePresetPreviewRuntime();
+            updatePresetPreviewUnavailableState(null);
             disposeCustomPreviewRuntime();
             if (window.__papelcoolCustomBuilderReady === true) {
                 resetCustomBuilderView();
@@ -11493,14 +11611,25 @@
                 showCharacterName(currentPresetCharacter);
             }
 
-            const runtimeReady = ensurePresetPreviewRuntime();
-            if (runtimeReady && presetPreviewRuntime.stageEl) {
+            const shouldShowUnavailable = updatePresetPreviewUnavailableState(currentPresetCharacter);
+            const runtimeReady = shouldShowUnavailable ? false : ensurePresetPreviewRuntime();
+            if (shouldShowUnavailable) {
+                disposePresetPreviewRuntime(true);
+            }
+
+            if (runtimeReady && presetPreviewRuntime.stageEl && !shouldShowUnavailable) {
                 presetPreviewRuntime.stageEl.classList.add('active');
                 presetPreviewRuntime.stageEl.setAttribute('aria-hidden', 'false');
                 if (currentPresetCharacter) {
                     applyPresetCharacterToPreview(currentPresetCharacter);
                 } else {
                     requestPresetPreviewRender(isLowPowerMobile ? 12 : 6);
+                }
+            } else {
+                const previewStage = document.getElementById('preset-preview-stage');
+                if (previewStage) {
+                    previewStage.classList.add('active');
+                    previewStage.setAttribute('aria-hidden', 'false');
                 }
             }
 
@@ -11516,10 +11645,6 @@
 
             const requestedView = getRequestedView();
             const requestedPreset = getRememberedPresetCharacter();
-
-            if (requestedView === 'preset-preview' && requestedPreset) {
-                currentPresetCharacter = requestedPreset;
-            }
 
             if (requestedView === 'home') {
                 navigateToView('home', { updateHistory: false, replaceHistory: true });
@@ -11538,6 +11663,11 @@
 
             if (requestedView === 'preset-preview') {
                 navigateToView('preset-preview', { updateHistory: false, replaceHistory: true });
+                if (requestedPreset) {
+                    await setPresetCharacter(requestedPreset);
+                    requestAnimationFrame(() => updatePresetPreviewUnavailableState(requestedPreset));
+                    setTimeout(() => updatePresetPreviewUnavailableState(requestedPreset), 160);
+                }
                 return;
             }
 
@@ -11652,33 +11782,38 @@
 
         const fandomsGrid = document.getElementById('fandoms-grid');
         const fandomFilter = document.getElementById('fandom-filter');
+        const presetSortSelect = document.getElementById('preset-sort-select');
         const globalSearchInput = document.getElementById('global-search-input');
         const mobileMenuButton = document.getElementById('app-mobile-menu-btn');
         const mobileDropdownMenu = document.getElementById('app-mobile-dropdown-menu');
 
-        const characterFandoms = {
-            'Steve': 'minecraft', 'Alex': 'minecraft', 'Zombie': 'minecraft',
-            'Skeleton': 'minecraft', 'Creeper': 'minecraft', 'Enderman': 'minecraft',
-            'Baby': 'kpop', 'Mystery': 'kpop', 'Romance': 'kpop',
-            'Abby': 'kpop', 'Jinu': 'kpop', 'Zoey': 'kpop',
-            'Rumi': 'kpop', 'Mira': 'kpop'
-        };
+        const characterFandoms = (typeof presetCharacterFandoms !== 'undefined')
+            ? presetCharacterFandoms
+            : {
+                'Steve': 'minecraft', 'Alex': 'minecraft', 'Zombie': 'minecraft',
+                'Skeleton': 'minecraft', 'Creeper': 'minecraft', 'Enderman': 'minecraft',
+                'Baby': 'kpop', 'Mystery': 'kpop', 'Romance': 'kpop',
+                'Abby': 'kpop', 'Jinu': 'kpop', 'Zoey': 'kpop',
+                'Rumi': 'kpop', 'Mira': 'kpop'
+            };
 
         const fandomLabels = {
             'minecraft': 'Minecraft Collection',
-            'kpop': 'Kpop Demon Hunters'
+            'kpop': 'Kpop Demon Hunters',
+            'morat': 'Morat'
         };
 
         let globalPresetSearchQuery = '';
-
-        const availablePresetPdfs = Object.freeze({
-            Abby: 'Abby.pdf',
-            Baby: 'Baby.pdf',
-            Jinu: 'Jinu.pdf',
-            Mira: 'Mira.pdf',
-            Rumi: 'Rumi.pdf',
-            Zoey: 'Zoey.pdf'
-        });
+        const availablePresetPdfs = (typeof presetCharacterPdfFiles !== 'undefined')
+            ? presetCharacterPdfFiles
+            : Object.freeze({
+                Abby: 'Abby.pdf',
+                Baby: 'Baby.pdf',
+                Jinu: 'Jinu.pdf',
+                Mira: 'Mira.pdf',
+                Rumi: 'Rumi.pdf',
+                Zoey: 'Zoey.pdf'
+            });
         const presetTemplateDownloadState = {
             phase: 'idle',
             characterName: null,
@@ -11687,14 +11822,25 @@
             progressTimer: null
         };
 
+        function normalizePresetSearchValue(value) {
+            return String(value || '')
+                .toLowerCase()
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '');
+        }
+
         function getPresetSearchText(name, fandomKey) {
-            const fandomLabel = (fandomLabels[fandomKey] || 'Papelcool Original').toLowerCase();
+            const fandomLabel = normalizePresetSearchValue(fandomLabels[fandomKey] || 'Papelcool Original');
             const fandomGroup = fandomKey === 'minecraft'
                 ? 'minecraft steve alex zombie skeleton creeper enderman'
                 : fandomKey === 'kpop'
                     ? 'kpop demon hunters baby mystery romance abby jinu zoey rumi mira'
+                    : fandomKey === 'morat'
+                        ? 'morat villamil simon martin isaza faltas tu mas de lo que aposte guitarra bajo bateria'
                     : 'papelcool original';
-            return `${name.toLowerCase()} ${fandomLabel} ${fandomGroup}`;
+            const displayName = normalizePresetSearchValue(getPresetDisplayName(name));
+            const slugName = normalizePresetSearchValue(name.replace(/-/g, ' '));
+            return `${displayName} ${slugName} ${fandomLabel} ${fandomGroup}`;
         }
 
         function closeMobileDropdown() {
@@ -11709,6 +11855,22 @@
             const downloadUrl = new URL('/api/preset-template-download', window.location.origin);
             downloadUrl.searchParams.set('character', characterName);
             return downloadUrl.toString();
+        }
+
+        function updatePresetPreviewUnavailableState(characterName) {
+            const stage = document.getElementById('preset-preview-stage');
+            const unavailableState = document.getElementById('preset-preview-unavailable');
+            const shouldShowUnavailable = Boolean(characterName) && !presetHas3dModel(characterName);
+
+            if (stage) {
+                stage.classList.toggle('preview-unavailable', shouldShowUnavailable);
+            }
+
+            if (unavailableState) {
+                unavailableState.classList.toggle('active', shouldShowUnavailable);
+            }
+
+            return shouldShowUnavailable;
         }
 
         function isTabletLikeDevice() {
@@ -12639,7 +12801,7 @@
             if (!fandomsGrid) return;
             fandomsGrid.innerHTML = '';
             
-            Object.keys(presetIcons).forEach(name => {
+            getSortedPresetNames().forEach(name => {
                 const fandomKey = characterFandoms[name] || 'other';
                 if (filter !== 'all' && fandomKey !== filter) return;
                 if (globalPresetSearchQuery) {
@@ -12650,17 +12812,17 @@
                 const card = document.createElement('div');
                 card.className = 'fandom-card';
                 const isFav = isFavorite(name);
-                const heartClass = isFav ? 'active' : '';
+                const shouldShowBadge = shouldShowPresetNewBadge(name);
 
                 card.innerHTML = `
-                    <div class="fandom-badge">New</div>
-                    <button class="fandom-heart material-symbols-outlined ${heartClass}" data-favorite-name="${name}" onclick="event.stopPropagation(); toggleFavorite('${name}', this)">star</button>
+                    ${shouldShowBadge ? '<div class="fandom-badge">New</div>' : ''}
+                    ${getPresetFavoriteButtonMarkup(name, isFav)}
                     <div class="fandom-image-container">
-                        <img src="${presetIcons[name]}" alt="${name}">
+                        <img src="${presetIcons[name]}" alt="${getPresetDisplayName(name)}">
                     </div>
                     <div class="fandom-info">
                         <span class="fandom-tag">${fandomLabels[fandomKey] || 'Papelcool Original'}</span>
-                        <h3 class="fandom-name">${name}</h3>
+                        <h3 class="fandom-name">${getPresetDisplayName(name)}</h3>
                         <button class="fandom-select-btn">Seleccionar personaje</button>
                     </div>
                 `;
@@ -12694,6 +12856,19 @@
             }
         });
 
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof onAuthStateChange !== 'function') return;
+            onAuthStateChange(() => {
+                if (activeAppView === 'presets') {
+                    renderFandomsGrid(fandomFilter ? fandomFilter.value : 'all');
+                }
+                if (activeAppView === 'home' && authenticatedHomeView?.classList.contains('active')) {
+                    renderAuthenticatedHome();
+                }
+                refreshFavoritesUI();
+            });
+        });
+
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Escape') {
                 closeMobileDropdown();
@@ -12706,6 +12881,13 @@
             });
         }
 
+        if (presetSortSelect) {
+            presetSortSelect.addEventListener('change', (e) => {
+                currentPresetSort = e.target.value || 'featured';
+                renderFandomsGrid(fandomFilter ? fandomFilter.value : 'all');
+            });
+        }
+
         if (globalSearchInput) {
             globalSearchInput.addEventListener('focus', () => {
                 if (activeAppView !== 'presets') {
@@ -12714,7 +12896,7 @@
             });
 
             globalSearchInput.addEventListener('input', (e) => {
-                globalPresetSearchQuery = e.target.value.toLowerCase().trim();
+                globalPresetSearchQuery = normalizePresetSearchValue(e.target.value).trim();
                 if (activeAppView !== 'presets') {
                     navigateToView('presets');
                     return;
@@ -12792,11 +12974,11 @@
         const presetsContainer = document.getElementById('presets-container');
         if (presetSearchInput && presetsContainer) {
             presetSearchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase().trim();
+                const query = normalizePresetSearchValue(e.target.value).trim();
                 const buttons = presetsContainer.querySelectorAll('.preset-character-btn');
                 buttons.forEach(btn => {
                     const img = btn.querySelector('img');
-                    const name = img && img.alt ? img.alt.toLowerCase() : '';
+                    const name = img && img.alt ? normalizePresetSearchValue(img.alt) : '';
                     btn.style.display = !query || name.includes(query) ? '' : 'none';
                 });
             });
@@ -13097,13 +13279,25 @@
             clearReadyPresetTemplateBlob();
             currentPresetCharacter = name;
             rememberPresetCharacter(name);
+            updatePresetPreviewUnavailableState(name);
             if (activeAppView === 'preset-preview') {
                 syncViewInUrl('preset-preview', true);
             }
             if (activeAppView === 'preset-preview') {
-                await applyPresetCharacterToPreview(name);
+                if (presetHas3dModel(name)) {
+                    await applyPresetCharacterToPreview(name);
+                } else {
+                    disposePresetPreviewRuntime(true);
+                    const previewStage = document.getElementById('preset-preview-stage');
+                    if (previewStage) {
+                        previewStage.classList.add('active');
+                        previewStage.setAttribute('aria-hidden', 'false');
+                    }
+                }
             } else {
-                await applyPresetCharacter(name);
+                if (presetHas3dModel(name)) {
+                    await applyPresetCharacter(name);
+                }
             }
             showCharacterName(name);
             updatePresetTemplateDownloadButton();
@@ -13114,7 +13308,7 @@
         function showCharacterName(name) {
             const characterNameDisplay = document.getElementById('character-name-display');
             const characterNameText = document.getElementById('character-name-text');
-            characterNameText.textContent = name.toUpperCase();
+            characterNameText.textContent = getPresetDisplayName(name).toUpperCase();
             characterNameDisplay.classList.add('active');
         }
 
@@ -15453,9 +15647,9 @@
                         <span class="material-symbols-outlined">star</span>
                     </button>
                     <div class="pc-favorite-card-thumb">
-                        <img src="${iconSrc}" alt="${name}" loading="lazy">
+                        <img src="${iconSrc}" alt="${getPresetDisplayName(name)}" loading="lazy">
                     </div>
-                    <h3 class="pc-favorite-card-title">${name}</h3>
+                    <h3 class="pc-favorite-card-title">${getPresetDisplayName(name)}</h3>
                 </article>
             `;
         }
@@ -15488,6 +15682,8 @@
         }
 
         function toggleFavorite(characterName, btnElement) {
+            if (!canUseFavorites()) return;
+
             const favorites = getFavorites();
             const nextFavorites = favorites.includes(characterName)
                 ? favorites.filter(name => name !== characterName)

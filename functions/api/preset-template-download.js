@@ -2,11 +2,31 @@ const R2_PDF_BASE_URL = 'https://pub-9432515251e743b7979ceb8e264f80ec.r2.dev/pre
 
 const availablePresetPdfs = Object.freeze({
   Abby: 'Abby.pdf',
+  Alex: 'Alex.pdf',
   Baby: 'Baby.pdf',
+  Creeper: 'Creeper.pdf',
+  Enderman: 'Enderman.pdf',
+  'Isaza-faltastu-guitarra': 'Isaza-faltastu-guitarra.pdf',
+  'Isaza-faltastu': 'Isaza-faltastu.pdf',
+  'Isaza-masdeloqueaposte': 'Isaza-masdeloqueaposte.pdf',
   Jinu: 'Jinu.pdf',
+  'Martin-faltastu-bateria': 'Martin-faltastu-bateria.pdf',
+  'Martin-faltastu': 'Martin-faltastu.pdf',
+  'Martin-masdeloqueaposte': 'Martin-masdeloqueaposte.pdf',
   Mira: 'Mira.pdf',
+  Mystery: 'Mystery.pdf',
+  Romance: 'Romance.pdf',
   Rumi: 'Rumi.pdf',
-  Zoey: 'Zoey.pdf'
+  'Simon-faltastu-bajo': 'Simon-faltastu-bajo.pdf',
+  'Simon-faltastu': 'Simon-faltastu.pdf',
+  'Simon-masdeloqueaposte': 'Simon-masdeloqueaposte.pdf',
+  Skeleton: 'Skeleton.pdf',
+  Steve: 'Steve.pdf',
+  'Villamil-faltastu-guitarra': 'Villamil-faltastu-guitarra.pdf',
+  'Villamil-faltastu': 'Villamil-faltastu.pdf',
+  'Villamil-masdeloqueaposte': 'Villamil-masdeloqueaposte.pdf',
+  Zoey: 'Zoey.pdf',
+  Zombie: 'Zombie.pdf'
 });
 
 export async function onRequestGet(context) {

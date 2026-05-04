@@ -286,17 +286,50 @@ window.searchCreators = searchCreators;
 function updateAuthUI(user) {
     const loginBtn = document.getElementById('auth-login-btn');
     const registerBtn = document.getElementById('auth-register-btn');
+    const mobileLoginBtn = document.getElementById('mobile-auth-login-btn');
+    const mobileRegisterBtn = document.getElementById('mobile-auth-register-btn');
     const userMenu = document.getElementById('auth-user-menu');
     const userEmail = document.getElementById('auth-user-email');
     const userAvatar = document.getElementById('auth-user-avatar');
     const homeGreetingName = document.getElementById('home-greeting-name');
     const homeProfileInitial = document.getElementById('home-profile-initial');
+    const closeMobileMenu = () => document.getElementById('app-mobile-dropdown-menu')?.classList.remove('active');
+
+    if (document.body) {
+        document.body.dataset.authState = user ? 'authenticated' : 'guest';
+    }
 
     if (user) {
         // User is logged in
-        if (loginBtn) loginBtn.style.display = 'none';
-        if (registerBtn) registerBtn.style.display = 'none';
-        if (userMenu) userMenu.style.display = 'flex';
+        if (loginBtn) {
+            loginBtn.style.display = 'flex';
+            loginBtn.textContent = 'Perfil';
+            loginBtn.setAttribute('aria-label', 'Perfil');
+            loginBtn.onclick = () => toggleUserProfile(true);
+        }
+        if (registerBtn) {
+            registerBtn.style.display = 'flex';
+            registerBtn.textContent = 'Cerrar sesión';
+            registerBtn.setAttribute('aria-label', 'Cerrar sesión');
+            registerBtn.onclick = () => handleSignOut();
+        }
+        if (mobileLoginBtn) {
+            mobileLoginBtn.textContent = 'Perfil';
+            mobileLoginBtn.setAttribute('aria-label', 'Perfil');
+            mobileLoginBtn.onclick = () => {
+                closeMobileMenu();
+                toggleUserProfile(true);
+            };
+        }
+        if (mobileRegisterBtn) {
+            mobileRegisterBtn.textContent = 'Cerrar sesión';
+            mobileRegisterBtn.setAttribute('aria-label', 'Cerrar sesión');
+            mobileRegisterBtn.onclick = () => {
+                closeMobileMenu();
+                handleSignOut();
+            };
+        }
+        if (userMenu) userMenu.style.display = 'none';
         if (userEmail) userEmail.textContent = user.email;
         if (userAvatar) {
             // Use Gravatar or first letter of email
@@ -312,8 +345,34 @@ function updateAuthUI(user) {
         if (saveCharBtn) saveCharBtn.disabled = false;
     } else {
         // User is logged out
-        if (loginBtn) loginBtn.style.display = 'flex';
-        if (registerBtn) registerBtn.style.display = 'flex';
+        if (loginBtn) {
+            loginBtn.style.display = 'flex';
+            loginBtn.textContent = 'Inicia sesión';
+            loginBtn.setAttribute('aria-label', 'Inicia sesión');
+            loginBtn.onclick = () => navigateToView('login');
+        }
+        if (registerBtn) {
+            registerBtn.style.display = 'flex';
+            registerBtn.textContent = '¡Regístrate!';
+            registerBtn.setAttribute('aria-label', 'Regístrate');
+            registerBtn.onclick = () => navigateToView('register');
+        }
+        if (mobileLoginBtn) {
+            mobileLoginBtn.textContent = 'Inicia sesión';
+            mobileLoginBtn.setAttribute('aria-label', 'Inicia sesión');
+            mobileLoginBtn.onclick = () => {
+                closeMobileMenu();
+                navigateToView('login');
+            };
+        }
+        if (mobileRegisterBtn) {
+            mobileRegisterBtn.textContent = '¡Regístrate!';
+            mobileRegisterBtn.setAttribute('aria-label', 'Regístrate');
+            mobileRegisterBtn.onclick = () => {
+                closeMobileMenu();
+                navigateToView('register');
+            };
+        }
         if (userMenu) userMenu.style.display = 'none';
         if (homeGreetingName) homeGreetingName.textContent = 'Creator';
         if (homeProfileInitial) homeProfileInitial.textContent = 'P';

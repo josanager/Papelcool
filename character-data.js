@@ -21,6 +21,9 @@ const minecraftTextureUrl = (character, ...segments) =>
 const kpopTextureUrl = (character, ...segments) =>
     textureRepoUrl('Elementos', 'Texturas', 'Kpop Demon Hunters', character, ...segments);
 
+const moratTextureUrl = (character, ...segments) =>
+    textureRepoUrl('Elementos', 'Texturas', 'Morat', character, ...segments);
+
 const basicTextureUrl = (...segments) =>
     textureRepoUrl('Elementos', 'Texturas', 'Basic-Textures', ...segments);
 
@@ -44,23 +47,239 @@ function getPresetCharacterTextures(characterName) {
     };
 }
 
-// --- ICONOS DE PERSONAJES PREESTABLECIDOS ---
-const presetIcons = {
-    'Steve': minecraftTextureUrl('Steve', 'Steve-icon.svg'),
-    'Alex': minecraftTextureUrl('Alex', 'Alex-icon.svg'),
-    'Zombie': minecraftTextureUrl('Zombie', 'Zombie-icon.svg'),
-    'Skeleton': minecraftTextureUrl('Skeleton', 'Skeleton-icon.svg'),
-    'Creeper': minecraftTextureUrl('Creeper', 'Creeper-icon.svg'),
-    'Enderman': minecraftTextureUrl('Enderman', 'Enderman-icon.svg'),
-    'Baby': kpopTextureUrl('Baby', 'Baby-icon.svg'),
-    'Mystery': kpopTextureUrl('Mystery', 'Mystery-icon.svg'),
-    'Romance': kpopTextureUrl('Romance', 'Romance-icon.svg'),
-    'Abby': kpopTextureUrl('Abby', 'Abby-icon.svg'),
-    'Jinu': kpopTextureUrl('Jinu', 'Jinu-icon.svg'),
-    'Zoey': kpopTextureUrl('Zoey', 'Zoey-icon.svg'),
-    'Rumi': kpopTextureUrl('Rumi', 'Rumi-icon.svg'),
-    'Mira': kpopTextureUrl('Mira', 'Mira-icon.svg')
-};
+// --- CATALOGO DE PERSONAJES PREESTABLECIDOS ---
+// ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
+const presetCatalog = Object.freeze([
+    {
+        name: 'Villamil-masdeloqueaposte',
+        displayName: 'Villamil Más de lo que aposté',
+        fandom: 'morat',
+        has3dModel: false,
+        pdfFile: 'Villamil-masdeloqueaposte.pdf',
+        icon: moratTextureUrl('Villamil-Mas de lo que aposte', 'Villamil mas de lo que aposte-icon.svg')
+    },
+    {
+        name: 'Villamil-faltastu',
+        displayName: 'Villamil Faltas Tú',
+        fandom: 'morat',
+        has3dModel: false,
+        pdfFile: 'Villamil-faltastu.pdf',
+        icon: moratTextureUrl('Villamil-Faltastu', 'Villamil faltas tu-icon.svg')
+    },
+    {
+        name: 'Villamil-faltastu-guitarra',
+        displayName: 'Villamil Faltas Tú Guitarra',
+        fandom: 'morat',
+        has3dModel: false,
+        pdfFile: 'Villamil-faltastu-guitarra.pdf',
+        icon: moratTextureUrl('Villamil-Faltastu-Guitarra', 'Villamil faltas tu-icon.svg')
+    },
+    {
+        name: 'Simon-masdeloqueaposte',
+        displayName: 'Simon Más de lo que aposté',
+        fandom: 'morat',
+        has3dModel: false,
+        pdfFile: 'Simon-masdeloqueaposte.pdf',
+        icon: moratTextureUrl('Simon-Mas de lo que aposte', 'Simon mas de lo que aposte-icon.svg')
+    },
+    {
+        name: 'Simon-faltastu',
+        displayName: 'Simon Faltas Tú',
+        fandom: 'morat',
+        has3dModel: false,
+        pdfFile: 'Simon-faltastu.pdf',
+        icon: moratTextureUrl('Simon-Faltastu', 'Simon faltas tu-icon.svg')
+    },
+    {
+        name: 'Simon-faltastu-bajo',
+        displayName: 'Simon Faltas Tú Bajo',
+        fandom: 'morat',
+        has3dModel: false,
+        pdfFile: 'Simon-faltastu-bajo.pdf',
+        icon: moratTextureUrl('Simon-Faltastu-Bajo', 'Simon faltas tu-icon.svg')
+    },
+    {
+        name: 'Martin-masdeloqueaposte',
+        displayName: 'Martin Más de lo que aposté',
+        fandom: 'morat',
+        has3dModel: false,
+        pdfFile: 'Martin-masdeloqueaposte.pdf',
+        icon: moratTextureUrl('Martin-Mas de lo que aposte', 'Martin mas de lo que aposte-icon.svg')
+    },
+    {
+        name: 'Martin-faltastu',
+        displayName: 'Martin Faltas Tú',
+        fandom: 'morat',
+        has3dModel: false,
+        pdfFile: 'Martin-faltastu.pdf',
+        icon: moratTextureUrl('Martin-Faltastu', 'Martin faltas tu-icon.svg')
+    },
+    {
+        name: 'Martin-faltastu-bateria',
+        displayName: 'Martin Faltas Tú Batería',
+        fandom: 'morat',
+        has3dModel: false,
+        pdfFile: 'Martin-faltastu-bateria.pdf',
+        icon: moratTextureUrl('Martin-Faltastu-Bateria', 'Martin faltas tu-icon.svg')
+    },
+    {
+        name: 'Isaza-masdeloqueaposte',
+        displayName: 'Isaza Más de lo que aposté',
+        fandom: 'morat',
+        has3dModel: false,
+        pdfFile: 'Isaza-masdeloqueaposte.pdf',
+        icon: moratTextureUrl('Isaza-Mas de lo que aposte', 'Isaza mas de lo que aposte-icon.svg')
+    },
+    {
+        name: 'Isaza-faltastu',
+        displayName: 'Isaza Faltas Tú',
+        fandom: 'morat',
+        has3dModel: false,
+        pdfFile: 'Isaza-faltastu.pdf',
+        icon: moratTextureUrl('Isaza-Faltastu', 'Isaza faltas tu-icon.svg')
+    },
+    {
+        name: 'Isaza-faltastu-guitarra',
+        displayName: 'Isaza Faltas Tú Guitarra',
+        fandom: 'morat',
+        has3dModel: false,
+        pdfFile: 'Isaza-faltastu-guitarra.pdf',
+        icon: moratTextureUrl('Isaza-Faltastu-Guitarra', 'Isaza faltas tu-icon.svg')
+    },
+    {
+        name: 'Mira',
+        displayName: 'Mira',
+        fandom: 'kpop',
+        has3dModel: true,
+        pdfFile: 'Mira.pdf',
+        icon: kpopTextureUrl('Mira', 'Mira-icon.svg')
+    },
+    {
+        name: 'Rumi',
+        displayName: 'Rumi',
+        fandom: 'kpop',
+        has3dModel: true,
+        pdfFile: 'Rumi.pdf',
+        icon: kpopTextureUrl('Rumi', 'Rumi-icon.svg')
+    },
+    {
+        name: 'Zoey',
+        displayName: 'Zoey',
+        fandom: 'kpop',
+        has3dModel: true,
+        pdfFile: 'Zoey.pdf',
+        icon: kpopTextureUrl('Zoey', 'Zoey-icon.svg')
+    },
+    {
+        name: 'Jinu',
+        displayName: 'Jinu',
+        fandom: 'kpop',
+        has3dModel: true,
+        pdfFile: 'Jinu.pdf',
+        icon: kpopTextureUrl('Jinu', 'Jinu-icon.svg')
+    },
+    {
+        name: 'Abby',
+        displayName: 'Abby',
+        fandom: 'kpop',
+        has3dModel: true,
+        pdfFile: 'Abby.pdf',
+        icon: kpopTextureUrl('Abby', 'Abby-icon.svg')
+    },
+    {
+        name: 'Romance',
+        displayName: 'Romance',
+        fandom: 'kpop',
+        has3dModel: true,
+        pdfFile: 'Romance.pdf',
+        icon: kpopTextureUrl('Romance', 'Romance-icon.svg')
+    },
+    {
+        name: 'Mystery',
+        displayName: 'Mystery',
+        fandom: 'kpop',
+        has3dModel: true,
+        pdfFile: 'Mystery.pdf',
+        icon: kpopTextureUrl('Mystery', 'Mystery-icon.svg')
+    },
+    {
+        name: 'Baby',
+        displayName: 'Baby',
+        fandom: 'kpop',
+        has3dModel: true,
+        pdfFile: 'Baby.pdf',
+        icon: kpopTextureUrl('Baby', 'Baby-icon.svg')
+    },
+    {
+        name: 'Enderman',
+        displayName: 'Enderman',
+        fandom: 'minecraft',
+        has3dModel: true,
+        pdfFile: 'Enderman.pdf',
+        icon: minecraftTextureUrl('Enderman', 'Enderman-icon.svg')
+    },
+    {
+        name: 'Creeper',
+        displayName: 'Creeper',
+        fandom: 'minecraft',
+        has3dModel: true,
+        pdfFile: 'Creeper.pdf',
+        icon: minecraftTextureUrl('Creeper', 'Creeper-icon.svg')
+    },
+    {
+        name: 'Skeleton',
+        displayName: 'Skeleton',
+        fandom: 'minecraft',
+        has3dModel: true,
+        pdfFile: 'Skeleton.pdf',
+        icon: minecraftTextureUrl('Skeleton', 'Skeleton-icon.svg')
+    },
+    {
+        name: 'Zombie',
+        displayName: 'Zombie',
+        fandom: 'minecraft',
+        has3dModel: true,
+        pdfFile: 'Zombie.pdf',
+        icon: minecraftTextureUrl('Zombie', 'Zombie-icon.svg')
+    },
+    {
+        name: 'Alex',
+        displayName: 'Alex',
+        fandom: 'minecraft',
+        has3dModel: true,
+        pdfFile: 'Alex.pdf',
+        icon: minecraftTextureUrl('Alex', 'Alex-icon.svg')
+    },
+    {
+        name: 'Steve',
+        displayName: 'Steve',
+        fandom: 'minecraft',
+        has3dModel: true,
+        pdfFile: 'Steve.pdf',
+        icon: minecraftTextureUrl('Steve', 'Steve-icon.svg')
+    }
+]);
+
+const presetCharacterOrder = Object.freeze(presetCatalog.map((character) => character.name));
+const presetCharacterDisplayNames = Object.freeze(
+    Object.fromEntries(presetCatalog.map((character) => [character.name, character.displayName]))
+);
+const presetCharacterFandoms = Object.freeze(
+    Object.fromEntries(presetCatalog.map((character) => [character.name, character.fandom]))
+);
+const presetCharacter3dAvailability = Object.freeze(
+    Object.fromEntries(presetCatalog.map((character) => [character.name, character.has3dModel]))
+);
+const presetCharacterPdfFiles = Object.freeze(
+    Object.fromEntries(presetCatalog.map((character) => [character.name, character.pdfFile]))
+);
+const presetIcons = Object.freeze(
+    Object.fromEntries(presetCatalog.map((character) => [character.name, character.icon]))
+);
+
+function hasPresetCharacter3dModel(characterName) {
+    return presetCharacter3dAvailability[characterName] !== false;
+}
 
 // --- DATA PARA OJOS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
