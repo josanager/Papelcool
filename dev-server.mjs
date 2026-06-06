@@ -1,10 +1,24 @@
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import {
+  handleCreateStripeCheckoutSession,
+  handleStripeWebhook,
+  handleVerifyStripeCheckoutSession
+} from './functions/_lib/stripe-access.js';
 
 const root = process.cwd();
 const port = Number(process.env.PORT || 8001);
 const r2Base = 'https://pub-9432515251e743b7979ceb8e264f80ec.r2.dev/presets-pdfs/';
+const localStripeAccessStore = new Map();
+const localStripeAccessKv = {
+  async get(key) {
+    return localStripeAccessStore.get(key) || null;
+  },
+  async put(key, value) {
+    localStripeAccessStore.set(key, value);
+  }
+};
 const presetFiles = Object.freeze({
   Abby: 'Abby.pdf',
   Alex: 'Alex.pdf',
@@ -51,6 +65,27 @@ const mimeTypes = {
 http.createServer(async (req, res) => {
   try {
     const requestUrl = new URL(req.url || '/', `http://localhost:${port}`);
+
+    if (requestUrl.pathname === '/api/stripe/create-checkout-session') {
+      const webRequest = await toWebRequest(req, requestUrl);
+      const response = await handleCreateStripeCheckoutSession(webRequest, getLocalFunctionEnv());
+      await sendWebResponse(res, response);
+      return;
+    }
+
+    if (requestUrl.pathname === '/api/stripe/verify-session') {
+      const webRequest = await toWebRequest(req, requestUrl);
+      const response = await handleVerifyStripeCheckoutSession(webRequest, getLocalFunctionEnv());
+      await sendWebResponse(res, response);
+      return;
+    }
+
+    if (requestUrl.pathname === '/api/stripe/webhook') {
+      const webRequest = await toWebRequest(req, requestUrl);
+      const response = await handleStripeWebhook(webRequest, getLocalFunctionEnv());
+      await sendWebResponse(res, response);
+      return;
+    }
 
     if (requestUrl.pathname === '/api/preset-template-download') {
       const character = requestUrl.searchParams.get('character');
@@ -136,10 +171,80 @@ http.createServer(async (req, res) => {
   console.log(`Papelcool dev server running at http://localhost:${port}`);
 });
 
-function sendJson(res, status, payload) {
+function readJsonBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on('data', (chunk) => chunks.push(chunk));
+    req.on('end', () => {
+      if (!chunks.length) {
+        resolve({});
+        return;
+      }
+
+      try {
+        resolve(JSON.parse(Buffer.concat(chunks).toString('utf8')));
+      } catch (error) {
+        reject(error);
+      }
+    });
+    req.on('error', reject);
+  });
+}
+
+function readRawBody(req) {
+  return new Promise((resolve, reject) => {
+    const chunks = [];
+    req.on('data', (chunk) => chunks.push(chunk));
+    req.on('end', () => {
+      resolve(chunks.length ? Buffer.concat(chunks) : undefined);
+    });
+    req.on('error', reject);
+  });
+}
+
+async function toWebRequest(req, requestUrl) {
+  const headers = new Headers();
+  Object.entries(req.headers).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      value.forEach((entry) => headers.append(key, entry));
+    } else if (value !== undefined) {
+      headers.set(key, String(value));
+    }
+  });
+
+  const body = ['GET', 'HEAD'].includes(req.method || 'GET')
+    ? undefined
+    : await readRawBody(req);
+
+  return new Request(requestUrl.toString(), {
+    method: req.method,
+    headers,
+    body
+  });
+}
+
+function getLocalFunctionEnv() {
+  return {
+    ...process.env,
+    PAPELCOOL_STRIPE_ACCESS_KV: localStripeAccessKv
+  };
+}
+
+async function sendWebResponse(res, response) {
+  const headers = {};
+  response.headers.forEach((value, key) => {
+    headers[key] = value;
+  });
+  res.writeHead(response.status, headers);
+  const arrayBuffer = await response.arrayBuffer();
+  res.end(Buffer.from(arrayBuffer));
+}
+
+function sendJson(res, status, payload, extraHeaders = {}) {
   res.writeHead(status, {
     'Cache-Control': 'no-store',
-    'Content-Type': 'application/json; charset=utf-8'
+    'Content-Type': 'application/json; charset=utf-8',
+    ...extraHeaders
   });
   res.end(JSON.stringify(payload));
 }

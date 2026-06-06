@@ -58,13 +58,13 @@
                     z-index: 1000000; backdrop-filter: blur(8px); padding: 20px;
                 `;
                 overlay.innerHTML = `
-                    <div style="background: white; border: 6px solid black; padding: 40px; border-radius: 32px; 
+                    <div style="background: white; border: 6px solid black; padding: 40px; border-radius: 32px;
                                 box-shadow: 20px 20px 0px rgba(255, 77, 148, 0.5); text-align: center; max-width: 500px;
                                 font-family: 'Fredoka', sans-serif; transform: rotate(-1deg);">
                         <div style="font-size: 80px; margin-bottom: 20px;">🚧</div>
                         <h1 style="font-size: 2.5rem; font-weight: 900; margin-bottom: 15px; text-transform: uppercase;">Protocol Error!</h1>
                         <p style="font-size: 1.2rem; font-weight: 600; color: #4B5563; margin-bottom: 25px;">
-                            You are visiting via <span style="color: #EF4444;">file://</span>. 
+                            You are visiting via <span style="color: #EF4444;">file://</span>.
                             Security rules block 3D models and assets here.
                         </p>
                         <div style="background: #F3F4F6; padding: 20px; border-radius: 16px; border: 3px dashed #D1D5DB; margin-bottom: 30px;">
@@ -190,7 +190,7 @@
         #fandoms-overlay {
             position: fixed;
             inset: 0;
-            background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%);
+            background: linear-gradient(180deg, #37BDF7 0%, #0A92E8 100%);
             z-index: 2000;
             display: none;
             flex-direction: column;
@@ -333,11 +333,42 @@
             top: clamp(8px, 4cqw, 12px);
             right: clamp(8px, 4cqw, 12px);
             z-index: 10;
-            color: #d4d4d8;
+            color: #000;
             transition: color 0.2s, transform 0.2s, font-variation-settings 0.2s;
             font-variation-settings: 'FILL' 0;
             font-size: clamp(1.15rem, 9.1cqw, 1.95rem);
             line-height: 1;
+        }
+
+        .fandom-heart::after {
+            content: "Añadir a favoritos";
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: max-content;
+            max-width: 150px;
+            padding: 0.42rem 0.58rem;
+            border: 2px solid #000;
+            border-radius: 8px;
+            background: #fff;
+            color: #000;
+            box-shadow: 3px 3px 0 rgba(0, 0, 0, 1);
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 800;
+            line-height: 1;
+            text-transform: uppercase;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-3px);
+            transition: opacity 0.16s ease, transform 0.16s ease;
+        }
+
+        .fandom-heart:hover::after,
+        .fandom-heart:focus-visible::after {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .fandom-heart:hover {
@@ -359,7 +390,7 @@
             border-bottom: 4px solid black;
             position: relative;
             flex: 0 0 auto;
-            aspect-ratio: 300 / 224;
+            aspect-ratio: 1 / 1;
             overflow: hidden;
         }
 
@@ -369,12 +400,14 @@
             object-fit: contain;
             object-position: center bottom;
             padding: 0.15rem;
-            transform: scale(1.58);
-            transition: transform 0.3s;
+            transform: scale(1.34);
+            filter: drop-shadow(10px 8px 0 rgba(115, 125, 132, 0.55));
+            transition: transform 0.3s, filter 0.3s;
         }
 
         .fandom-card:hover .fandom-image-container img {
-            transform: scale(1.66);
+            transform: scale(1.4);
+            filter: drop-shadow(12px 9px 0 rgba(115, 125, 132, 0.58));
         }
 
         .fandom-info {
@@ -387,6 +420,8 @@
             flex: 1 1 auto;
             justify-content: space-between;
             min-height: 0;
+            position: relative;
+            z-index: 2;
         }
 
         .fandom-tag {
@@ -404,6 +439,80 @@
             letter-spacing: clamp(0.01em, 0.2cqw, 0.05em);
         }
 
+        .fandom-meta-row {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .fandom-cart-btn {
+            position: relative;
+            width: clamp(26px, 9cqw, 34px);
+            height: clamp(26px, 9cqw, 34px);
+            border: 2px solid #000;
+            border-radius: 999px;
+            background: #fff;
+            color: #000;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 2px 2px 0 #000;
+            cursor: pointer;
+            flex: 0 0 auto;
+            z-index: 30;
+            pointer-events: auto;
+            transition: background 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+        }
+
+        .fandom-cart-btn .material-symbols-outlined {
+            font-size: clamp(1rem, 5cqw, 1.25rem);
+            line-height: 1;
+        }
+
+        .fandom-cart-btn::after {
+            content: "Añadir a carrito";
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: max-content;
+            max-width: 150px;
+            padding: 0.42rem 0.58rem;
+            border: 2px solid #000;
+            border-radius: 8px;
+            background: #fff;
+            color: #000;
+            box-shadow: 3px 3px 0 rgba(0, 0, 0, 1);
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.68rem;
+            font-weight: 800;
+            line-height: 1;
+            text-transform: uppercase;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(-3px);
+            transition: opacity 0.16s ease, transform 0.16s ease;
+            z-index: 20;
+        }
+
+        .fandom-cart-btn:hover,
+        .fandom-cart-btn.active {
+            background: #FFE600;
+        }
+
+        .fandom-cart-btn:hover {
+            transform: translate(-1px, -1px);
+            box-shadow: 3px 3px 0 #000;
+        }
+
+        .fandom-cart-btn:hover::after,
+        .fandom-cart-btn:focus-visible::after {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         .fandom-name {
             font-family: 'Fredoka', sans-serif;
             font-weight: 700;
@@ -412,6 +521,23 @@
             text-transform: uppercase;
             margin: 0;
             line-height: 1.05;
+        }
+
+        .fandom-price-tag {
+            display: inline-flex;
+            align-items: center;
+            align-self: flex-start;
+            width: fit-content;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            font-family: 'Fredoka', sans-serif;
+            font-size: clamp(0.95rem, 5.2cqw, 1.25rem);
+            font-weight: 900;
+            line-height: 1;
+            color: #000;
+            text-transform: uppercase;
+            white-space: nowrap;
         }
 
         .fandom-select-btn {
@@ -501,6 +627,32 @@
             display: none !important;
         }
 
+        .pc-mobile-cart-btn {
+            display: inline-flex !important;
+            position: relative;
+            flex: 0 0 auto;
+        }
+
+        .pc-mobile-cart-count {
+            position: absolute;
+            top: -7px;
+            right: -7px;
+            min-width: 22px;
+            height: 22px;
+            padding: 0 6px;
+            border: 2px solid #fff;
+            border-radius: 999px;
+            background: #407BFF;
+            color: #fff;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 800;
+            line-height: 18px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .pc-home-mobile-dropdown {
             display: none !important;
             position: absolute;
@@ -524,6 +676,180 @@
             justify-content: flex-start;
         }
 
+        .pc-mobile-menu-search {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            width: 100%;
+            min-height: 56px;
+            padding: 0.85rem 1rem;
+            border: 3px solid #000;
+            border-radius: 999px;
+            background: #fff;
+            box-shadow: 3px 3px 0 rgba(0, 0, 0, 1);
+            color: #000;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .pc-mobile-menu-search:focus-within {
+            box-shadow: 3px 3px 0 rgba(0, 0, 0, 1);
+        }
+
+        .pc-mobile-menu-search .material-symbols-outlined {
+            color: #000;
+            font-size: 1.35rem;
+            font-weight: 700;
+            flex: 0 0 auto;
+        }
+
+        .pc-mobile-menu-search input {
+            width: 100%;
+            min-width: 0;
+            border: none;
+            outline: none;
+            background: transparent;
+            color: #000;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .pc-cart-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 12px);
+            left: 1rem;
+            right: 1rem;
+            z-index: 10000;
+            flex-direction: column;
+            gap: 0.9rem;
+            padding: 1.25rem;
+            background: #fff;
+            border: 4px solid #000;
+            border-radius: 24px;
+            box-shadow: 8px 8px 0 rgba(0, 0, 0, 1);
+            color: #111827;
+        }
+
+        .pc-cart-dropdown.active {
+            display: flex;
+        }
+
+        .pc-cart-dropdown-title {
+            margin: 0;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #000;
+        }
+
+        .pc-cart-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+            max-height: 360px;
+            overflow-y: auto;
+            padding-right: 0.2rem;
+        }
+
+        .pc-cart-item {
+            display: grid;
+            grid-template-columns: 54px minmax(0, 1fr) auto auto;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.65rem;
+            border: 3px solid #000;
+            border-radius: 16px;
+            background: #D1E9FF;
+            box-shadow: 3px 3px 0 #000;
+            cursor: pointer;
+        }
+
+        .pc-cart-open-btn {
+            display: contents;
+            border: 0;
+            padding: 0;
+            background: transparent;
+            color: inherit;
+            cursor: pointer;
+            font: inherit;
+            text-align: left;
+        }
+
+        .pc-cart-item img {
+            width: 54px;
+            height: 54px;
+            object-fit: contain;
+            object-position: center bottom;
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 12px;
+        }
+
+        .pc-cart-item-name {
+            min-width: 0;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 800;
+            line-height: 1.05;
+            text-transform: uppercase;
+            color: #000;
+        }
+
+        .pc-cart-item-price {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.88rem;
+            font-weight: 900;
+            color: #000;
+            white-space: nowrap;
+        }
+
+        .pc-cart-remove-btn {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #000;
+            border-radius: 12px;
+            background: #fff;
+            color: #000;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 3px 3px 0 #000;
+            cursor: pointer;
+            transition: background 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+        }
+
+        .pc-cart-remove-btn:hover {
+            background: #FF4D94;
+            color: #fff;
+            transform: translate(-1px, -1px);
+            box-shadow: 4px 4px 0 #000;
+        }
+
+        .pc-cart-remove-btn:active {
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 #000;
+        }
+
+        .pc-cart-remove-btn .material-symbols-outlined {
+            font-size: 1.35rem;
+            line-height: 1;
+        }
+
+        .pc-cart-empty {
+            margin: 0;
+            padding: 1rem;
+            border: 3px dashed #000;
+            border-radius: 16px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.92rem;
+            font-weight: 700;
+            text-align: center;
+            color: #000;
+            background: #FFF7BF;
+        }
+
         @media (max-width: 1180px) {
             .pc-home-topbar {
                 flex-wrap: wrap;
@@ -543,7 +869,7 @@
             }
 
             .pc-mobile-menu-btn {
-                display: inline-flex !important;
+                display: none !important;
             }
 
             .pc-home-mobile-dropdown.active {
@@ -697,7 +1023,7 @@
             height: 100%;
             position: fixed;
             font-family: 'Fredoka', sans-serif;
-            background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%);
+            background: linear-gradient(180deg, #37BDF7 0%, #0A92E8 100%);
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
@@ -726,7 +1052,7 @@
         }
 
         #user-profile-view {
-            --bg-color: #E0F2FE;
+            --bg-color: #D4F0FF;
             --grid-blue: #D1E9FF;
         }
 
@@ -895,7 +1221,7 @@
             width: 100vw;
             height: 100vh;
             height: 100dvh;
-            background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%);
+            background: linear-gradient(180deg, #37BDF7 0%, #0A92E8 100%);
             z-index: 1;
             opacity: 0;
             transition: opacity 0.5s ease-out;
@@ -2016,7 +2342,7 @@
             align-items: center !important;
             justify-content: center !important;
             z-index: 2 !important;
-            background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%) !important;
+            background: linear-gradient(180deg, #37BDF7 0%, #0A92E8 100%) !important;
             pointer-events: none !important;
             overflow: hidden !important;
             overscroll-behavior: none !important;
@@ -2999,7 +3325,7 @@
         }
 
 
-        .payment-title {
+        .pdf-ready-title {
             font-family: 'Fredoka', sans-serif;
             font-size: 2.5rem;
             font-weight: 900;
@@ -3008,7 +3334,7 @@
             text-transform: uppercase;
         }
 
-        .payment-subtitle {
+        .pdf-ready-subtitle {
             font-family: 'Fredoka', sans-serif;
             font-size: 1.2rem;
             font-weight: 600;
@@ -3016,8 +3342,8 @@
             margin: 0 0 1.5rem;
         }
 
-        /* Mensaje de pago exitoso - overlay pantalla completa */
-        .payment-success-message {
+        /* Mensaje de PDF listo - overlay pantalla completa */
+        .pdf-ready-message {
             position: fixed;
             top: 0;
             left: 0;
@@ -3034,8 +3360,87 @@
             z-index: 9999;
         }
 
-        .payment-success-message.hidden {
+        .pdf-ready-message.hidden {
             display: none !important;
+        }
+
+        .stripe-status-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10020;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.58);
+        }
+
+        .stripe-status-overlay.active {
+            display: flex;
+        }
+
+        .stripe-status-card,
+        .stripe-success-card {
+            width: min(620px, 100%);
+            background: #fff;
+            border: 4px solid #000;
+            border-radius: 16px;
+            box-shadow: 8px 8px 0 #000;
+            padding: clamp(1.2rem, 3vw, 2rem);
+            color: #000;
+        }
+
+        .stripe-status-card h2,
+        .stripe-success-card h1 {
+            margin: 0 0 0.8rem;
+            font-family: 'Fredoka', sans-serif;
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            font-weight: 900;
+            line-height: 0.98;
+            text-transform: uppercase;
+        }
+
+        .stripe-status-card p,
+        .stripe-success-card p {
+            margin: 0 0 1rem;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            line-height: 1.5;
+            color: #111827;
+        }
+
+        .stripe-status-actions,
+        .stripe-success-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1.2rem;
+        }
+
+        .stripe-status-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            padding: 0.8rem 1.1rem;
+            border: 3px solid #000;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 4px 4px 0 #000;
+            color: #000;
+            cursor: pointer;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .stripe-status-btn.primary {
+            background: #FFE600;
+        }
+
+        .stripe-status-btn.pink {
+            background: #FF4D94;
+            color: #fff;
         }
 
         /* Contenedor de progreso PDF - fondo oscuro transparente */
@@ -5224,14 +5629,14 @@
             position: fixed; top: 0; left: 0; right: 0; z-index: 9500; display: none;
         }
         #app-global-topbar.active { display: block; }
-        
+
         .funko-style-nav {
             display: flex; align-items: center; justify-content: space-between;
             gap: 1rem; width: 100vw; max-width: 100%; min-height: 84px; padding: 0.75rem 1.5rem;
             background-color: #111827;
             border-bottom: 4px solid #000;
         }
-        
+
         .funko-nav-left, .funko-nav-right { display: flex; align-items: center; min-width: 0; }
         .funko-nav-left { flex: 0 0 auto; }
         .funko-nav-right { flex: 0 1 auto; justify-content: flex-end; gap: 0.75rem; }
@@ -5246,7 +5651,7 @@
             display: block; height: clamp(30px, 2.4vw, 38px); width: auto;
             filter: drop-shadow(3px 3px 0px rgba(0,0,0,1));
         }
-        
+
         .funko-nav-link {
             background: transparent; border: none; font-family: 'Fredoka', sans-serif;
             font-weight: 700; font-size: clamp(0.82rem, 0.74rem + 0.28vw, 1rem); line-height: 1.15;
@@ -5255,15 +5660,27 @@
             white-space: nowrap; flex: 0 1 auto;
         }
         .funko-nav-link:hover { color: #FFE600; }
-        
+
         .funko-search {
-            display: flex; align-items: center; background: #fff; border: 3px solid #000;
-            border-radius: 99px; padding: 0.35rem 0.9rem; width: clamp(180px, 18vw, 260px); min-width: 0;
-            box-shadow: 3px 3px 0 #fff;
+            display: flex; align-items: center; background: #fff; border: 4px solid #000;
+            border-radius: 999px; padding: 0.5rem 0.9rem; width: clamp(190px, 18vw, 270px); min-width: 0;
+            min-height: 48px;
+            box-shadow: 5px 5px 0 rgba(0,0,0,1);
+            transition: all 0.18s ease;
+        }
+        .funko-search:focus-within {
+            transform: translate(-1px, -1px);
+            box-shadow: 7px 7px 0 rgba(0,0,0,1);
+        }
+        .funko-search .material-symbols-outlined {
+            color: #000;
+            font-size: 1.35rem;
+            font-weight: 700;
+            flex: 0 0 auto;
         }
         .funko-search input {
             border: none; outline: none; background: transparent; font-family: 'Fredoka', sans-serif;
-            font-weight: 600; font-size: 0.88rem; color: #000; width: 100%; margin-left: 0.45rem; min-width: 0;
+            font-weight: 700; font-size: 0.88rem; color: #000; width: 100%; margin-left: 0.5rem; min-width: 0;
         }
         .funko-avatar-btn {
             width: 48px; height: 48px; border-radius: 50%; border: 3px solid #000;
@@ -5345,7 +5762,7 @@
         }
         .funko-showcase-slot {
             width: 100vw; margin-left: calc(-50vw + 50%);
-            min-height: 64vh; background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%);
+            min-height: 64vh; background: linear-gradient(180deg, #37BDF7 0%, #0A92E8 100%);
             border-bottom: 5px solid #000; position: relative; overflow: hidden;
         }
         .funko-showcase-stage {
@@ -5625,17 +6042,44 @@
             .funko-auth-btn { padding-inline: 0.85rem; font-size: 0.82rem; }
         }
         @media (max-width: 1180px) {
-            .funko-nav-center { display: none !important; }
             .funko-style-nav { min-height: 76px; }
             .funko-banners-grid { grid-template-columns: repeat(2, 1fr); }
             .funko-hero-inner { flex-direction: column; text-align: center; padding: 2rem; }
             .funko-hero-content { margin-top: 2rem; }
             .funko-create-strip-inner { align-items: flex-start; flex-direction: column; }
         }
+        @media (min-width: 769px) and (max-width: 1040px) {
+            .funko-search {
+                width: 52px;
+                height: 52px;
+                min-height: 52px;
+                padding: 0;
+                justify-content: center;
+                flex: 0 0 52px;
+            }
+
+            .funko-search input {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                opacity: 0;
+                pointer-events: none;
+                margin: 0;
+            }
+
+            .funko-search .material-symbols-outlined {
+                font-size: 1.55rem;
+            }
+        }
         @media (max-width: 768px) {
             /* Navbar Mobile Adaptations */
+            .pc-mobile-menu-btn {
+                display: inline-flex !important;
+            }
+
             .funko-nav-right .funko-search,
             #auth-container { display: none !important; }
+            .funko-nav-center { display: none !important; }
             .funko-style-nav {
                 display: grid; grid-template-columns: 56px minmax(0, 1fr) 56px;
                 align-items: center; gap: 0; padding: 0.75rem 1rem;
@@ -5645,10 +6089,13 @@
                 grid-column: 2; display: flex; justify-content: center; width: 100%; min-width: 0;
             }
             .funko-nav-right {
-                grid-column: 3; display: block !important; width: 56px; min-width: 56px; visibility: hidden;
+                grid-column: 3; display: flex !important; justify-content: flex-end; width: 56px; min-width: 56px; visibility: visible;
+            }
+            .funko-nav-right #app-cart-btn {
+                display: inline-flex !important;
             }
             .funko-brand-btn { justify-content: center; width: 100%; }
-            
+
             /* Responsive Hero & 3D Canvas */
             .funko-banners-grid { grid-template-columns: 1fr; }
             .funko-hero-content h1 {
@@ -5687,7 +6134,7 @@
                 text-align: center;
                 justify-content: center;
             }
-            
+
             /* Section Paddings & Grid */
             .funko-section { padding: 0 1rem; margin-top: 2rem; margin-bottom: 1rem; }
             .funko-section:first-of-type { margin-bottom: 3.25rem; }
@@ -5728,8 +6175,1701 @@
                 transform: scale(1.22);
             }
         }
-    
+
         /* SHOWCASE MODE NAVBAR - Eliminado para mantener la nav visible */
+
+        /* ============================================ */
+        /* === LANDING PAGE REDESIGN — VERTICAL SCROLL DESKTOP === */
+        /* ============================================ */
+
+
+
+        /* --- Landing wrapper --- */
+        .lp-landing-wrapper {
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        /* --- PROMO BAR --- */
+        .lp-promo-bar {
+            display: none;
+        }
+        .lp-promo-track.is-running {
+            animation: lp-promo-marquee var(--lp-promo-duration, 38s) linear infinite;
+        }
+        @keyframes lp-promo-marquee {
+            from {
+                transform: translate3d(0, 0, 0);
+            }
+            to {
+                transform: translate3d(calc(var(--lp-promo-loop-width, 1040px) * -1), 0, 0);
+            }
+        }
+        @media (min-width: 769px) {
+            .lp-promo-bar {
+                display: block;
+                width: 100%;
+                height: 58px;
+                border-bottom: 4px solid #000;
+                overflow: hidden;
+                pointer-events: none;
+            }
+            .lp-promo-track {
+                display: flex;
+                width: max-content;
+                height: 100%;
+                will-change: transform;
+            }
+            .lp-promo-item {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.75rem;
+                width: 260px;
+                height: 58px;
+                padding: 0 1rem;
+                font-family: 'Fredoka', sans-serif;
+                text-align: center;
+                border-right: 3px solid rgba(0,0,0,0.15);
+                flex: 0 0 260px;
+            }
+            .lp-promo-item:last-child {
+                border-right: none;
+            }
+            .lp-promo-item:nth-child(4n + 1) { background: #FF4D94; color: #fff; }
+            .lp-promo-item:nth-child(4n + 2) { background: #FFE600; color: #000; }
+            .lp-promo-item:nth-child(4n + 3) { background: #407BFF; color: #fff; }
+            .lp-promo-item:nth-child(4n + 4) { background: #2ECC71; color: #fff; }
+            .lp-promo-icon {
+                width: 2rem;
+                height: 2rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                flex: 0 0 auto;
+                line-height: 1;
+            }
+            .lp-promo-icon img {
+                width: 100%;
+                height: 100%;
+                display: block;
+            }
+            .lp-promo-text {
+                text-align: left;
+            }
+            .lp-promo-title {
+                font-weight: 700;
+                font-size: 0.82rem;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                line-height: 1.1;
+            }
+            .lp-promo-subtitle {
+                font-size: 0.72rem;
+                font-weight: 600;
+                opacity: 0.85;
+                line-height: 1.2;
+            }
+        }
+
+        /* --- HERO SECTION (Desktop split) --- */
+        @media (min-width: 769px) {
+            .lp-hero {
+                width: 100%;
+                min-height: 520px;
+                background:
+                    radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.15) 0%, transparent 60%),
+                    linear-gradient(180deg, #37BDF7 0%, #0A92E8 100%);
+                border-bottom: 5px solid #000;
+                position: relative;
+                overflow: hidden;
+            }
+            .lp-hero-inner {
+                width: min(1400px, 100%);
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                align-items: center;
+                min-height: 520px;
+                padding: 2rem;
+                gap: 2rem;
+            }
+            .lp-hero-copy {
+                z-index: 2;
+                position: relative;
+            }
+            .lp-hero-copy h1 {
+                font-family: 'Fredoka', sans-serif;
+                font-size: clamp(2.5rem, 3.5vw, 4rem);
+                font-weight: 900;
+                line-height: 1.05;
+                color: #fff;
+                text-transform: uppercase;
+                text-shadow: 4px 4px 0 rgba(0,0,0,0.35);
+                margin: 0 0 1rem;
+                max-width: 14ch;
+            }
+            .lp-hero-copy p {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: rgba(255,255,255,0.92);
+                line-height: 1.55;
+                margin: 0 0 1.8rem;
+                max-width: 42ch;
+                text-shadow: 1px 1px 0 rgba(0,0,0,0.15);
+            }
+            .lp-hero-ctas {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            .lp-btn {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+                padding: 1rem 1.8rem;
+                border: 4px solid #000;
+                border-radius: 999px;
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 1rem;
+                text-transform: uppercase;
+                cursor: pointer;
+                box-shadow: 6px 6px 0 rgba(0,0,0,1);
+                transition: all 0.18s ease;
+                text-decoration: none;
+                line-height: 1;
+            }
+            .lp-btn:hover {
+                transform: translate(-2px, -2px);
+                box-shadow: 8px 8px 0 rgba(0,0,0,1);
+            }
+            .lp-btn:active {
+                transform: translate(3px, 3px);
+                box-shadow: 3px 3px 0 rgba(0,0,0,1);
+            }
+            .lp-btn--pink { background: #FF4D94; color: #fff; }
+            .lp-btn--yellow { background: #FFE600; color: #000; }
+            .lp-btn--white { background: #fff; color: #000; }
+            .lp-btn--dark { background: #111827; color: #FFE600; }
+            .lp-hero-3d-slot {
+                position: relative;
+                min-height: 420px;
+                border-radius: 28px;
+                overflow: hidden;
+            }
+        }
+
+        @keyframes lp-float {
+            0%, 100% { transform: translateY(0) rotate(-15deg); }
+            50% { transform: translateY(-12px) rotate(-10deg); }
+        }
+
+        /* --- BENEFITS STRIP --- */
+        .lp-benefits {
+            display: none;
+        }
+        @media (min-width: 769px) {
+            .lp-benefits {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 0;
+                width: 100%;
+                background: #fff;
+                border-bottom: 4px solid #000;
+            }
+            .lp-benefit-item {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                padding: 1.5rem 1.2rem;
+                border-right: 3px solid rgba(0,0,0,0.08);
+                transition: background 0.2s;
+            }
+            .lp-benefit-item:last-child { border-right: none; }
+            .lp-benefit-item:hover { background: #FFFDE7; }
+            .lp-benefit-icon {
+                width: 52px;
+                height: 52px;
+                border: 3px solid #000;
+                border-radius: 16px;
+                background: #FFE600;
+                box-shadow: 3px 3px 0 rgba(0,0,0,1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                font-size: 1.5rem;
+            }
+            .lp-benefit-title {
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 0.85rem;
+                text-transform: uppercase;
+                color: #000;
+                margin-bottom: 0.15rem;
+            }
+            .lp-benefit-text {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.78rem;
+                color: #555;
+                font-weight: 500;
+                line-height: 1.35;
+            }
+        }
+
+        /* --- SECTION COMMON --- */
+        .lp-section {
+            width: min(1400px, 100%);
+            margin: 0 auto;
+            padding: 3.5rem 2rem;
+        }
+        .lp-section-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            font-weight: 900;
+            color: #000;
+            text-transform: uppercase;
+            text-align: center;
+            margin: 0 0 2.5rem;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.06);
+            position: relative;
+        }
+        .lp-section-title::after {
+            content: "";
+            display: block;
+            width: 80px;
+            height: 5px;
+            background: #FF4D94;
+            border-radius: 999px;
+            margin: 0.75rem auto 0;
+        }
+
+        /* --- WORLDS GRID --- */
+        @media (min-width: 769px) {
+            .lp-worlds-section {
+                background: linear-gradient(180deg, #F0F9FF 0%, #fff 100%);
+                border-bottom: 4px solid #000;
+            }
+            .lp-worlds-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.5rem;
+            }
+            .lp-world-card {
+                background: #fff;
+                border: 4px solid #000;
+                border-radius: 24px;
+                box-shadow: 8px 8px 0 rgba(0,0,0,1);
+                overflow: hidden;
+                cursor: pointer;
+                transition: all 0.22s ease;
+                display: flex;
+                flex-direction: column;
+            }
+            .lp-world-card:hover {
+                transform: translate(-3px, -3px) rotate(-0.5deg);
+                box-shadow: 12px 12px 0 rgba(0,0,0,1);
+            }
+            .lp-world-card:active {
+                transform: translate(2px, 2px);
+                box-shadow: 4px 4px 0 rgba(0,0,0,1);
+            }
+            .lp-world-img {
+                width: 100%;
+                aspect-ratio: 4 / 3;
+                background: #D1E9FF;
+                border-bottom: 4px solid #000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 4rem;
+                overflow: hidden;
+                position: relative;
+            }
+            .lp-world-img img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                object-position: center bottom;
+                transform: scale(1.4);
+                transition: transform 0.3s;
+            }
+            .lp-world-card:hover .lp-world-img img {
+                transform: scale(1.52);
+            }
+            .lp-world-body {
+                padding: 1.1rem;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.75rem;
+            }
+            .lp-world-name {
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 1.1rem;
+                text-transform: uppercase;
+                color: #000;
+            }
+            .lp-world-cta {
+                padding: 0.55rem 1rem;
+                border: 3px solid #000;
+                border-radius: 999px;
+                background: #FFE600;
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 0.78rem;
+                text-transform: uppercase;
+                color: #000;
+                box-shadow: 3px 3px 0 rgba(0,0,0,1);
+                cursor: pointer;
+                transition: all 0.15s;
+                white-space: nowrap;
+            }
+            .lp-world-cta:hover {
+                background: #FFD400;
+                transform: translate(-1px, -1px);
+                box-shadow: 5px 5px 0 rgba(0,0,0,1);
+            }
+        }
+
+        /* --- BEST SELLERS GRID --- */
+        @media (min-width: 769px) {
+            .lp-bestsellers-section {
+                background: #fff;
+                border-bottom: 4px solid #000;
+            }
+            .lp-bestsellers-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: 2rem;
+            }
+            .lp-bestsellers-header .lp-section-title {
+                text-align: left;
+                margin: 0;
+            }
+            .lp-bestsellers-header .lp-section-title::after { display: none; }
+            .lp-bestsellers-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 1.5rem;
+            }
+            .lp-bestsellers-grid .fandom-card {
+                width: 100%;
+                min-width: 0;
+            }
+            .lp-product-card {
+                background: #fff;
+                border: 4px solid #000;
+                border-radius: 22px;
+                box-shadow: 6px 6px 0 rgba(0,0,0,1);
+                overflow: hidden;
+                cursor: pointer;
+                transition: all 0.2s ease;
+                display: flex;
+                flex-direction: column;
+                position: relative;
+            }
+            .lp-product-card:hover {
+                transform: translateY(-5px);
+                box-shadow: 10px 10px 0 rgba(0,0,0,1);
+            }
+            .lp-product-badge {
+                position: absolute;
+                top: 12px;
+                left: 12px;
+                padding: 0.25rem 0.7rem;
+                border: 2px solid #000;
+                border-radius: 999px;
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 0.7rem;
+                text-transform: uppercase;
+                z-index: 5;
+                line-height: 1.2;
+            }
+            .lp-product-badge--new { background: #FF4D94; color: #fff; }
+            .lp-product-badge--exclusive { background: #FFE600; color: #000; }
+            .lp-product-heart {
+                position: absolute;
+                top: 12px;
+                right: 12px;
+                z-index: 5;
+                color: #d4d4d8;
+                cursor: pointer;
+                transition: color 0.2s, transform 0.2s;
+                font-variation-settings: 'FILL' 0;
+                font-size: 1.6rem;
+                background: none;
+                border: none;
+            }
+            .lp-product-heart:hover {
+                color: #FF4D94;
+                transform: scale(1.15);
+            }
+            .lp-product-heart.active {
+                color: #FF4D94;
+                font-variation-settings: 'FILL' 1;
+            }
+            .lp-product-img {
+                width: 100%;
+                aspect-ratio: 1;
+                background: #F0F9FF;
+                border-bottom: 4px solid #000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+            }
+            .lp-product-img img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                object-position: center bottom;
+                transform: scale(1.3);
+                filter: drop-shadow(4px 4px 0 rgba(0,0,0,0.4));
+                transition: transform 0.3s;
+            }
+            .lp-product-card:hover .lp-product-img img {
+                transform: scale(1.4);
+            }
+            .lp-product-info {
+                padding: 1rem 1.1rem 1.2rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.4rem;
+            }
+            .lp-product-name {
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 1rem;
+                text-transform: uppercase;
+                color: #000;
+                margin: 0;
+                line-height: 1.15;
+            }
+            .lp-product-meta {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.78rem;
+                color: #777;
+                font-weight: 600;
+            }
+            .lp-product-meta .lp-tag {
+                padding: 0.15rem 0.45rem;
+                border-radius: 6px;
+                background: #D4F0FF;
+                color: #1E3A8A;
+                font-size: 0.72rem;
+                font-weight: 700;
+                text-transform: uppercase;
+            }
+            .lp-product-add-btn {
+                margin-top: 0.4rem;
+                width: 100%;
+                padding: 0.75rem;
+                border: 3px solid #000;
+                border-radius: 14px;
+                background: #FFE600;
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 0.82rem;
+                text-transform: uppercase;
+                color: #000;
+                box-shadow: 3px 3px 0 rgba(0,0,0,1);
+                cursor: pointer;
+                transition: all 0.15s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.4rem;
+            }
+            .lp-product-add-btn:hover {
+                background: #FFD400;
+                transform: translate(-1px, -1px);
+                box-shadow: 5px 5px 0 rgba(0,0,0,1);
+            }
+            .lp-product-add-btn:active {
+                transform: translate(2px, 2px);
+                box-shadow: 1px 1px 0 rgba(0,0,0,1);
+            }
+        }
+
+        /* --- LIMITED BUNDLE --- */
+        @media (min-width: 769px) {
+            .lp-bundle-section {
+                background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+                border-top: 5px solid #000;
+                border-bottom: 5px solid #000;
+                position: relative;
+                overflow: hidden;
+            }
+            .lp-bundle-section::before {
+                content: "🚀";
+                position: absolute;
+                top: 20%;
+                right: 10%;
+                font-size: 4rem;
+                opacity: 0.15;
+                animation: lp-float 5s ease-in-out infinite;
+                pointer-events: none;
+            }
+            .lp-bundle-inner {
+                width: min(1200px, 100%);
+                margin: 0 auto;
+                padding: 4rem 2rem;
+                text-align: center;
+                position: relative;
+                z-index: 2;
+            }
+            .lp-bundle-tag {
+                display: inline-block;
+                padding: 0.4rem 1.2rem;
+                background: #FF4D94;
+                border: 3px solid #000;
+                border-radius: 999px;
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 0.9rem;
+                text-transform: uppercase;
+                color: #fff;
+                box-shadow: 4px 4px 0 rgba(0,0,0,1);
+                margin-bottom: 1.2rem;
+                letter-spacing: 0.06em;
+            }
+            .lp-bundle-title {
+                font-family: 'Fredoka', sans-serif;
+                font-size: clamp(2.5rem, 4vw, 3.5rem);
+                font-weight: 900;
+                color: #fff;
+                text-transform: uppercase;
+                text-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+                margin: 0 0 0.75rem;
+            }
+            .lp-bundle-subtitle {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 1.15rem;
+                font-weight: 600;
+                color: rgba(255,255,255,0.85);
+                margin: 0 0 2rem;
+                max-width: 52ch;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .lp-bundle-prices {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 1.5rem;
+                margin-bottom: 2rem;
+                flex-wrap: wrap;
+            }
+            .lp-price-old {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 1.6rem;
+                font-weight: 700;
+                color: rgba(255,255,255,0.5);
+                text-decoration: line-through;
+            }
+            .lp-price-now {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 2.8rem;
+                font-weight: 900;
+                color: #FFE600;
+                text-shadow: 3px 3px 0 rgba(0,0,0,0.4);
+            }
+            .lp-price-discount {
+                padding: 0.35rem 0.9rem;
+                background: #2ECC71;
+                border: 3px solid #000;
+                border-radius: 12px;
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 1rem;
+                color: #fff;
+                box-shadow: 3px 3px 0 rgba(0,0,0,1);
+            }
+        }
+
+        /* --- HOW IT WORKS --- */
+        @media (min-width: 769px) {
+            .lp-how-section {
+                background: linear-gradient(180deg, #fff 0%, #F0F9FF 100%);
+                border-bottom: 4px solid #000;
+            }
+            .lp-steps-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1.5rem;
+                counter-reset: step-counter;
+            }
+            .lp-step-card {
+                text-align: center;
+                padding: 2rem 1.2rem;
+                border: 4px solid #000;
+                border-radius: 24px;
+                background: #fff;
+                box-shadow: 6px 6px 0 rgba(0,0,0,1);
+                transition: all 0.2s ease;
+                position: relative;
+            }
+            .lp-step-card:hover {
+                transform: translateY(-4px);
+                box-shadow: 10px 10px 0 rgba(0,0,0,1);
+            }
+            .lp-step-number {
+                width: 56px;
+                height: 56px;
+                border: 4px solid #000;
+                border-radius: 50%;
+                background: #FFE600;
+                box-shadow: 4px 4px 0 rgba(0,0,0,1);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 900;
+                font-size: 1.5rem;
+                color: #000;
+                margin: 0 auto 1rem;
+            }
+            .lp-step-title {
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 1.05rem;
+                text-transform: uppercase;
+                color: #000;
+                margin-bottom: 0.5rem;
+            }
+            .lp-step-text {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.88rem;
+                color: #555;
+                font-weight: 500;
+                line-height: 1.45;
+            }
+        }
+
+        /* --- SOCIAL PROOF + FAQ --- */
+        @media (min-width: 769px) {
+            .lp-proof-section {
+                background: #fff;
+                border-bottom: 4px solid #000;
+            }
+            .lp-proof-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 3rem;
+            }
+            .lp-proof-col-title {
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 800;
+                font-size: 1.4rem;
+                text-transform: uppercase;
+                color: #000;
+                margin: 0 0 1.5rem;
+            }
+            /* Testimonials */
+            .lp-testimonials {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .lp-testimonial {
+                padding: 1.2rem;
+                border: 3px solid #000;
+                border-radius: 20px;
+                background: #FFFDE7;
+                box-shadow: 4px 4px 0 rgba(0,0,0,1);
+                transition: transform 0.15s;
+            }
+            .lp-testimonial:hover {
+                transform: translate(-2px, -2px);
+                box-shadow: 6px 6px 0 rgba(0,0,0,1);
+            }
+            .lp-testimonial-stars {
+                color: #FFB800;
+                font-size: 1.1rem;
+                margin-bottom: 0.4rem;
+            }
+            .lp-testimonial-text {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.92rem;
+                color: #333;
+                font-weight: 500;
+                line-height: 1.5;
+                margin-bottom: 0.6rem;
+                font-style: italic;
+            }
+            .lp-testimonial-author {
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 0.82rem;
+                color: #000;
+            }
+            .lp-testimonial-city {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.75rem;
+                color: #888;
+                font-weight: 600;
+            }
+
+            /* FAQ Accordion */
+            .lp-faq-list {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .lp-faq-item {
+                border: 3px solid #000;
+                border-radius: 16px;
+                background: #fff;
+                box-shadow: 3px 3px 0 rgba(0,0,0,1);
+                overflow: hidden;
+                transition: box-shadow 0.2s;
+            }
+            .lp-faq-item:hover {
+                box-shadow: 5px 5px 0 rgba(0,0,0,1);
+            }
+            .lp-faq-question {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+                padding: 1rem 1.1rem;
+                border: none;
+                background: transparent;
+                cursor: pointer;
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 0.88rem;
+                color: #000;
+                text-align: left;
+                gap: 0.75rem;
+            }
+            .lp-faq-question .material-symbols-outlined {
+                font-size: 1.3rem;
+                transition: transform 0.25s;
+                flex-shrink: 0;
+            }
+            .lp-faq-item.open .lp-faq-question .material-symbols-outlined {
+                transform: rotate(180deg);
+            }
+            .lp-faq-answer {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease, padding 0.3s ease;
+            }
+            .lp-faq-item.open .lp-faq-answer {
+                max-height: 200px;
+            }
+            .lp-faq-answer-inner {
+                padding: 0 1.1rem 1rem;
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.85rem;
+                color: #555;
+                font-weight: 500;
+                line-height: 1.55;
+            }
+        }
+
+        /* --- LANDING FOOTER --- */
+        @media (min-width: 769px) {
+            .lp-footer {
+                background: #111827;
+                border-top: 5px solid #000;
+                color: #fff;
+            }
+            .lp-footer-newsletter {
+                width: min(800px, 100%);
+                margin: 0 auto;
+                padding: 3.5rem 2rem;
+                text-align: center;
+                border-bottom: 2px solid rgba(255,255,255,0.1);
+            }
+            .lp-footer-newsletter h3 {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 2.2rem;
+                font-weight: 900;
+                color: #fff;
+                text-transform: uppercase;
+                margin: 0 0 0.5rem;
+            }
+            .lp-footer-newsletter p {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 1rem;
+                color: #aaa;
+                margin: 0 0 1.8rem;
+                font-weight: 500;
+            }
+            .lp-newsletter-form {
+                display: flex;
+                gap: 0.75rem;
+                justify-content: center;
+                max-width: 480px;
+                margin: 0 auto;
+            }
+            .lp-newsletter-input {
+                flex: 1;
+                min-width: 0;
+                padding: 0.9rem 1rem;
+                border: 3px solid #333;
+                border-radius: 14px;
+                background: #1f2937;
+                color: #fff;
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.92rem;
+                outline: none;
+                transition: border-color 0.2s;
+            }
+            .lp-newsletter-input:focus { border-color: #FFE600; }
+            .lp-newsletter-input::placeholder { color: #777; }
+            .lp-newsletter-btn {
+                padding: 0.9rem 1.5rem;
+                background: #FFE600;
+                border: 3px solid #000;
+                border-radius: 14px;
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 0.88rem;
+                text-transform: uppercase;
+                color: #000;
+                cursor: pointer;
+                box-shadow: 3px 3px 0 rgba(0,0,0,1);
+                transition: all 0.15s;
+                white-space: nowrap;
+            }
+            .lp-newsletter-btn:hover {
+                transform: translate(-1px, -1px);
+                box-shadow: 5px 5px 0 rgba(0,0,0,1);
+            }
+            .lp-footer-cols {
+                width: min(1400px, 100%);
+                margin: 0 auto;
+                padding: 3rem 2rem;
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 2rem;
+            }
+            .lp-footer-col h4 {
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 0.92rem;
+                text-transform: uppercase;
+                color: #FFE600;
+                margin: 0 0 1rem;
+            }
+            .lp-footer-col ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 0.6rem;
+            }
+            .lp-footer-col li {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.82rem;
+                color: #aaa;
+                cursor: pointer;
+                transition: color 0.2s;
+                font-weight: 500;
+            }
+            .lp-footer-col li:hover { color: #fff; }
+            .lp-footer-bottom {
+                width: min(1400px, 100%);
+                margin: 0 auto;
+                padding: 1.5rem 2rem;
+                border-top: 1px solid rgba(255,255,255,0.1);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+            .lp-footer-legal {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.78rem;
+                color: #666;
+                font-weight: 500;
+            }
+            .lp-footer-badges {
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            }
+            .lp-footer-badges span {
+                padding: 0.3rem 0.6rem;
+                border: 2px solid #333;
+                border-radius: 6px;
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.72rem;
+                font-weight: 700;
+                color: #888;
+            }
+            .lp-footer-security {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.72rem;
+                font-weight: 700;
+                color: #2ECC71;
+                text-transform: uppercase;
+                display: flex;
+                align-items: center;
+                gap: 0.4rem;
+            }
+        }
+
+        /* ============================================ */
+        /* === LANDING PAGE — MOBILE / TABLET  ======= */
+        /* ============================================ */
+        @media (max-width: 768px) {
+
+            /* --- Wrapper --- */
+            .lp-landing-wrapper {
+                width: 100%;
+                overflow-x: hidden;
+            }
+
+            /* --- PROMO BAR (horizontal scroll ticker) --- */
+            .lp-promo-bar {
+                display: block;
+                overflow: hidden;
+                width: 100%;
+                height: 56px;
+                border-bottom: 3px solid #000;
+                pointer-events: none;
+                scrollbar-width: none;
+            }
+            .lp-promo-track {
+                display: flex;
+                width: max-content;
+                height: 100%;
+                will-change: transform;
+            }
+            .lp-promo-bar::-webkit-scrollbar { display: none; }
+            .lp-promo-item {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                width: 205px;
+                height: 56px;
+                padding: 0 0.9rem;
+                font-family: 'Fredoka', sans-serif;
+                flex: 0 0 205px;
+            }
+            .lp-promo-item:nth-child(4n + 1) { background: #FF4D94; color: #fff; }
+            .lp-promo-item:nth-child(4n + 2) { background: #FFE600; color: #000; }
+            .lp-promo-item:nth-child(4n + 3) { background: #407BFF; color: #fff; }
+            .lp-promo-item:nth-child(4n + 4) { background: #2ECC71; color: #fff; }
+            .lp-promo-icon {
+                width: 1.85rem;
+                height: 1.85rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                flex: 0 0 auto;
+                line-height: 1;
+            }
+            .lp-promo-icon img {
+                width: 100%;
+                height: 100%;
+                display: block;
+            }
+            .lp-promo-text { text-align: left; }
+            .lp-promo-title {
+                font-weight: 700;
+                font-size: 0.88rem;
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+                line-height: 1.15;
+            }
+            .lp-promo-subtitle {
+                font-size: 0.78rem;
+                font-weight: 600;
+                opacity: 0.85;
+                line-height: 1.25;
+            }
+
+            /* --- HERO (stacked, 3D below copy) --- */
+            .lp-hero {
+                width: 100%;
+                min-height: auto;
+                background:
+                    radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.12) 0%, transparent 60%),
+                    linear-gradient(180deg, #37BDF7 0%, #0A92E8 100%);
+                border-bottom: 4px solid #000;
+                position: relative;
+                overflow: hidden;
+            }
+            .lp-hero-inner {
+                display: flex;
+                flex-direction: column;
+                padding: 2rem 1.25rem 1rem;
+                gap: 1rem;
+            }
+            .lp-hero-copy {
+                z-index: 2;
+                position: relative;
+                text-align: center;
+            }
+            .lp-hero-copy h1 {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 2.5rem;
+                font-weight: 900;
+                line-height: 1.08;
+                color: #fff;
+                text-transform: uppercase;
+                text-shadow: 3px 3px 0 rgba(0,0,0,0.35);
+                margin: 0 0 0.85rem;
+            }
+            .lp-hero-copy p {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 1.05rem;
+                color: rgba(255,255,255,0.9);
+                line-height: 1.55;
+                margin: 0 0 1.5rem;
+                max-width: 30ch;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .lp-hero-ctas {
+                display: flex;
+                gap: 0.75rem;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .lp-hero-3d-slot {
+                position: relative;
+                width: 100%;
+                height: 280px;
+                border-radius: 20px;
+                overflow: hidden;
+            }
+
+            /* --- Shared button base (mobile) --- */
+            .lp-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.95rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 0.06em;
+                padding: 0.85rem 1.6rem;
+                border: 3px solid #000;
+                border-radius: 999px;
+                cursor: pointer;
+                box-shadow: 3px 3px 0 rgba(0,0,0,1);
+                transition: transform 0.12s, box-shadow 0.12s;
+                min-height: 44px;
+                -webkit-tap-highlight-color: transparent;
+            }
+            .lp-btn:active {
+                transform: translate(2px, 2px);
+                box-shadow: 1px 1px 0 rgba(0,0,0,1);
+            }
+            .lp-btn--pink { background: #FF4D94; color: #fff; }
+            .lp-btn--yellow { background: #FFE600; color: #000; }
+            .lp-btn--white { background: #fff; color: #000; }
+
+            /* --- BENEFITS STRIP (2x2 grid) --- */
+            .lp-benefits {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0;
+                border-bottom: 4px solid #000;
+                background: #FFF9E0;
+            }
+            .lp-benefit-item {
+                display: flex;
+                align-items: flex-start;
+                gap: 0.7rem;
+                padding: 1.1rem 1rem;
+                border-right: 2px solid rgba(0,0,0,0.1);
+                border-bottom: 2px solid rgba(0,0,0,0.1);
+            }
+            .lp-benefit-item:nth-child(2n) { border-right: none; }
+            .lp-benefit-item:nth-child(n+3) { border-bottom: none; }
+            .lp-benefit-icon {
+                font-size: 1.6rem;
+                line-height: 1;
+                flex-shrink: 0;
+            }
+            .lp-benefit-title {
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 0.92rem;
+                color: #000;
+                line-height: 1.25;
+            }
+            .lp-benefit-text {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.8rem;
+                color: #555;
+                line-height: 1.4;
+                font-weight: 500;
+            }
+
+            /* --- Shared section title (mobile) --- */
+            .lp-section-title {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 1.75rem;
+                font-weight: 900;
+                color: #000;
+                text-transform: uppercase;
+                text-align: center;
+                margin: 0 0 1.5rem;
+            }
+            .lp-section {
+                width: 100%;
+                padding: 0 1.25rem;
+            }
+
+            /* --- WORLDS GRID (2 cols) --- */
+            .lp-worlds-section {
+                padding: 2.5rem 0;
+                background: #fff;
+                border-bottom: 4px solid #000;
+            }
+            .lp-worlds-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+            .lp-world-card {
+                background: #fff;
+                border: 3px solid #000;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 3px 3px 0 rgba(0,0,0,1);
+                cursor: pointer;
+                transition: transform 0.15s;
+                -webkit-tap-highlight-color: transparent;
+            }
+            .lp-world-card:active {
+                transform: translate(2px, 2px);
+                box-shadow: 1px 1px 0 rgba(0,0,0,1);
+            }
+            .lp-world-img {
+                width: 100%;
+                aspect-ratio: 4/3;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+            }
+            .lp-world-img img {
+                width: 70%;
+                height: 70%;
+                object-fit: contain;
+            }
+            .lp-world-body {
+                padding: 0.75rem 0.85rem;
+                text-align: center;
+                border-top: 3px solid #000;
+            }
+            .lp-world-name {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.95rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                color: #000;
+                display: block;
+                margin-bottom: 0.35rem;
+            }
+            .lp-world-cta {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.78rem;
+                font-weight: 700;
+                color: #407BFF;
+                text-transform: uppercase;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                padding: 0;
+            }
+
+            /* --- BEST SELLERS (2 cols product cards) --- */
+            .lp-bestsellers-section {
+                padding: 2.5rem 0;
+                background: linear-gradient(180deg, #37BDF7 0%, #0A92E8 100%);
+                border-bottom: 4px solid #000;
+            }
+            .lp-bestsellers-section .lp-section-title {
+                color: #fff;
+            }
+            .lp-bestsellers-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 1.25rem;
+                margin-bottom: 1.5rem;
+            }
+            .lp-bestsellers-header .lp-section-title {
+                margin: 0;
+                text-align: left;
+                font-size: 1.5rem;
+            }
+            .lp-bestsellers-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+                padding: 0 1.25rem;
+            }
+            .lp-bestsellers-grid .fandom-card {
+                width: 100%;
+                min-width: 0;
+            }
+            .lp-product-card {
+                background: #fff;
+                border: 3px solid #000;
+                border-radius: 16px;
+                overflow: hidden;
+                box-shadow: 3px 3px 0 rgba(0,0,0,1);
+                position: relative;
+                cursor: pointer;
+                -webkit-tap-highlight-color: transparent;
+                transition: transform 0.15s;
+            }
+            .lp-product-card:active {
+                transform: translate(2px, 2px);
+                box-shadow: 1px 1px 0 rgba(0,0,0,1);
+            }
+            .lp-product-badge {
+                position: absolute;
+                top: 0.5rem;
+                left: 0.5rem;
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.68rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                padding: 0.25rem 0.55rem;
+                border: 2px solid #000;
+                border-radius: 8px;
+                box-shadow: 2px 2px 0 rgba(0,0,0,1);
+                z-index: 2;
+            }
+            .lp-product-badge--new { background: #2ECC71; color: #fff; }
+            .lp-product-badge--exclusive { background: #FF4D94; color: #fff; }
+            .lp-product-heart {
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                background: rgba(255,255,255,0.9);
+                border: 2px solid #000;
+                border-radius: 50%;
+                width: 36px;
+                height: 36px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 2;
+                padding: 0;
+            }
+            .lp-product-heart .material-symbols-outlined {
+                font-size: 1.15rem;
+                color: #FF4D94;
+            }
+            .lp-product-img {
+                width: 100%;
+                aspect-ratio: 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #F5F5F5;
+                padding: 0.5rem;
+            }
+            .lp-product-img img {
+                width: 80%;
+                height: 80%;
+                object-fit: contain;
+            }
+            .lp-product-info {
+                padding: 0.7rem 0.75rem 0.85rem;
+                border-top: 3px solid #000;
+            }
+            .lp-product-name {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.9rem;
+                font-weight: 700;
+                color: #000;
+                margin: 0 0 0.35rem;
+                line-height: 1.25;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+            .lp-product-meta {
+                display: flex;
+                gap: 0.35rem;
+                margin-bottom: 0.5rem;
+            }
+            .lp-product-meta .lp-tag {
+                padding: 0.15rem 0.4rem;
+                border-radius: 5px;
+                background: #D4F0FF;
+                color: #1E3A8A;
+                font-size: 0.72rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                font-family: 'Fredoka', sans-serif;
+            }
+            .lp-product-add-btn {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.4rem;
+                background: #FFE600;
+                color: #000;
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.82rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                border: 2px solid #000;
+                border-radius: 10px;
+                padding: 0.6rem;
+                cursor: pointer;
+                box-shadow: 2px 2px 0 rgba(0,0,0,1);
+                min-height: 40px;
+                -webkit-tap-highlight-color: transparent;
+            }
+            .lp-product-add-btn:active {
+                transform: translate(1px, 1px);
+                box-shadow: 1px 1px 0 rgba(0,0,0,1);
+            }
+
+            /* --- LIMITED BUNDLE --- */
+            .lp-bundle-section {
+                background:
+                    radial-gradient(ellipse at 50% 50%, rgba(255,77,148,0.15) 0%, transparent 70%),
+                    linear-gradient(135deg, #1A1A2E 0%, #0F0F1F 100%);
+                border-bottom: 4px solid #000;
+                padding: 3rem 1.5rem;
+                text-align: center;
+            }
+            .lp-bundle-inner {
+                max-width: 100%;
+            }
+            .lp-bundle-tag {
+                display: inline-block;
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.88rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                background: #FF4D94;
+                color: #fff;
+                padding: 0.35rem 0.9rem;
+                border: 3px solid #000;
+                border-radius: 999px;
+                box-shadow: 3px 3px 0 rgba(0,0,0,1);
+                margin-bottom: 0.75rem;
+            }
+            .lp-bundle-title {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 2rem;
+                font-weight: 900;
+                color: #fff;
+                text-transform: uppercase;
+                margin: 0 0 0.5rem;
+            }
+            .lp-bundle-subtitle {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 1rem;
+                color: rgba(255,255,255,0.75);
+                line-height: 1.5;
+                margin: 0 0 1.25rem;
+            }
+            .lp-bundle-prices {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 0.6rem;
+                flex-wrap: wrap;
+                margin-bottom: 1.25rem;
+            }
+            .lp-price-old {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 1.2rem;
+                color: #999;
+                text-decoration: line-through;
+            }
+            .lp-price-now {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 2rem;
+                font-weight: 900;
+                color: #FFE600;
+            }
+            .lp-price-discount {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.85rem;
+                font-weight: 800;
+                background: #2ECC71;
+                color: #fff;
+                padding: 0.2rem 0.5rem;
+                border: 2px solid #000;
+                border-radius: 8px;
+            }
+
+            /* --- HOW IT WORKS (2x2 grid) --- */
+            .lp-how-section {
+                padding: 2.5rem 0;
+                background: #fff;
+                border-bottom: 4px solid #000;
+            }
+            .lp-steps-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1rem;
+            }
+            .lp-step-card {
+                background: #fff;
+                border: 3px solid #000;
+                border-radius: 16px;
+                padding: 1.25rem;
+                text-align: center;
+                box-shadow: 3px 3px 0 rgba(0,0,0,1);
+            }
+            .lp-step-number {
+                width: 42px;
+                height: 42px;
+                background: #FFE600;
+                color: #000;
+                border: 3px solid #000;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-family: 'Fredoka', sans-serif;
+                font-size: 1.25rem;
+                font-weight: 900;
+                margin: 0 auto 0.6rem;
+                box-shadow: 2px 2px 0 rgba(0,0,0,1);
+            }
+            .lp-step-title {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.95rem;
+                font-weight: 800;
+                color: #000;
+                text-transform: uppercase;
+                margin-bottom: 0.3rem;
+            }
+            .lp-step-text {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.82rem;
+                color: #555;
+                line-height: 1.4;
+                font-weight: 500;
+            }
+
+            /* --- SOCIAL PROOF + FAQ (stacked) --- */
+            .lp-proof-section {
+                padding: 2.5rem 0;
+                background: #FFF9E0;
+                border-bottom: 4px solid #000;
+            }
+            .lp-proof-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 2rem;
+            }
+            .lp-proof-col-title {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 1.4rem;
+                font-weight: 900;
+                color: #000;
+                text-transform: uppercase;
+                margin: 0 0 1rem;
+                text-align: center;
+            }
+            .lp-testimonials {
+                display: flex;
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .lp-testimonial {
+                background: #fff;
+                border: 3px solid #000;
+                border-radius: 16px;
+                padding: 1.25rem;
+                box-shadow: 3px 3px 0 rgba(0,0,0,1);
+            }
+            .lp-testimonial-stars {
+                font-size: 1rem;
+                color: #FFD21F;
+                margin-bottom: 0.4rem;
+                letter-spacing: 0.1em;
+            }
+            .lp-testimonial-text {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.95rem;
+                color: #333;
+                line-height: 1.5;
+                margin: 0 0 0.5rem;
+                font-weight: 500;
+                font-style: italic;
+            }
+            .lp-testimonial-author {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.9rem;
+                font-weight: 700;
+                color: #000;
+            }
+            .lp-testimonial-city {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.82rem;
+                color: #888;
+                font-weight: 500;
+            }
+
+            /* FAQ Accordion */
+            .lp-faq-list {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            .lp-faq-item {
+                background: #fff;
+                border: 3px solid #000;
+                border-radius: 14px;
+                overflow: hidden;
+                box-shadow: 2px 2px 0 rgba(0,0,0,1);
+            }
+            .lp-faq-question {
+                width: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 1rem 1.15rem;
+                background: transparent;
+                border: none;
+                cursor: pointer;
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.95rem;
+                font-weight: 700;
+                color: #000;
+                text-align: left;
+                gap: 0.5rem;
+                min-height: 44px;
+                -webkit-tap-highlight-color: transparent;
+            }
+            .lp-faq-question .material-symbols-outlined {
+                font-size: 1.3rem;
+                transition: transform 0.25s;
+                flex-shrink: 0;
+            }
+            .lp-faq-item.open .lp-faq-question .material-symbols-outlined {
+                transform: rotate(180deg);
+            }
+            .lp-faq-answer {
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease;
+            }
+            .lp-faq-item.open .lp-faq-answer {
+                max-height: 200px;
+            }
+            .lp-faq-answer-inner {
+                padding: 0 1rem 1rem;
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.9rem;
+                color: #555;
+                line-height: 1.5;
+                font-weight: 500;
+            }
+
+            /* --- FOOTER (stacked cols) --- */
+            .lp-footer {
+                background: #111;
+                padding: 2rem 1rem 1.5rem;
+            }
+            .lp-footer-cols {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem 1rem;
+                margin-bottom: 1.5rem;
+            }
+            .lp-footer-col h4 {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.95rem;
+                font-weight: 800;
+                color: #fff;
+                text-transform: uppercase;
+                margin: 0 0 0.65rem;
+            }
+            .lp-footer-col ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 0.45rem;
+            }
+            .lp-footer-col ul li {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.88rem;
+                color: #aaa;
+                font-weight: 500;
+                cursor: pointer;
+                min-height: 32px;
+                display: flex;
+                align-items: center;
+            }
+            .lp-footer-bottom {
+                padding-top: 1.25rem;
+                border-top: 1px solid rgba(255,255,255,0.1);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 0.75rem;
+                text-align: center;
+            }
+            .lp-footer-legal {
+                font-family: 'Montserrat', sans-serif;
+                font-size: 0.78rem;
+                color: #666;
+                font-weight: 500;
+            }
+            .lp-footer-badges {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .lp-footer-badges span {
+                padding: 0.2rem 0.45rem;
+                border: 2px solid #333;
+                border-radius: 5px;
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.75rem;
+                font-weight: 700;
+                color: #888;
+            }
+            .lp-footer-security {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.78rem;
+                font-weight: 700;
+                color: #2ECC71;
+                text-transform: uppercase;
+                display: flex;
+                align-items: center;
+                gap: 0.3rem;
+            }
+        }
+
+        /* ============================================ */
+        /* === END LANDING PAGE REDESIGN === */
+        /* ============================================ */
     </style>
 </head>
 
@@ -5760,7 +7900,7 @@
 
 
 
-    
+
 
     <!-- Dropdown Menu - Global Fixed - Sticker Style -->
     <div id="auth-user-dropdown"
@@ -5813,11 +7953,8 @@
 
             <!-- Nav (Center) -->
             <nav class="funko-nav-center" aria-label="Navegación principal">
-                <button type="button" class="funko-nav-link" onclick="navigateToView('presets')">Personajes</button>
-                <button type="button" class="funko-nav-link" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-collection-grid'), 0)">Colecciones</button>
-                <button type="button" class="funko-nav-link" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-banner-grid'), 0)">Novedades</button>
-                <button type="button" class="funko-nav-link" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-groups'), 0)">Fan Clubs</button>
-                <button type="button" class="funko-nav-link" onclick="navigateToView('home'); setTimeout(() => scrollAuthenticatedHomeTo('home-community-notes'), 0)">Club Papel</button>
+                <button type="button" class="funko-nav-link" onclick="navigateToView('presets')">Colecciones</button>
+                <button type="button" class="funko-nav-link" onclick="navigateToView('custom')">Crea el tuyo</button>
             </nav>
 
             <!-- Search & Actions (Right) -->
@@ -5846,19 +7983,30 @@
                         </button>
                     </div>
                 </div>
+                <button type="button" id="app-cart-btn" class="pc-home-icon pc-mobile-cart-btn" aria-label="Carrito">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                    <span id="app-cart-count" class="pc-mobile-cart-count" style="display: none;">0</span>
+                </button>
             </div>
 
             <!-- Mobile Dropdown -->
             <div id="app-mobile-dropdown-menu" class="pc-home-mobile-dropdown" style="display: none; flex-direction: column; gap: 0.85rem; padding: 1.5rem; background: #fff; border: 4px solid #000; border-radius: 24px; box-shadow: 8px 8px 0 rgba(0,0,0,1); position: absolute; top: calc(100% + 12px); left: 1rem; right: 1rem; z-index: 10000;">
-                <button type="button" class="pc-home-chip" onclick="navigateToView('presets'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center;">Personajes</button>
-                <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-collection-grid'), 0)" style="width: 100%; justify-content: center;">Colecciones</button>
-                <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-banner-grid'), 0)" style="width: 100%; justify-content: center;">Novedades</button>
-                <button type="button" class="pc-home-chip" onclick="navigateToView('home'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active'); setTimeout(() => scrollAuthenticatedHomeTo('home-groups'), 0)" style="width: 100%; justify-content: center;">Fan Clubs</button>
+                <label class="pc-mobile-menu-search" aria-label="Buscar en colecciones">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="text" id="mobile-menu-search-input" placeholder="Busca ideas o fandoms..." autocomplete="off" />
+                </label>
+                <button type="button" class="pc-home-chip" onclick="navigateToView('presets'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center;">Colecciones</button>
+                <button type="button" class="pc-home-chip" onclick="navigateToView('custom'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center;">Crea el tuyo</button>
                 <div style="height: 4px; background: #000; width: 100%; margin: 0.5rem 0; border-radius: 4px;"></div>
-                <button type="button" id="mobile-auth-login-btn" class="pc-home-chip" onclick="navigateToView('login'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center; background: #E0F2FE;">Inicia sesión</button>
+                <button type="button" id="mobile-auth-login-btn" class="pc-home-chip" onclick="navigateToView('login'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center; background: #D4F0FF;">Inicia sesión</button>
                 <button type="button" id="mobile-auth-register-btn" class="pc-home-chip" onclick="navigateToView('register'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center; background: #FFE600; color: #000;">¡Regístrate!</button>
             </div>
-            
+
+            <div id="app-cart-dropdown" class="pc-cart-dropdown" aria-live="polite">
+                <p class="pc-cart-dropdown-title">Tu carrito</p>
+                <div id="app-cart-list" class="pc-cart-list"></div>
+            </div>
+
             <style>
                 #app-mobile-dropdown-menu.active {
                     display: flex !important;
@@ -6252,6 +8400,13 @@
         </div>
     </div>
 
+    <div id="stripe-status-overlay" class="stripe-status-overlay" aria-hidden="true">
+        <div class="stripe-status-card" role="dialog" aria-modal="true" aria-labelledby="stripe-status-title">
+            <h2 id="stripe-status-title">Pago seguro</h2>
+            <div id="stripe-status-content" aria-live="polite"></div>
+        </div>
+    </div>
+
     <div id="canvas-container"></div>
     <div id="preset-preview-stage" aria-hidden="true">
         <div id="preset-preview-scene"></div>
@@ -6429,7 +8584,7 @@
         </div>
         <div id="custom-builder-finished-actions" class="custom-builder-floating hidden">
             <button type="button" id="custom-builder-edit-btn" class="custom-builder-mini-btn" onclick="window.resumeCustomBuilderFlow && window.resumeCustomBuilderFlow()">Editar otra vez</button>
-            <button type="button" id="download-pdf-custom-btn" class="custom-builder-mini-btn custom-builder-mini-btn--primary">Descargar PDF</button>
+            <button type="button" id="download-pdf-custom-btn" class="custom-builder-mini-btn custom-builder-mini-btn--primary">Pagar y descargar</button>
         </div>
     </div>
 
@@ -6763,6 +8918,7 @@
             if (path.includes('/studio/preset-preview')) return 'preset-preview';
             if (path.includes('/auth/login')) return 'login';
             if (path.includes('/auth/register')) return 'register';
+            if (path.includes('/stripe-success')) return 'stripe-success';
             if (path.includes('/showcase')) return 'showcase';
             return null;
         }
@@ -6860,6 +9016,11 @@
                 return;
             }
 
+            if (view === 'stripe-success') {
+                openStripeSuccessView();
+                return;
+            }
+
             if (view === 'preset-preview') {
                 openPresetPreviewView();
                 return;
@@ -6894,6 +9055,7 @@
         var editorPanelWrapper = document.getElementById('editor-panel-wrapper');
         var presetsSection = document.getElementById('presets-section');
         var customizeSection = document.getElementById('customize-section');
+        var stripeSuccessView = document.getElementById('stripe-success-view');
         let baseModelScale = 1;
         let baseGroundY = 0;
 
@@ -7188,12 +9350,12 @@
            - Sin compresión necesaria: no hay degradación
            - Carga más rápida: menos datos a transferir
            - Mejor rendimiento: procesamiento optimizado
-           
+
            SOLUCIÓN ANTI-PIXELADO:
            - SVG se rasteriza a 2048x2048 antes de aplicar como textura
            - Mantiene calidad vectorial en el modelo 3D
            - Sin pixelado visible incluso en zoom cercano
-           
+
            SOLUCIÓN COLORES CORRECTOS:
            - Canvas sin configuración de colorSpace
            - Three.js maneja los colores automáticamente
@@ -11419,6 +13581,7 @@
             if (!editorPanelWrapper) editorPanelWrapper = document.getElementById('editor-panel-wrapper');
             if (!presetsSection) presetsSection = document.getElementById('presets-section');
             if (!customizeSection) customizeSection = document.getElementById('customize-section');
+            if (!stripeSuccessView) stripeSuccessView = document.getElementById('stripe-success-view');
         }
 
         function createPresetArtCluster(names, imageClass = '') {
@@ -11437,9 +13600,18 @@
             return document.body?.dataset?.authState === 'authenticated';
         }
 
-        function getPresetFavoriteButtonMarkup(name, isFav) {
-            if (!canUseFavorites()) return '';
+        function getPresetFavoriteButtonMarkup(name, isFav, forceRender = false) {
+            if (!forceRender && !canUseFavorites()) return '';
             return `<button class="fandom-heart material-symbols-outlined ${isFav ? 'active' : ''}" data-favorite-name="${name}" onclick="event.stopPropagation(); toggleFavorite('${name}', this)">star</button>`;
+        }
+
+        function getPresetCartButtonMarkup(name) {
+            const isInCart = typeof isCartItem === 'function' && isCartItem(name);
+            return `
+                <button type="button" class="fandom-cart-btn ${isInCart ? 'active' : ''}" data-cart-name="${name}" aria-label="Añadir a carrito">
+                    <span class="material-symbols-outlined">shopping_cart</span>
+                </button>
+            `;
         }
 
         function getCollectionButtonLabel() {
@@ -11447,25 +13619,31 @@
         }
 
         function getLatestPresetNames(limit = 6, sourceNames = getOrderedPresetNames()) {
-            return sourceNames.filter((name) => typeof presetIcons !== 'undefined' && presetIcons[name]).slice(0, limit);
+            const validNames = sourceNames.filter((name) => typeof presetIcons !== 'undefined' && presetIcons[name]);
+            return validNames.slice(0, limit);
         }
 
         function getPresetCardMarkup(name, options = {}) {
             const fandomKey = characterFandoms[name] || 'other';
             const fandomLabel = fandomLabels[fandomKey] || 'Papelcool Original';
             const isFav = isFavorite(name);
+            const favoriteMarkup = (options.showFavorite || canUseFavorites()) ? getPresetFavoriteButtonMarkup(name, isFav, true) : '';
             const badgeText = options.badgeText || (shouldShowPresetNewBadge(name) ? 'New' : '');
             const imageLoading = options.lazyImage ? ' loading="lazy"' : '';
 
             return `
                 ${badgeText ? `<div class="fandom-badge">${badgeText}</div>` : ''}
-                ${getPresetFavoriteButtonMarkup(name, isFav)}
+                ${favoriteMarkup}
                 <div class="fandom-image-container">
                     <img src="${getPresetIconSource(name)}" alt="${getPresetDisplayName(name)}"${imageLoading} onerror="this.src='webclip.png'">
                 </div>
                 <div class="fandom-info">
-                    <span class="fandom-tag">${fandomLabel}</span>
+                    <div class="fandom-meta-row">
+                        <span class="fandom-tag">${fandomLabel}</span>
+                        ${getPresetCartButtonMarkup(name)}
+                    </div>
                     <h3 class="fandom-name">${getPresetDisplayName(name)}</h3>
+                    <span class="fandom-price-tag">$0.00</span>
                     <button class="fandom-select-btn">${getCollectionButtonLabel()}</button>
                 </div>
             `;
@@ -11547,79 +13725,313 @@
             ensureTikTokEmbedScript();
         }
 
-        function renderAuthenticatedHome() {
-            ensureDeferredViews();
-            const heroTop = document.getElementById('home-top');
-            const collectionGrid = document.getElementById('home-collection-grid');
-            const tiktokGrid = document.getElementById('home-tiktok-grid');
-            const bannerGrid = document.getElementById('home-banner-grid');
+        const STRIPE_PENDING_SESSION_KEY = 'papelcool_pending_stripe_session';
+        const STRIPE_VERIFIED_SESSION_KEY = 'papelcool_verified_stripe_session';
 
-            if (heroTop && !heroTop.querySelector('#home-showcase-scene')) {
-                heroTop.innerHTML = `
-                    <div class="funko-hero-wrapper">
-                        <div class="funko-hero-inner">
-                            <div class="funko-hero-content">
-                                <h1>Crear nunca fue tan divertido</h1>
-                                <button type="button" class="funko-hero-cta" onclick="navigateToView('presets')">Ver colecciones</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="funko-showcase-slot" id="home-showcase-slot">
-                        <div class="funko-showcase-stage" id="home-showcase-stage">
-                            <div class="funko-showcase-scene" id="home-showcase-scene"></div>
-                        </div>
-                    </div>
-                    <section class="funko-create-strip" aria-labelledby="home-create-strip-title">
-                        <div class="funko-create-strip-inner">
-                            <div class="funko-create-strip-copy">
-                                <h2 id="home-create-strip-title" class="funko-create-strip-title">Crea el tuyo</h2>
-                                <p>¿Quieres montar tu propio Papelcool? Entra al editor nuevo y empieza desde cero con tu personaje.</p>
-                            </div>
-                            <button type="button" class="funko-create-strip-cta" onclick="navigateToView('custom')">Crea el tuyo</button>
-                        </div>
-                    </section>
-                `;
+        function getStripeSuccessUrl() {
+            const url = new URL(window.location.href);
+            url.searchParams.set('view', 'stripe-success');
+            url.searchParams.set('session_id', '{CHECKOUT_SESSION_ID}');
+            url.searchParams.delete('preset');
+            return url.toString().replace('%7BCHECKOUT_SESSION_ID%7D', '{CHECKOUT_SESSION_ID}');
+        }
+
+        function getStripeCancelUrl() {
+            const url = new URL(window.location.href);
+            url.searchParams.set('view', 'custom');
+            url.searchParams.set('payment', 'stripe_cancelled');
+            url.searchParams.delete('preset');
+            return url.toString();
+        }
+
+        function getStripeOverlay() {
+            return document.getElementById('stripe-status-overlay');
+        }
+
+        function getStripeStatusContent() {
+            return document.getElementById('stripe-status-content');
+        }
+
+        function openStripeStatusOverlay() {
+            const overlay = getStripeOverlay();
+            if (!overlay) return;
+            overlay.classList.add('active');
+            overlay.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeStripeStatusOverlay() {
+            const overlay = getStripeOverlay();
+            if (!overlay) return;
+            overlay.classList.remove('active');
+            overlay.setAttribute('aria-hidden', 'true');
+        }
+
+        function setStripeStatus(contentHtml) {
+            const mount = getStripeStatusContent();
+            if (mount) mount.innerHTML = contentHtml;
+        }
+
+        async function createStripeCheckoutSession() {
+            const user = typeof getCurrentUser === 'function'
+                ? await getCurrentUser().catch(() => null)
+                : null;
+            const response = await fetch('/api/stripe/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: user?.email || '',
+                    userId: user?.id || '',
+                    orderId: `papelcool_custom_${Date.now()}`,
+                    successUrl: getStripeSuccessUrl(),
+                    cancelUrl: getStripeCancelUrl()
+                })
+            });
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok || !payload?.url || !payload?.id) {
+                const error = new Error(payload?.error || 'No se pudo crear el checkout de Stripe.');
+                error.payload = payload;
+                error.status = response.status;
+                throw error;
             }
+            return payload;
+        }
 
-            if (collectionGrid) {
-                const latestPresets = getLatestPresetNames(6);
-                collectionGrid.className = 'funko-new-picks-grid';
-                collectionGrid.innerHTML = latestPresets.map((name) => {
-                    return `
-                    <article class="fandom-card" onclick="if (window.setPresetCharacter) { navigateToView('preset-preview'); window.setPresetCharacter('${name}'); }">
-                        ${getPresetCardMarkup(name, { lazyImage: true })}
-                    </article>
-                `;
-                }).join('');
-                syncFavoriteButtons();
+        async function verifyStripeSession(sessionId) {
+            const response = await fetch('/api/stripe/verify-session', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ sessionId })
+            });
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok) {
+                const error = new Error(payload?.error || 'No se pudo verificar el pago de Stripe.');
+                error.payload = payload;
+                error.status = response.status;
+                throw error;
             }
+            return payload;
+        }
 
-            if (tiktokGrid) {
-                renderHomeTikTokEmbeds(tiktokGrid);
-            }
-
-            if (bannerGrid) {
-                // Render the 3 collection banners
-                const banners = [
-                    { title: "Kpop Demon Hunters", tag: "KPOP DEMON HUNTERS", body: "Reune a tus idols favoritos en una vitrina lista para escenario, fandom y coleccion.", color: "#B8860B", art: ["Mira", "Rumi"] },
-                    { title: "Morat", tag: "MORAT", body: "Arma una coleccion con vibra acustica, amigos de gira y momentos para cantar juntos.", color: "#556B2F", art: ["Villamil-faltastu", "Isaza-faltastu-guitarra"] },
-                    { title: "Minecraft", tag: "MINECRAFT", body: "Construye una escena tranquila con personajes iconicos listos para compartir mundo.", color: "#8B4513", art: ["Steve", "Alex"] }
-                ];
-                bannerGrid.innerHTML = banners.map(b => `
-                    <article class="funko-banner-card" style="background: ${b.color};">
-                        <div class="funko-banner-card-top">
-                            <span class="funko-banner-tag">${b.tag}</span>
-                            <h3>${b.title}</h3>
-                            <p>${b.body}</p>
-                            <button type="button" class="funko-banner-shop-btn" onclick="navigateToView('presets')">VER COLECCIÓN</button>
-                        </div>
-                        <div class="funko-banner-card-art">
-                            ${b.art.map(name => `<img src="${getPresetIconSource(name)}" alt="${getPresetDisplayName(name)}" onerror="this.src='webclip.png'">`).join('')}
-                        </div>
-                    </article>
-                `).join('');
+        function rememberPendingStripeSession(session) {
+            try {
+                sessionStorage.setItem(STRIPE_PENDING_SESSION_KEY, JSON.stringify({
+                    sessionId: session.id,
+                    checkoutUrl: session.url,
+                    createdAt: new Date().toISOString()
+                }));
+            } catch (error) {
+                console.warn('Could not store pending Stripe session:', error);
             }
         }
+
+        function getPendingStripeSessionId() {
+            try {
+                const raw = sessionStorage.getItem(STRIPE_PENDING_SESSION_KEY);
+                return raw ? JSON.parse(raw).sessionId : null;
+            } catch {
+                return null;
+            }
+        }
+
+        function getVerifiedStripeSessionId() {
+            try {
+                return sessionStorage.getItem(STRIPE_VERIFIED_SESSION_KEY);
+            } catch {
+                return null;
+            }
+        }
+
+        function rememberVerifiedStripeSession(sessionId) {
+            try {
+                sessionStorage.setItem(STRIPE_VERIFIED_SESSION_KEY, sessionId);
+            } catch (error) {
+                console.warn('Could not store verified Stripe session:', error);
+            }
+        }
+
+        async function startStripeCheckoutForCustomPdf() {
+            currentPresetCharacter = 'Custom';
+            openStripeStatusOverlay();
+            setStripeStatus('<p>Preparando checkout seguro de Stripe...</p>');
+
+            let checkoutWindow = null;
+            try {
+                checkoutWindow = window.open('', '_blank', 'noopener,noreferrer');
+            } catch {
+                checkoutWindow = null;
+            }
+
+            try {
+                const session = await createStripeCheckoutSession();
+                rememberPendingStripeSession(session);
+                if (checkoutWindow) {
+                    checkoutWindow.location = session.url;
+                } else {
+                    window.location.assign(session.url);
+                    return;
+                }
+
+                setStripeStatus(`
+                    <p>Se abrió Stripe en una pestaña nueva. Completa el pago de 5 USD y vuelve aquí para descargar sin perder tu personaje.</p>
+                    <div class="stripe-status-actions">
+                        <button type="button" class="stripe-status-btn primary" onclick="verifyStripePaymentAndDownload()">Ya pagué, verificar y descargar</button>
+                        <button type="button" class="stripe-status-btn" onclick="closeStripeStatusOverlay()">Seguir editando</button>
+                    </div>
+                `);
+            } catch (error) {
+                if (checkoutWindow) checkoutWindow.close();
+                const missing = error.payload?.missing;
+                const copy = missing?.STRIPE_SECRET_KEY
+                    ? 'Configura STRIPE_SECRET_KEY y STRIPE_PRICE_ID como variables del backend en Cloudflare.'
+                    : 'Revisa la configuración de Stripe y vuelve a intentarlo.';
+                setStripeStatus(`
+                    <p>No se pudo abrir Stripe. ${copy}</p>
+                    <div class="stripe-status-actions">
+                        <button type="button" class="stripe-status-btn primary" onclick="startStripeCheckoutForCustomPdf()">Reintentar</button>
+                        <button type="button" class="stripe-status-btn" onclick="closeStripeStatusOverlay()">Cerrar</button>
+                    </div>
+                `);
+            }
+        }
+
+        async function verifyStripePaymentAndDownload() {
+            const sessionId = getPendingStripeSessionId() || getVerifiedStripeSessionId();
+            if (!sessionId) {
+                setStripeStatus(`
+                    <p>No hay una sesión pendiente de Stripe en esta pestaña. Vuelve a iniciar el checkout.</p>
+                    <div class="stripe-status-actions">
+                        <button type="button" class="stripe-status-btn primary" onclick="startStripeCheckoutForCustomPdf()">Comprar por 5 USD</button>
+                        <button type="button" class="stripe-status-btn" onclick="closeStripeStatusOverlay()">Cerrar</button>
+                    </div>
+                `);
+                return;
+            }
+
+            setStripeStatus('<p>Verificando el pago en Stripe...</p>');
+            try {
+                const result = await verifyStripeSession(sessionId);
+                if (!result?.active) {
+                    setStripeStatus(`
+                        <p>Todavía no aparece como pagado. Si acabas de pagar, espera unos segundos y vuelve a verificar.</p>
+                        <div class="stripe-status-actions">
+                            <button type="button" class="stripe-status-btn primary" onclick="verifyStripePaymentAndDownload()">Verificar otra vez</button>
+                            <button type="button" class="stripe-status-btn" onclick="closeStripeStatusOverlay()">Cerrar</button>
+                        </div>
+                    `);
+                    return;
+                }
+                rememberVerifiedStripeSession(sessionId);
+                closeStripeStatusOverlay();
+                await generateCustomPdfDownload(sessionId);
+            } catch (error) {
+                setStripeStatus(`
+                    <p>No se pudo verificar el pago todavía. ${error.message || 'Inténtalo de nuevo.'}</p>
+                    <div class="stripe-status-actions">
+                        <button type="button" class="stripe-status-btn primary" onclick="verifyStripePaymentAndDownload()">Reintentar</button>
+                        <button type="button" class="stripe-status-btn" onclick="closeStripeStatusOverlay()">Cerrar</button>
+                    </div>
+                `);
+            }
+        }
+
+        window.startStripeCheckoutForCustomPdf = startStripeCheckoutForCustomPdf;
+        window.verifyStripePaymentAndDownload = verifyStripePaymentAndDownload;
+        window.verifyStripeSuccessView = verifyStripeSuccessView;
+        window.closeStripeStatusOverlay = closeStripeStatusOverlay;
+
+        function renderAuthenticatedHome() {
+            ensureDeferredViews();
+            const heroSlot = document.getElementById('lp-hero-3d-slot');
+            const worldsGrid = document.getElementById('lp-worlds-grid');
+            const bestsellersGrid = document.getElementById('lp-bestsellers-grid');
+
+            // Inject 3D showcase into hero if not already present
+            if (heroSlot && !heroSlot.querySelector('#home-showcase-scene')) {
+                heroSlot.innerHTML = `
+                    <div class="funko-showcase-stage" id="home-showcase-stage" style="position: absolute; inset: 0; border-radius: 28px; overflow: hidden;">
+                        <div class="funko-showcase-scene" id="home-showcase-scene"></div>
+                    </div>
+                `;
+            }
+
+            // Populate worlds grid from banner data (collections/fandoms)
+            if (worldsGrid && !worldsGrid.dataset.rendered) {
+                const worlds = [
+                    { title: "KPOP", color: "#B8860B", art: ["Mira", "Rumi"] },
+                    { title: "MINECRAFT", color: "#8B4513", art: ["Steve", "Alex"] },
+                    { title: "MORAT", color: "#556B2F", art: ["Villamil-faltastu", "Isaza-faltastu-guitarra"] },
+                    { title: "FANTASY", color: "#6A0DAD", art: ["Mira", "Rumi"] },
+                    { title: "ARCADE", color: "#E74C3C", art: ["Steve"] },
+                    { title: "ORIGINALES", color: "#2980B9", art: ["Alex"] }
+                ];
+                worldsGrid.innerHTML = worlds.map(w => {
+                    const artName = w.art[0];
+                    const imgSrc = typeof getPresetIconSource === 'function' ? getPresetIconSource(artName) : 'webclip.png';
+                    return `
+                    <article class="lp-world-card" onclick="navigateToView('presets')">
+                        <div class="lp-world-img" style="background: ${w.color}20;">
+                            <img src="${imgSrc}" alt="${w.title}" onerror="this.src='webclip.png'" loading="lazy">
+                        </div>
+                        <div class="lp-world-body">
+                            <span class="lp-world-name">${w.title}</span>
+                            <button type="button" class="lp-world-cta">Ver más</button>
+                        </div>
+                    </article>`;
+                }).join('');
+                worldsGrid.dataset.rendered = 'true';
+            }
+
+            // Populate best sellers from actual character data
+            if (bestsellersGrid && !bestsellersGrid.dataset.rendered) {
+                const presetNames = typeof getLatestPresetNames === 'function' ? getLatestPresetNames(6) : [];
+                if (presetNames.length > 0) {
+                    bestsellersGrid.innerHTML = '';
+                    presetNames.forEach((name) => {
+                        const card = document.createElement('div');
+                        card.className = 'fandom-card';
+                        card.innerHTML = getPresetCardMarkup(name, { lazyImage: true, showFavorite: true });
+
+                        const cardCartBtn = card.querySelector('.fandom-cart-btn');
+                        if (cardCartBtn) {
+                            cardCartBtn.addEventListener('click', (event) => {
+                                event.stopPropagation();
+                                addPresetToCart(name, cardCartBtn);
+                            });
+                        }
+
+                        card.addEventListener('click', async () => {
+                            if (window.setPresetCharacter) {
+                                navigateToView('preset-preview');
+                                await window.setPresetCharacter(name);
+                            }
+                        });
+
+                        bestsellersGrid.appendChild(card);
+                    });
+                    bestsellersGrid.dataset.rendered = 'true';
+                    syncFavoriteButtons();
+                    syncCartButtons();
+                }
+            }
+        }
+
+        // FAQ Accordion toggle
+        function toggleLpFaq(btn) {
+            const item = btn.closest('.lp-faq-item');
+            if (!item) return;
+            const wasOpen = item.classList.contains('open');
+            // Close all FAQ items first
+            document.querySelectorAll('.lp-faq-item.open').forEach(el => el.classList.remove('open'));
+            // Toggle clicked item
+            if (!wasOpen) item.classList.add('open');
+        }
+        window.toggleLpFaq = toggleLpFaq;
 
 
         async function syncAuthenticatedHomeUser(userArg) {
@@ -11668,6 +14080,7 @@
             }
 
             if (show) {
+                if (stripeSuccessView) stripeSuccessView.style.display = 'none';
                 startShowcase();
                 document.body.classList.remove('customization-active');
                 if (editorPanelWrapper) editorPanelWrapper.style.display = 'none';
@@ -11686,15 +14099,18 @@
                 applyPresetPreviewPerformanceProfile();
                 authenticatedHomeView.classList.add('active');
                 setGlobalTopbarVisible(true);
-                if (authContainer) authContainer.style.display = 'flex';
+
                 if (userProfileView) userProfileView.style.display = 'none';
                 syncAuthenticatedHomeUser();
+                // Scroll to top
+                authenticatedHomeView.scrollTop = 0;
+
                 setTimeout(() => { onWindowResize(); }, 100);
                 return;
             }
 
             authenticatedHomeView.classList.remove('active');
-            setGlobalTopbarVisible(false);
+            setGlobalTopbarVisible(true);
             if (fandomsOverlay) fandomsOverlay.classList.remove('active');
         }
 
@@ -11707,14 +14123,15 @@
         function openCustomizationView() {
             ensureDeferredViews();
             document.body.classList.remove('showcase-mode');
+
             disposePresetPreviewRuntime();
             stopShowcase();
             if (fandomsOverlay) fandomsOverlay.classList.remove('active');
             if (userProfileView) userProfileView.style.display = 'none';
+            if (stripeSuccessView) stripeSuccessView.style.display = 'none';
             hideCharacterName();
 
-            const authContainer = document.getElementById('auth-container');
-            if (authContainer) authContainer.style.display = 'none';
+
             if (authenticatedHomeView) authenticatedHomeView.classList.remove('active');
 
             document.body.classList.add('customization-active');
@@ -11729,7 +14146,7 @@
             shouldRenderScene = false;
             customRenderBurstFrames = 0;
             forceMemoryCleanup();
-            setGlobalTopbarVisible(false);
+            setGlobalTopbarVisible(true);
             activeAppView = 'custom';
 
             if (window.__papelcoolCustomBuilderReady === true) {
@@ -11754,6 +14171,7 @@
             ensureDeferredViews();
             stopActiveCustomPdfGeneration();
             document.body.classList.remove('showcase-mode');
+
             disposePresetPreviewRuntime();
             updatePresetPreviewUnavailableState(null);
             disposeCustomPreviewRuntime();
@@ -11761,6 +14179,7 @@
                 resetCustomBuilderView();
             }
             if (userProfileView) userProfileView.style.display = 'none';
+            if (stripeSuccessView) stripeSuccessView.style.display = 'none';
             stopShowcase();
             document.body.classList.remove('customization-active');
             if (editorPanelWrapper) editorPanelWrapper.style.display = 'none';
@@ -11768,8 +14187,6 @@
             if (customizeSection) customizeSection.classList.add('hidden');
             hideCharacterName();
             if (authenticatedHomeView) authenticatedHomeView.classList.remove('active');
-            const authContainer = document.getElementById('auth-container');
-            if (authContainer) authContainer.style.display = 'none';
             if (canvasContainer) {
                 canvasContainer.style.display = 'none';
                 canvasContainer.classList.remove('showcase-active');
@@ -11785,6 +14202,100 @@
             updatePresetTemplateDownloadButton();
         }
 
+        function renderStripeSuccessState(state, details = {}) {
+            const mount = document.getElementById('stripe-success-content');
+            if (!mount) return;
+            const views = {
+                checking: {
+                    title: 'Verificando pago',
+                    body: 'Estamos confirmando tu pago de Stripe.',
+                    actions: ''
+                },
+                active: {
+                    title: 'Pago verificado',
+                    body: 'Tu pago de 5 USD quedó confirmado. Vuelve al editor original para descargar sin perder tu personaje.',
+                    actions: `
+                        <button type="button" class="stripe-status-btn primary" onclick="navigateToView('custom')">Volver al editor</button>
+                    `
+                },
+                missing: {
+                    title: 'Pago no confirmado',
+                    body: details.message || 'No encontramos una sesión pagada. Si acabas de pagar, espera unos segundos y verifica de nuevo.',
+                    actions: `
+                        <button type="button" class="stripe-status-btn primary" onclick="verifyStripeSuccessView()">Verificar otra vez</button>
+                        <button type="button" class="stripe-status-btn" onclick="navigateToView('custom')">Volver</button>
+                    `
+                },
+                error: {
+                    title: 'Error de verificación',
+                    body: details.message || 'No se pudo verificar la sesión de Stripe.',
+                    actions: `
+                        <button type="button" class="stripe-status-btn primary" onclick="verifyStripeSuccessView()">Reintentar</button>
+                        <button type="button" class="stripe-status-btn" onclick="navigateToView('custom')">Volver</button>
+                    `
+                }
+            };
+            const view = views[state] || views.error;
+            mount.innerHTML = `
+                <h1>${view.title}</h1>
+                <p>${view.body}</p>
+                <div class="stripe-success-actions">${view.actions}</div>
+            `;
+        }
+
+        async function verifyStripeSuccessView() {
+            const params = new URLSearchParams(window.location.search);
+            const sessionId = params.get('session_id');
+            if (!sessionId) {
+                renderStripeSuccessState('error', { message: 'Falta el session_id de Stripe en la URL.' });
+                return;
+            }
+
+            renderStripeSuccessState('checking');
+            try {
+                const result = await verifyStripeSession(sessionId);
+                if (!result?.active) {
+                    renderStripeSuccessState('missing', result || {});
+                    return;
+                }
+                rememberVerifiedStripeSession(sessionId);
+                renderStripeSuccessState('active');
+            } catch (error) {
+                renderStripeSuccessState('error', {
+                    message: error.payload?.error || error.message
+                });
+            }
+        }
+
+        function openStripeSuccessView() {
+            ensureDeferredViews();
+            stopActiveCustomPdfGeneration();
+            document.body.classList.remove('showcase-mode');
+            document.body.classList.remove('customization-active');
+            disposePresetPreviewRuntime();
+            disposeCustomPreviewRuntime();
+            if (window.__papelcoolCustomBuilderReady === true) {
+                resetCustomBuilderView();
+            }
+            if (userProfileView) userProfileView.style.display = 'none';
+            stopShowcase();
+            if (fandomsOverlay) fandomsOverlay.classList.remove('active');
+            if (authenticatedHomeView) authenticatedHomeView.classList.remove('active');
+            if (editorPanelWrapper) editorPanelWrapper.style.display = 'none';
+            if (presetsSection) presetsSection.classList.add('hidden');
+            if (customizeSection) customizeSection.classList.add('hidden');
+            if (canvasContainer) {
+                canvasContainer.style.display = 'none';
+                canvasContainer.classList.remove('showcase-active');
+            }
+            hideCharacterName();
+            shouldRenderScene = false;
+            setGlobalTopbarVisible(true);
+            activeAppView = 'stripe-success';
+            if (stripeSuccessView) stripeSuccessView.style.display = 'block';
+            verifyStripeSuccessView();
+        }
+
         function openPresetPreviewView() {
             ensureDeferredViews();
             stopActiveCustomPdfGeneration();
@@ -11798,10 +14309,10 @@
                 currentPresetCharacter = getRememberedPresetCharacter();
             }
             if (userProfileView) userProfileView.style.display = 'none';
+            if (stripeSuccessView) stripeSuccessView.style.display = 'none';
             stopShowcase();
             if (fandomsOverlay) fandomsOverlay.classList.remove('active');
-            const authContainer = document.getElementById('auth-container');
-            if (authContainer) authContainer.style.display = 'none';
+
             if (authenticatedHomeView) authenticatedHomeView.classList.remove('active');
             if (editorPanelWrapper) editorPanelWrapper.style.display = 'none';
             if (presetsSection) presetsSection.classList.add('hidden');
@@ -11814,7 +14325,7 @@
             }
 
             shouldRenderScene = false;
-            setGlobalTopbarVisible(false);
+            setGlobalTopbarVisible(true);
             activeAppView = 'preset-preview';
 
             const presetActionButtons = document.getElementById('preset-action-buttons');
@@ -11866,6 +14377,11 @@
 
             if (requestedView === 'custom') {
                 navigateToView('custom', { updateHistory: false, replaceHistory: true });
+                return;
+            }
+
+            if (requestedView === 'stripe-success') {
+                navigateToView('stripe-success', { updateHistory: false, replaceHistory: true });
                 return;
             }
 
@@ -11997,8 +14513,13 @@
         const fandomFilter = document.getElementById('fandom-filter');
         const presetSortSelect = document.getElementById('preset-sort-select');
         const globalSearchInput = document.getElementById('global-search-input');
+        const mobileMenuSearchInput = document.getElementById('mobile-menu-search-input');
         const mobileMenuButton = document.getElementById('app-mobile-menu-btn');
         const mobileDropdownMenu = document.getElementById('app-mobile-dropdown-menu');
+        const cartButton = document.getElementById('app-cart-btn');
+        const cartDropdown = document.getElementById('app-cart-dropdown');
+        const cartList = document.getElementById('app-cart-list');
+        const cartCount = document.getElementById('app-cart-count');
 
         const characterFandoms = (typeof presetCharacterFandoms !== 'undefined')
             ? presetCharacterFandoms
@@ -12054,6 +14575,15 @@
             const displayName = normalizePresetSearchValue(getPresetDisplayName(name));
             const slugName = normalizePresetSearchValue(name.replace(/-/g, ' '));
             return `${displayName} ${slugName} ${fandomLabel} ${fandomGroup}`;
+        }
+
+        if (fandomsGrid) {
+            fandomsGrid.addEventListener('click', (event) => {
+                const cartBtn = event.target.closest('.fandom-cart-btn');
+                if (!cartBtn) return;
+                event.stopPropagation();
+                addPresetToCart(cartBtn.dataset.cartName, cartBtn);
+            });
         }
 
         function closeMobileDropdown() {
@@ -13040,7 +15570,7 @@
         function renderFandomsGrid(filter = 'all') {
             if (!fandomsGrid) return;
             fandomsGrid.innerHTML = '';
-            
+
             getSortedPresetNames().forEach(name => {
                 const fandomKey = characterFandoms[name] || 'other';
                 if (filter !== 'all' && fandomKey !== filter) return;
@@ -13056,6 +15586,14 @@
                     ${getPresetCardMarkup(name)}
                 `;
 
+                const cardCartBtn = card.querySelector('.fandom-cart-btn');
+                if (cardCartBtn) {
+                    cardCartBtn.addEventListener('click', (event) => {
+                        event.stopPropagation();
+                        addPresetToCart(name, cardCartBtn);
+                    });
+                }
+
                 card.addEventListener('click', async () => {
                     if (window.setPresetCharacter) {
                         navigateToView('preset-preview');
@@ -13067,17 +15605,126 @@
             });
 
             syncFavoriteButtons();
+            syncCartButtons();
         }
 
         if (mobileMenuButton) {
             mobileMenuButton.addEventListener('click', (event) => {
                 event.stopPropagation();
+                if (cartDropdown) cartDropdown.classList.remove('active');
                 toggleMobileDropdown();
             });
         }
 
+        function renderCartDropdown() {
+            if (!cartList || typeof getCartItems !== 'function') return;
+            const favorites = getCartItems();
+
+            if (cartCount) {
+                cartCount.textContent = String(favorites.length);
+                cartCount.style.display = favorites.length ? 'inline-flex' : 'none';
+            }
+
+            if (!favorites.length) {
+                cartList.innerHTML = '<p class="pc-cart-empty">Tu carrito está vacío. Guarda personajes desde Colecciones.</p>';
+                return;
+            }
+
+            cartList.innerHTML = favorites.map((name) => {
+                const iconSrc = (typeof presetIcons !== 'undefined' && presetIcons[name]) ? presetIcons[name] : 'logo.svg';
+                return `
+                    <div class="pc-cart-item">
+                        <button type="button" class="pc-cart-open-btn" onclick="openCartCharacter('${name}')">
+                            <img src="${iconSrc}" alt="${getPresetDisplayName(name)}" loading="lazy">
+                            <span class="pc-cart-item-name">${getPresetDisplayName(name)}</span>
+                        </button>
+                        <span class="pc-cart-item-price">$0.00</span>
+                        <button type="button" class="pc-cart-remove-btn" aria-label="Eliminar ${getPresetDisplayName(name)} del carrito" onclick="event.stopPropagation(); removePresetFromCart('${name}');">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function isCartItem(characterName) {
+            return typeof getCartItems === 'function' && getCartItems().includes(characterName);
+        }
+
+        function syncCartButtons() {
+            if (typeof getCartItems !== 'function') return;
+            const cartItems = getCartItems();
+            document.querySelectorAll('[data-cart-name]').forEach((button) => {
+                button.classList.toggle('active', cartItems.includes(button.dataset.cartName));
+            });
+        }
+
+        function addPresetToCart(characterName, btnElement) {
+            if (typeof getCartItems !== 'function' || typeof saveCartItems !== 'function') return;
+            const cartItems = getCartItems();
+            const nextCartItems = cartItems.includes(characterName)
+                ? cartItems
+                : [...cartItems, characterName];
+
+            saveCartItems(nextCartItems);
+
+            if (btnElement) {
+                btnElement.classList.add('active');
+            }
+
+            renderCartDropdown();
+            syncCartButtons();
+        }
+
+        function removePresetFromCart(characterName) {
+            if (typeof getCartItems !== 'function' || typeof saveCartItems !== 'function') return;
+            const nextCartItems = getCartItems().filter((name) => name !== characterName);
+            saveCartItems(nextCartItems);
+            renderCartDropdown();
+            syncCartButtons();
+        }
+
+        function toggleCartDropdown() {
+            if (!cartDropdown) return;
+            if (mobileDropdownMenu) mobileDropdownMenu.classList.remove('active');
+            renderCartDropdown();
+            cartDropdown.classList.toggle('active');
+        }
+
+        function closeCartDropdown() {
+            if (cartDropdown) cartDropdown.classList.remove('active');
+        }
+
+        function openCartCharacter(name) {
+            closeCartDropdown();
+            if (window.setPresetCharacter) {
+                navigateToView('preset-preview');
+                window.setPresetCharacter(name);
+            }
+        }
+
+        if (cartButton) {
+            cartButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                toggleCartDropdown();
+            });
+        }
+
+        window.openCartCharacter = openCartCharacter;
+        window.addPresetToCart = addPresetToCart;
+        window.removePresetFromCart = removePresetFromCart;
+
         document.addEventListener('click', (event) => {
-            if (!mobileDropdownMenu || !mobileDropdownMenu.classList.contains('active')) return;
+            if (!mobileDropdownMenu || !mobileDropdownMenu.classList.contains('active')) {
+                if (cartDropdown && cartDropdown.classList.contains('active')) {
+                    const clickedInsideCart = cartDropdown.contains(event.target);
+                    const clickedCartButton = cartButton && cartButton.contains(event.target);
+                    if (!clickedInsideCart && !clickedCartButton) {
+                        closeCartDropdown();
+                    }
+                }
+                return;
+            }
             const clickedInsideMenu = mobileDropdownMenu.contains(event.target);
             const clickedMenuButton = mobileMenuButton && mobileMenuButton.contains(event.target);
             if (!clickedInsideMenu && !clickedMenuButton) {
@@ -13118,6 +15765,16 @@
         }
 
         if (globalSearchInput) {
+            const globalSearchWrapper = globalSearchInput.closest('.funko-search');
+
+            if (globalSearchWrapper) {
+                globalSearchWrapper.addEventListener('click', () => {
+                    if (window.matchMedia('(min-width: 769px) and (max-width: 1040px)').matches && activeAppView !== 'presets') {
+                        navigateToView('presets');
+                    }
+                });
+            }
+
             globalSearchInput.addEventListener('focus', () => {
                 if (activeAppView !== 'presets') {
                     navigateToView('presets');
@@ -13132,6 +15789,34 @@
                 }
                 const selectedFilter = fandomFilter ? fandomFilter.value : 'all';
                 renderFandomsGrid(selectedFilter);
+            });
+        }
+
+        function applyGlobalPresetSearch(value) {
+            globalPresetSearchQuery = normalizePresetSearchValue(value).trim();
+            if (globalSearchInput && globalSearchInput.value !== value) {
+                globalSearchInput.value = value;
+            }
+            if (mobileMenuSearchInput && mobileMenuSearchInput.value !== value) {
+                mobileMenuSearchInput.value = value;
+            }
+            if (activeAppView !== 'presets') {
+                navigateToView('presets');
+                return;
+            }
+            const selectedFilter = fandomFilter ? fandomFilter.value : 'all';
+            renderFandomsGrid(selectedFilter);
+        }
+
+        if (mobileMenuSearchInput) {
+            mobileMenuSearchInput.addEventListener('focus', () => {
+                if (activeAppView !== 'presets') {
+                    navigateToView('presets');
+                }
+            });
+
+            mobileMenuSearchInput.addEventListener('input', (event) => {
+                applyGlobalPresetSearch(event.target.value);
             });
         }
 
@@ -13168,8 +15853,7 @@
         const downloadPdfCustomBtn = document.getElementById('download-pdf-custom-btn');
         if (downloadPdfCustomBtn) {
             downloadPdfCustomBtn.addEventListener('click', async () => {
-                currentPresetCharacter = 'Custom';
-                await generatePDFAfterPayment('custom-download');
+                await startStripeCheckoutForCustomPdf();
             });
         }
 
@@ -13595,7 +16279,7 @@
         // Variables para la página de descarga
         let generatedPdfBlob = null;
 
-        // Payment Modal Management
+        // Account modal management
         const accountModal = document.getElementById('account-modal');
         const modalCloseBtn = document.getElementById('modal-close-btn');
         const modalLoggedOut = document.getElementById('modal-logged-out');
@@ -13605,7 +16289,7 @@
         // Función para abrir descarga directa
         async function openDownloadPage() {
             // Iniciar generación automática directamente sin modal intermedio
-            await generatePDFAfterPayment('automatic-download');
+            await generateCustomPdfDownload('automatic-download');
         }
 
         // Detectar eventos al cargar la página
@@ -13645,8 +16329,8 @@
             }
         });
 
-        // Función para generar PDF después del pago
-        async function generatePDFAfterPayment(receiptId) {
+        // Función para generar el PDF personalizado
+        async function generateCustomPdfDownload(downloadId) {
             if (isGeneratingPDF) {
                 return;
             }
@@ -13680,7 +16364,7 @@
                     return;
                 }
 
-                console.error(`Error al generar PDF (${receiptId}):`, error);
+                console.error(`Error al generar PDF (${downloadId}):`, error);
                 resetPdfProgressModal();
                 alert('Hubo un error al generar el PDF. Por favor, intenta de nuevo.');
                 window.history.replaceState({}, document.title, window.location.pathname);
@@ -14589,7 +17273,7 @@
                     next: 'Next',
                     finish: 'Finish',
                     editAgain: 'Edit again',
-                    download: 'Download PDF',
+                    download: 'Pay and download',
                     skin: 'Base color',
                     eyes: 'Eyes',
                     eyebrows: 'Eyebrows',
@@ -14624,7 +17308,7 @@
                 next: 'Siguiente',
                 finish: 'Finalizar',
                 editAgain: 'Editar otra vez',
-                download: 'Descargar PDF',
+                download: 'Pagar y descargar',
                 skin: 'Color base',
                 eyes: 'Ojos',
                 eyebrows: 'Cejas',
@@ -15323,7 +18007,7 @@
             if (isShowing) {
                 profileView.style.display = 'block';
                 setGlobalTopbarVisible(true);
-                if (authContainer) authContainer.style.display = 'none';
+
                 if (authenticatedHomeView) authenticatedHomeView.classList.remove('active');
                 if (fandomsOverlay) fandomsOverlay.classList.remove('active');
                 if (canvasContainer) canvasContainer.style.display = 'none';
@@ -15346,8 +18030,7 @@
                 } else if (activeAppView === 'home') {
                     openAuthenticatedHome(true);
                 } else {
-                    setGlobalTopbarVisible(false);
-                    if (authContainer) authContainer.style.display = 'block';
+                    setGlobalTopbarVisible(true);
                 }
             }
         }
@@ -15448,7 +18131,7 @@
             if (addBtn) addBtn.style.display = isOwner ? 'flex' : 'none';
             if (followBtn) followBtn.style.display = isOwner ? 'none' : 'flex';
 
-            // Note: Sticker grid rendering should handle isOwner check inside loadUserCharacters 
+            // Note: Sticker grid rendering should handle isOwner check inside loadUserCharacters
             // but we can also hide buttons here as a fallback
             stickerAdminBtns.forEach(btn => {
                 if (btn.textContent.includes('EDIT') || btn.textContent.includes('DELETE')) {
@@ -15857,6 +18540,10 @@
         window.openAuthenticatedHome = openAuthenticatedHome;
         window.scrollAuthenticatedHomeTo = scrollAuthenticatedHomeTo;
         window.navigateToView = navigateToView;
+        window.startStripeCheckoutForCustomPdf = startStripeCheckoutForCustomPdf;
+        window.verifyStripePaymentAndDownload = verifyStripePaymentAndDownload;
+        window.verifyStripeSuccessView = verifyStripeSuccessView;
+        window.closeStripeStatusOverlay = closeStripeStatusOverlay;
 
 
 
@@ -15870,6 +18557,19 @@
             } catch {
                 return [];
             }
+        }
+
+        function getCartItems() {
+            try {
+                const raw = JSON.parse(localStorage.getItem('papelcool_cart') || '[]');
+                return Array.isArray(raw) ? [...new Set(raw.filter(Boolean))] : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function saveCartItems(items) {
+            localStorage.setItem('papelcool_cart', JSON.stringify([...new Set(items.filter(Boolean))]));
         }
 
         function saveFavorites(favorites) {
@@ -15886,7 +18586,7 @@
                 button.classList.toggle('active', active);
                 if (button.classList.contains('fandom-heart')) {
                     button.textContent = 'star';
-                    button.style.color = active ? '#FFC700' : '';
+                    button.style.color = active ? '#FFC700' : '#000';
                 } else {
                     button.style.color = active ? '#FF4D94' : '';
                 }
@@ -15929,11 +18629,17 @@
             if (favoritesView && favoritesView.style.display !== 'none') {
                 renderFavorites();
             }
+            if (typeof renderCartDropdown === 'function') {
+                renderCartDropdown();
+            }
             if (window.renderProfileFavorites) {
                 window.renderProfileFavorites();
             }
             syncFavoriteButtons();
+            syncCartButtons();
         }
+
+        renderCartDropdown();
 
         function toggleFavorite(characterName, btnElement) {
             if (!canUseFavorites()) return;
@@ -15950,7 +18656,7 @@
                 btnElement.classList.toggle('active', active);
                 if (btnElement.classList.contains('fandom-heart')) {
                     btnElement.textContent = 'star';
-                    btnElement.style.color = active ? '#FFC700' : '';
+                    btnElement.style.color = active ? '#FFC700' : '#000';
                 } else {
                     btnElement.style.color = active ? '#FF4D94' : '';
                 }
@@ -16018,6 +18724,8 @@
 
         // Expose functions globally
         window.toggleFavorite = toggleFavorite;
+        window.addPresetToCart = addPresetToCart;
+        window.syncCartButtons = syncCartButtons;
         window.openFavoritesView = showFavoritesView;
 
         function switchProfileTab(tabId) {
@@ -16090,121 +18798,412 @@
 
         window.isFavorite = isFavorite;
 
+        function initLandingPromoCarousel() {
+            const promoBar = document.getElementById('lp-promo-bar');
+            const promoTrack = document.getElementById('lp-promo-track');
+            if (!promoBar || !promoTrack || promoBar.dataset.carouselReady === 'true') return;
+
+            promoBar.dataset.carouselReady = 'true';
+
+            if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+
+            const speedPxPerSecond = 22;
+            let resizeTimer = null;
+            let startAttempts = 0;
+
+            const getItems = () => Array.from(promoTrack.querySelectorAll('.lp-promo-item'));
+
+            const ensureLoopItems = () => {
+                promoTrack.classList.remove('is-running');
+                const originalItems = getItems().filter((item) => item.dataset.carouselClone !== 'true');
+                if (!originalItems.length) return;
+
+                if (promoBar.clientWidth < 1) return;
+
+                promoTrack.querySelectorAll('[data-carousel-clone="true"]').forEach((clone) => {
+                    clone.remove();
+                });
+
+                const loopWidth = originalItems.reduce((total, item) => total + item.getBoundingClientRect().width, 0);
+                if (loopWidth < 1) return;
+
+                const minimumTrackWidth = Math.max(promoBar.clientWidth * 4, loopWidth * 3);
+                let renderedWidth = loopWidth;
+
+                while (renderedWidth < minimumTrackWidth) {
+                    originalItems.forEach((item) => {
+                        const clone = item.cloneNode(true);
+                        clone.setAttribute('aria-hidden', 'true');
+                        clone.dataset.carouselClone = 'true';
+                        promoTrack.appendChild(clone);
+                    });
+                    renderedWidth += loopWidth;
+                }
+
+                promoTrack.style.setProperty('--lp-promo-loop-width', `${loopWidth}px`);
+                promoTrack.style.setProperty('--lp-promo-duration', `${Math.max(loopWidth / speedPxPerSecond, 18)}s`);
+                promoTrack.style.transform = '';
+                promoTrack.classList.add('is-running');
+            };
+
+            const startCarousel = () => {
+                ensureLoopItems();
+            };
+
+            const startWhenVisible = () => {
+                startAttempts += 1;
+                startCarousel();
+                if (!promoTrack.classList.contains('is-running') && startAttempts < 20) {
+                    window.setTimeout(startWhenVisible, 150);
+                }
+            };
+
+            window.addEventListener('resize', () => {
+                window.clearTimeout(resizeTimer);
+                resizeTimer = window.setTimeout(startCarousel, 180);
+            });
+
+            startWhenVisible();
+        }
+
+        document.addEventListener('DOMContentLoaded', initLandingPromoCarousel);
+        initLandingPromoCarousel();
+
     </script>
     <div id="authenticated-home-view">
-        <!-- Hero spacer removed: 3D model is now a section above, not a background -->
+        <div class="lp-landing-wrapper">
 
-        <main style="pointer-events: auto; background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%); position: relative; z-index: 15; border-top: 5px solid #000; box-shadow: 0 -10px 20px rgba(0,0,0,0.2);">
-            
-            <!-- Hero Banner -->
-            <div id="home-top"></div>
-
-            <!-- New Picks For You -->
-            <section class="funko-section" style="padding-top: 3rem;">
-                <div class="funko-carousel-header">
-                    <h2>Últimos añadidos</h2>
-                    <div class="funko-carousel-controls" aria-label="Controles del carrusel">
-                        <button type="button" class="funko-carousel-btn" onclick="scrollFunkoCollection('prev')" aria-label="Anterior">
-                            <span class="material-symbols-outlined">arrow_back</span>
-                        </button>
-                        <button type="button" class="funko-carousel-btn" onclick="scrollFunkoCollection('next')" aria-label="Siguiente">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
+            <!-- ===== PROMO BAR ===== -->
+            <div class="lp-promo-bar" id="lp-promo-bar">
+                <div class="lp-promo-track" id="lp-promo-track">
+                    <div class="lp-promo-item">
+                        <span class="lp-promo-icon" aria-hidden="true">
+                            <img src="assets/icons/promo-download.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Descargas gratis</div>
+                            <div class="lp-promo-subtitle">Para casi todo</div>
+                        </div>
+                    </div>
+                    <div class="lp-promo-item">
+                        <span class="lp-promo-icon" aria-hidden="true">
+                            <img src="assets/icons/promo-drops.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Nuevos Drops</div>
+                            <div class="lp-promo-subtitle">Cada semana</div>
+                        </div>
+                    </div>
+                    <div class="lp-promo-item">
+                        <span class="lp-promo-icon" aria-hidden="true">
+                            <img src="assets/icons/promo-limited.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Ediciones Limitadas</div>
+                            <div class="lp-promo-subtitle">No te las pierdas</div>
+                        </div>
+                    </div>
+                    <div class="lp-promo-item">
+                        <span class="lp-promo-icon" aria-hidden="true">
+                            <img src="assets/icons/promo-tiktok.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Filtros de TikTok</div>
+                            <div class="lp-promo-subtitle">Pruébalos ya</div>
+                        </div>
                     </div>
                 </div>
-                <div class="funko-carousel-viewport">
-                    <div class="funko-new-picks-grid" id="home-collection-grid"></div>
+            </div>
+
+            <!-- ===== HERO ===== -->
+            <section class="lp-hero" id="lp-hero">
+                <div class="lp-hero-inner">
+                    <div class="lp-hero-copy">
+                        <h1>Arma tus personajes favoritos en papel</h1>
+                        <p>Kits de papel para coleccionar, armar y dar vida a tu imaginación.</p>
+                        <div class="lp-hero-ctas">
+                            <button type="button" class="lp-btn lp-btn--pink" onclick="navigateToView('presets')">
+                                <span class="material-symbols-outlined" style="font-size: 1.2rem;">shopping_cart</span>
+                                Comprar ahora
+                            </button>
+                            <button type="button" class="lp-btn lp-btn--yellow" onclick="navigateToView('presets')">
+                                Explorar mundos
+                                <span class="material-symbols-outlined" style="font-size: 1.2rem;">arrow_forward</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="lp-hero-3d-slot" id="lp-hero-3d-slot">
+                        <!-- 3D showcase scene injected here by JS -->
+                    </div>
                 </div>
             </section>
 
-            <section class="funko-section">
-                <div class="funko-carousel-header">
-                    <h2>Filtros de TikTok</h2>
-                    <div class="funko-carousel-controls" aria-label="Controles del carrusel de TikTok">
-                        <button type="button" class="funko-carousel-btn" onclick="scrollHomeCarousel('home-tiktok-viewport', 'prev')" aria-label="Anterior">
-                            <span class="material-symbols-outlined">arrow_back</span>
-                        </button>
-                        <button type="button" class="funko-carousel-btn" onclick="scrollHomeCarousel('home-tiktok-viewport', 'next')" aria-label="Siguiente">
-                            <span class="material-symbols-outlined">arrow_forward</span>
-                        </button>
+            <!-- ===== BENEFITS STRIP ===== -->
+            <div class="lp-benefits" id="lp-benefits">
+                <div class="lp-benefit-item">
+                    <div class="lp-benefit-icon" aria-hidden="true"></div>
+                    <div>
+                        <div class="lp-benefit-title">Fácil de armar</div>
+                        <div class="lp-benefit-text">Instrucciones paso a paso ilustradas.</div>
                     </div>
                 </div>
-                <div class="funko-carousel-viewport" id="home-tiktok-viewport">
-                    <div class="funko-tiktok-grid" id="home-tiktok-grid"></div>
+                <div class="lp-benefit-item">
+                    <div class="lp-benefit-icon">🌿</div>
+                    <div>
+                        <div class="lp-benefit-title">Papel Eco-Friendly</div>
+                        <div class="lp-benefit-text">Papel grueso premium, 100% reciclable.</div>
+                    </div>
+                </div>
+                <div class="lp-benefit-item">
+                    <div class="lp-benefit-icon" aria-hidden="true"></div>
+                    <div>
+                        <div class="lp-benefit-title">Ideal para coleccionar</div>
+                        <div class="lp-benefit-text">Personajes únicos de diferentes mundos.</div>
+                    </div>
+                </div>
+                <div class="lp-benefit-item">
+                    <div class="lp-benefit-icon">✂️</div>
+                    <div>
+                        <div class="lp-benefit-title">Sin pegamento difícil</div>
+                        <div class="lp-benefit-text">Sistema de ensamble inteligente.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== WORLDS / CATEGORIES ===== -->
+            <section class="lp-worlds-section">
+                <div class="lp-section" id="lp-worlds">
+                    <h2 class="lp-section-title">Explora nuestros mundos</h2>
+                    <div class="lp-worlds-grid" id="lp-worlds-grid">
+                        <!-- Injected by JS from existing character data -->
+                    </div>
                 </div>
             </section>
 
-            <!-- Fandom / Banners Area -->
-            <section class="funko-section">
-                <h2>Originales de Papelcool y fandoms</h2>
-                <div class="funko-banners-grid" id="home-banner-grid"></div>
-            </section>
-
-            <!-- FUNKO-STYLE FOOTER -->
-            <footer class="funko-home-footer">
-                <!-- Newsletter block acting like a Pop-art Sticker -->
-                <div class="funko-newsletter-card">
-                    <h3 style="font-family: 'Fredoka', sans-serif; font-size: 3rem; font-weight: 900; color: #000; text-transform: uppercase; margin-bottom: 1rem; text-align: center;">Únete al Newsletter</h3>
-                    <p style="font-family: 'Montserrat', sans-serif; font-size: 1.1rem; color: #111; text-align: center; margin-bottom: 2rem;">¡Entérate primero de nuevos drops, figuras especiales y eventos en TikTok!</p>
-                    <div class="funko-newsletter-form">
-                        <input type="text" placeholder="Correo electrónico..." class="funko-newsletter-input">
-                        <button class="funko-newsletter-submit">SUSCRIBIRME</button>
+            <!-- ===== BEST SELLERS ===== -->
+            <section class="lp-bestsellers-section">
+                <div class="lp-section" id="lp-bestsellers">
+                    <div class="lp-bestsellers-header">
+                        <h2 class="lp-section-title">Best Sellers</h2>
+                        <button type="button" class="lp-btn lp-btn--white" onclick="navigateToView('presets')" style="font-size: 0.85rem; padding: 0.7rem 1.2rem; box-shadow: 4px 4px 0 rgba(0,0,0,1);">
+                            Ver todos
+                            <span class="material-symbols-outlined" style="font-size: 1rem;">arrow_forward</span>
+                        </button>
+                    </div>
+                    <div class="lp-bestsellers-grid" id="lp-bestsellers-grid">
+                        <!-- Injected by JS from existing character data -->
                     </div>
                 </div>
+            </section>
 
-                <!-- Social & Links -->
-                <div class="funko-footer-main">
-                    <div class="funko-footer-brand">
-                        <img src="logo.svg" alt="Papelcool" class="funko-footer-logo">
+            <!-- ===== LIMITED BUNDLE ===== -->
+            <section class="lp-bundle-section" id="lp-bundle">
+                <div class="lp-bundle-inner">
+                    <span class="lp-bundle-tag">🔥 Drop Limitado</span>
+                    <h2 class="lp-bundle-title">Bundle Galáctico</h2>
+                    <p class="lp-bundle-subtitle">5 kits exclusivos + accesorios. ¡Solo 500 disponibles!</p>
+                    <div class="lp-bundle-prices">
+                        <span class="lp-price-old">$1,995 MXN</span>
+                        <span class="lp-price-now">$1,299 MXN</span>
+                        <span class="lp-price-discount">35% OFF</span>
                     </div>
-                    <div style="flex: 1; min-width: 200px;">
-                        <h4 style="font-family: 'Fredoka', sans-serif; font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 1.5rem;">Mi cuenta</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; font-family: 'Montserrat', sans-serif; color: #bbb; display: flex; flex-direction: column; gap: 0.8rem;">
-                            <li style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#bbb'">Historial de pedidos</li>
-                            <li style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#bbb'">Wishlist</li>
+                    <button type="button" class="lp-btn lp-btn--pink" onclick="navigateToView('presets')">
+                        <span class="material-symbols-outlined" style="font-size: 1.2rem;">local_fire_department</span>
+                        ¡Lo quiero!
+                    </button>
+                </div>
+            </section>
+
+            <!-- ===== HOW IT WORKS ===== -->
+            <section class="lp-how-section">
+                <div class="lp-section" id="lp-how">
+                    <h2 class="lp-section-title">Cómo funciona</h2>
+                    <div class="lp-steps-grid">
+                        <div class="lp-step-card">
+                            <div class="lp-step-number">1</div>
+                            <div class="lp-step-title">Elige tu kit</div>
+                            <div class="lp-step-text">Explora mundos y encuentra tu personaje favorito.</div>
+                        </div>
+                        <div class="lp-step-card">
+                            <div class="lp-step-number">2</div>
+                            <div class="lp-step-title">Dobla y arma</div>
+                            <div class="lp-step-text">Sigue las instrucciones ilustradas y arma paso a paso.</div>
+                        </div>
+                        <div class="lp-step-card">
+                            <div class="lp-step-number">3</div>
+                            <div class="lp-step-title">Personaliza</div>
+                            <div class="lp-step-text">Añade accesorios, caras, detalles y hazlo tuyo.</div>
+                        </div>
+                        <div class="lp-step-card">
+                            <div class="lp-step-number">4</div>
+                            <div class="lp-step-title">Exhibe y colecciona</div>
+                            <div class="lp-step-text">Ponlo en tu escritorio, repisa o vitrina.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== SOCIAL PROOF + FAQ ===== -->
+            <section class="lp-proof-section">
+                <div class="lp-section" id="lp-proof">
+                    <div class="lp-proof-grid">
+                        <!-- Testimonials -->
+                        <div>
+                            <h3 class="lp-proof-col-title">Lo que dicen nuestros Coolers</h3>
+                            <div class="lp-testimonials">
+                                <div class="lp-testimonial">
+                                    <div class="lp-testimonial-stars">★★★★★</div>
+                                    <p class="lp-testimonial-text">"Increíbles. Los diseños están alucinantes y súper fáciles de armar."</p>
+                                    <span class="lp-testimonial-author">Alex G.</span>
+                                    <span class="lp-testimonial-city"> · Monterrey</span>
+                                </div>
+                                <div class="lp-testimonial">
+                                    <div class="lp-testimonial-stars">★★★★★</div>
+                                    <p class="lp-testimonial-text">"La calidad del papel es excelente y los detalles son brutales."</p>
+                                    <span class="lp-testimonial-author">Fer K.</span>
+                                    <span class="lp-testimonial-city"> · CDMX</span>
+                                </div>
+                                <div class="lp-testimonial">
+                                    <div class="lp-testimonial-stars">★★★★★</div>
+                                    <p class="lp-testimonial-text">"Me encanta que no necesiten pegamento. Solo doblar y listo."</p>
+                                    <span class="lp-testimonial-author">Mariana L.</span>
+                                    <span class="lp-testimonial-city"> · Guadalajara</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- FAQ -->
+                        <div>
+                            <h3 class="lp-proof-col-title">Preguntas Frecuentes</h3>
+                            <div class="lp-faq-list" id="lp-faq-list">
+                                <div class="lp-faq-item">
+                                    <button type="button" class="lp-faq-question" onclick="toggleLpFaq(this)">
+                                        ¿Necesito pegamento para armar los kits?
+                                        <span class="material-symbols-outlined">expand_more</span>
+                                    </button>
+                                    <div class="lp-faq-answer"><div class="lp-faq-answer-inner">No necesariamente. El sistema está pensado para ensamblarse de forma sencilla sin pegamento.</div></div>
+                                </div>
+                                <div class="lp-faq-item">
+                                    <button type="button" class="lp-faq-question" onclick="toggleLpFaq(this)">
+                                        ¿Los kits incluyen todo lo necesario?
+                                        <span class="material-symbols-outlined">expand_more</span>
+                                    </button>
+                                    <div class="lp-faq-answer"><div class="lp-faq-answer-inner">Sí, incluyen piezas impresas e instrucciones paso a paso.</div></div>
+                                </div>
+                                <div class="lp-faq-item">
+                                    <button type="button" class="lp-faq-question" onclick="toggleLpFaq(this)">
+                                        ¿Cuánto tiempo tarda en llegar mi pedido?
+                                        <span class="material-symbols-outlined">expand_more</span>
+                                    </button>
+                                    <div class="lp-faq-answer"><div class="lp-faq-answer-inner">Depende de tu ciudad y método de envío. Normalmente entre 3-7 días hábiles.</div></div>
+                                </div>
+                                <div class="lp-faq-item">
+                                    <button type="button" class="lp-faq-question" onclick="toggleLpFaq(this)">
+                                        ¿Hacen envíos internacionales?
+                                        <span class="material-symbols-outlined">expand_more</span>
+                                    </button>
+                                    <div class="lp-faq-answer"><div class="lp-faq-answer-inner">Sí, según disponibilidad por país.</div></div>
+                                </div>
+                                <div class="lp-faq-item">
+                                    <button type="button" class="lp-faq-question" onclick="toggleLpFaq(this)">
+                                        ¿Qué pasa si falta alguna pieza?
+                                        <span class="material-symbols-outlined">expand_more</span>
+                                    </button>
+                                    <div class="lp-faq-answer"><div class="lp-faq-answer-inner">Puedes contactar soporte para revisar tu pedido y te enviaremos las piezas faltantes.</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== FOOTER ===== -->
+            <footer class="lp-footer" id="lp-footer">
+
+                <div class="lp-footer-cols">
+                    <div class="lp-footer-col">
+                        <h4>Tienda</h4>
+                        <ul>
+                            <li>Todos los Kits</li>
+                            <li>Nuevos Drops</li>
+                            <li>Ediciones Limitadas</li>
+                            <li>Accesorios</li>
+                            <li>Gift Cards</li>
                         </ul>
                     </div>
-                    <div style="flex: 1; min-width: 200px;">
-                        <h4 style="font-family: 'Fredoka', sans-serif; font-size: 1.5rem; font-weight: 800; color: white; margin-bottom: 1.5rem;">Contacto</h4>
-                        <ul style="list-style: none; padding: 0; margin: 0; font-family: 'Montserrat', sans-serif; color: #bbb; display: flex; flex-direction: column; gap: 0.8rem;">
-                            <li style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#bbb'">Centro de soporte</li>
-                            <li style="cursor: pointer; transition: color 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='#bbb'">Eventos de TikTok</li>
+                    <div class="lp-footer-col">
+                        <h4>Sobre Papelcool</h4>
+                        <ul>
+                            <li>Nuestra Historia</li>
+                            <li>Sustentabilidad</li>
+                            <li>Blog Cool</li>
+                            <li>Atención al Cliente</li>
+                            <li>Contacto</li>
+                        </ul>
+                    </div>
+                    <div class="lp-footer-col">
+                        <h4>Ayuda</h4>
+                        <ul>
+                            <li>Preguntas Frecuentes</li>
+                            <li>Envío y Devoluciones</li>
+                            <li>Términos y Condiciones</li>
+                            <li>Políticas de Privacidad</li>
+                        </ul>
+                    </div>
+                    <div class="lp-footer-col">
+                        <h4>Síguenos</h4>
+                        <ul>
+                            <li>Instagram</li>
+                            <li>TikTok</li>
+                            <li>YouTube</li>
+                            <li>Facebook</li>
                         </ul>
                     </div>
                 </div>
-
-                <div style="max-width: 1400px; margin: 4rem auto 0; padding-top: 2rem; border-top: 2px solid #333; display: flex; justify-content: space-between; color: #888; font-family: 'Montserrat', sans-serif; font-size: 0.9rem;">
-                    <span>© 2026 Papelcool. Todos los derechos reservados.</span>
-                    <span>Hecho con ❤️ para fandoms.</span>
+                <div class="lp-footer-bottom">
+                    <span class="lp-footer-legal">© 2026 PAPELCOOL. Todos los derechos reservados.</span>
+                    <div class="lp-footer-badges">
+                        <span>Visa</span><span>Mastercard</span><span>Amex</span><span>PayPal</span>
+                    </div>
+                    <span class="lp-footer-security">
+                        <span class="material-symbols-outlined" style="font-size: 1rem;">verified_user</span>
+                        Compra segura y protegida
+                    </span>
                 </div>
             </footer>
-        </main>
+
+        </div><!-- /.lp-landing-wrapper -->
+    </div>
+    <div id="stripe-success-view" style="display: none; position: fixed; inset: 0; z-index: 9000; overflow-y: auto; background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%); padding: 7rem 1rem 3rem;">
+        <section class="stripe-success-card" id="stripe-success-content" aria-live="polite" style="margin: 0 auto;">
+            <h1>Verificando pago</h1>
+            <p>Estamos confirmando tu pago de Stripe.</p>
+        </section>
     </div>
     <!-- USER PROFILE VIEW (Hidden by default) -->
-    <div id="user-profile-view" style="display: none; position: fixed; inset: 0; z-index: 9000; overflow-y: auto; background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%); color: var(--pc-ink);">
+    <div id="user-profile-view" style="display: none; position: fixed; inset: 0; z-index: 9000; overflow-y: auto; background: linear-gradient(180deg, #37BDF7 0%, #0A92E8 100%); color: var(--pc-ink);">
         <!-- bg floating shapes -->
         <div style="position: fixed; top: 10%; right: -50px; width: 300px; height: 300px; background: #FFE600; opacity: 0.2; clip-path: polygon(10% 0%, 100% 5%, 90% 95%, 5% 100%); transform: rotate(12deg); pointer-events: none; z-index: 0;"></div>
         <div style="position: fixed; bottom: -50px; left: -50px; width: 400px; height: 400px; background: #407BFF; opacity: 0.15; clip-path: polygon(5% 15%, 95% 0%, 100% 85%, 15% 100%); transform: rotate(-12deg); pointer-events: none; z-index: 0;"></div>
 
         <div class="pc-home-shell" style="min-height: 100vh; padding: 6rem 2rem 2rem; max-width: 900px; margin: 0 auto; position: relative; z-index: 10;">
             <section class="ui-panel" style="background: white; border: 4px solid black; border-radius: 20px; box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1); padding: 2rem; display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; margin-bottom: 2rem; position: relative;">
-                
+
                 <!-- Avatar Sticker -->
                 <div style="width: 140px; height: 140px; border-radius: 50%; border: 4px solid #000; overflow: hidden; box-shadow: 6px 6px 0 rgba(0,0,0,1); background: #FFE600; display: flex; align-items: center; justify-content: center; transform: rotate(-3deg);">
                     <span id="profile-avatar-initial" style="font-family: 'Fredoka', sans-serif; font-size: 4rem; font-weight: 800; color: #000;">U</span>
                 </div>
-                
+
                 <div style="flex: 1; min-width: 250px;">
                     <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
                         <h2 id="profile-username" style="font-family: 'Fredoka', sans-serif; font-size: 2.5rem; font-weight: 900; margin: 0; color: #000; text-transform: uppercase;">Username</h2>
                         <span id="profile-handle" style="font-family: 'Fredoka', sans-serif; font-size: 1.2rem; font-weight: 700; color: #FF4D94; border: 3px solid #000; border-radius: 99px; padding: 0.2rem 0.8rem; background: white; box-shadow: 3px 3px 0 #000;">@username</span>
                     </div>
                     <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1rem;">
-                        <div style="background: #E0F2FE; border: 3px solid #000; padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 3px 3px 0 #000; text-align: center;">
+                        <div style="background: #D4F0FF; border: 3px solid #000; padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 3px 3px 0 #000; text-align: center;">
                             <strong id="profile-favorites-count" style="display: block; font-family: 'Fredoka', sans-serif; font-size: 1.5rem; color: #000;">0</strong>
                             <span style="font-family: 'Fredoka', sans-serif; font-size: 0.9rem; color: #000; font-weight: 700; text-transform: uppercase;">Favoritos</span>
                         </div>
-                        <div style="background: #E0F2FE; border: 3px solid #000; padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 3px 3px 0 #000; text-align: center;">
+                        <div style="background: #D4F0FF; border: 3px solid #000; padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 3px 3px 0 #000; text-align: center;">
                             <strong id="profile-customs-count" style="display: block; font-family: 'Fredoka', sans-serif; font-size: 1.5rem; color: #000;">0</strong>
                             <span style="font-family: 'Fredoka', sans-serif; font-size: 0.9rem; color: #000; font-weight: 700; text-transform: uppercase;">Customs</span>
                         </div>
