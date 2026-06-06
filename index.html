@@ -1262,10 +1262,29 @@
             overflow: hidden;
             overscroll-behavior: none;
             pointer-events: none; /* Allow scroll and clicks to pass through to the page */
+            background: transparent;
         }
 
         #canvas-container:active {
             cursor: grabbing;
+        }
+
+        body.main-3d-viewer-active:not(.customization-active) #canvas-container {
+            background:
+                radial-gradient(circle at top, rgba(255, 230, 0, 0.22), transparent 34%),
+                linear-gradient(180deg, #e0f2fe 0%, #f7fbff 58%, #eef6ff 100%);
+        }
+
+        body.main-3d-viewer-active:not(.customization-active) #canvas-container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(90deg, rgba(0, 0, 0, 0.035) 1px, transparent 1px),
+                linear-gradient(rgba(0, 0, 0, 0.035) 1px, transparent 1px);
+            background-size: 28px 28px;
+            opacity: 0.72;
+            pointer-events: none;
         }
 
         #preset-preview-stage {
@@ -1987,6 +2006,8 @@
             height: 100%;
             object-fit: contain;
             object-position: center;
+            position: relative;
+            z-index: 1;
         }
 
         /* Mobile y Tablet (hasta 1024px) */
@@ -2014,7 +2035,8 @@
             }
 
             #canvas-container {
-                height: 100vh;
+                height: calc(100vh - var(--header-height, 80px));
+                height: calc(100dvh - var(--header-height, 80px));
             }
 
             /* Ocultar el botón de modo dentro del panel en móvil */
@@ -9197,7 +9219,12 @@
             const rect = canvasContainer.getBoundingClientRect();
             const w = Math.max(1, Math.floor(rect.width));
             const h = Math.max(1, Math.floor(rect.height));
-            if (typeof fovOverride === 'number') camera.fov = fovOverride;
+            let resolvedFov = fovOverride;
+            if (typeof resolvedFov !== 'number' && (activeAppView === 'custom' || activeAppView === 'preset-preview')) {
+                const aspect = w / h;
+                resolvedFov = aspect < 1 ? (isLowPowerMobile ? 42 : 40) : 36;
+            }
+            if (typeof resolvedFov === 'number') camera.fov = resolvedFov;
             camera.aspect = w / h;
             camera.updateProjectionMatrix();
             renderer.setSize(w, h);
@@ -9673,6 +9700,7 @@
         };
         const initialTransforms = new Map();
         let modelCenter = new THREE.Vector3();
+        const mainViewerTarget = new THREE.Vector3(0, 1.18, 0);
         let eyesMesh = null;
         let eyebrowsMesh = null;
         let noseMesh = null;
@@ -9813,7 +9841,7 @@
             controls.dampingFactor = 0.08;
             controls.minPolarAngle = 0;
             controls.maxPolarAngle = Math.PI;
-            controls.target.copy(modelCenter);
+            controls.target.copy(activeAppView === 'custom' || activeAppView === 'preset-preview' ? mainViewerTarget : modelCenter);
             controls.update();
             resizeToCanvasContainer();
         }
