@@ -126,13 +126,20 @@
 
 
     <style>
-        /* Preset Character Buttons overrides */
         :root {
             --pc-character-card-width: 100px;
             --pc-character-card-height: 158px;
             --pc-character-shell-min: 150px;
             --pc-character-shell-max: 300px;
+            --header-height: 88px; /* 84px min-height + 4px border-bottom */
         }
+
+        @media (max-width: 1180px) {
+            :root {
+                --header-height: 80px; /* 76px min-height + 4px border-bottom */
+            }
+        }
+
 
         .preset-character-btn {
             background: transparent;
@@ -1245,10 +1252,10 @@
 
         #canvas-container {
             width: 100vw;
-            height: 100vh;
-            height: 100dvh;
+            height: calc(100vh - var(--header-height, 88px));
+            height: calc(100dvh - var(--header-height, 88px));
             position: fixed;
-            top: 0;
+            top: var(--header-height, 88px);
             left: 0;
             cursor: default;
             z-index: 2;
@@ -1263,7 +1270,10 @@
 
         #preset-preview-stage {
             position: fixed;
-            inset: 0;
+            top: var(--header-height, 88px);
+            left: 0;
+            right: 0;
+            bottom: 0;
             z-index: 3;
             display: none;
             overflow: hidden;
@@ -1271,6 +1281,20 @@
                 radial-gradient(circle at top, rgba(255, 230, 0, 0.22), transparent 34%),
                 linear-gradient(180deg, #e0f2fe 0%, #f7fbff 58%, #eef6ff 100%);
             pointer-events: auto;
+            transition: right 0.22s cubic-bezier(0.16, 1, 0.3, 1), bottom 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Shift the 3D preview stage so that it doesn't render behind/under the comments panel */
+        @media (min-width: 980px), (orientation: landscape) and (min-width: 768px) {
+            body.comments-panel-open #preset-preview-stage {
+                right: min(410px, calc(100vw - 110px));
+            }
+        }
+
+        @media (max-width: 979px) and (portrait), (orientation: portrait) and (max-width: 767px) {
+            body.comments-panel-open #preset-preview-stage {
+                bottom: min(78dvh, 760px);
+            }
         }
 
         #preset-preview-stage.active {
@@ -3960,6 +3984,11 @@
             pointer-events: none !important;
         }
 
+        body.main-3d-viewer-active.customization-active #canvas-container {
+            display: block !important;
+            pointer-events: auto !important;
+        }
+
         #editor-panel-wrapper {
             display: none;
         }
@@ -4014,7 +4043,7 @@
         }
 
         #custom-builder-finished-actions {
-            top: calc(18px + env(safe-area-inset-top, 0px));
+            top: calc(var(--header-height, 88px) + 18px + env(safe-area-inset-top, 0px));
             right: 16px;
             left: auto;
             display: flex;
@@ -4339,16 +4368,17 @@
             body.customization-active.custom-editor-open #editor-panel-wrapper {
                 display: block !important;
                 position: fixed;
-                inset: 0 auto 0 0;
+                inset: var(--header-height, 88px) auto 0 0;
                 width: var(--custom-editor-width);
-                height: 100vh;
-                height: 100dvh;
+                height: calc(100vh - var(--header-height, 88px));
+                height: calc(100dvh - var(--header-height, 88px));
                 z-index: 40;
                 pointer-events: auto;
+                padding: 0;
             }
 
             body.customization-active.custom-editor-open #preset-preview-stage {
-                inset: 0 0 0 var(--custom-editor-width);
+                inset: var(--header-height, 88px) 0 0 var(--custom-editor-width);
             }
 
             .custom-builder-panel {
@@ -4372,8 +4402,8 @@
             }
 
             body.customization-active.custom-editor-open #preset-preview-stage {
-                inset: 0 0 48vh 0;
-                inset: 0 0 48dvh 0;
+                inset: var(--header-height, 80px) 0 48vh 0;
+                inset: var(--header-height, 80px) 0 48dvh 0;
             }
 
             .custom-builder-panel {
@@ -6554,13 +6584,33 @@
             }
             .lp-bestsellers-header .lp-section-title::after { display: none; }
             .lp-bestsellers-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
                 gap: 1.5rem;
+                padding-bottom: 1.25rem;
+                scroll-behavior: smooth;
+                -webkit-overflow-scrolling: touch;
+            }
+            .lp-bestsellers-grid::-webkit-scrollbar {
+                height: 8px;
+            }
+            .lp-bestsellers-grid::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 4px;
+            }
+            .lp-bestsellers-grid::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 4px;
+            }
+            .lp-bestsellers-grid::-webkit-scrollbar-thumb:hover {
+                background: #555;
             }
             .lp-bestsellers-grid .fandom-card {
-                width: 100%;
-                min-width: 0;
+                flex: 0 0 calc(33.333% - 1rem);
+                min-width: 280px;
+                scroll-snap-align: start;
             }
             .lp-product-card {
                 background: #fff;
@@ -6710,16 +6760,21 @@
                 position: relative;
                 overflow: hidden;
             }
-            .lp-bundle-section::before {
-                content: "🚀";
+            .lp-bundle-emoji {
                 position: absolute;
-                top: 20%;
-                right: 10%;
-                font-size: 4rem;
-                opacity: 0.15;
-                animation: lp-float 5s ease-in-out infinite;
+                font-size: 3.5rem;
+                opacity: 0.08;
                 pointer-events: none;
+                user-select: none;
+                animation: lp-float 6s ease-in-out infinite;
+                z-index: 1;
             }
+            .lp-bundle-emoji.emoji-1 { top: 12%; left: 8%; animation-delay: 0s; }
+            .lp-bundle-emoji.emoji-2 { top: 20%; right: 10%; animation-delay: 1.5s; font-size: 4rem; }
+            .lp-bundle-emoji.emoji-3 { bottom: 15%; left: 12%; animation-delay: 3s; }
+            .lp-bundle-emoji.emoji-4 { bottom: 25%; right: 15%; animation-delay: 4.5s; }
+            .lp-bundle-emoji.emoji-5 { top: 45%; left: 4%; animation-delay: 2s; font-size: 3rem; }
+            .lp-bundle-emoji.emoji-6 { top: 55%; right: 6%; animation-delay: 3.5s; font-size: 3.2rem; }
             .lp-bundle-inner {
                 width: min(1200px, 100%);
                 margin: 0 auto;
@@ -7073,6 +7128,10 @@
                 flex-direction: column;
                 gap: 0.6rem;
             }
+            .lp-footer-col a {
+                color: inherit;
+                text-decoration: none;
+            }
             .lp-footer-col li {
                 font-family: 'Montserrat', sans-serif;
                 font-size: 0.82rem;
@@ -7081,7 +7140,8 @@
                 transition: color 0.2s;
                 font-weight: 500;
             }
-            .lp-footer-col li:hover { color: #fff; }
+            .lp-footer-col li:hover,
+            .lp-footer-col a:hover { color: #fff; }
             .lp-footer-bottom {
                 width: min(1400px, 100%);
                 margin: 0 auto;
@@ -7418,14 +7478,19 @@
                 font-size: 1.5rem;
             }
             .lp-bestsellers-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
                 gap: 1rem;
-                padding: 0 1.25rem;
+                padding: 0 1.25rem 1rem;
+                scroll-behavior: smooth;
+                -webkit-overflow-scrolling: touch;
             }
             .lp-bestsellers-grid .fandom-card {
-                width: 100%;
-                min-width: 0;
+                flex: 0 0 calc(70% - 0.5rem);
+                min-width: 240px;
+                scroll-snap-align: start;
             }
             .lp-product-card {
                 background: #fff;
@@ -7556,7 +7621,19 @@
                 border-bottom: 4px solid #000;
                 padding: 3rem 1.5rem;
                 text-align: center;
+                position: relative;
+                overflow: hidden;
             }
+            .lp-bundle-emoji {
+                font-size: 2.2rem;
+                opacity: 0.05;
+            }
+            .lp-bundle-emoji.emoji-1 { top: 8%; left: 4%; }
+            .lp-bundle-emoji.emoji-2 { top: 12%; right: 4%; }
+            .lp-bundle-emoji.emoji-3 { bottom: 8%; left: 6%; }
+            .lp-bundle-emoji.emoji-4 { bottom: 12%; right: 6%; }
+            .lp-bundle-emoji.emoji-5 { display: none; }
+            .lp-bundle-emoji.emoji-6 { display: none; }
             .lp-bundle-inner {
                 max-width: 100%;
             }
@@ -8625,6 +8702,7 @@
                 'download-message': 'Your download will start through your browser.<br>Please check your downloads folder.',
                 'got-it': 'Got it',
                 'back-btn': 'BACK',
+                'lp-bestsellers-title': 'Best Sellers',
                 'color-warning-title': 'Color Required',
                 'color-warning-body': 'You must select a color to paint the model before downloading.',
                 'cat-eyes': 'Eyes',
@@ -8722,6 +8800,7 @@
                 'download-message': 'Tu descarga comenzará en el navegador.<br>Por favor, revisa tu carpeta de descargas.',
                 'got-it': 'Entendido',
                 'back-btn': 'VOLVER',
+                'lp-bestsellers-title': 'Recién añadidos',
                 'color-warning-title': 'Color Requerido',
                 'color-warning-body': 'Debes seleccionar un color para pintar el modelo antes de descargar.',
                 'cat-eyes': 'Ojos',
@@ -9169,9 +9248,12 @@
 
         const controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
+        controls.dampingFactor = 0.08;
         controls.minDistance = 3;  // Zoom in máximo (más cerca)
         controls.maxDistance = 25; // Zoom out máximo (más lejos)
         let isControlInteracting = false;
+        // Number of extra frames to render after pointer release for smooth damping coast-down
+        const DAMPING_COAST_FRAMES = 120; // ~2 seconds at 60fps
 
         renderer.domElement.addEventListener('pointerdown', () => {
             if (activeAppView === 'preset-preview') {
@@ -9181,9 +9263,12 @@
         });
         renderer.domElement.addEventListener('pointerup', () => {
             isControlInteracting = false;
+            // Request enough frames for damping to fully settle
+            requestCustomRender(DAMPING_COAST_FRAMES);
         });
         renderer.domElement.addEventListener('pointercancel', () => {
             isControlInteracting = false;
+            requestCustomRender(DAMPING_COAST_FRAMES);
         });
         window.addEventListener('pointerup', () => {
             isControlInteracting = false;
@@ -9476,8 +9561,6 @@
             img.crossOrigin = 'anonymous';
 
             img.onload = function () {
-                // Subimos resolución en móvil, pero usando el aspect ratio real del SVG para no
-                // reservar memoria cuadrada innecesaria en cada textura.
                 const sourceWidth = img.naturalWidth || img.width || 1024;
                 const sourceHeight = img.naturalHeight || img.height || 1024;
                 const scale = targetLongSide / Math.max(sourceWidth, sourceHeight, 1);
@@ -9511,7 +9594,19 @@
 
         // Función para cargar texturas SVG únicamente
         function loadOptimizedTexture(url, onLoad, onError) {
-            // Solo soportamos SVG con cache y resolución dinámica
+            // En custom y preset-preview usamos el mismo presupuesto de raster y caché
+            // del showcase del landing para igualar calidad/coste entre viewers 3D.
+            if (activeAppView === 'custom' || activeAppView === 'preset-preview') {
+                return loadShowcaseTexture(url)
+                    .then((texture) => {
+                        if (onLoad) onLoad(texture);
+                    })
+                    .catch((error) => {
+                        if (onError) onError(error);
+                    });
+            }
+
+            // Resto de contextos: mantenemos el raster adaptativo original.
             return loadSVGAsHighResTexture(url, onLoad, onError);
         }
 
@@ -9677,9 +9772,51 @@
             textureGeneration: 0,
             headColor: null,
             isDragging: false,
+            isDamping: false,
+            dragVelocity: 0,
             activePointerId: null,
             lastPointerX: 0
         };
+        const USE_MAIN_VIEWER_FOR_PRESET_AND_CUSTOM = true;
+
+        function hidePresetPreviewStageSurface() {
+            const stage = document.getElementById('preset-preview-stage');
+            if (!stage) return;
+            stage.classList.remove('active', 'preview-unavailable');
+            stage.setAttribute('aria-hidden', 'true');
+
+            const unavailable = document.getElementById('preset-preview-unavailable');
+            if (unavailable) unavailable.classList.remove('active');
+        }
+
+        function showMainViewerCanvas() {
+            if (!canvasContainer) return;
+            canvasContainer.style.display = 'block';
+            canvasContainer.classList.remove('showcase-active');
+            canvasContainer.style.pointerEvents = 'auto';
+            canvasContainer.style.cursor = 'grab';
+        }
+
+        function hideMainViewerCanvas() {
+            if (!canvasContainer) return;
+            canvasContainer.style.display = 'none';
+            canvasContainer.classList.remove('showcase-active');
+            canvasContainer.style.pointerEvents = 'none';
+        }
+
+        function configureMainViewerCamera(cameraPosition = originalCameraPos) {
+            camera.position.copy(cameraPosition);
+            controls.enabled = true;
+            controls.enablePan = true;
+            controls.enableZoom = true;
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.08;
+            controls.minPolarAngle = 0;
+            controls.maxPolarAngle = Math.PI;
+            controls.target.copy(modelCenter);
+            controls.update();
+            resizeToCanvasContainer();
+        }
 
         function syncModelPartsBindings(sourceParts) {
             modelParts.head = sourceParts?.head || null;
@@ -10043,17 +10180,32 @@
                 return;
             }
 
+            let controlsChanged = false;
             if (presetPreviewRuntime.controls) {
-                presetPreviewRuntime.controls.update();
-            }
+                const prevX = presetPreviewRuntime.camera.position.x;
+                const prevY = presetPreviewRuntime.camera.position.y;
+                const prevZ = presetPreviewRuntime.camera.position.z;
+                const prevTX = presetPreviewRuntime.controls.target.x;
+                const prevTY = presetPreviewRuntime.controls.target.y;
+                const prevTZ = presetPreviewRuntime.controls.target.z;
 
+                presetPreviewRuntime.controls.update();
+
+                controlsChanged = 
+                    Math.abs(presetPreviewRuntime.camera.position.x - prevX) > 0.0001 ||
+                    Math.abs(presetPreviewRuntime.camera.position.y - prevY) > 0.0001 ||
+                    Math.abs(presetPreviewRuntime.camera.position.z - prevZ) > 0.0001 ||
+                    Math.abs(presetPreviewRuntime.controls.target.x - prevTX) > 0.0001 ||
+                    Math.abs(presetPreviewRuntime.controls.target.y - prevTY) > 0.0001 ||
+                    Math.abs(presetPreviewRuntime.controls.target.z - prevTZ) > 0.0001;
+            }
             presetPreviewRuntime.renderer.render(presetPreviewRuntime.scene, presetPreviewRuntime.camera);
 
             if (presetPreviewRuntime.requestedFrames > 0) {
                 presetPreviewRuntime.requestedFrames -= 1;
             }
 
-            if (presetPreviewRuntime.interacting || presetPreviewRuntime.requestedFrames > 0) {
+            if (presetPreviewRuntime.interacting || controlsChanged || presetPreviewRuntime.requestedFrames > 0) {
                 presetPreviewRuntime.rafId = requestAnimationFrame(renderPresetPreviewFrame);
             }
         }
@@ -10063,6 +10215,15 @@
             const width = presetPreviewRuntime.mountEl.clientWidth || window.innerWidth;
             const height = presetPreviewRuntime.mountEl.clientHeight || window.innerHeight;
             presetPreviewRuntime.camera.aspect = width / height;
+
+            // Adapt FOV to viewport aspect ratio to prevent character clipping on narrow/vertical viewport spaces
+            const aspect = width / height;
+            if (aspect < 1) {
+                presetPreviewRuntime.camera.fov = isLowPowerMobile ? 42 : 40;
+            } else {
+                presetPreviewRuntime.camera.fov = 36;
+            }
+
             presetPreviewRuntime.camera.updateProjectionMatrix();
             presetPreviewRuntime.renderer.setSize(width, height);
             requestPresetPreviewRender(2);
@@ -10135,14 +10296,32 @@
                 return;
             }
 
-            customPreviewRuntime.controls?.update();
+            let controlsChanged = false;
+            if (customPreviewRuntime.controls) {
+                const prevX = customPreviewRuntime.camera.position.x;
+                const prevY = customPreviewRuntime.camera.position.y;
+                const prevZ = customPreviewRuntime.camera.position.z;
+                const prevTX = customPreviewRuntime.controls.target.x;
+                const prevTY = customPreviewRuntime.controls.target.y;
+                const prevTZ = customPreviewRuntime.controls.target.z;
+
+                customPreviewRuntime.controls.update();
+
+                controlsChanged = 
+                    Math.abs(customPreviewRuntime.camera.position.x - prevX) > 0.0001 ||
+                    Math.abs(customPreviewRuntime.camera.position.y - prevY) > 0.0001 ||
+                    Math.abs(customPreviewRuntime.camera.position.z - prevZ) > 0.0001 ||
+                    Math.abs(customPreviewRuntime.controls.target.x - prevTX) > 0.0001 ||
+                    Math.abs(customPreviewRuntime.controls.target.y - prevTY) > 0.0001 ||
+                    Math.abs(customPreviewRuntime.controls.target.z - prevTZ) > 0.0001;
+            }
             customPreviewRuntime.renderer.render(customPreviewRuntime.scene, customPreviewRuntime.camera);
 
             if (customPreviewRuntime.requestedFrames > 0) {
                 customPreviewRuntime.requestedFrames -= 1;
             }
 
-            if (customPreviewRuntime.interacting || customPreviewRuntime.requestedFrames > 0) {
+            if (customPreviewRuntime.interacting || controlsChanged || customPreviewRuntime.requestedFrames > 0) {
                 customPreviewRuntime.rafId = requestAnimationFrame(renderCustomPreviewFrame);
             }
         }
@@ -10152,6 +10331,15 @@
             const width = customPreviewRuntime.mountEl.clientWidth || window.innerWidth;
             const height = customPreviewRuntime.mountEl.clientHeight || window.innerHeight;
             customPreviewRuntime.camera.aspect = width / height;
+
+            // Adapt FOV to viewport aspect ratio to prevent character clipping on narrow/vertical viewport spaces
+            const aspect = width / height;
+            if (aspect < 1) {
+                customPreviewRuntime.camera.fov = isLowPowerMobile ? 42 : 40;
+            } else {
+                customPreviewRuntime.camera.fov = 36;
+            }
+
             customPreviewRuntime.camera.updateProjectionMatrix();
             customPreviewRuntime.renderer.setSize(width, height);
             requestCustomPreviewRender(2);
@@ -10232,7 +10420,7 @@
             customPreviewRuntime.mountEl.appendChild(runtimeRenderer.domElement);
 
             const runtimeControls = new OrbitControls(runtimeCamera, runtimeRenderer.domElement);
-            runtimeControls.enableDamping = !isLowPowerMobile;
+            runtimeControls.enableDamping = true;
             runtimeControls.dampingFactor = 0.08;
             runtimeControls.enablePan = false;
             runtimeControls.rotateSpeed = isLowPowerMobile ? 0.82 : 0.96;
@@ -10318,7 +10506,7 @@
             presetPreviewRuntime.mountEl.appendChild(runtimeRenderer.domElement);
 
             const runtimeControls = new OrbitControls(runtimeCamera, runtimeRenderer.domElement);
-            runtimeControls.enableDamping = !isLowPowerMobile;
+            runtimeControls.enableDamping = true;
             runtimeControls.dampingFactor = 0.08;
             runtimeControls.enablePan = false;
             runtimeControls.rotateSpeed = isLowPowerMobile ? 0.82 : 0.96;
@@ -10404,7 +10592,7 @@
                 return Promise.resolve();
             }
 
-            return loadPresetPreviewTexture(url)
+            return loadShowcaseTexture(url)
                 .then((texture) => {
                     if (!texture || activeAppView !== 'preset-preview' || (options.characterName && presetPreviewRuntime.pendingCharacter !== options.characterName)) {
                         texture?.dispose?.();
@@ -11025,15 +11213,29 @@
             showcaseRuntime.rafId = 0;
             if (!isShowcaseActive || !showcaseRuntime.isInitialized) return;
 
-            const frameBudget = isLowPowerMobile ? (1000 / 24) : (1000 / 36);
-            if (now - showcaseRuntime.lastFrameAt < frameBudget) {
+            const isInteractingOrDamping = showcaseRuntime.isDragging || showcaseRuntime.isDamping;
+            const frameBudget = isInteractingOrDamping ? 0 : (isLowPowerMobile ? (1000 / 30) : (1000 / 45));
+            if (frameBudget > 0 && now - showcaseRuntime.lastFrameAt < frameBudget) {
                 showcaseRuntime.rafId = requestAnimationFrame(renderShowcaseFrame);
                 return;
             }
             showcaseRuntime.lastFrameAt = now;
 
-            if (showcaseRuntime.modelRoot && !showcaseRuntime.isDragging) {
-                showcaseRuntime.modelRoot.rotation.y = (showcaseRuntime.modelRoot.rotation.y + showcaseRotationSpeed * 0.01) % (Math.PI * 2);
+            if (showcaseRuntime.modelRoot) {
+                if (showcaseRuntime.isDragging) {
+                    // Actualizado directamente por los eventos de arrastre
+                } else if (showcaseRuntime.isDamping) {
+                    // Rotar suavemente con la velocidad acumulada
+                    showcaseRuntime.modelRoot.rotation.y = (showcaseRuntime.modelRoot.rotation.y + showcaseRuntime.dragVelocity) % (Math.PI * 2);
+                    showcaseRuntime.dragVelocity *= 0.92; // Amortiguación
+                    if (Math.abs(showcaseRuntime.dragVelocity) < 0.001) {
+                        showcaseRuntime.isDamping = false;
+                        showcaseRuntime.dragVelocity = 0;
+                    }
+                } else {
+                    // Rotación automática normal lenta
+                    showcaseRuntime.modelRoot.rotation.y = (showcaseRuntime.modelRoot.rotation.y + showcaseRotationSpeed * 0.01) % (Math.PI * 2);
+                }
             }
 
             const timestamp = Date.now();
@@ -11057,6 +11259,7 @@
             }
 
             showcaseRuntime.isDragging = false;
+            showcaseRuntime.isDamping = Math.abs(showcaseRuntime.dragVelocity) > 0.002;
             showcaseRuntime.activePointerId = null;
             showcaseRuntime.lastPointerX = 0;
             canvas.classList.remove('is-dragging');
@@ -11093,6 +11296,8 @@
             runtimeRenderer.domElement.addEventListener('pointerdown', (event) => {
                 if (!showcaseRuntime.modelRoot) return;
                 showcaseRuntime.isDragging = true;
+                showcaseRuntime.isDamping = false;
+                showcaseRuntime.dragVelocity = 0;
                 showcaseRuntime.activePointerId = event.pointerId;
                 showcaseRuntime.lastPointerX = event.clientX;
                 runtimeRenderer.domElement.classList.add('is-dragging');
@@ -11104,7 +11309,9 @@
                 if (!showcaseRuntime.isDragging || showcaseRuntime.activePointerId !== event.pointerId || !showcaseRuntime.modelRoot) return;
                 const deltaX = event.clientX - showcaseRuntime.lastPointerX;
                 showcaseRuntime.lastPointerX = event.clientX;
-                showcaseRuntime.modelRoot.rotation.y = (showcaseRuntime.modelRoot.rotation.y + deltaX * 0.015) % (Math.PI * 2);
+                const speed = deltaX * 0.015;
+                showcaseRuntime.dragVelocity = showcaseRuntime.dragVelocity * 0.4 + speed * 0.6;
+                showcaseRuntime.modelRoot.rotation.y = (showcaseRuntime.modelRoot.rotation.y + speed) % (Math.PI * 2);
             });
             runtimeRenderer.domElement.addEventListener('pointerup', (event) => {
                 if (showcaseRuntime.activePointerId !== event.pointerId) return;
@@ -11271,8 +11478,18 @@
                 applyInitialViewFromRoute();
 
                 if (activeAppView === 'preset-preview' && currentPresetCharacter) {
-                    ensurePresetPreviewRuntime();
-                    applyPresetCharacterToPreview(currentPresetCharacter);
+                    if (USE_MAIN_VIEWER_FOR_PRESET_AND_CUSTOM) {
+                        hidePresetPreviewStageSurface();
+                        showMainViewerCanvas();
+                        syncModelPartsBindings(loadedModelParts);
+                        if (footShadow) footShadow.visible = true;
+                        configureMainViewerCamera(originalCameraPos);
+                        applyPresetPreviewPerformanceProfile();
+                        applyPresetCharacter(currentPresetCharacter);
+                    } else {
+                        ensurePresetPreviewRuntime();
+                        applyPresetCharacterToPreview(currentPresetCharacter);
+                    }
                 }
 
                 if (isShowcaseActive) {
@@ -12826,7 +13043,10 @@
             }
 
             // Ajustar cámara y renderer según contexto
-            if (activeAppView === 'custom') {
+            if (USE_MAIN_VIEWER_FOR_PRESET_AND_CUSTOM && (activeAppView === 'custom' || activeAppView === 'preset-preview')) {
+                resizeToCanvasContainer();
+                requestCustomRender(2);
+            } else if (activeAppView === 'custom') {
                 requestCustomPreviewRender(2);
             } else if (isCustomizationActive) {
                 resizeToCanvasContainer();
@@ -12895,13 +13115,32 @@
 
             lastFrameTimestamp = nowMs;
 
-            const dt = Math.min(clock.getDelta(), 0.1); // Limitar dt para evitar grandes saltos
+            let controlsChanged = false;
+            if (controls) {
+                const prevX = camera.position.x;
+                const prevY = camera.position.y;
+                const prevZ = camera.position.z;
+                const prevTX = controls.target.x;
+                const prevTY = controls.target.y;
+                const prevTZ = controls.target.z;
 
-            if (!shouldRenderScene && !isCircularCameraAnimation && !isAnimatingCamera) {
+                controls.update();
+
+                controlsChanged = 
+                    Math.abs(camera.position.x - prevX) > 0.0001 ||
+                    Math.abs(camera.position.y - prevY) > 0.0001 ||
+                    Math.abs(camera.position.z - prevZ) > 0.0001 ||
+                    Math.abs(controls.target.x - prevTX) > 0.0001 ||
+                    Math.abs(controls.target.y - prevTY) > 0.0001 ||
+                    Math.abs(controls.target.z - prevTZ) > 0.0001;
+            }
+            const isInteracting = isControlInteracting || controlsChanged;
+
+            if (!shouldRenderScene && !isCircularCameraAnimation && !isAnimatingCamera && !isInteracting) {
                 return;
             }
 
-            if (isCustomEditingView && !isCircularCameraAnimation && !isAnimatingCamera && customRenderBurstFrames <= 0) {
+            if (isCustomEditingView && !isCircularCameraAnimation && !isAnimatingCamera && !isInteracting && customRenderBurstFrames <= 0) {
                 return;
             }
 
@@ -12912,11 +13151,13 @@
                 isPresetPreviewView &&
                 !isCircularCameraAnimation &&
                 !isAnimatingCamera &&
-                !isControlInteracting &&
+                !isInteracting &&
                 customRenderBurstFrames <= 0
             ) {
                 return;
             }
+
+            const dt = Math.min(clock.getDelta(), 0.1); // Limitar dt para evitar grandes saltos
 
             // Actualizar showcase si está activo
             updateShowcaseRotation();
@@ -13017,7 +13258,6 @@
                 }
             }
 
-            controls.update();
             renderer.render(scene, camera);
 
             if (isCustomEditingView && customRenderBurstFrames > 0) {
@@ -13860,32 +14100,11 @@
             openStripeStatusOverlay();
             setStripeStatus('<p>Preparando checkout seguro de Stripe...</p>');
 
-            let checkoutWindow = null;
-            try {
-                checkoutWindow = window.open('', '_blank', 'noopener,noreferrer');
-            } catch {
-                checkoutWindow = null;
-            }
-
             try {
                 const session = await createStripeCheckoutSession();
                 rememberPendingStripeSession(session);
-                if (checkoutWindow) {
-                    checkoutWindow.location = session.url;
-                } else {
-                    window.location.assign(session.url);
-                    return;
-                }
-
-                setStripeStatus(`
-                    <p>Se abrió Stripe en una pestaña nueva. Completa el pago de 5 USD y vuelve aquí para descargar sin perder tu personaje.</p>
-                    <div class="stripe-status-actions">
-                        <button type="button" class="stripe-status-btn primary" onclick="verifyStripePaymentAndDownload()">Ya pagué, verificar y descargar</button>
-                        <button type="button" class="stripe-status-btn" onclick="closeStripeStatusOverlay()">Seguir editando</button>
-                    </div>
-                `);
+                window.location.assign(session.url);
             } catch (error) {
-                if (checkoutWindow) checkoutWindow.close();
                 const missing = error.payload?.missing;
                 const copy = missing?.STRIPE_SECRET_KEY
                     ? 'Configura STRIPE_SECRET_KEY y STRIPE_PRICE_ID como variables del backend en Cloudflare.'
@@ -14065,6 +14284,7 @@
             if (show) {
                 stopActiveCustomPdfGeneration();
             }
+            document.body.classList.remove('main-3d-viewer-active');
             document.body.classList.remove('showcase-mode');
             const authContainer = document.getElementById('auth-container');
             updatePresetTemplateDownloadButton();
@@ -14089,10 +14309,7 @@
                 if (fandomsOverlay) fandomsOverlay.classList.remove('active');
                 hideCharacterName();
 
-                if (canvasContainer) {
-                    canvasContainer.style.display = 'none';
-                    canvasContainer.classList.remove('showcase-active');
-                }
+                hideMainViewerCanvas();
 
                 shouldRenderScene = false;
                 activeAppView = 'home';
@@ -14122,9 +14339,11 @@
 
         function openCustomizationView() {
             ensureDeferredViews();
+            document.body.classList.add('main-3d-viewer-active');
             document.body.classList.remove('showcase-mode');
 
             disposePresetPreviewRuntime();
+            hidePresetPreviewStageSurface();
             stopShowcase();
             if (fandomsOverlay) fandomsOverlay.classList.remove('active');
             if (userProfileView) userProfileView.style.display = 'none';
@@ -14138,26 +14357,32 @@
             if (presetsSection) presetsSection.classList.add('hidden');
             if (customizeSection) customizeSection.classList.remove('hidden');
 
-            if (canvasContainer) {
-                canvasContainer.style.display = 'none';
-                canvasContainer.classList.remove('showcase-active');
-            }
-
-            shouldRenderScene = false;
+            showMainViewerCanvas();
+            shouldRenderScene = true;
             customRenderBurstFrames = 0;
             forceMemoryCleanup();
             setGlobalTopbarVisible(true);
             activeAppView = 'custom';
 
+            if (USE_MAIN_VIEWER_FOR_PRESET_AND_CUSTOM) {
+                syncModelPartsBindings(loadedModelParts);
+                resetCustomBuilderModelState();
+                if (footShadow) footShadow.visible = true;
+                configureMainViewerCamera(isLowPowerMobile ? mobileCustomizationCameraPos : desktopCustomizationCameraPos);
+                requestCustomRender(isLowPowerMobile ? 26 : 18);
+            }
+
             if (window.__papelcoolCustomBuilderReady === true) {
                 launchCustomBuilderExperience();
             }
 
-            const runtimeReady = ensureCustomPreviewRuntime();
-            if (runtimeReady && customPreviewRuntime.stageEl) {
-                customPreviewRuntime.stageEl.classList.add('active');
-                customPreviewRuntime.stageEl.setAttribute('aria-hidden', 'false');
-                requestCustomPreviewRender(isLowPowerMobile ? 18 : 8);
+            if (!USE_MAIN_VIEWER_FOR_PRESET_AND_CUSTOM) {
+                const runtimeReady = ensureCustomPreviewRuntime();
+                if (runtimeReady && customPreviewRuntime.stageEl) {
+                    customPreviewRuntime.stageEl.classList.add('active');
+                    customPreviewRuntime.stageEl.setAttribute('aria-hidden', 'false');
+                    requestCustomPreviewRender(isLowPowerMobile ? 18 : 8);
+                }
             }
 
             notifyCustomPdfStateChanged('custom-view-open', true);
@@ -14170,6 +14395,7 @@
         function openPresetsView() {
             ensureDeferredViews();
             stopActiveCustomPdfGeneration();
+            document.body.classList.remove('main-3d-viewer-active');
             document.body.classList.remove('showcase-mode');
 
             disposePresetPreviewRuntime();
@@ -14187,10 +14413,7 @@
             if (customizeSection) customizeSection.classList.add('hidden');
             hideCharacterName();
             if (authenticatedHomeView) authenticatedHomeView.classList.remove('active');
-            if (canvasContainer) {
-                canvasContainer.style.display = 'none';
-                canvasContainer.classList.remove('showcase-active');
-            }
+            hideMainViewerCanvas();
             shouldRenderScene = false;
             customRenderBurstFrames = 0;
             forceMemoryCleanup();
@@ -14270,6 +14493,7 @@
         function openStripeSuccessView() {
             ensureDeferredViews();
             stopActiveCustomPdfGeneration();
+            document.body.classList.remove('main-3d-viewer-active');
             document.body.classList.remove('showcase-mode');
             document.body.classList.remove('customization-active');
             disposePresetPreviewRuntime();
@@ -14284,10 +14508,7 @@
             if (editorPanelWrapper) editorPanelWrapper.style.display = 'none';
             if (presetsSection) presetsSection.classList.add('hidden');
             if (customizeSection) customizeSection.classList.add('hidden');
-            if (canvasContainer) {
-                canvasContainer.style.display = 'none';
-                canvasContainer.classList.remove('showcase-active');
-            }
+            hideMainViewerCanvas();
             hideCharacterName();
             shouldRenderScene = false;
             setGlobalTopbarVisible(true);
@@ -14299,8 +14520,11 @@
         function openPresetPreviewView() {
             ensureDeferredViews();
             stopActiveCustomPdfGeneration();
+            document.body.classList.add('main-3d-viewer-active');
             document.body.classList.remove('showcase-mode');
             document.body.classList.remove('customization-active');
+            disposePresetPreviewRuntime();
+            hidePresetPreviewStageSurface();
             disposeCustomPreviewRuntime();
             if (window.__papelcoolCustomBuilderReady === true) {
                 resetCustomBuilderView();
@@ -14317,14 +14541,9 @@
             if (editorPanelWrapper) editorPanelWrapper.style.display = 'none';
             if (presetsSection) presetsSection.classList.add('hidden');
             if (customizeSection) customizeSection.classList.add('hidden');
-            if (canvasContainer) {
-                canvasContainer.style.display = 'none';
-                canvasContainer.classList.remove('showcase-active');
-                canvasContainer.style.cursor = 'grab';
-                canvasContainer.style.pointerEvents = 'auto';
-            }
+            showMainViewerCanvas();
 
-            shouldRenderScene = false;
+            shouldRenderScene = true;
             setGlobalTopbarVisible(true);
             activeAppView = 'preset-preview';
 
@@ -14336,20 +14555,34 @@
             }
 
             const shouldShowUnavailable = updatePresetPreviewUnavailableState(currentPresetCharacter);
-            const runtimeReady = shouldShowUnavailable ? false : ensurePresetPreviewRuntime();
-            if (shouldShowUnavailable) {
-                disposePresetPreviewRuntime(true);
-            }
-
-            if (runtimeReady && presetPreviewRuntime.stageEl && !shouldShowUnavailable) {
-                presetPreviewRuntime.stageEl.classList.add('active');
-                presetPreviewRuntime.stageEl.setAttribute('aria-hidden', 'false');
+            if (USE_MAIN_VIEWER_FOR_PRESET_AND_CUSTOM && !shouldShowUnavailable) {
+                hidePresetPreviewStageSurface();
+                syncModelPartsBindings(loadedModelParts);
+                if (footShadow) footShadow.visible = true;
+                configureMainViewerCamera(originalCameraPos);
+                applyPresetPreviewPerformanceProfile();
                 if (currentPresetCharacter) {
-                    applyPresetCharacterToPreview(currentPresetCharacter);
+                    applyPresetCharacter(currentPresetCharacter);
                 } else {
-                    requestPresetPreviewRender(isLowPowerMobile ? 12 : 6);
+                    requestCustomRender(isLowPowerMobile ? 18 : 12);
+                }
+            } else if (!USE_MAIN_VIEWER_FOR_PRESET_AND_CUSTOM) {
+                const runtimeReady = shouldShowUnavailable ? false : ensurePresetPreviewRuntime();
+                if (shouldShowUnavailable) {
+                    disposePresetPreviewRuntime(true);
+                }
+
+                if (runtimeReady && presetPreviewRuntime.stageEl && !shouldShowUnavailable) {
+                    presetPreviewRuntime.stageEl.classList.add('active');
+                    presetPreviewRuntime.stageEl.setAttribute('aria-hidden', 'false');
+                    if (currentPresetCharacter) {
+                        applyPresetCharacterToPreview(currentPresetCharacter);
+                    } else {
+                        requestPresetPreviewRender(isLowPowerMobile ? 12 : 6);
+                    }
                 }
             } else {
+                hideMainViewerCanvas();
                 const previewStage = document.getElementById('preset-preview-stage');
                 if (previewStage) {
                     previewStage.classList.add('active');
@@ -14393,7 +14626,9 @@
             if (requestedView === 'preset-preview') {
                 navigateToView('preset-preview', { updateHistory: false, replaceHistory: true });
                 if (requestedPreset) {
-                    await setPresetCharacter(requestedPreset);
+                    if (currentPresetCharacter !== requestedPreset) {
+                        await setPresetCharacter(requestedPreset);
+                    }
                     requestAnimationFrame(() => updatePresetPreviewUnavailableState(requestedPreset));
                     setTimeout(() => updatePresetPreviewUnavailableState(requestedPreset), 160);
                 }
@@ -15224,6 +15459,16 @@
             if (activeAppView !== 'custom' || !document.body.classList.contains('customization-active')) return;
             if (!modelParts.head && !modelParts.torso && !modelParts.arms.length && !modelParts.legs.length) return;
             if (shouldDeferCustomPdfPreparationUntilDownload()) {
+                customPdfPrepState.version += 1;
+                customPdfPrepState.snapshot = null;
+                customPdfPrepState.snapshotKey = null;
+                customPdfPrepState.preparedKey = null;
+                customPdfPrepState.pageSvgs = null;
+                customPdfPrepState.lastError = null;
+                cancelQueuedCustomPdfPreparation();
+                return;
+            }
+            if (!hasCustomizationInteracted && !isGeneratingPDF) {
                 customPdfPrepState.version += 1;
                 customPdfPrepState.snapshot = null;
                 customPdfPrepState.snapshotKey = null;
@@ -16198,8 +16443,19 @@
             }
             if (activeAppView === 'preset-preview') {
                 if (presetHas3dModel(name)) {
-                    await applyPresetCharacterToPreview(name);
+                    if (USE_MAIN_VIEWER_FOR_PRESET_AND_CUSTOM) {
+                        hidePresetPreviewStageSurface();
+                        showMainViewerCanvas();
+                        syncModelPartsBindings(loadedModelParts);
+                        if (footShadow) footShadow.visible = true;
+                        configureMainViewerCamera(originalCameraPos);
+                        applyPresetPreviewPerformanceProfile();
+                        await applyPresetCharacter(name);
+                    } else {
+                        await applyPresetCharacterToPreview(name);
+                    }
                 } else {
+                    hideMainViewerCanvas();
                     disposePresetPreviewRuntime(true);
                     const previewStage = document.getElementById('preset-preview-stage');
                     if (previewStage) {
@@ -17455,6 +17711,7 @@
 
         function resetCustomBuilderModelState() {
             if (!modelParts.head && !modelParts.torso && !modelParts.arms.length && !modelParts.legs.length) return;
+            hasCustomizationInteracted = false;
             invalidateAllCustomTextureVersions();
             resetCustomPdfPreparedAssets();
 
@@ -18984,7 +19241,7 @@
             <section class="lp-bestsellers-section">
                 <div class="lp-section" id="lp-bestsellers">
                     <div class="lp-bestsellers-header">
-                        <h2 class="lp-section-title">Best Sellers</h2>
+                        <h2 class="lp-section-title" data-i18n="lp-bestsellers-title">Best Sellers</h2>
                         <button type="button" class="lp-btn lp-btn--white" onclick="navigateToView('presets')" style="font-size: 0.85rem; padding: 0.7rem 1.2rem; box-shadow: 4px 4px 0 rgba(0,0,0,1);">
                             Ver todos
                             <span class="material-symbols-outlined" style="font-size: 1rem;">arrow_forward</span>
@@ -18996,20 +19253,26 @@
                 </div>
             </section>
 
-            <!-- ===== LIMITED BUNDLE ===== -->
+            <!-- ===== TIKTOK FILTERS ===== -->
             <section class="lp-bundle-section" id="lp-bundle">
+                <div class="lp-bundle-emoji emoji-1" aria-hidden="true">✂️</div>
+                <div class="lp-bundle-emoji emoji-2" aria-hidden="true">🖨️</div>
+                <div class="lp-bundle-emoji emoji-3" aria-hidden="true">🎨</div>
+                <div class="lp-bundle-emoji emoji-4" aria-hidden="true">👾</div>
+                <div class="lp-bundle-emoji emoji-5" aria-hidden="true">📄</div>
+                <div class="lp-bundle-emoji emoji-6" aria-hidden="true">🤳</div>
                 <div class="lp-bundle-inner">
-                    <span class="lp-bundle-tag">🔥 Drop Limitado</span>
-                    <h2 class="lp-bundle-title">Bundle Galáctico</h2>
-                    <p class="lp-bundle-subtitle">5 kits exclusivos + accesorios. ¡Solo 500 disponibles!</p>
+                    <span class="lp-bundle-tag">🎬 FILTROS VIRALES</span>
+                    <h2 class="lp-bundle-title">TikTok Oficial</h2>
+                    <p class="lp-bundle-subtitle">¡Entra a nuestro perfil @papelcool en TikTok y descubre los filtros oficiales más divertidos para jugar con tus creaciones!</p>
                     <div class="lp-bundle-prices">
-                        <span class="lp-price-old">$1,995 MXN</span>
-                        <span class="lp-price-now">$1,299 MXN</span>
-                        <span class="lp-price-discount">35% OFF</span>
+                        <span class="lp-price-old">PAGO</span>
+                        <span class="lp-price-now">GRATIS</span>
+                        <span class="lp-price-discount">¡ÚSALOS YA!</span>
                     </div>
-                    <button type="button" class="lp-btn lp-btn--pink" onclick="navigateToView('presets')">
-                        <span class="material-symbols-outlined" style="font-size: 1.2rem;">local_fire_department</span>
-                        ¡Lo quiero!
+                    <button type="button" class="lp-btn lp-btn--pink" onclick="window.open('https://www.tiktok.com/@papelcool', '_blank', 'noopener,noreferrer')">
+                        <span class="material-symbols-outlined" style="font-size: 1.2rem;">smart_display</span>
+                        ¡Ver en TikTok!
                     </button>
                 </div>
             </section>
@@ -19152,10 +19415,9 @@
                     <div class="lp-footer-col">
                         <h4>Síguenos</h4>
                         <ul>
-                            <li>Instagram</li>
-                            <li>TikTok</li>
-                            <li>YouTube</li>
-                            <li>Facebook</li>
+                            <li><a href="https://www.instagram.com/papel.cool/" target="_blank" rel="noopener noreferrer">Instagram</a></li>
+                            <li><a href="https://www.tiktok.com/@papel.cool" target="_blank" rel="noopener noreferrer">TikTok</a></li>
+                            <li><a href="https://www.youtube.com/@papelcool" target="_blank" rel="noopener noreferrer">YouTube</a></li>
                         </ul>
                     </div>
                 </div>

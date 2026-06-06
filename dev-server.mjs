@@ -8,6 +8,33 @@ import {
 } from './functions/_lib/stripe-access.js';
 
 const root = process.cwd();
+
+// Load environment variables from .env file if it exists
+try {
+  const envPath = path.join(root, '.env');
+  if (fs.existsSync(envPath)) {
+    const envFile = fs.readFileSync(envPath, 'utf8');
+    envFile.split(/\r?\n/).forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith('#')) return;
+      const index = trimmed.indexOf('=');
+      if (index === -1) return;
+      const key = trimmed.slice(0, index).trim();
+      let value = trimmed.slice(index + 1).trim();
+      // Remove surrounding quotes if any
+      if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
+        value = value.slice(1, -1);
+      }
+      if (key && process.env[key] === undefined) {
+        process.env[key] = value;
+      }
+    });
+    console.log('Successfully loaded environment variables from .env');
+  }
+} catch (e) {
+  console.warn('Could not load .env file:', e);
+}
+
 const port = Number(process.env.PORT || 8001);
 const r2Base = 'https://pub-9432515251e743b7979ceb8e264f80ec.r2.dev/presets-pdfs/';
 const localStripeAccessStore = new Map();

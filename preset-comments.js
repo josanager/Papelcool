@@ -1184,8 +1184,10 @@
         state.isOpen = forceOpen ? true : !state.isOpen;
         dom.overlay.hidden = !state.isOpen;
         dom.overlay.classList.toggle('open', state.isOpen);
+        document.body.classList.toggle('comments-panel-open', state.isOpen);
         document.body.style.overflow = state.isOpen && !isDesktopLayout() ? 'hidden' : '';
         render();
+        window.dispatchEvent(new Event('resize'));
     }
 
     function closePanel(options = {}) {
@@ -1193,9 +1195,11 @@
         state.isOpen = false;
         dom.overlay.hidden = true;
         dom.overlay.classList.remove('open');
+        document.body.classList.remove('comments-panel-open');
         document.body.style.overflow = '';
         if (keepFocus) dom.trigger.focus();
         render();
+        window.dispatchEvent(new Event('resize'));
     }
 
     function setReplyTarget(commentId, author) {
