@@ -4257,6 +4257,22 @@
             line-height: 1.45;
         }
 
+        .custom-builder-section--tones {
+            background: transparent;
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
+        }
+
+        .custom-builder-section--options {
+            background: transparent;
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
+        }
+
         .custom-builder-tones {
             display: grid;
             grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -4399,6 +4415,11 @@
                 padding: 0;
             }
 
+            body.main-3d-viewer-active.customization-active.custom-editor-open #canvas-container {
+                left: var(--custom-editor-width);
+                width: calc(100vw - var(--custom-editor-width));
+            }
+
             body.customization-active.custom-editor-open #preset-preview-stage {
                 inset: var(--header-height, 88px) 0 0 var(--custom-editor-width);
             }
@@ -4421,6 +4442,13 @@
                 margin: 0;
                 z-index: 40;
                 pointer-events: auto;
+            }
+
+            body.main-3d-viewer-active.customization-active.custom-editor-open #canvas-container {
+                left: 0;
+                width: 100vw;
+                height: calc(100vh - var(--header-height, 80px) - 48vh);
+                height: calc(100dvh - var(--header-height, 80px) - 48dvh);
             }
 
             body.customization-active.custom-editor-open #preset-preview-stage {
@@ -14577,10 +14605,7 @@
 
             const presetActionButtons = document.getElementById('preset-action-buttons');
             if (presetActionButtons) presetActionButtons.classList.remove('active');
-
-            if (currentPresetCharacter) {
-                showCharacterName(currentPresetCharacter);
-            }
+            hideCharacterName();
 
             const shouldShowUnavailable = updatePresetPreviewUnavailableState(currentPresetCharacter);
             if (USE_MAIN_VIEWER_FOR_PRESET_AND_CUSTOM && !shouldShowUnavailable) {
@@ -16496,13 +16521,21 @@
                     await applyPresetCharacter(name);
                 }
             }
-            showCharacterName(name);
+            if (activeAppView !== 'preset-preview') {
+                showCharacterName(name);
+            } else {
+                hideCharacterName();
+            }
             updatePresetTemplateDownloadButton();
         }
         window.setPresetCharacter = setPresetCharacter;
 
         // Función para mostrar el nombre del personaje
         function showCharacterName(name) {
+            if (activeAppView === 'preset-preview') {
+                hideCharacterName();
+                return;
+            }
             const characterNameDisplay = document.getElementById('character-name-display');
             const characterNameText = document.getElementById('character-name-text');
             characterNameText.textContent = getPresetDisplayName(name).toUpperCase();
@@ -17942,11 +17975,7 @@
             const copy = getCustomBuilderCopy();
 
             container.innerHTML = `
-                <div class="custom-builder-section">
-                    <p class="custom-builder-note">${copy.skinNote}</p>
-                </div>
-                <div class="custom-builder-section">
-                    <span class="custom-builder-section-label">${copy.tones}</span>
+                <div class="custom-builder-section custom-builder-section--tones">
                     <div id="custom-builder-tones" class="custom-builder-tones"></div>
                 </div>
                 <div class="custom-builder-section">
@@ -18032,14 +18061,8 @@
         }
 
         function renderCustomBuilderOptionsStep(container, step) {
-            const copy = getCustomBuilderCopy();
             const section = document.createElement('div');
-            section.className = 'custom-builder-section';
-
-            const label = document.createElement('span');
-            label.className = 'custom-builder-section-label';
-            label.textContent = copy.options;
-            section.appendChild(label);
+            section.className = 'custom-builder-section custom-builder-section--options';
 
             const grid = document.createElement('div');
             grid.className = 'custom-builder-options-grid';
