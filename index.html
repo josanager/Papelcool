@@ -4134,6 +4134,11 @@
             background: #FFE600;
         }
 
+        .custom-builder-mini-btn--success {
+            background: #2ECC71;
+            color: #000;
+        }
+
         #customize-section {
             display: flex;
             flex-direction: column;
@@ -14032,10 +14037,16 @@
 
         const STRIPE_PENDING_SESSION_KEY = 'papelcool_pending_stripe_session';
         const STRIPE_VERIFIED_SESSION_KEY = 'papelcool_verified_stripe_session';
+        const STRIPE_PENDING_SESSION_LOCAL_KEY = 'papelcool_pending_stripe_session_backup';
+        const STRIPE_VERIFIED_SESSION_LOCAL_KEY = 'papelcool_verified_stripe_session_backup';
+        const CUSTOM_STRIPE_DRAFT_SESSION_KEY = 'papelcool_custom_stripe_draft';
+        const CUSTOM_STRIPE_DRAFT_LOCAL_KEY = 'papelcool_custom_stripe_draft_backup';
+        const CUSTOM_STRIPE_DRAFT_TTL_MS = 30 * 60 * 1000;
 
         function getStripeSuccessUrl() {
             const url = new URL(window.location.href);
-            url.searchParams.set('view', 'stripe-success');
+            url.searchParams.set('view', 'custom');
+            url.searchParams.set('payment', 'stripe_success');
             url.searchParams.set('session_id', '{CHECKOUT_SESSION_ID}');
             url.searchParams.delete('preset');
             return url.toString().replace('%7BCHECKOUT_SESSION_ID%7D', '{CHECKOUT_SESSION_ID}');
@@ -14124,29 +14135,76 @@
         }
 
         function rememberPendingStripeSession(session) {
+            const payload = {
+                sessionId: session.id,
+                checkoutUrl: session.url || '',
+                createdAt: new Date().toISOString(),
+                expiresAt: Date.now() + CUSTOM_STRIPE_DRAFT_TTL_MS
+            };
+
             try {
-                sessionStorage.setItem(STRIPE_PENDING_SESSION_KEY, JSON.stringify({
-                    sessionId: session.id,
-                    checkoutUrl: session.url,
-                    createdAt: new Date().toISOString()
-                }));
+                sessionStorage.setItem(STRIPE_PENDING_SESSION_KEY, JSON.stringify(payload));
             } catch (error) {
                 console.warn('Could not store pending Stripe session:', error);
+            }
+
+            try {
+                localStorage.setItem(STRIPE_PENDING_SESSION_LOCAL_KEY, JSON.stringify(payload));
+            } catch (error) {
+                console.warn('Could not store pending Stripe session backup:', error);
             }
         }
 
         function getPendingStripeSessionId() {
+            const parseSession = (raw) => {
+                if (!raw) return null;
+                try {
+                    const parsed = JSON.parse(raw);
+                    if (!parsed?.sessionId) return null;
+                    if (parsed.expiresAt && Date.now() > Number(parsed.expiresAt)) return 'expired';
+                    return parsed.sessionId;
+                } catch {
+                    return null;
+                }
+            };
+
             try {
                 const raw = sessionStorage.getItem(STRIPE_PENDING_SESSION_KEY);
-                return raw ? JSON.parse(raw).sessionId : null;
+                const sessionId = parseSession(raw);
+                if (sessionId === 'expired') {
+                    sessionStorage.removeItem(STRIPE_PENDING_SESSION_KEY);
+                } else if (sessionId) {
+                    return sessionId;
+                }
             } catch {
                 return null;
             }
+
+            try {
+                const raw = localStorage.getItem(STRIPE_PENDING_SESSION_LOCAL_KEY);
+                const sessionId = parseSession(raw);
+                if (sessionId === 'expired') {
+                    localStorage.removeItem(STRIPE_PENDING_SESSION_LOCAL_KEY);
+                    return null;
+                }
+                if (sessionId) return sessionId;
+            } catch {
+                return null;
+            }
+
+            return null;
         }
 
         function getVerifiedStripeSessionId() {
             try {
-                return sessionStorage.getItem(STRIPE_VERIFIED_SESSION_KEY);
+                const sessionId = sessionStorage.getItem(STRIPE_VERIFIED_SESSION_KEY);
+                if (sessionId) return sessionId;
+            } catch {
+                return null;
+            }
+
+            try {
+                return localStorage.getItem(STRIPE_VERIFIED_SESSION_LOCAL_KEY);
             } catch {
                 return null;
             }
@@ -14158,10 +14216,17 @@
             } catch (error) {
                 console.warn('Could not store verified Stripe session:', error);
             }
+
+            try {
+                localStorage.setItem(STRIPE_VERIFIED_SESSION_LOCAL_KEY, sessionId);
+            } catch (error) {
+                console.warn('Could not store verified Stripe session backup:', error);
+            }
         }
 
         async function startStripeCheckoutForCustomPdf() {
             currentPresetCharacter = 'Custom';
+            persistCustomStripeDraft();
             openStripeStatusOverlay();
             setStripeStatus('<p>Preparando checkout seguro de Stripe...</p>');
 
@@ -14211,6 +14276,7 @@
                     return;
                 }
                 rememberVerifiedStripeSession(sessionId);
+                setCustomCheckoutState('paid', sessionId);
                 closeStripeStatusOverlay();
                 await generateCustomPdfDownload(sessionId);
             } catch (error) {
@@ -14428,17 +14494,27 @@
             forceMemoryCleanup();
             setGlobalTopbarVisible(true);
             activeAppView = 'custom';
+            const shouldRestoreStripeDraft = shouldAttemptCustomStripeDraftRestore();
 
             if (USE_MAIN_VIEWER_FOR_PRESET_AND_CUSTOM) {
                 syncModelPartsBindings(loadedModelParts);
-                resetCustomBuilderModelState();
+                if (!shouldRestoreStripeDraft) {
+                    resetCustomBuilderModelState();
+                }
                 if (footShadow) footShadow.visible = true;
                 configureMainViewerCamera(isLowPowerMobile ? mobileCustomizationCameraPos : desktopCustomizationCameraPos);
                 requestCustomRender(isLowPowerMobile ? 26 : 18);
             }
 
             if (window.__papelcoolCustomBuilderReady === true) {
-                launchCustomBuilderExperience();
+                if (shouldRestoreStripeDraft) {
+                    restoreCustomStripeDraftIfNeeded();
+                } else {
+                    setCustomCheckoutState('unpaid');
+                    launchCustomBuilderExperience();
+                }
+            } else if (!shouldRestoreStripeDraft) {
+                setCustomCheckoutState('unpaid');
             }
 
             if (!USE_MAIN_VIEWER_FOR_PRESET_AND_CUSTOM) {
@@ -16160,6 +16236,13 @@
         const downloadPdfCustomBtn = document.getElementById('download-pdf-custom-btn');
         if (downloadPdfCustomBtn) {
             downloadPdfCustomBtn.addEventListener('click', async () => {
+                if (customCheckoutState.status === 'verifying') return;
+
+                if (customCheckoutState.status === 'paid') {
+                    await generateCustomPdfDownload(customCheckoutState.sessionId || 'paid-custom-download');
+                    return;
+                }
+
                 await startStripeCheckoutForCustomPdf();
             });
         }
@@ -17588,6 +17671,156 @@
             timers: [],
             elements: {}
         };
+        const customCheckoutState = {
+            status: 'unpaid',
+            sessionId: null
+        };
+        let isRestoringCustomStripeDraft = false;
+
+        function persistCustomStripeDraft(rawDraft) {
+            const draft = rawDraft || buildCurrentCustomStripeDraft();
+            if (!draft) return;
+
+            const payload = JSON.stringify({
+                version: 1,
+                savedAt: Date.now(),
+                expiresAt: Date.now() + CUSTOM_STRIPE_DRAFT_TTL_MS,
+                draft
+            });
+
+            try {
+                sessionStorage.setItem(CUSTOM_STRIPE_DRAFT_SESSION_KEY, payload);
+            } catch (error) {
+                console.warn('Could not persist custom Stripe draft in sessionStorage:', error);
+            }
+
+            try {
+                localStorage.setItem(CUSTOM_STRIPE_DRAFT_LOCAL_KEY, payload);
+            } catch (error) {
+                console.warn('Could not persist custom Stripe draft in localStorage:', error);
+            }
+        }
+
+        function clearPersistedCustomStripeDraft() {
+            try {
+                sessionStorage.removeItem(CUSTOM_STRIPE_DRAFT_SESSION_KEY);
+            } catch (error) {
+                console.warn('Could not clear session custom Stripe draft:', error);
+            }
+
+            try {
+                localStorage.removeItem(CUSTOM_STRIPE_DRAFT_LOCAL_KEY);
+            } catch (error) {
+                console.warn('Could not clear local custom Stripe draft:', error);
+            }
+        }
+
+        function clearStoredStripeSessionState() {
+            try {
+                sessionStorage.removeItem(STRIPE_PENDING_SESSION_KEY);
+                sessionStorage.removeItem(STRIPE_VERIFIED_SESSION_KEY);
+            } catch (error) {
+                console.warn('Could not clear stored Stripe session state:', error);
+            }
+
+            try {
+                localStorage.removeItem(STRIPE_PENDING_SESSION_LOCAL_KEY);
+                localStorage.removeItem(STRIPE_VERIFIED_SESSION_LOCAL_KEY);
+            } catch (error) {
+                console.warn('Could not clear stored Stripe session state backup:', error);
+            }
+        }
+
+        function loadPersistedCustomStripeDraft() {
+            const parseDraftPayload = (raw) => {
+                if (!raw) return null;
+
+                try {
+                    const parsed = JSON.parse(raw);
+                    if (!parsed?.draft || !parsed?.expiresAt) return null;
+                    if (Date.now() > Number(parsed.expiresAt)) return 'expired';
+                    return parsed.draft;
+                } catch {
+                    return null;
+                }
+            };
+
+            let draft = null;
+            let backupRaw = null;
+
+            try {
+                draft = parseDraftPayload(sessionStorage.getItem(CUSTOM_STRIPE_DRAFT_SESSION_KEY));
+            } catch (error) {
+                console.warn('Could not read session custom Stripe draft:', error);
+            }
+
+            if (draft === 'expired') {
+                clearPersistedCustomStripeDraft();
+                return null;
+            }
+
+            if (draft) return draft;
+
+            try {
+                backupRaw = localStorage.getItem(CUSTOM_STRIPE_DRAFT_LOCAL_KEY);
+                draft = parseDraftPayload(backupRaw);
+            } catch (error) {
+                console.warn('Could not read local custom Stripe draft:', error);
+            }
+
+            if (draft === 'expired') {
+                clearPersistedCustomStripeDraft();
+                return null;
+            }
+
+            if (draft && backupRaw) {
+                try {
+                    sessionStorage.setItem(CUSTOM_STRIPE_DRAFT_SESSION_KEY, backupRaw);
+                } catch (error) {
+                    console.warn('Could not restore session custom Stripe draft from backup:', error);
+                }
+            }
+
+            return draft || null;
+        }
+
+        function getCustomStripeReturnContext() {
+            const params = new URLSearchParams(window.location.search);
+            return {
+                payment: params.get('payment') || '',
+                sessionId: params.get('session_id') || ''
+            };
+        }
+
+        function shouldAttemptCustomStripeDraftRestore() {
+            const context = getCustomStripeReturnContext();
+            return context.payment === 'stripe_cancelled' || context.payment === 'stripe_success' || Boolean(context.sessionId);
+        }
+
+        function buildCurrentCustomStripeDraft() {
+            if (!document.body.classList.contains('customization-active')) return null;
+
+            return {
+                hasCustomizationInteracted: Boolean(hasCustomizationInteracted),
+                snapshot: buildCurrentCustomPdfSnapshot(),
+                builder: {
+                    phase: customBuilderState.phase,
+                    currentStepIndex: customBuilderState.currentStepIndex,
+                    lastStepIndex: customBuilderState.lastStepIndex,
+                    colorTarget: customBuilderState.colorTarget,
+                    colorSource: customBuilderState.colorSource,
+                    activeToneHex: customBuilderState.activeToneHex,
+                    sliderHue: customBuilderState.sliderHue,
+                    sliderLightness: customBuilderState.sliderLightness
+                }
+            };
+        }
+
+        function setCustomCheckoutState(status = 'unpaid', sessionId = null) {
+            customCheckoutState.status = status;
+            customCheckoutState.sessionId = sessionId || null;
+            syncCustomBuilderCheckoutButton();
+        }
 
         function getCustomBuilderCopy() {
             const lang = (localStorage.getItem('papelcool_lang') || 'es').toLowerCase().startsWith('es') ? 'es' : 'en';
@@ -17600,6 +17833,8 @@
                     finish: 'Finish',
                     editAgain: 'Edit again',
                     download: 'Pay and download',
+                    downloadReady: 'Download',
+                    verifyingPayment: 'Verifying payment...',
                     skin: 'Base color',
                     eyes: 'Eyes',
                     eyebrows: 'Eyebrows',
@@ -17635,6 +17870,8 @@
                 finish: 'Finalizar',
                 editAgain: 'Editar otra vez',
                 download: 'Pagar y descargar',
+                downloadReady: 'Descargar',
+                verifyingPayment: 'Verificando pago...',
                 skin: 'Color base',
                 eyes: 'Ojos',
                 eyebrows: 'Cejas',
@@ -17750,15 +17987,44 @@
             syncCustomBuilderLabels();
         }
 
+        function syncCustomBuilderCheckoutButton() {
+            if (!customBuilderState.initialized) return;
+
+            const copy = getCustomBuilderCopy();
+            const downloadBtn = customBuilderState.elements.downloadBtn;
+            if (!downloadBtn) return;
+
+            downloadBtn.classList.remove('custom-builder-mini-btn--primary', 'custom-builder-mini-btn--success');
+            downloadBtn.disabled = false;
+            downloadBtn.setAttribute('aria-busy', 'false');
+
+            if (customCheckoutState.status === 'paid') {
+                downloadBtn.textContent = copy.downloadReady;
+                downloadBtn.classList.add('custom-builder-mini-btn--success');
+                return;
+            }
+
+            if (customCheckoutState.status === 'verifying') {
+                downloadBtn.textContent = copy.verifyingPayment;
+                downloadBtn.classList.add('custom-builder-mini-btn--primary');
+                downloadBtn.disabled = true;
+                downloadBtn.setAttribute('aria-busy', 'true');
+                return;
+            }
+
+            downloadBtn.textContent = copy.download;
+            downloadBtn.classList.add('custom-builder-mini-btn--primary');
+        }
+
         function syncCustomBuilderLabels() {
             if (!customBuilderState.initialized) return;
 
             const copy = getCustomBuilderCopy();
-            const { startBtn, editBtn, downloadBtn } = customBuilderState.elements;
+            const { startBtn, editBtn } = customBuilderState.elements;
 
             if (startBtn) startBtn.textContent = copy.start;
             if (editBtn) editBtn.textContent = copy.editAgain;
-            if (downloadBtn) downloadBtn.textContent = copy.download;
+            syncCustomBuilderCheckoutButton();
         }
 
         function removeOverlayMesh(parent, mesh) {
@@ -17824,6 +18090,10 @@
             forceMemoryCleanup();
             requestCustomRender(isLowPowerMobile ? 20 : 28);
             notifyCustomPdfStateChanged('custom-reset', true);
+
+            if (!isRestoringCustomStripeDraft) {
+                setCustomCheckoutState('unpaid');
+            }
         }
 
         function hslToHex(h, s, l) {
@@ -17959,6 +18229,173 @@
 
             requestCustomRender(isLowPowerMobile ? 14 : 22);
             notifyCustomPdfStateChanged(`color-${target}`);
+
+            if (!isRestoringCustomStripeDraft && customCheckoutState.status === 'paid') {
+                clearStoredStripeSessionState();
+                setCustomCheckoutState('unpaid');
+                stripCustomStripeReturnParamsFromUrl();
+            }
+        }
+
+        function stripCustomStripeReturnParamsFromUrl() {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('session_id');
+            url.searchParams.delete('payment');
+            window.history.replaceState({ view: 'custom' }, '', `${url.pathname}${url.search}${url.hash}`);
+        }
+
+        function applyCustomColorSnapshotToModel(colors = {}) {
+            const leftArm = modelParts.arms?.find((arm) => arm.name.toLowerCase().includes('l'));
+            const rightArm = modelParts.arms?.find((arm) => arm.name.toLowerCase().includes('r'));
+            const leftLeg = modelParts.legs?.find((leg) => leg.name.toLowerCase().includes('l'));
+            const rightLeg = modelParts.legs?.find((leg) => leg.name.toLowerCase().includes('r'));
+
+            if (modelParts.head && colors.headColor) {
+                const headColor = new THREE.Color(colors.headColor);
+                applyColorToMeshWithoutTextures(modelParts.head, headColor);
+                if (modelParts.ears) modelParts.ears.forEach((ear) => applyColorToMeshWithoutTextures(ear, headColor));
+                applyNoseColor(headColor.getHex());
+            }
+
+            if (modelParts.torso && colors.torsoColor) {
+                applyColorToMeshWithoutTextures(modelParts.torso, new THREE.Color(colors.torsoColor));
+            }
+
+            if (leftArm && colors.armLeftColor) {
+                applyColorToMeshWithoutTextures(leftArm, new THREE.Color(colors.armLeftColor));
+            }
+
+            if (rightArm && colors.armRightColor) {
+                applyColorToMeshWithoutTextures(rightArm, new THREE.Color(colors.armRightColor));
+            }
+
+            if (leftLeg && colors.legLeftColor) {
+                applyColorToMeshWithoutTextures(leftLeg, new THREE.Color(colors.legLeftColor));
+            }
+
+            if (rightLeg && colors.legRightColor) {
+                applyColorToMeshWithoutTextures(rightLeg, new THREE.Color(colors.legRightColor));
+            }
+        }
+
+        function applyCustomTextureSnapshotToModel(textureUrls = {}) {
+            currentEyeTextureURL = textureUrls.eyes || null;
+            currentEyebrowTextureURL = textureUrls.eyebrows || null;
+            currentNoseTextureURL = textureUrls.nose || null;
+            currentEarTextureURL = textureUrls['ear-left'] || textureUrls['ear-right'] || null;
+            currentHairFrontURL = textureUrls['hair-front'] || null;
+            currentHairBackURL = textureUrls['hair-back'] || null;
+            currentHairLeftURL = textureUrls['hair-left'] || null;
+            currentHairRightURL = textureUrls['hair-right'] || null;
+            currentHairUpURL = textureUrls['hair-up'] || null;
+            currentTorsoFrontURL = textureUrls['torso-front'] || null;
+            currentTorsoBackURL = textureUrls['torso-back'] || null;
+            currentArmLeftURL = textureUrls['arm-left-front'] || textureUrls['arm-left-back'] || null;
+            currentArmRightURL = textureUrls['arm-right-front'] || textureUrls['arm-right-back'] || null;
+            currentLegLeftURL = textureUrls['leg-left-front'] || textureUrls['leg-left-back'] || null;
+            currentLegRightURL = textureUrls['leg-right-front'] || textureUrls['leg-right-back'] || null;
+
+            changeEyeTexture(currentEyeTextureURL);
+            changeEyebrowTexture(currentEyebrowTextureURL);
+            changeNoseTexture(currentNoseTextureURL);
+            changeEarTexture('left', currentEarTextureURL);
+            changeEarTexture('right', currentEarTextureURL);
+            changeHairTexture(currentHairFrontURL, currentHairBackURL, currentHairLeftURL, currentHairRightURL, currentHairUpURL);
+            changeTorsoClothing(currentTorsoFrontURL, currentTorsoBackURL);
+            changeArmClothing('left', currentArmLeftURL);
+            changeArmClothing('right', currentArmRightURL);
+            changeLegClothing('left', currentLegLeftURL);
+            changeLegClothing('right', currentLegRightURL);
+        }
+
+        function restoreCustomBuilderDraftState(draft) {
+            if (!draft?.builder) {
+                launchCustomBuilderExperience();
+                return;
+            }
+
+            customBuilderState.currentStepIndex = Math.max(0, Number(draft.builder.currentStepIndex) || 0);
+            customBuilderState.lastStepIndex = Math.max(0, Number(draft.builder.lastStepIndex) || customBuilderState.currentStepIndex);
+            customBuilderState.colorTarget = draft.builder.colorTarget || 'all';
+            customBuilderState.colorSource = draft.builder.colorSource || 'none';
+            customBuilderState.activeToneHex = draft.builder.activeToneHex || null;
+            customBuilderState.sliderHue = Number.isFinite(Number(draft.builder.sliderHue)) ? Number(draft.builder.sliderHue) : 32;
+            customBuilderState.sliderLightness = Number.isFinite(Number(draft.builder.sliderLightness)) ? Number(draft.builder.sliderLightness) : 74;
+            hasCustomizationInteracted = Boolean(draft.hasCustomizationInteracted);
+
+            const phase = draft.builder.phase || 'finished';
+            if (phase === 'finished') {
+                clearCustomBuilderTimers();
+                clearCustomBuilderStepContent(customBuilderState.elements.stepContent);
+                hideCustomBuilderFloating(customBuilderState.elements.intro);
+                showCustomBuilderFloating(customBuilderState.elements.finishedActions);
+                setCustomBuilderPhase('finished');
+                return;
+            }
+
+            if (phase === 'editing') {
+                openCustomBuilderEditor(customBuilderState.currentStepIndex);
+                return;
+            }
+
+            launchCustomBuilderExperience();
+        }
+
+        async function restoreCustomStripeDraftIfNeeded() {
+            if (!shouldAttemptCustomStripeDraftRestore()) {
+                setCustomCheckoutState('unpaid');
+                return;
+            }
+
+            initializeCustomBuilder();
+
+            const draft = loadPersistedCustomStripeDraft();
+            if (!draft?.snapshot) {
+                setCustomCheckoutState('unpaid');
+                resetCustomBuilderModelState();
+                launchCustomBuilderExperience();
+                return;
+            }
+
+            isRestoringCustomStripeDraft = true;
+            try {
+                resetCustomBuilderModelState();
+                applyCustomColorSnapshotToModel(draft.snapshot.colors || {});
+                applyCustomTextureSnapshotToModel(draft.snapshot.textureUrls || {});
+                restoreCustomBuilderDraftState(draft);
+                requestCustomRender(isLowPowerMobile ? 24 : 18);
+                notifyCustomPdfStateChanged('stripe-return-restore', true);
+            } finally {
+                isRestoringCustomStripeDraft = false;
+            }
+
+            const { payment, sessionId } = getCustomStripeReturnContext();
+            if (payment === 'stripe_cancelled') {
+                clearStoredStripeSessionState();
+                setCustomCheckoutState('unpaid');
+                return;
+            }
+
+            if (!sessionId) {
+                setCustomCheckoutState('unpaid');
+                return;
+            }
+
+            rememberPendingStripeSession({ id: sessionId, url: window.location.href });
+            setCustomCheckoutState('verifying', sessionId);
+
+            try {
+                const result = await verifyStripeSession(sessionId);
+                if (result?.active) {
+                    rememberVerifiedStripeSession(sessionId);
+                    setCustomCheckoutState('paid', sessionId);
+                    return;
+                }
+            } catch (error) {
+                console.warn('Stripe verification after custom restore failed:', error);
+            }
+
+            setCustomCheckoutState('unpaid');
         }
 
         function applyCustomBuilderTone(hexColor) {
@@ -18104,6 +18541,11 @@
                 button.addEventListener('click', () => {
                     step.apply(item);
                     hasCustomizationInteracted = true;
+                    if (!isRestoringCustomStripeDraft && customCheckoutState.status === 'paid') {
+                        clearStoredStripeSessionState();
+                        setCustomCheckoutState('unpaid');
+                        stripCustomStripeReturnParamsFromUrl();
+                    }
                     customBuilderState.lastStepIndex = customBuilderState.currentStepIndex;
                     requestCustomRender(isLowPowerMobile ? 12 : 18);
                     renderCustomBuilderStep();

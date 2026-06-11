@@ -31,7 +31,7 @@ export async function handleCreateStripeCheckoutSession(request, env) {
   const successUrl = sanitizeReturnUrl(
     body.successUrl,
     origin,
-    `${origin}/index.html?view=stripe-success&session_id={CHECKOUT_SESSION_ID}`
+    `${origin}/index.html?view=custom&payment=stripe_success&session_id={CHECKOUT_SESSION_ID}`
   );
   const cancelUrl = sanitizeReturnUrl(
     body.cancelUrl,
