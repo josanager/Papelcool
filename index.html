@@ -138,12 +138,12 @@
             --pc-character-card-height: 158px;
             --pc-character-shell-min: 150px;
             --pc-character-shell-max: 300px;
-            --header-height: 88px; /* 84px min-height + 4px border-bottom */
+            --header-height: 84px; /* 84px min-height (includes border-bottom) */
         }
 
         @media (max-width: 1180px) {
             :root {
-                --header-height: 80px; /* 76px min-height + 4px border-bottom */
+                --header-height: 76px; /* 76px min-height (includes border-bottom) */
             }
         }
 
@@ -1261,10 +1261,10 @@
 
         #canvas-container {
             width: 100vw;
-            height: calc(100vh - var(--header-height, 88px));
-            height: calc(100dvh - var(--header-height, 88px));
+            height: calc(100vh - var(--header-height, 84px));
+            height: calc(100dvh - var(--header-height, 84px));
             position: fixed;
-            top: var(--header-height, 88px);
+            top: var(--header-height, 84px);
             left: 0;
             right: 0;
             cursor: default;
@@ -1300,7 +1300,7 @@
 
         #preset-preview-stage {
             position: fixed;
-            top: var(--header-height, 88px);
+            top: var(--header-height, 84px);
             left: 0;
             right: 0;
             bottom: 0;
@@ -2051,8 +2051,8 @@
             }
 
             #canvas-container {
-                height: calc(100vh - var(--header-height, 80px));
-                height: calc(100dvh - var(--header-height, 80px));
+                height: calc(100vh - var(--header-height, 76px));
+                height: calc(100dvh - var(--header-height, 76px));
             }
 
             /* Ocultar el botón de modo dentro del panel en móvil */
@@ -4089,7 +4089,7 @@
         }
 
         #custom-builder-finished-actions {
-            top: calc(var(--header-height, 88px) + 18px + env(safe-area-inset-top, 0px));
+            top: calc(var(--header-height, 84px) + 18px + env(safe-area-inset-top, 0px));
             right: 16px;
             left: auto;
             display: flex;
@@ -4435,10 +4435,10 @@
             body.customization-active.custom-editor-open #editor-panel-wrapper {
                 display: block !important;
                 position: fixed;
-                inset: var(--header-height, 88px) 0 0 auto;
+                inset: var(--header-height, 84px) 0 0 auto;
                 width: var(--custom-editor-width);
-                height: calc(100vh - var(--header-height, 88px));
-                height: calc(100dvh - var(--header-height, 88px));
+                height: calc(100vh - var(--header-height, 84px));
+                height: calc(100dvh - var(--header-height, 84px));
                 z-index: 40;
                 pointer-events: auto;
                 padding: 0;
@@ -4451,7 +4451,7 @@
             }
 
             body.customization-active.custom-editor-open #preset-preview-stage {
-                inset: var(--header-height, 88px) var(--custom-editor-width) 0 0;
+                inset: var(--header-height, 84px) var(--custom-editor-width) 0 0;
             }
 
             .custom-builder-panel {
@@ -4478,13 +4478,13 @@
             body.main-3d-viewer-active.customization-active.custom-editor-open #canvas-container {
                 left: 0;
                 width: 100vw;
-                height: calc(100vh - var(--header-height, 80px) - 48vh);
-                height: calc(100dvh - var(--header-height, 80px) - 48dvh);
+                height: calc(100vh - var(--header-height, 76px) - 48vh);
+                height: calc(100dvh - var(--header-height, 76px) - 48dvh);
             }
 
             body.customization-active.custom-editor-open #preset-preview-stage {
-                inset: var(--header-height, 80px) 0 48vh 0;
-                inset: var(--header-height, 80px) 0 48dvh 0;
+                inset: var(--header-height, 76px) 0 48vh 0;
+                inset: var(--header-height, 76px) 0 48dvh 0;
             }
 
             .custom-builder-panel {
