@@ -6305,15 +6305,24 @@
         .lp-promo-bar {
             display: none;
         }
-        .lp-promo-track.is-running {
-            animation: lp-promo-marquee var(--lp-promo-duration, 38s) linear infinite;
+        .lp-promo-track {
+            display: flex;
+            width: max-content;
+            height: 100%;
+            will-change: transform;
+            animation: lp-promo-marquee 30s linear infinite;
         }
         @keyframes lp-promo-marquee {
             from {
                 transform: translate3d(0, 0, 0);
             }
             to {
-                transform: translate3d(calc(var(--lp-promo-loop-width, 1040px) * -1), 0, 0);
+                transform: translate3d(-25%, 0, 0);
+            }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .lp-promo-track {
+                animation: none;
             }
         }
         @media (min-width: 769px) {
@@ -6343,9 +6352,6 @@
                 text-align: center;
                 border-right: 3px solid rgba(0,0,0,0.15);
                 flex: 0 0 260px;
-            }
-            .lp-promo-item:last-child {
-                border-right: none;
             }
             .lp-promo-item:nth-child(4n + 1) { background: #FF4D94; color: #fff; }
             .lp-promo-item:nth-child(4n + 2) { background: #FFE600; color: #000; }
@@ -19833,76 +19839,7 @@
 
         window.isFavorite = isFavorite;
 
-        function initLandingPromoCarousel() {
-            const promoBar = document.getElementById('lp-promo-bar');
-            const promoTrack = document.getElementById('lp-promo-track');
-            if (!promoBar || !promoTrack || promoBar.dataset.carouselReady === 'true') return;
 
-            promoBar.dataset.carouselReady = 'true';
-
-            if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
-
-            const speedPxPerSecond = 22;
-            let resizeTimer = null;
-            let startAttempts = 0;
-
-            const getItems = () => Array.from(promoTrack.querySelectorAll('.lp-promo-item'));
-
-            const ensureLoopItems = () => {
-                promoTrack.classList.remove('is-running');
-                const originalItems = getItems().filter((item) => item.dataset.carouselClone !== 'true');
-                if (!originalItems.length) return;
-
-                if (promoBar.clientWidth < 1) return;
-
-                promoTrack.querySelectorAll('[data-carousel-clone="true"]').forEach((clone) => {
-                    clone.remove();
-                });
-
-                const loopWidth = originalItems.reduce((total, item) => total + item.getBoundingClientRect().width, 0);
-                if (loopWidth < 1) return;
-
-                const minimumTrackWidth = Math.max(promoBar.clientWidth * 4, loopWidth * 3);
-                let renderedWidth = loopWidth;
-
-                while (renderedWidth < minimumTrackWidth) {
-                    originalItems.forEach((item) => {
-                        const clone = item.cloneNode(true);
-                        clone.setAttribute('aria-hidden', 'true');
-                        clone.dataset.carouselClone = 'true';
-                        promoTrack.appendChild(clone);
-                    });
-                    renderedWidth += loopWidth;
-                }
-
-                promoTrack.style.setProperty('--lp-promo-loop-width', `${loopWidth}px`);
-                promoTrack.style.setProperty('--lp-promo-duration', `${Math.max(loopWidth / speedPxPerSecond, 18)}s`);
-                promoTrack.style.transform = '';
-                promoTrack.classList.add('is-running');
-            };
-
-            const startCarousel = () => {
-                ensureLoopItems();
-            };
-
-            const startWhenVisible = () => {
-                startAttempts += 1;
-                startCarousel();
-                if (!promoTrack.classList.contains('is-running') && startAttempts < 20) {
-                    window.setTimeout(startWhenVisible, 150);
-                }
-            };
-
-            window.addEventListener('resize', () => {
-                window.clearTimeout(resizeTimer);
-                resizeTimer = window.setTimeout(startCarousel, 180);
-            });
-
-            startWhenVisible();
-        }
-
-        document.addEventListener('DOMContentLoaded', initLandingPromoCarousel);
-        initLandingPromoCarousel();
 
     </script>
     <div id="authenticated-home-view">
@@ -19911,6 +19848,7 @@
             <!-- ===== PROMO BAR ===== -->
             <div class="lp-promo-bar" id="lp-promo-bar">
                 <div class="lp-promo-track" id="lp-promo-track">
+                    <!-- Set 1 -->
                     <div class="lp-promo-item">
                         <span class="lp-promo-icon" aria-hidden="true">
                             <img src="assets/icons/promo-download.svg" alt="">
@@ -19940,6 +19878,120 @@
                     </div>
                     <div class="lp-promo-item">
                         <span class="lp-promo-icon" aria-hidden="true">
+                            <img src="assets/icons/promo-tiktok.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Filtros de TikTok</div>
+                            <div class="lp-promo-subtitle">Pruébalos ya</div>
+                        </div>
+                    </div>
+
+                    <!-- Set 2 -->
+                    <div class="lp-promo-item" aria-hidden="true">
+                        <span class="lp-promo-icon">
+                            <img src="assets/icons/promo-download.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Descargas gratis</div>
+                            <div class="lp-promo-subtitle">Para casi todo</div>
+                        </div>
+                    </div>
+                    <div class="lp-promo-item" aria-hidden="true">
+                        <span class="lp-promo-icon">
+                            <img src="assets/icons/promo-drops.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Nuevos Drops</div>
+                            <div class="lp-promo-subtitle">Cada semana</div>
+                        </div>
+                    </div>
+                    <div class="lp-promo-item" aria-hidden="true">
+                        <span class="lp-promo-icon">
+                            <img src="assets/icons/promo-limited.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Ediciones Limitadas</div>
+                            <div class="lp-promo-subtitle">No te las pierdas</div>
+                        </div>
+                    </div>
+                    <div class="lp-promo-item" aria-hidden="true">
+                        <span class="lp-promo-icon">
+                            <img src="assets/icons/promo-tiktok.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Filtros de TikTok</div>
+                            <div class="lp-promo-subtitle">Pruébalos ya</div>
+                        </div>
+                    </div>
+
+                    <!-- Set 3 -->
+                    <div class="lp-promo-item" aria-hidden="true">
+                        <span class="lp-promo-icon">
+                            <img src="assets/icons/promo-download.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Descargas gratis</div>
+                            <div class="lp-promo-subtitle">Para casi todo</div>
+                        </div>
+                    </div>
+                    <div class="lp-promo-item" aria-hidden="true">
+                        <span class="lp-promo-icon">
+                            <img src="assets/icons/promo-drops.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Nuevos Drops</div>
+                            <div class="lp-promo-subtitle">Cada semana</div>
+                        </div>
+                    </div>
+                    <div class="lp-promo-item" aria-hidden="true">
+                        <span class="lp-promo-icon">
+                            <img src="assets/icons/promo-limited.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Ediciones Limitadas</div>
+                            <div class="lp-promo-subtitle">No te las pierdas</div>
+                        </div>
+                    </div>
+                    <div class="lp-promo-item" aria-hidden="true">
+                        <span class="lp-promo-icon">
+                            <img src="assets/icons/promo-tiktok.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Filtros de TikTok</div>
+                            <div class="lp-promo-subtitle">Pruébalos ya</div>
+                        </div>
+                    </div>
+
+                    <!-- Set 4 -->
+                    <div class="lp-promo-item" aria-hidden="true">
+                        <span class="lp-promo-icon">
+                            <img src="assets/icons/promo-download.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Descargas gratis</div>
+                            <div class="lp-promo-subtitle">Para casi todo</div>
+                        </div>
+                    </div>
+                    <div class="lp-promo-item" aria-hidden="true">
+                        <span class="lp-promo-icon">
+                            <img src="assets/icons/promo-drops.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Nuevos Drops</div>
+                            <div class="lp-promo-subtitle">Cada semana</div>
+                        </div>
+                    </div>
+                    <div class="lp-promo-item" aria-hidden="true">
+                        <span class="lp-promo-icon">
+                            <img src="assets/icons/promo-limited.svg" alt="">
+                        </span>
+                        <div class="lp-promo-text">
+                            <div class="lp-promo-title">Ediciones Limitadas</div>
+                            <div class="lp-promo-subtitle">No te las pierdas</div>
+                        </div>
+                    </div>
+                    <div class="lp-promo-item" aria-hidden="true">
+                        <span class="lp-promo-icon">
                             <img src="assets/icons/promo-tiktok.svg" alt="">
                         </span>
                         <div class="lp-promo-text">
