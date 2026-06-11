@@ -415,13 +415,13 @@
             object-position: center bottom;
             padding: 0.15rem;
             transform: scale(1.34);
-            filter: drop-shadow(10px 8px 0 rgba(115, 125, 132, 0.55));
+            filter: drop-shadow(5px 4px 0 rgba(115, 125, 132, 0.55));
             transition: transform 0.3s, filter 0.3s;
         }
 
         .fandom-card:hover .fandom-image-container img {
             transform: scale(1.4);
-            filter: drop-shadow(12px 9px 0 rgba(115, 125, 132, 0.58));
+            filter: drop-shadow(6px 5px 0 rgba(115, 125, 132, 0.58));
         }
 
         .fandom-info {
@@ -530,7 +530,7 @@
         .fandom-name {
             font-family: 'Fredoka', sans-serif;
             font-weight: 700;
-            font-size: clamp(0.8rem, 4.7cqw, 1rem);
+            font-size: clamp(1rem, 5.5cqw, 1.2rem);
             color: black;
             text-transform: uppercase;
             margin: 0;
@@ -1581,7 +1581,7 @@
 
             .fandom-name,
             .pc-favorite-card-title {
-                font-size: 0.92rem;
+                font-size: 1.05rem;
                 line-height: 1.08;
             }
 
@@ -1681,7 +1681,7 @@
 
             .fandom-name,
             .pc-favorite-card-title {
-                font-size: 0.82rem;
+                font-size: 0.96rem;
                 line-height: 1.05;
             }
 
@@ -8189,323 +8189,645 @@
     </div>
 
     <!-- Authentication Modal - Sticker Style -->
-    <div id="auth-modal" style="display: none; position: fixed; inset: 0; z-index: 10000; overflow-y: auto;">
-        <!-- Background with decorative shapes -->
-        <div style="position: fixed; inset: 0; background: #e0f2fe;"></div>
+    <div id="auth-modal" style="display: none; position: fixed; inset: 0; z-index: 10000; background: linear-gradient(135deg, #e0f2fe 0%, #f8fafc 100%); overflow-y: auto;">
+        
+        <style>
+            .pc-auth-bg-shape {
+                position: absolute;
+                border: 3px solid #000;
+                opacity: 0.12;
+                pointer-events: none;
+                z-index: 1;
+            }
 
-        <!-- Close Button -->
-        <button onclick="hideAuthModal(); navigateToView('showcase');"
-            style="position: fixed; top: 24px; left: 24px; z-index: 50; background: #407BFF; color: white; width: 56px; height: 56px; border-radius: 50%; border: 5px solid white; box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s;"
-            onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-            <span class="material-symbols-outlined" style="font-size: 30px;">arrow_back</span>
+            .pc-auth-back-btn {
+                position: fixed;
+                top: 24px;
+                left: 24px;
+                z-index: 50;
+                background: #407BFF;
+                color: #FFFFFF;
+                width: 48px;
+                height: 48px;
+                border-radius: 50%;
+                border: 3px solid #000000;
+                box-shadow: 4px 4px 0px #000000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+            }
+            .pc-auth-back-btn:hover {
+                transform: scale(1.1);
+                box-shadow: 5px 5px 0px #000000;
+                background: #FFE600;
+                color: #000000;
+            }
+            .pc-auth-back-btn:active {
+                transform: scale(0.95);
+                box-shadow: 2px 2px 0px #000000;
+            }
+
+            .pc-auth-container {
+                position: relative;
+                display: flex;
+                width: 100%;
+                max-width: 1000px;
+                margin: auto;
+                z-index: 10;
+                box-sizing: border-box;
+                padding: 80px 24px 40px 24px;
+                gap: 48px;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .pc-auth-left {
+                width: 100%;
+                max-width: 400px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 24px;
+                box-sizing: border-box;
+                z-index: 20;
+                position: relative;
+            }
+
+            .pc-auth-badge {
+                background: #FF4D94;
+                border: 4px solid #000000;
+                padding: 12px 28px;
+                box-shadow: 6px 6px 0px #000000;
+                transform: rotate(-3deg);
+                display: inline-block;
+                border-radius: 16px;
+                z-index: 25;
+                margin-bottom: -12px;
+            }
+            .pc-auth-badge h1 {
+                color: white;
+                font-family: 'Fredoka', sans-serif;
+                font-size: 2rem;
+                font-weight: 800;
+                letter-spacing: 0.03em;
+                text-transform: uppercase;
+                margin: 0;
+                text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.15);
+            }
+
+            .pc-auth-card {
+                width: 100%;
+                background: #FFFFFF;
+                border: 4px solid #000000;
+                border-radius: 24px;
+                box-shadow: 8px 8px 0px #000000;
+                box-sizing: border-box;
+                padding: 36px 28px 28px 28px;
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .pc-auth-card-header {
+                margin-bottom: 8px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .pc-auth-card-title {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 1.75rem;
+                font-weight: 800;
+                color: #000000;
+                margin: 0;
+                text-transform: uppercase;
+                letter-spacing: 0.01em;
+            }
+            .pc-auth-card-title-line {
+                width: 80px;
+                height: 5px;
+                background: #FFE600;
+                margin-top: 8px;
+                border-radius: 3px;
+                border: 1px solid #000;
+            }
+
+            .pc-auth-step-badge {
+                background: #FFFFFF;
+                border: 3px solid #000000;
+                padding: 6px 12px;
+                border-radius: 10px;
+                box-shadow: 3px 3px 0px #000000;
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.78rem;
+                font-weight: 800;
+                color: #000000;
+                text-transform: uppercase;
+                flex-shrink: 0;
+                transform: rotate(2deg);
+            }
+
+            .pc-auth-form-group {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .pc-auth-form-group label {
+                display: block;
+                color: #000000;
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.88rem;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+            }
+
+            .pc-auth-input-wrapper {
+                position: relative;
+                width: 100%;
+            }
+            .pc-auth-input {
+                width: 100%;
+                height: 52px;
+                padding: 0 46px 0 18px;
+                border-radius: 14px;
+                background: #FFFFFF;
+                border: 3.5px solid #000000;
+                font-family: 'Montserrat', sans-serif;
+                font-size: 1rem;
+                font-weight: 700;
+                color: #000000;
+                outline: none;
+                box-shadow: 4px 4px 0px #000000;
+                box-sizing: border-box;
+                transition: transform 100ms ease, box-shadow 100ms ease, background-color 150ms ease;
+            }
+            .pc-auth-input::placeholder {
+                color: #9CA3AF;
+                font-weight: 500;
+            }
+            .pc-auth-input:focus {
+                background-color: #FFE600;
+                transform: translate(-2px, -2px);
+                box-shadow: 6px 6px 0px #000000;
+            }
+            .pc-auth-input-wrapper .material-symbols-outlined {
+                position: absolute;
+                right: 16px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #000000;
+                font-size: 24px;
+                pointer-events: none;
+            }
+            .pc-auth-input-wrapper .pc-auth-password-toggle {
+                pointer-events: auto;
+                cursor: pointer;
+            }
+
+            .pc-auth-terms-row {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                margin-top: 4px;
+                margin-bottom: 4px;
+            }
+            .pc-auth-checkbox {
+                width: 22px;
+                height: 22px;
+                margin-top: 2px;
+                cursor: pointer;
+                appearance: none;
+                background-color: #FFFFFF;
+                border: 3px solid #000000;
+                border-radius: 6px;
+                box-shadow: 2px 2px 0px #000000;
+                flex-shrink: 0;
+                position: relative;
+                transition: transform 100ms ease, box-shadow 100ms ease, background-color 100ms ease;
+            }
+            .pc-auth-checkbox:checked {
+                background-color: #2ECC71;
+            }
+            .pc-auth-checkbox:checked::after {
+                content: "✓";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                color: #FFFFFF;
+                font-family: 'Fredoka', sans-serif;
+                font-size: 14px;
+                font-weight: 900;
+            }
+            .pc-auth-checkbox:focus {
+                outline: none;
+            }
+            .pc-auth-checkbox:active {
+                transform: translate(1px, 1px);
+                box-shadow: 1px 1px 0px #000000;
+            }
+            .pc-auth-terms-label {
+                font-family: 'Fredoka', sans-serif;
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #374151;
+                cursor: pointer;
+                line-height: 1.4;
+            }
+
+            .pc-auth-submit-btn {
+                width: 100%;
+                border: 3.5px solid #000000;
+                padding: 16px;
+                border-radius: 16px;
+                box-shadow: 5px 5px 0px #000000;
+                cursor: pointer;
+                box-sizing: border-box;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: transform 100ms ease, box-shadow 100ms ease, background-color 150ms ease;
+            }
+            .pc-auth-submit-btn:hover {
+                transform: translate(-2px, -2px);
+                box-shadow: 7px 7px 0px #000000;
+            }
+            .pc-auth-submit-btn:active {
+                transform: translate(2px, 2px);
+                box-shadow: 3px 3px 0px #000000;
+            }
+            .pc-auth-submit-btn span {
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 900;
+                font-size: 1.2rem;
+                text-transform: uppercase;
+                letter-spacing: 0.02em;
+            }
+            .pc-auth-submit-btn[data-type="login"] {
+                background: #FFE600;
+                color: #000000;
+            }
+            .pc-auth-submit-btn[data-type="login"]:hover {
+                background: #FFD500;
+            }
+            .pc-auth-submit-btn[data-type="register"] {
+                background: #2ECC71;
+                color: #FFFFFF;
+            }
+            .pc-auth-submit-btn[data-type="register"]:hover {
+                background: #27AE60;
+            }
+
+            .pc-auth-social-label {
+                text-align: center;
+                color: #6B7280;
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 800;
+                margin-top: 16px;
+                margin-bottom: 12px;
+                text-transform: uppercase;
+                font-size: 0.78rem;
+                letter-spacing: 0.08em;
+            }
+
+            .pc-auth-social-row {
+                display: flex;
+                justify-content: center;
+                gap: 16px;
+            }
+            .pc-auth-social-btn {
+                background: #FFFFFF;
+                border: 3px solid #000000;
+                border-radius: 50%;
+                width: 52px;
+                height: 52px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 4px 4px 0px #000000;
+                cursor: pointer;
+                transition: transform 100ms ease, box-shadow 100ms ease, background-color 100ms ease;
+                transform: rotate(-4deg);
+            }
+            .pc-auth-social-btn:hover {
+                transform: scale(1.1) rotate(-4deg) translate(-2px, -2px);
+                box-shadow: 6px 6px 0px #000000;
+                background-color: #F9FAFB;
+            }
+            .pc-auth-social-btn:active {
+                transform: scale(0.95) rotate(-4deg) translate(1px, 1px);
+                box-shadow: 2px 2px 0px #000000;
+            }
+
+            .pc-auth-msg-error {
+                padding: 12px;
+                background: #FEE2E2;
+                border: 3px solid #EF4444;
+                border-radius: 12px;
+                color: #DC2626;
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 0.88rem;
+                text-align: center;
+                box-shadow: 3px 3px 0px #000000;
+            }
+            .pc-auth-msg-success {
+                padding: 12px;
+                background: #D1FAE5;
+                border: 3px solid #10B981;
+                border-radius: 12px;
+                color: #059669;
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 700;
+                font-size: 0.88rem;
+                text-align: center;
+                box-shadow: 3px 3px 0px #000000;
+            }
+
+            .pc-auth-footer {
+                display: flex;
+                gap: 12px;
+                align-items: center;
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 100%;
+            }
+
+            .pc-auth-footer-link {
+                background: #FFFFFF;
+                border: 3px solid #000000;
+                border-radius: 14px;
+                padding: 8px 18px;
+                color: #000000;
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 800;
+                font-size: 0.88rem;
+                text-transform: uppercase;
+                box-shadow: 4px 4px 0px #000000;
+                text-decoration: none;
+                transition: transform 100ms ease, box-shadow 100ms ease, background-color 100ms ease;
+                display: inline-block;
+                transform: rotate(-1deg);
+            }
+            .pc-auth-footer-link:hover {
+                transform: translate(-2px, -2px) rotate(-1deg);
+                box-shadow: 6px 6px 0px #000000;
+                background: #FFE600;
+            }
+            .pc-auth-footer-link:active {
+                transform: translate(1px, 1px) rotate(-1deg);
+                box-shadow: 2px 2px 0px #000000;
+            }
+
+            .pc-auth-footer-badge {
+                background: #2ECC71;
+                border: 3px solid #000000;
+                border-radius: 14px;
+                padding: 8px 18px;
+                box-shadow: 4px 4px 0px #000000;
+                display: inline-block;
+                font-family: 'Fredoka', sans-serif;
+                font-weight: 800;
+                font-size: 0.88rem;
+                color: #FFFFFF;
+                text-transform: uppercase;
+                transform: rotate(1deg);
+            }
+            .pc-auth-footer-badge a {
+                color: #FFFFFF;
+                text-decoration: underline;
+                font-weight: 900;
+            }
+            .pc-auth-footer-badge a:hover {
+                color: #FFE600;
+            }
+            
+            .pc-auth-footer-badge[data-type="login-ref"] {
+                background: #407BFF;
+                transform: rotate(-1deg);
+            }
+
+            /* Decorative Background Floating Shapes */
+            .pc-auth-deco-shape {
+                position: absolute;
+                border: 4.5px solid #000;
+                border-radius: 24px;
+                opacity: 0.25;
+                pointer-events: none;
+                z-index: 1;
+                animation: pcFloat 6s ease-in-out infinite alternate;
+            }
+
+            @keyframes pcFloat {
+                0% { transform: translateY(0) rotate(0deg); }
+                100% { transform: translateY(-15px) rotate(8deg); }
+            }
+
+            @media (min-width: 1024px) {
+                .pc-auth-container {
+                    flex-direction: row;
+                    padding: 48px;
+                    gap: 64px;
+                    height: 100%;
+                    min-height: 100vh;
+                }
+                .pc-auth-left {
+                    width: 45%;
+                    max-width: 440px;
+                }
+                .pc-auth-right {
+                    display: flex !important;
+                    width: 55%;
+                }
+            }
+        </style>
+
+        <!-- Background decorative stickers -->
+        <div class="pc-auth-deco-shape" style="top: 12%; left: 8%; width: 75px; height: 75px; background: #FFE600; transform: rotate(12deg); animation-delay: 0s;"></div>
+        <div class="pc-auth-deco-shape" style="bottom: 12%; left: 6%; width: 95px; height: 95px; background: #FF4D94; transform: rotate(-18deg); animation-delay: 1s;"></div>
+        <div class="pc-auth-deco-shape" style="top: 15%; right: 12%; width: 85px; height: 85px; background: #407BFF; transform: rotate(25deg); animation-delay: 2s;"></div>
+        <div class="pc-auth-deco-shape" style="bottom: 15%; right: 8%; width: 70px; height: 70px; background: #2ECC71; transform: rotate(-12deg); animation-delay: 3s;"></div>
+
+        <!-- Close / Back Button -->
+        <button onclick="hideAuthModal(); navigateToView('showcase');" class="pc-auth-back-btn" aria-label="Volver">
+            <span class="material-symbols-outlined">arrow_back</span>
         </button>
 
         <!-- Main Content Container -->
-        <div style="position: relative; display: flex; min-height: 100vh; width: 100%; flex-direction: column; align-items: center; justify-content: center; max-width: 1280px; margin: 0 auto; z-index: 10;"
-            class="px-4 py-16 sm:px-12 sm:py-6 lg:flex-row">
+        <div class="pc-auth-container">
 
-            <!-- Left Side - Form -->
-            <div
-                style="width: 100%; max-width: 400px; display: flex; flex-direction: column; align-items: center; gap: 16px;">
+            <!-- Left Side - Form Card Wrapper -->
+            <div class="pc-auth-left">
 
                 <!-- JOIN US Badge -->
-                <div
-                    style="background: #FF4D94; border: 4px solid white; padding: 10px 24px; box-shadow: 4px 4px 0px 0px rgba(0,0,0,1); transform: rotate(-3deg); display: inline-block;">
-                    <h1 style="color: white; font-family: 'Fredoka', sans-serif; font-size: 2rem; font-weight: 700; letter-spacing: -0.05em; text-transform: uppercase; margin: 0;"
-                        data-i18n="auth-join-us">
-                        Join Us!</h1>
+                <div class="pc-auth-badge">
+                    <h1 data-i18n="auth-join-us">Join Us!</h1>
                 </div>
 
                 <!-- Form Card -->
-                <div style="position: relative; width: 100%; max-width: 360px;" class="px-2 sm:px-0">
-                    <div id="auth-form-container"
-                        class="p-5" style="background: white; border: 4px solid black; border-radius: 20px; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); transform: rotate(1deg); position: relative; z-index: 20;">
-
-                        <!-- LOGIN FORM -->
-                        <div id="auth-login-form">
-                            <div style="margin-bottom: 16px;">
-                                <h2 style="font-family: 'Fredoka', sans-serif; font-size: 1.8rem; font-weight: 700; color: black; margin: 0; text-transform: uppercase;"
-                                    data-i18n="auth-who-are-you">
-                                    Who are you?</h2>
-                                <div style="width: 80px; height: 4px; background: #FFE600; margin-top: 8px;"></div>
-                            </div>
-                            <form id="auth-form" onsubmit="handleAuthSubmit(event)"
-                                style="display: flex; flex-direction: column; gap: 20px;">
-                                <div>
-                                    <label
-                                        style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;"
-                                        data-i18n="auth-email-label">Email
-                                        / Username</label>
-                                    <div style="position: relative;">
-                                        <input type="email" id="auth-email" name="email" autocomplete="email" placeholder="hello@papel.cool" required
-                                            style="width: 100%; height: 56px; padding: 0 50px 0 20px; border-radius: 16px; background: #F9FAFB; border: 3px solid #E5E7EB; font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: black; outline: none; transition: all 0.2s;"
-                                            onfocus="this.style.borderColor='black'"
-                                            onblur="this.style.borderColor='#E5E7EB'"
-                                            data-i18n="auth-email-placeholder">
-                                        <span class="material-symbols-outlined"
-                                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 22px;">mail</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label
-                                        style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;"
-                                        data-i18n="auth-password-label">Password</label>
-                                    <div style="position: relative;">
-                                        <input type="password" id="auth-password" name="password" autocomplete="current-password" placeholder="••••••••" required
-                                            minlength="6"
-                                            style="width: 100%; height: 56px; padding: 0 50px 0 20px; border-radius: 16px; background: #F9FAFB; border: 3px solid #E5E7EB; font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: black; outline: none; transition: all 0.2s;"
-                                            onfocus="this.style.borderColor='black'"
-                                            onblur="this.style.borderColor='#E5E7EB'"
-                                            data-i18n="auth-password-placeholder">
-                                        <span class="material-symbols-outlined"
-                                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 22px; cursor: pointer;"
-                                            onclick="const input = document.getElementById('auth-password'); if (input.type === 'password') { input.type = 'text'; this.textContent = 'visibility_off'; } else { input.type = 'password'; this.textContent = 'visibility'; }">visibility</span>
-                                    </div>
-                                </div>
-                                <div style="padding-top: 8px;">
-                                    <button type="submit" id="auth-submit-btn"
-                                        style="width: 100%; background: #FFE600; border: 4px solid black; padding: 18px; border-radius: 16px; box-shadow: 5px 5px 0px 0px rgba(0,0,0,1); cursor: pointer; transition: all 0.2s;"
-                                        onmouseover="this.style.transform='scale(1.02)'"
-                                        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='5px 5px 0px 0px rgba(0,0,0,1)'"
-                                        onmousedown="this.style.boxShadow='none'; this.style.transform='translateY(4px)'"
-                                        onmouseup="this.style.boxShadow='5px 5px 0px 0px rgba(0,0,0,1)'; this.style.transform='scale(1.02)'">
-                                        <span
-                                            style="color: black; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.3rem; text-transform: uppercase; letter-spacing: -0.02em;"
-                                            data-i18n="auth-enter-btn">Enter
-                                            World</span>
-                                    </button>
-                                </div>
-                            </form>
-
-                            <div style="margin-top: 28px;">
-                                <p style="text-align: center; color: #6B7280; font-family: 'Fredoka', sans-serif; font-weight: 600; margin-bottom: 16px; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em;"
-                                    data-i18n="auth-social-label">
-                                    Or sign in with</p>
-                                <div style="display: flex; justify-content: center; gap: 20px;">
-                                    <button onclick="handleGoogleSignIn()"
-                                        style="background: white; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(-8deg);"
-                                        onmouseover="this.style.transform='scale(1.1) rotate(-8deg)'"
-                                        onmouseout="this.style.transform='rotate(-8deg)'">
-                                        <svg width="28" height="28" viewBox="0 0 24 24">
-                                            <path
-                                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                                                fill="#4285F4" />
-                                            <path
-                                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                                                fill="#34A853" />
-                                            <path
-                                                d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z"
-                                                fill="#FBBC05" />
-                                            <path
-                                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z"
-                                                fill="#EA4335" />
-                                        </svg>
-                                    </button>
-                                </div>
+                <div class="pc-auth-card">
+                    <!-- LOGIN FORM -->
+                    <div id="auth-login-form">
+                        <div class="pc-auth-card-header">
+                            <div>
+                                <h2 class="pc-auth-card-title" data-i18n="auth-who-are-you">Who are you?</h2>
+                                <div class="pc-auth-card-title-line"></div>
                             </div>
                         </div>
-
-                        <!-- REGISTER FORM -->
-                        <div id="auth-register-form" style="display: none;">
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
-                                <div>
-                                    <h2 style="font-family: 'Fredoka', sans-serif; font-size: 1.8rem; font-weight: 700; color: black; margin: 0; text-transform: uppercase;"
-                                        data-i18n="auth-who-are-you">
-                                        Who are you?</h2>
-                                    <div style="width: 80px; height: 4px; background: #FFE600; margin-top: 8px;"></div>
-                                </div>
-                                <div
-                                    style="background: #F3F4F6; padding: 6px 14px; border-radius: 8px; border: 2px solid #E5E7EB;">
-                                    <span
-                                        style="font-family: 'Fredoka', sans-serif; font-size: 0.8rem; font-weight: 700; color: #6B7280; text-transform: uppercase;"
-                                        data-i18n="auth-step-1">Step
-                                        01/02</span>
+                        <form id="auth-form" onsubmit="handleAuthSubmit(event)" style="display: flex; flex-direction: column; gap: 18px;">
+                            <div class="pc-auth-form-group">
+                                <label for="auth-email" data-i18n="auth-email-label">Email / Username</label>
+                                <div class="pc-auth-input-wrapper">
+                                    <input type="email" id="auth-email" name="email" autocomplete="email" placeholder="hello@papel.cool" required class="pc-auth-input" data-i18n="auth-email-placeholder">
+                                    <span class="material-symbols-outlined">mail</span>
                                 </div>
                             </div>
-
-                            <form id="auth-register-form-element" onsubmit="handleAuthSubmit(event)"
-                                style="display: flex; flex-direction: column; gap: 18px;">
-                                <div>
-                                    <label
-                                        style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;"
-                                        data-i18n="auth-nickname-label">Nickname</label>
-                                    <div style="position: relative;">
-                                        <input type="text" id="auth-nickname" name="nickname" autocomplete="nickname" placeholder="Papel_Cool_99" required
-                                            minlength="3"
-                                            style="width: 100%; height: 52px; padding: 0 50px 0 20px; border-radius: 14px; background: #F9FAFB; border: 3px solid #E5E7EB; font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: black; outline: none; transition: all 0.2s;"
-                                            onfocus="this.style.borderColor='black'"
-                                            onblur="this.style.borderColor='#E5E7EB'"
-                                            data-i18n="auth-nickname-placeholder">
-                                        <span class="material-symbols-outlined"
-                                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 22px;">mood</span>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label
-                                        style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;"
-                                        data-i18n="auth-register-email-label">Email
-                                        Address</label>
-                                    <div style="position: relative;">
-                                        <input type="email" id="auth-register-email" name="email" autocomplete="email" placeholder="hello@papel.cool"
-                                            required
-                                            style="width: 100%; height: 52px; padding: 0 50px 0 20px; border-radius: 14px; background: #F9FAFB; border: 3px solid #E5E7EB; font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: black; outline: none; transition: all 0.2s;"
-                                            onfocus="this.style.borderColor='black'"
-                                            onblur="this.style.borderColor='#E5E7EB'"
-                                            data-i18n="auth-email-placeholder">
-                                        <span class="material-symbols-outlined"
-                                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 22px;">mail</span>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label
-                                        style="display: block; color: black; font-family: 'Fredoka', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 8px; text-transform: uppercase;"
-                                        data-i18n="auth-password-label">Password</label>
-                                    <div style="position: relative;">
-                                        <input type="password" id="auth-register-password" name="new-password" autocomplete="new-password" placeholder="••••••••"
-                                            required minlength="6"
-                                            style="width: 100%; height: 52px; padding: 0 50px 0 20px; border-radius: 14px; background: #F9FAFB; border: 3px solid #E5E7EB; font-family: 'Fredoka', sans-serif; font-size: 1rem; font-weight: 600; color: black; outline: none; transition: all 0.2s;"
-                                            onfocus="this.style.borderColor='black'"
-                                            onblur="this.style.borderColor='#E5E7EB'"
-                                            data-i18n="auth-password-placeholder">
-                                        <span class="material-symbols-outlined"
-                                            style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 22px; cursor: pointer;"
-                                            onclick="const input = document.getElementById('auth-register-password'); if (input.type === 'password') { input.type = 'text'; this.textContent = 'visibility_off'; } else { input.type = 'password'; this.textContent = 'visibility'; }">visibility</span>
-                                    </div>
-                                </div>
-
-                                <div style="display: flex; align-items: flex-start; gap: 12px; margin-top: 8px;">
-                                    <input type="checkbox" id="auth-terms" required
-                                        style="width: 22px; height: 22px; margin-top: 2px; cursor: pointer; accent-color: black;">
-                                    <label for="auth-terms"
-                                        style="font-family: 'Fredoka', sans-serif; font-size: 0.85rem; font-weight: 600; color: #374151; cursor: pointer;"
-                                        data-i18n="auth-terms-label-html">
-                                        I agree to the <a href="/terms/"
-                                            style="color: #407BFF; text-decoration: underline; font-weight: 700;">Sticker
-                                            Rules</a> & <a href="/privacy/"
-                                            style="color: #407BFF; text-decoration: underline; font-weight: 700;">Privacy</a>
-                                    </label>
-                                </div>
-
-                                <div style="padding-top: 12px;">
-                                    <button type="submit" id="auth-register-submit-btn"
-                                        style="width: 100%; background: #2ECC71; border: 4px solid black; padding: 18px; border-radius: 16px; box-shadow: 5px 5px 0px 0px rgba(0,0,0,1); cursor: pointer; transition: all 0.2s;"
-                                        onmouseover="this.style.transform='scale(1.02)'"
-                                        onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='5px 5px 0px 0px rgba(0,0,0,1)'"
-                                        onmousedown="this.style.boxShadow='none'; this.style.transform='translateY(4px)'"
-                                        onmouseup="this.style.boxShadow='5px 5px 0px 0px rgba(0,0,0,1)'; this.style.transform='scale(1.02)'">
-                                        <span
-                                            style="color: white; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.3rem; text-transform: uppercase; letter-spacing: -0.02em;"
-                                            data-i18n="auth-create-btn">Create
-                                            Account</span>
-                                    </button>
-                                </div>
-                            </form>
-
-                            <div style="margin-top: 28px;">
-                                <p style="text-align: center; color: #6B7280; font-family: 'Fredoka', sans-serif; font-weight: 600; margin-bottom: 16px; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.1em;"
-                                    data-i18n="auth-social-label">
-                                    Or sign in with</p>
-                                <div style="display: flex; justify-content: center; gap: 20px;">
-                                    <button onclick="handleGoogleSignIn()"
-                                        style="background: white; border-radius: 50%; border: 3px solid #E5E7EB; width: 52px; height: 52px; display: flex; align-items: center; justify-content: center; box-shadow: 3px 3px 0px 0px rgba(0,0,0,0.6); cursor: pointer; transition: transform 0.2s; transform: rotate(-8deg);"
-                                        onmouseover="this.style.transform='scale(1.1) rotate(-8deg)'"
-                                        onmouseout="this.style.transform='rotate(-8deg)'">
-                                        <svg width="28" height="28" viewBox="0 0 24 24">
-                                            <path
-                                                d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                                                fill="#4285F4" />
-                                            <path
-                                                d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                                                fill="#34A853" />
-                                            <path
-                                                d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z"
-                                                fill="#FBBC05" />
-                                            <path
-                                                d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z"
-                                                fill="#EA4335" />
-                                        </svg>
-                                    </button>
+                            <div class="pc-auth-form-group">
+                                <label for="auth-password" data-i18n="auth-password-label">Password</label>
+                                <div class="pc-auth-input-wrapper">
+                                    <input type="password" id="auth-password" name="password" autocomplete="current-password" placeholder="••••••••" required minlength="6" class="pc-auth-input" data-i18n="auth-password-placeholder">
+                                    <span class="material-symbols-outlined pc-auth-password-toggle" onclick="const input = document.getElementById('auth-password'); if (input.type === 'password') { input.type = 'text'; this.textContent = 'visibility_off'; } else { input.type = 'password'; this.textContent = 'visibility'; }">visibility</span>
                                 </div>
                             </div>
-                        </div>
+                            <div style="padding-top: 8px;">
+                                <button type="submit" id="auth-submit-btn" class="pc-auth-submit-btn" data-type="login">
+                                    <span data-i18n="auth-enter-btn">Enter World</span>
+                                </button>
+                            </div>
+                        </form>
 
-                        <!-- Error/Success Messages -->
-                        <div id="auth-error"
-                            style="display: none; margin-top: 16px; padding: 12px; background: #FEE2E2; border: 3px solid #EF4444; border-radius: 12px; color: #DC2626; font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.9rem; text-align: center;">
-                        </div>
-                        <div id="auth-success"
-                            style="display: none; margin-top: 16px; padding: 12px; background: #D1FAE5; border: 3px solid #10B981; border-radius: 12px; color: #059669; font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.9rem; text-align: center;">
+                        <div>
+                            <p class="pc-auth-social-label" data-i18n="auth-social-label">Or sign in with</p>
+                            <div class="pc-auth-social-row">
+                                <button onclick="handleGoogleSignIn()" class="pc-auth-social-btn" aria-label="Google">
+                                    <svg width="24" height="24" viewBox="0 0 24 24">
+                                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                                        <path d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z" fill="#FBBC05" />
+                                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Black background accent -->
-                    <div
-                        style="position: absolute; bottom: -10px; left: -10px; width: 100%; height: 100%; background: black; z-index: 10; border-radius: 24px;">
+                    <!-- REGISTER FORM -->
+                    <div id="auth-register-form" style="display: none;">
+                        <div class="pc-auth-card-header">
+                            <div>
+                                <h2 class="pc-auth-card-title" data-i18n="auth-who-are-you">Who are you?</h2>
+                                <div class="pc-auth-card-title-line"></div>
+                            </div>
+                            <div class="pc-auth-step-badge">
+                                <span data-i18n="auth-step-1">Step 01/02</span>
+                            </div>
+                        </div>
+
+                        <form id="auth-register-form-element" onsubmit="handleAuthSubmit(event)" style="display: flex; flex-direction: column; gap: 18px;">
+                            <div class="pc-auth-form-group">
+                                <label for="auth-nickname" data-i18n="auth-nickname-label">Nickname</label>
+                                <div class="pc-auth-input-wrapper">
+                                    <input type="text" id="auth-nickname" name="nickname" autocomplete="nickname" placeholder="Papel_Cool_99" required minlength="3" class="pc-auth-input" data-i18n="auth-nickname-placeholder">
+                                    <span class="material-symbols-outlined">mood</span>
+                                </div>
+                            </div>
+
+                            <div class="pc-auth-form-group">
+                                <label for="auth-register-email" data-i18n="auth-register-email-label">Email Address</label>
+                                <div class="pc-auth-input-wrapper">
+                                    <input type="email" id="auth-register-email" name="email" autocomplete="email" placeholder="hello@papel.cool" required class="pc-auth-input" data-i18n="auth-email-placeholder">
+                                    <span class="material-symbols-outlined">mail</span>
+                                </div>
+                            </div>
+
+                            <div class="pc-auth-form-group">
+                                <label for="auth-register-password" data-i18n="auth-password-label">Password</label>
+                                <div class="pc-auth-input-wrapper">
+                                    <input type="password" id="auth-register-password" name="new-password" autocomplete="new-password" placeholder="••••••••" required minlength="6" class="pc-auth-input" data-i18n="auth-password-placeholder">
+                                    <span class="material-symbols-outlined pc-auth-password-toggle" onclick="const input = document.getElementById('auth-register-password'); if (input.type === 'password') { input.type = 'text'; this.textContent = 'visibility_off'; } else { input.type = 'password'; this.textContent = 'visibility'; }">visibility</span>
+                                </div>
+                            </div>
+
+                            <div class="pc-auth-terms-row">
+                                <input type="checkbox" id="auth-terms" required class="pc-auth-checkbox">
+                                <label for="auth-terms" class="pc-auth-terms-label" data-i18n="auth-terms-label-html">
+                                    I agree to the <a href="/terms/" style="color: #407BFF; text-decoration: underline; font-weight: 700;">Sticker Rules</a> & <a href="/privacy/" style="color: #407BFF; text-decoration: underline; font-weight: 700;">Privacy</a>
+                                </label>
+                            </div>
+
+                            <div style="padding-top: 8px;">
+                                <button type="submit" id="auth-register-submit-btn" class="pc-auth-submit-btn" data-type="register">
+                                    <span data-i18n="auth-create-btn">Create Account</span>
+                                </button>
+                            </div>
+                        </form>
+
+                        <div>
+                            <p class="pc-auth-social-label" data-i18n="auth-social-label">Or sign in with</p>
+                            <div class="pc-auth-social-row">
+                                <button onclick="handleGoogleSignIn()" class="pc-auth-social-btn" aria-label="Google">
+                                    <svg width="24" height="24" viewBox="0 0 24 24">
+                                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92(3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+                                        <path d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z" fill="#FBBC05" />
+                                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Error/Success Messages -->
+                    <div id="auth-error" class="pc-auth-msg-error" style="display: none;"></div>
+                    <div id="auth-success" class="pc-auth-msg-success" style="display: none;"></div>
                 </div>
 
                 <!-- LOGIN FOOTER -->
-                <div id="auth-login-footer"
-                    style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: center; padding-top: 8px;">
-                    <a href="#"
-                        style="background: white; border: 4px solid black; padding: 4px 16px; color: black; font-family: 'Fredoka', sans-serif; font-weight: 700; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); transform: rotate(-2deg); text-decoration: none; transition: transform 0.2s;"
-                        onmouseover="this.style.transform='scale(1.05) rotate(-2deg)'"
-                        onmouseout="this.style.transform='rotate(-2deg)'" data-i18n="auth-forgot-link">Forgot?</a>
-                    <div
-                        style="background: #2ECC71; border: 4px solid black; padding: 4px 24px; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); transform: rotate(2deg);">
-                        <p style="color: white; font-family: 'Fredoka', sans-serif; font-weight: 700; margin: 0;">
-                            <span data-i18n="auth-new-text">New?</span>
-                            <a href="#" onclick="switchAuthTab('register'); return false;"
-                                style="color: white; text-decoration: underline;" data-i18n="auth-signup-link">Sign
-                                Up!</a>
-                        </p>
+                <div id="auth-login-footer" class="pc-auth-footer">
+                    <a href="#" class="pc-auth-footer-link" data-i18n="auth-forgot-link">Forgot?</a>
+                    <div class="pc-auth-footer-badge">
+                        <span data-i18n="auth-new-text">New?</span>
+                        <a href="#" onclick="switchAuthTab('register'); return false;" style="color: white; text-decoration: underline;" data-i18n="auth-signup-link">Sign Up!</a>
                     </div>
                 </div>
 
-                <!-- REGISTER FOOTER (No Forgot button, Login link instead) -->
-                <div id="auth-register-footer"
-                    style="display: none; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: center; padding-top: 8px;">
-                    <div
-                        style="background: #407BFF; border: 4px solid black; padding: 4px 24px; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); transform: rotate(-2deg);">
-                        <p style="color: white; font-family: 'Fredoka', sans-serif; font-weight: 700; margin: 0;">
-                            <span data-i18n="auth-have-account-text">Have account?</span>
-                            <a href="#" onclick="switchAuthTab('login'); return false;"
-                                style="color: white; text-decoration: underline;" data-i18n="auth-login-link">Login!</a>
-                        </p>
+                <!-- REGISTER FOOTER -->
+                <div id="auth-register-footer" class="pc-auth-footer" style="display: none;">
+                    <div class="pc-auth-footer-badge" data-type="login-ref">
+                        <span data-i18n="auth-have-account-text">Have account?</span>
+                        <a href="#" onclick="switchAuthTab('login'); return false;" style="color: white; text-decoration: underline;" data-i18n="auth-login-link">Login!</a>
                     </div>
                 </div>
             </div>
 
             <!-- Right Side - 3D Character (hidden on mobile) -->
-            <div style="display: none; width: 50%; margin-top: 48px; position: relative; align-items: center; justify-content: center;"
-                class="lg:flex lg:mt-0">
-                <div
-                    style="position: absolute; top: 0; right: 40px; z-index: 30; background: white; border: 4px solid black; padding: 12px 24px; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); transform: rotate(12deg);">
-                    <p
-                        style="color: black; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.25rem; text-transform: uppercase; font-style: italic; margin: 0;">
+            <div style="display: none; width: 55%; position: relative; align-items: center; justify-content: center; flex-direction: column;" class="pc-auth-right">
+                <div style="position: absolute; top: 10%; right: 10%; z-index: 30; background: white; border: 4.5px solid black; padding: 12px 28px; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); transform: rotate(10deg); border-radius: 16px;">
+                    <p style="color: black; font-family: 'Fredoka', sans-serif; font-weight: 800; font-size: 1.35rem; text-transform: uppercase; font-style: italic; margin: 0; letter-spacing: 0.02em;">
                         Customize me!</p>
                 </div>
-                <div style="position: relative; width: 100%; max-width: 500px; aspect-ratio: 1;">
-                    <div
-                        style="position: absolute; inset: 16px; background: #FFE600; opacity: 0.4; border-radius: 50%; border: 4px solid black; filter: blur(4px);">
-                    </div>
-                    <div
-                        style="position: absolute; inset: 40px; background: #407BFF; opacity: 0.3; clip-path: polygon(10% 0%, 100% 5%, 90% 95%, 5% 100%); transform: rotate(45deg);">
-                    </div>
-                    <div id="auth-modal-3d-container"
-                        style="position: relative; width: 100%; height: 100%; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 16px;">
+                <div style="position: relative; width: 100%; max-width: 480px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center;">
+                    <!-- Rotating backdrop stickers -->
+                    <div style="position: absolute; inset: 16px; background: #FFE600; opacity: 0.4; border-radius: 50%; border: 4px solid black; filter: blur(4px);"></div>
+                    <div style="position: absolute; inset: 40px; background: #407BFF; opacity: 0.35; clip-path: polygon(15% 0%, 100% 10%, 85% 90%, 0% 100%); transform: rotate(45deg); border-radius: 20px;"></div>
+                    
+                    <div id="auth-modal-3d-container" style="position: relative; width: 100%; height: 100%; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 16px;">
                         <!-- 3D character will be rendered here -->
                     </div>
-                    <div
-                        style="position: absolute; top: 25%; right: 0; width: 96px; height: 96px; background: #FF9F43; border: 4px solid black; border-radius: 50%; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); z-index: 30; display: flex; align-items: center; justify-content: center; transform: rotate(-15deg);">
-                        <span class="material-symbols-outlined" style="color: white; font-size: 48px;">star</span>
+
+                    <!-- Floating Badges -->
+                    <div style="position: absolute; top: 15%; left: -5%; width: 90px; height: 90px; background: #FF9F43; border: 4px solid black; border-radius: 50%; box-shadow: 5px 5px 0px 0px rgba(0,0,0,1); z-index: 30; display: flex; align-items: center; justify-content: center; transform: rotate(-15deg);">
+                        <span class="material-symbols-outlined" style="color: white; font-size: 44px; font-weight: bold;">star</span>
                     </div>
-                    <div
-                        style="position: absolute; bottom: 25%; left: 0; width: 80px; height: 80px; background: #2ECC71; border: 4px solid black; clip-path: polygon(0% 5%, 100% 15%, 85% 100%, 10% 90%); box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); z-index: 30; display: flex; align-items: center; justify-content: center; transform: rotate(25deg);">
-                        <span class="material-symbols-outlined" style="color: white; font-size: 36px;">favorite</span>
+                    <div style="position: absolute; bottom: 15%; right: -5%; width: 85px; height: 85px; background: #FF4D94; border: 4px solid black; clip-path: polygon(0% 10%, 100% 0%, 90% 100%, 10% 90%); box-shadow: 5px 5px 0px 0px rgba(0,0,0,1); z-index: 30; display: flex; align-items: center; justify-content: center; transform: rotate(20deg); border-radius: 16px;">
+                        <span class="material-symbols-outlined" style="color: white; font-size: 38px; font-weight: bold;">favorite</span>
                     </div>
                 </div>
             </div>
