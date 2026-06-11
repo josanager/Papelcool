@@ -24,7 +24,8 @@
         replyToId: null,
         replyToAuthor: '',
         highlightedCommentId: null,
-        lastLoadedPreset: null
+        lastLoadedPreset: null,
+        sortMode: 'newest'
     };
 
     const dom = {};
@@ -157,7 +158,7 @@
                 max-height: min(78dvh, 760px);
                 display: flex;
                 flex-direction: column;
-                background: #1b1e20;
+                background: linear-gradient(180deg, #fffef8 0%, #edf5ff 100%);
                 border-top: 3px solid #000;
                 border-left: 3px solid #000;
                 border-right: 3px solid #000;
@@ -167,6 +168,7 @@
                 transform: translateY(105%);
                 transition: transform 180ms ease;
                 overflow: hidden;
+                pointer-events: auto;
             }
 
             .pc-comments-overlay.open .pc-comments-panel {
@@ -178,7 +180,7 @@
                 height: 5px;
                 margin: 10px auto 2px;
                 border-radius: 999px;
-                background: rgba(255, 255, 255, 0.45);
+                background: rgba(0, 0, 0, 0.18);
                 flex: 0 0 auto;
             }
 
@@ -188,8 +190,8 @@
                 justify-content: space-between;
                 gap: 12px;
                 padding: 14px 16px 12px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-                background: #1b1e20;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+                background: rgba(255, 255, 255, 0.9);
             }
 
             .pc-comments-title-wrap {
@@ -201,7 +203,7 @@
                 font-family: 'Fredoka', sans-serif;
                 font-size: 1rem;
                 font-weight: 700;
-                color: #fff;
+                color: #111827;
                 line-height: 1.1;
             }
 
@@ -209,7 +211,7 @@
                 margin: 4px 0 0;
                 font-size: 0.8rem;
                 font-weight: 600;
-                color: rgba(255, 255, 255, 0.68);
+                color: rgba(17, 24, 39, 0.6);
                 white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -222,13 +224,31 @@
                 flex: 0 0 auto;
             }
 
+            .pc-comments-sort {
+                border: 2px solid #000;
+                border-radius: 999px;
+                background: #fff;
+                color: #111827;
+                padding: 10px 14px;
+                font: 700 0.78rem/1 'Montserrat', sans-serif;
+                box-shadow: 2px 2px 0 rgba(0, 0, 0, 1);
+                cursor: pointer;
+                appearance: none;
+                min-width: 132px;
+            }
+
+            .pc-comments-sort:focus-visible {
+                outline: 2px solid #0ea5e9;
+                outline-offset: 2px;
+            }
+
             .pc-comments-icon-btn {
                 width: 40px;
                 height: 40px;
                 border: 2px solid #000;
                 border-radius: 12px;
-                background: #2a2e31;
-                color: #fff;
+                background: #fff;
+                color: #111827;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
@@ -248,21 +268,21 @@
 
             .pc-comments-status {
                 padding: 10px 16px;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-                background: rgba(255, 255, 255, 0.04);
-                color: rgba(255, 255, 255, 0.82);
+                border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+                background: rgba(255, 255, 255, 0.65);
+                color: rgba(17, 24, 39, 0.82);
                 font-size: 0.78rem;
                 font-weight: 600;
             }
 
             .pc-comments-status[data-tone="warning"] {
-                background: rgba(255, 230, 0, 0.12);
-                color: #ffe600;
+                background: rgba(255, 230, 0, 0.22);
+                color: #7a5200;
             }
 
             .pc-comments-status[data-tone="error"] {
-                background: rgba(255, 77, 148, 0.12);
-                color: #ff8eb8;
+                background: rgba(255, 77, 148, 0.16);
+                color: #9f1239;
             }
 
             .pc-comments-list {
@@ -272,17 +292,19 @@
                 display: flex;
                 flex-direction: column;
                 gap: 14px;
-                background: #1b1e20;
+                background:
+                    radial-gradient(circle at top left, rgba(255, 230, 0, 0.18), transparent 26%),
+                    linear-gradient(180deg, #fffef8 0%, #edf5ff 100%);
             }
 
             .pc-comments-empty {
                 min-height: 280px;
                 padding: 40px 18px 24px;
-                border: 1px solid rgba(255, 255, 255, 0.06);
+                border: 2px dashed rgba(0, 0, 0, 0.16);
                 border-radius: 18px;
-                background: transparent;
+                background: rgba(255, 255, 255, 0.72);
                 text-align: center;
-                color: rgba(255, 255, 255, 0.66);
+                color: rgba(17, 24, 39, 0.66);
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -294,7 +316,7 @@
                 font-family: 'Fredoka', sans-serif;
                 font-size: clamp(1.2rem, 5vw, 2rem);
                 margin-bottom: 10px;
-                color: #fff;
+                color: #111827;
                 line-height: 1.08;
             }
 
@@ -336,7 +358,7 @@
             }
 
             .pc-comment-card {
-                background: #272b2f;
+                background: rgba(255, 255, 255, 0.94);
                 border: 2px solid #000;
                 border-radius: 18px;
                 box-shadow: 3px 3px 0 rgba(0, 0, 0, 1);
@@ -344,7 +366,7 @@
             }
 
             .pc-comment-card.is-highlighted {
-                background: #343127;
+                background: #fff2ad;
             }
 
             .pc-comment-meta {
@@ -359,7 +381,7 @@
                 border: 0;
                 padding: 0;
                 background: transparent;
-                color: #fff;
+                color: #111827;
                 font-family: 'Fredoka', sans-serif;
                 font-size: 0.95rem;
                 font-weight: 700;
@@ -374,13 +396,13 @@
 
             .pc-comment-time {
                 font-size: 0.74rem;
-                color: rgba(255, 255, 255, 0.52);
+                color: rgba(17, 24, 39, 0.52);
                 font-weight: 600;
             }
 
             .pc-comment-body {
                 margin: 0;
-                color: rgba(255, 255, 255, 0.9);
+                color: rgba(17, 24, 39, 0.9);
                 font-size: 0.92rem;
                 font-weight: 500;
                 line-height: 1.45;
@@ -400,7 +422,7 @@
                 border: 0;
                 padding: 0;
                 background: transparent;
-                color: rgba(255, 255, 255, 0.72);
+                color: rgba(17, 24, 39, 0.72);
                 display: inline-flex;
                 align-items: center;
                 gap: 5px;
@@ -424,8 +446,8 @@
             .pc-comments-composer {
                 flex: 0 0 auto;
                 padding: 10px 14px calc(12px + env(safe-area-inset-bottom, 0px));
-                border-top: 1px solid rgba(255, 255, 255, 0.08);
-                background: #1b1e20;
+                border-top: 1px solid rgba(0, 0, 0, 0.08);
+                background: rgba(255, 255, 255, 0.92);
             }
 
             .pc-comments-primary-btn {
@@ -464,7 +486,7 @@
                 padding: 10px 12px;
                 border: 2px solid #000;
                 border-radius: 16px;
-                background: #2a2e31;
+                background: #fff;
                 box-shadow: 2px 2px 0 rgba(0, 0, 0, 1);
             }
 
@@ -476,7 +498,7 @@
                 display: block;
                 font-family: 'Fredoka', sans-serif;
                 font-size: 0.84rem;
-                color: #fff;
+                color: #111827;
             }
 
             .pc-comments-reply-chip span {
@@ -484,7 +506,7 @@
                 margin-top: 2px;
                 font-size: 0.75rem;
                 font-weight: 600;
-                color: rgba(255, 255, 255, 0.65);
+                color: rgba(17, 24, 39, 0.65);
             }
 
             .pc-comments-quick-reactions {
@@ -506,7 +528,7 @@
                 height: 36px;
                 border-radius: 999px;
                 background: transparent;
-                color: #fff;
+                color: #111827;
                 font-size: 1.25rem;
                 line-height: 1;
                 display: inline-flex;
@@ -555,9 +577,9 @@
 
             .pc-comments-input-shell {
                 min-width: 0;
-                border: 2px solid rgba(255, 255, 255, 0.1);
+                border: 2px solid rgba(0, 0, 0, 0.12);
                 border-radius: 999px;
-                background: #23272a;
+                background: #fff;
                 padding: 0 14px;
             }
 
@@ -570,7 +592,7 @@
                 border-radius: 0;
                 background: transparent;
                 padding: 13px 0 11px;
-                color: #fff;
+                color: #111827;
                 font: 600 0.96rem/1.35 'Montserrat', sans-serif;
                 box-shadow: none;
             }
@@ -580,7 +602,7 @@
             }
 
             .pc-comments-textarea::placeholder {
-                color: rgba(255, 255, 255, 0.46);
+                color: rgba(17, 24, 39, 0.46);
             }
 
             .pc-comments-textarea[readonly] {
@@ -597,7 +619,7 @@
             .pc-comments-hint {
                 font-size: 0.78rem;
                 font-weight: 700;
-                color: rgba(255, 255, 255, 0.42);
+                color: rgba(17, 24, 39, 0.42);
             }
 
             .pc-comments-composer-actions {
@@ -646,7 +668,7 @@
             .pc-comments-secondary-btn {
                 border: 0;
                 background: transparent;
-                color: rgba(255, 255, 255, 0.68);
+                color: rgba(17, 24, 39, 0.68);
                 font: 700 0.78rem/1 'Montserrat', sans-serif;
                 cursor: pointer;
                 padding: 6px 0;
@@ -654,7 +676,7 @@
 
             .pc-comments-secondary-btn:hover,
             .pc-comments-secondary-btn:focus-visible {
-                color: #fff;
+                color: #111827;
                 outline: none;
             }
 
@@ -666,7 +688,7 @@
 
             .pc-comments-guest-copy {
                 margin: 0;
-                color: rgba(255, 255, 255, 0.72);
+                color: rgba(17, 24, 39, 0.72);
                 font: 700 0.84rem/1.35 'Montserrat', sans-serif;
             }
 
@@ -708,31 +730,28 @@
 
             @media (min-width: 980px), (orientation: landscape) and (min-width: 768px) {
                 .pc-comments-rail {
-                    top: 104px;
-                    transform: none;
-                    right: calc(env(safe-area-inset-right, 0px) + 18px);
-                }
-
-                .pc-comments-trigger {
-                    width: 60px;
-                    min-height: 76px;
+                    display: none !important;
                 }
 
                 .pc-comments-overlay {
                     background: transparent;
+                    pointer-events: none;
                 }
 
                 .pc-comments-panel {
                     left: auto;
-                    right: calc(env(safe-area-inset-right, 0px) + 18px);
-                    top: 96px;
-                    bottom: 18px;
-                    width: min(390px, calc(100vw - 110px));
+                    right: 0;
+                    top: var(--header-height, 88px);
+                    bottom: 0;
+                    width: var(--custom-editor-width, clamp(320px, 25vw, 420px));
                     max-height: none;
-                    border: 3px solid #000;
-                    border-radius: 26px;
-                    box-shadow: 8px 8px 0 rgba(0, 0, 0, 1);
-                    transform: translateX(108%);
+                    border-top: 0;
+                    border-right: 0;
+                    border-bottom: 0;
+                    border-left: 3px solid #000;
+                    border-radius: 0;
+                    box-shadow: none;
+                    transform: translateX(0);
                 }
 
                 .pc-comments-overlay.open .pc-comments-panel {
@@ -740,6 +759,22 @@
                 }
 
                 .pc-comments-handle {
+                    display: none;
+                }
+
+                .pc-comments-header {
+                    padding: 20px 22px 16px;
+                }
+
+                .pc-comments-list {
+                    padding: 22px 22px 24px;
+                }
+
+                .pc-comments-composer {
+                    padding: 16px 22px calc(18px + env(safe-area-inset-bottom, 0px));
+                }
+
+                .pc-comments-header-actions [data-action="close"] {
                     display: none;
                 }
             }
@@ -797,6 +832,10 @@
                             <p class="pc-comments-subtitle">0 comentarios</p>
                         </div>
                         <div class="pc-comments-header-actions">
+                            <select class="pc-comments-sort" aria-label="Ordenar comentarios">
+                                <option value="newest">Más recientes</option>
+                                <option value="popular">Más gustados</option>
+                            </select>
                             <button type="button" class="pc-comments-icon-btn" data-action="close" aria-label="Cerrar comentarios">
                                 <span class="material-symbols-outlined" aria-hidden="true">close</span>
                             </button>
@@ -864,6 +903,7 @@
         dom.subtitle = root.querySelector('.pc-comments-subtitle');
         dom.status = root.querySelector('.pc-comments-status');
         dom.list = root.querySelector('.pc-comments-list');
+        dom.sortSelect = root.querySelector('.pc-comments-sort');
         dom.replyChip = root.querySelector('.pc-comments-reply-chip');
         dom.replyChipText = root.querySelector('.pc-comments-reply-chip span');
         dom.quickReactions = root.querySelector('.pc-comments-quick-reactions');
@@ -885,6 +925,10 @@
         dom.panel.querySelector('[data-action="close"]').addEventListener('click', closePanel);
         dom.panel.querySelector('[data-action="cancel-reply"]').addEventListener('click', clearReplyTarget);
         dom.form.querySelector('[data-action="clear"]').addEventListener('click', clearComposer);
+        dom.sortSelect.addEventListener('change', () => {
+            state.sortMode = dom.sortSelect.value === 'popular' ? 'popular' : 'newest';
+            renderCommentList();
+        });
         dom.quickReactions.addEventListener('click', handleQuickReactionClick);
         dom.guestCta.addEventListener('click', handleGuestAuthClick);
 
@@ -935,8 +979,8 @@
             refreshForCurrentPreset();
         });
 
-        window.addEventListener('resize', render);
-        window.addEventListener('orientationchange', render);
+        window.addEventListener('resize', renderLayout);
+        window.addEventListener('orientationchange', renderLayout);
     }
 
     function wrapGlobalHooks() {
@@ -1181,6 +1225,18 @@
 
     function togglePanel(forceOpen = false) {
         if (!canShowEntryPoint()) return;
+        if (isDesktopLayout()) {
+            state.isOpen = true;
+            dom.overlay.hidden = false;
+            dom.overlay.classList.add('open');
+            document.body.classList.add('comments-panel-open');
+            document.body.style.overflow = '';
+            render();
+            window.dispatchEvent(new Event('resize'));
+            if (typeof window.startSmoothResizeLoop === 'function') window.startSmoothResizeLoop(350);
+            setTimeout(() => window.dispatchEvent(new Event('resize')), 300);
+            return;
+        }
         state.isOpen = forceOpen ? true : !state.isOpen;
         dom.overlay.hidden = !state.isOpen;
         dom.overlay.classList.toggle('open', state.isOpen);
@@ -1188,10 +1244,21 @@
         document.body.style.overflow = state.isOpen && !isDesktopLayout() ? 'hidden' : '';
         render();
         window.dispatchEvent(new Event('resize'));
+        if (typeof window.startSmoothResizeLoop === 'function') window.startSmoothResizeLoop(350);
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 300);
     }
 
     function closePanel(options = {}) {
         const { keepFocus = true } = options;
+        if (isDesktopLayout() && canShowEntryPoint()) {
+            state.isOpen = true;
+            dom.overlay.hidden = false;
+            dom.overlay.classList.add('open');
+            document.body.classList.add('comments-panel-open');
+            document.body.style.overflow = '';
+            render();
+            return;
+        }
         state.isOpen = false;
         dom.overlay.hidden = true;
         dom.overlay.classList.remove('open');
@@ -1200,6 +1267,8 @@
         if (keepFocus) dom.trigger.focus();
         render();
         window.dispatchEvent(new Event('resize'));
+        if (typeof window.startSmoothResizeLoop === 'function') window.startSmoothResizeLoop(350);
+        setTimeout(() => window.dispatchEvent(new Event('resize')), 300);
     }
 
     function setReplyTarget(commentId, author) {
@@ -1310,12 +1379,16 @@
                 body
             };
 
-            const { error } = await client.from(COMMENTS_TABLE).insert(payload);
+            const { data: insertedComment, error } = await client
+                .from(COMMENTS_TABLE)
+                .insert(payload)
+                .select('id')
+                .single();
             if (error) throw error;
 
             clearComposer();
             await refreshForCurrentPreset({ force: true });
-            scrollListToBottom();
+            highlightComment(insertedComment?.id || null);
         } catch (error) {
             renderStatus(error?.message || 'No se pudo publicar el comentario.', 'error');
             console.error('Preset comment insert error:', error);
@@ -1358,31 +1431,56 @@
         }
     }
 
-    function scrollListToBottom() {
-        requestAnimationFrame(() => {
-            dom.list.scrollTop = dom.list.scrollHeight;
-        });
-    }
-
-    function render() {
+    function renderLayout() {
         const entryVisible = canShowEntryPoint();
+        const desktopLayout = isDesktopLayout();
         dom.root.dataset.activeView = state.activeView || '';
         dom.root.dataset.currentPreset = state.currentPreset || '';
         dom.root.dataset.entryVisible = entryVisible ? 'true' : 'false';
-        dom.rail.hidden = !entryVisible || state.isOpen;
+        if (entryVisible && desktopLayout) {
+            state.isOpen = true;
+        }
+        dom.rail.hidden = !entryVisible || state.isOpen || desktopLayout;
         if (!entryVisible) {
             if (state.isOpen) closePanel({ keepFocus: false });
             return;
         }
 
-        dom.triggerCount.textContent = `${state.comments.length}`;
-        dom.subtitle.textContent = `${state.comments.length} comentario${state.comments.length === 1 ? '' : 's'}`;
         dom.overlay.hidden = !state.isOpen;
         dom.overlay.classList.toggle('open', state.isOpen);
+        document.body.classList.toggle('comments-panel-open', state.isOpen);
+        document.body.style.overflow = state.isOpen && !desktopLayout ? 'hidden' : '';
+        syncHostLayout(entryVisible, desktopLayout);
+    }
+
+    function render() {
+        renderLayout();
+        const entryVisible = canShowEntryPoint();
+        if (!entryVisible) return;
+
+        dom.triggerCount.textContent = `${state.comments.length}`;
+        dom.subtitle.textContent = `${state.comments.length} comentario${state.comments.length === 1 ? '' : 's'}`;
+        dom.sortSelect.value = state.sortMode;
 
         renderStatusVisibility();
         renderCommentList();
         renderComposer();
+    }
+
+    function syncHostLayout(entryVisible, desktopLayout) {
+        const canvasContainer = document.getElementById('canvas-container');
+        const previewStage = document.getElementById('preset-preview-stage');
+        const shouldSplitDesktop = entryVisible && state.isOpen && desktopLayout;
+
+        if (canvasContainer) {
+            canvasContainer.style.left = '0px';
+            canvasContainer.style.width = shouldSplitDesktop ? 'calc(100vw - var(--custom-editor-width))' : '100vw';
+            canvasContainer.style.right = shouldSplitDesktop ? 'var(--custom-editor-width)' : '0px';
+        }
+
+        if (previewStage) {
+            previewStage.style.right = shouldSplitDesktop ? 'var(--custom-editor-width)' : '';
+        }
     }
 
     function renderStatus(message, tone = 'default', hide = false) {
@@ -1439,8 +1537,8 @@
         if (state.comments.length === 0) {
             dom.list.innerHTML = `
                 <div class="pc-comments-empty">
-                    <strong>Todavía no hay comentarios</strong>
-                    <span>Inicia la conversación.</span>
+                    <strong>Este preset todavía no tiene comentarios</strong>
+                    <span>Haz que esta colección arranque. El primer comentario marca el tono.</span>
                 </div>
             `;
             return;
@@ -1467,7 +1565,32 @@
             }
         });
 
+        roots.forEach(sortCommentChildren);
+        roots.sort((left, right) => compareComments(left, right, state.sortMode));
         return roots;
+    }
+
+    function sortCommentChildren(comment) {
+        comment.children.sort((left, right) => compareComments(left, right, 'oldest'));
+        comment.children.forEach(sortCommentChildren);
+    }
+
+    function compareComments(left, right, mode = 'newest') {
+        const leftTime = new Date(left?.created_at || 0).getTime();
+        const rightTime = new Date(right?.created_at || 0).getTime();
+        const leftLikes = state.likeCounts.get(left?.id) || 0;
+        const rightLikes = state.likeCounts.get(right?.id) || 0;
+
+        if (mode === 'popular') {
+            if (rightLikes !== leftLikes) return rightLikes - leftLikes;
+            return rightTime - leftTime;
+        }
+
+        if (mode === 'oldest') {
+            return leftTime - rightTime;
+        }
+
+        return rightTime - leftTime;
     }
 
     function renderCommentNode(comment, depth) {
@@ -1481,7 +1604,7 @@
         const highlighted = state.highlightedCommentId === comment.id;
 
         return `
-            <article class="pc-comment" data-depth="${Math.min(depth, 3)}">
+            <article class="pc-comment" data-depth="${Math.min(depth, 3)}" data-comment-node-id="${escapeAttribute(comment.id)}">
                 <div class="pc-comment-avatar">${initial}</div>
                 <div class="pc-comment-card ${highlighted ? 'is-highlighted' : ''}">
                     <div class="pc-comment-meta">
@@ -1533,6 +1656,25 @@
         dom.charCount.hidden = !isAuthenticated;
         dom.clearButton.hidden = !dom.textarea.value.trim() && !state.replyToId;
         autoSizeTextarea();
+    }
+
+    function highlightComment(commentId) {
+        state.highlightedCommentId = commentId || null;
+        renderCommentList();
+
+        if (!commentId) return;
+
+        requestAnimationFrame(() => {
+            const commentNode = dom.list.querySelector(`[data-comment-node-id="${escapeAttribute(commentId)}"]`);
+            commentNode?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        });
+
+        window.setTimeout(() => {
+            if (state.highlightedCommentId === commentId) {
+                state.highlightedCommentId = null;
+                renderCommentList();
+            }
+        }, 2200);
     }
 
     function formatRelativeTime(input) {

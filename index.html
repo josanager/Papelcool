@@ -126,6 +126,13 @@
 
 
     <style>
+        body.no-transitions *,
+        body.no-transitions::before,
+        body.no-transitions::after {
+            transition: none !important;
+            animation: none !important;
+        }
+
         :root {
             --pc-character-card-width: 100px;
             --pc-character-card-height: 158px;
@@ -1008,6 +1015,7 @@
     <script src="supabase-config.js"></script>
     <script src="auth.js"></script>
     <script src="character-storage.js"></script>
+    <script src="preset-comments.js?v=20260611b"></script>
 
     <style>
         * {
@@ -1031,6 +1039,7 @@
             position: fixed;
             font-family: 'Fredoka', sans-serif;
             background: linear-gradient(180deg, #37BDF7 0%, #0A92E8 100%);
+            --custom-editor-width: clamp(320px, 25vw, 420px);
             -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
             -webkit-user-select: none;
@@ -1257,12 +1266,14 @@
             position: fixed;
             top: var(--header-height, 88px);
             left: 0;
+            right: 0;
             cursor: default;
             z-index: 2;
             overflow: hidden;
             overscroll-behavior: none;
             pointer-events: none; /* Allow scroll and clicks to pass through to the page */
             background: transparent;
+            transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1), right 0.22s cubic-bezier(0.16, 1, 0.3, 1), bottom 0.22s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         #canvas-container:active {
@@ -1305,8 +1316,13 @@
 
         /* Shift the 3D preview stage so that it doesn't render behind/under the comments panel */
         @media (min-width: 980px), (orientation: landscape) and (min-width: 768px) {
+            body.comments-panel-open:not(.customization-active) #canvas-container {
+                width: calc(100vw - var(--custom-editor-width)) !important;
+                right: var(--custom-editor-width);
+            }
+
             body.comments-panel-open #preset-preview-stage {
-                right: min(410px, calc(100vw - 110px));
+                right: var(--custom-editor-width);
             }
         }
 
@@ -3071,6 +3087,18 @@
             }
         }
 
+        @media (min-width: 980px), (orientation: landscape) and (min-width: 768px) {
+            body.comments-panel-open .preset-template-download {
+                left: calc((100vw - var(--custom-editor-width)) / 2);
+                transform: translateX(-50%);
+            }
+
+            body.comments-panel-open #download-pdf-btn {
+                left: calc((100vw - var(--custom-editor-width)) / 2);
+                transform: translateX(-50%);
+            }
+        }
+
         #download-pdf-btn::after {
             content: "";
             position: absolute;
@@ -3997,10 +4025,6 @@
 
 
         /* --- Custom Builder Rewrite --- */
-        body.customization-active {
-            --custom-editor-width: clamp(320px, 25vw, 420px);
-        }
-
         body.customization-active #canvas-container {
             display: none !important;
             pointer-events: none !important;
@@ -4411,7 +4435,7 @@
             body.customization-active.custom-editor-open #editor-panel-wrapper {
                 display: block !important;
                 position: fixed;
-                inset: var(--header-height, 88px) auto 0 0;
+                inset: var(--header-height, 88px) 0 0 auto;
                 width: var(--custom-editor-width);
                 height: calc(100vh - var(--header-height, 88px));
                 height: calc(100dvh - var(--header-height, 88px));
@@ -4421,16 +4445,18 @@
             }
 
             body.main-3d-viewer-active.customization-active.custom-editor-open #canvas-container {
-                left: var(--custom-editor-width);
-                width: calc(100vw - var(--custom-editor-width));
+                left: 0;
+                right: var(--custom-editor-width);
+                width: auto;
             }
 
             body.customization-active.custom-editor-open #preset-preview-stage {
-                inset: var(--header-height, 88px) 0 0 var(--custom-editor-width);
+                inset: var(--header-height, 88px) var(--custom-editor-width) 0 0;
             }
 
             .custom-builder-panel {
-                border-right: 4px solid #000000;
+                border-left: 4px solid #000000;
+                border-right: 0;
             }
         }
 
@@ -8015,7 +8041,7 @@
 </head>
 
 
-<body class="text-white">
+<body class="text-white no-transitions">
 
 
     <!-- Pop-art global background floating shapes -->
@@ -9054,8 +9080,8 @@
 
         let initialViewApplied = false;
 
-        function getViewFromPathname() {
-            const path = window.location.pathname.toLowerCase();
+        function getViewFromPathname(pathname = window.location.pathname) {
+            const path = String(pathname || window.location.pathname).toLowerCase();
             if (path.includes('/studio/custom')) return 'custom';
             if (path.includes('/studio/presets')) return 'presets';
             if (path.includes('/studio/preset-preview')) return 'preset-preview';
@@ -9082,6 +9108,7 @@
         }
 
         const PRESET_PREVIEW_STORAGE_KEY = 'papelcool_last_preset_preview';
+        const AUTH_RETURN_CONTEXT_STORAGE_KEY = 'papelcool_auth_return_context';
 
         function getRequestedPresetCharacter() {
             const params = new URLSearchParams(window.location.search);
@@ -9117,6 +9144,150 @@
             }
         }
 
+        function sanitizeAuthReturnContext(context) {
+            if (!context || typeof context !== 'object') return null;
+
+            const normalizedView = typeof context.view === 'string' && context.view.trim()
+                ? normalizeLegacyView(context.view.trim())
+                : null;
+            const normalizedPreset = typeof context.preset === 'string' && context.preset.trim()
+                ? context.preset.trim()
+                : null;
+            const normalizedUrl = typeof context.url === 'string' && context.url.trim()
+                ? context.url.trim()
+                : null;
+
+            if (!normalizedView && !normalizedUrl) return null;
+
+            return {
+                view: normalizedView,
+                preset: normalizedPreset,
+                url: normalizedUrl,
+                reopenComments: Boolean(context.reopenComments),
+                source: typeof context.source === 'string' ? context.source.trim() : '',
+                createdAt: Date.now()
+            };
+        }
+
+        function setAuthReturnContext(context) {
+            const sanitized = sanitizeAuthReturnContext(context);
+            if (!sanitized) return false;
+
+            try {
+                sessionStorage.setItem(AUTH_RETURN_CONTEXT_STORAGE_KEY, JSON.stringify(sanitized));
+                return true;
+            } catch (error) {
+                console.warn('Could not persist auth return context:', error);
+                return false;
+            }
+        }
+
+        function getAuthReturnContext() {
+            try {
+                const raw = sessionStorage.getItem(AUTH_RETURN_CONTEXT_STORAGE_KEY);
+                if (!raw) return null;
+                return sanitizeAuthReturnContext(JSON.parse(raw));
+            } catch (error) {
+                console.warn('Could not read auth return context:', error);
+                return null;
+            }
+        }
+
+        function clearAuthReturnContext() {
+            try {
+                sessionStorage.removeItem(AUTH_RETURN_CONTEXT_STORAGE_KEY);
+            } catch (error) {
+                console.warn('Could not clear auth return context:', error);
+            }
+        }
+
+        function getRouteFromContext(context) {
+            if (!context) return null;
+
+            const route = {
+                view: context.view || null,
+                preset: context.preset || null,
+                reopenComments: Boolean(context.reopenComments)
+            };
+
+            if (context.url) {
+                try {
+                    const url = new URL(context.url, window.location.origin);
+                    route.view = route.view || normalizeLegacyView(url.searchParams.get('view') || getViewFromPathname(url.pathname) || null);
+                    route.preset = route.preset || url.searchParams.get('preset') || null;
+                } catch (error) {
+                    console.warn('Could not parse auth return URL:', error);
+                }
+            }
+
+            return route.view ? route : null;
+        }
+
+        function syncAuthReturnUrl(view, preset) {
+            const url = new URL(window.location.href);
+
+            if (view === 'showcase') {
+                url.searchParams.delete('view');
+            } else {
+                url.searchParams.set('view', view);
+            }
+
+            if (view === 'preset-preview' && preset) {
+                url.searchParams.set('preset', preset);
+            } else {
+                url.searchParams.delete('preset');
+            }
+
+            window.history.replaceState({ view }, '', `${url.pathname}${url.search}${url.hash}`);
+        }
+
+        async function restoreAuthReturnContext(options = {}) {
+            const { user = null, clearAfterRestore = true } = options;
+            const context = getAuthReturnContext();
+            if (!context) return false;
+
+            const activeUser = user || (typeof getCurrentUser === 'function' ? await getCurrentUser().catch(() => null) : null);
+            if (!activeUser) return false;
+
+            const route = getRouteFromContext(context);
+            if (!route?.view) {
+                if (clearAfterRestore) clearAuthReturnContext();
+                return false;
+            }
+
+            if (route.preset) {
+                rememberPresetCharacter(route.preset);
+            }
+
+            syncAuthReturnUrl(route.view, route.preset);
+            navigateToView(route.view, { updateHistory: false, replaceHistory: true });
+
+            if (route.view === 'preset-preview' && route.preset && typeof window.setPresetCharacter === 'function') {
+                await window.setPresetCharacter(route.preset);
+            }
+
+            if (route.reopenComments) {
+                requestAnimationFrame(() => {
+                    const reopenPanel = () => {
+                        if (window.presetCommentsController?.open) {
+                            window.presetCommentsController.open();
+                        }
+                    };
+
+                    reopenPanel();
+                    window.setTimeout(reopenPanel, 220);
+                });
+            }
+
+            if (clearAfterRestore) clearAuthReturnContext();
+            return true;
+        }
+
+        function openAuthWithReturn(mode = 'login', context = null) {
+            if (context) setAuthReturnContext(context);
+            showAuthModal(mode);
+        }
+
         function syncViewInUrl(view, replaceHistory = false) {
             view = normalizeLegacyView(view);
             const url = new URL(window.location.href);
@@ -9136,50 +9307,62 @@
             window.history[method]({ view }, '', `${url.pathname}${url.search}${url.hash}`);
         }
 
+        function performWithoutTransitions(action) {
+            document.body.classList.add('no-transitions');
+            action();
+            // Force layout reflow
+            document.body.offsetHeight;
+            setTimeout(() => {
+                document.body.classList.remove('no-transitions');
+            }, 100);
+        }
+
         function navigateToView(view, options = {}) {
-            view = normalizeLegacyView(view);
-            const { updateHistory = true, replaceHistory = false } = options;
+            performWithoutTransitions(() => {
+                view = normalizeLegacyView(view);
+                const { updateHistory = true, replaceHistory = false } = options;
 
-            if (updateHistory) {
-                syncViewInUrl(view, replaceHistory);
-            }
+                if (updateHistory) {
+                    syncViewInUrl(view, replaceHistory);
+                }
 
-            if (view === 'home') {
-                openAuthenticatedHome(true);
-                return;
-            }
+                if (view === 'home') {
+                    openAuthenticatedHome(true);
+                    return;
+                }
 
-            if (view === 'presets') {
-                openPresetsView();
-                return;
-            }
+                if (view === 'presets') {
+                    openPresetsView();
+                    return;
+                }
 
-            if (view === 'custom') {
-                openCustomizationView();
-                return;
-            }
+                if (view === 'custom') {
+                    openCustomizationView();
+                    return;
+                }
 
-            if (view === 'stripe-success') {
-                openStripeSuccessView();
-                return;
-            }
+                if (view === 'stripe-success') {
+                    openStripeSuccessView();
+                    return;
+                }
 
-            if (view === 'preset-preview') {
-                openPresetPreviewView();
-                return;
-            }
+                if (view === 'preset-preview') {
+                    openPresetPreviewView();
+                    return;
+                }
 
-            if (view === 'login') {
-                showAuthModal('login');
-                return;
-            }
+                if (view === 'login') {
+                    showAuthModal('login');
+                    return;
+                }
 
-            if (view === 'register') {
-                showAuthModal('register');
-                return;
-            }
+                if (view === 'register') {
+                    showAuthModal('register');
+                    return;
+                }
 
-            openShowcaseView();
+                openShowcaseView();
+            });
         }
         window.navigateToView = navigateToView;
 
@@ -9271,6 +9454,31 @@
             camera.updateProjectionMatrix();
             renderer.setSize(w, h);
         }
+
+        function syncCustomEditorViewportLayout() {
+            if (!canvasContainer) return;
+
+            const isDesktopEditorOpen = window.innerWidth >= 1025
+                && document.body.classList.contains('customization-active')
+                && document.body.classList.contains('custom-editor-open');
+
+            if (isDesktopEditorOpen) {
+                canvasContainer.style.left = '0px';
+                canvasContainer.style.right = 'auto';
+                canvasContainer.style.width = 'calc(100vw - var(--custom-editor-width))';
+            } else {
+                canvasContainer.style.left = '';
+                canvasContainer.style.right = '';
+                canvasContainer.style.width = '';
+            }
+
+            requestAnimationFrame(() => {
+                if (USE_MAIN_VIEWER_FOR_PRESET_AND_CUSTOM && activeAppView === 'custom') {
+                    resizeToCanvasContainer();
+                    requestCustomRender(isLowPowerMobile ? 8 : 4);
+                }
+            });
+        }
         // Initialization context
         const loadingIndicator = document.getElementById('loading-indicator');
         const scene = new THREE.Scene();
@@ -9290,9 +9498,9 @@
         scene.background = null;
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const originalCameraPos = new THREE.Vector3(0, 1.5, 5);
-        const mobileCustomizationCameraPos = new THREE.Vector3(0, 1.72, 3.15);
-        const desktopCustomizationCameraPos = new THREE.Vector3(0, 1.6, 4.2);
+        const originalCameraPos = new THREE.Vector3(0, 1.5, 5.8);
+        const mobileCustomizationCameraPos = new THREE.Vector3(0, 1.6, 4.0);
+        const desktopCustomizationCameraPos = new THREE.Vector3(0, 1.5, 5.0);
         camera.position.copy(originalCameraPos);
 
         // Detectar si es móvil para reducir calidad y memoria
@@ -13097,6 +13305,7 @@
         function onWindowResize() {
             const isMobile = window.innerWidth <= 1024;
             const isCustomizationActive = document.body.classList.contains('customization-active');
+            syncCustomEditorViewportLayout();
             resizePresetPreviewRuntime();
             resizeCustomPreviewRuntime();
             resizeShowcaseRuntime();
@@ -13127,6 +13336,20 @@
                 renderer.setSize(window.innerWidth, window.innerHeight);
             }
         }
+
+        function startSmoothResizeLoop(duration = 350) {
+            const startTime = performance.now();
+            function tick() {
+                const now = performance.now();
+                const elapsed = now - startTime;
+                onWindowResize();
+                if (elapsed < duration) {
+                    requestAnimationFrame(tick);
+                }
+            }
+            requestAnimationFrame(tick);
+        }
+        window.startSmoothResizeLoop = startSmoothResizeLoop;
 
 
         // --- SHOWCASE MANUAL DRAG ---
@@ -14463,12 +14686,14 @@
         }
 
         function openShowcaseView() {
+            presetApplicationVersion++;
             openAuthenticatedHome(true);
             document.body.classList.add('showcase-mode');
             activeAppView = 'showcase';
         }
 
         function openCustomizationView() {
+            presetApplicationVersion++;
             ensureDeferredViews();
             document.body.classList.add('main-3d-viewer-active');
             document.body.classList.remove('showcase-mode');
@@ -14494,6 +14719,7 @@
             forceMemoryCleanup();
             setGlobalTopbarVisible(true);
             activeAppView = 'custom';
+            updatePresetTemplateDownloadButton();
             const shouldRestoreStripeDraft = shouldAttemptCustomStripeDraftRestore();
 
             if (USE_MAIN_VIEWER_FOR_PRESET_AND_CUSTOM) {
@@ -14534,6 +14760,7 @@
         }
 
         function openPresetsView() {
+            presetApplicationVersion++;
             ensureDeferredViews();
             stopActiveCustomPdfGeneration();
             document.body.classList.remove('main-3d-viewer-active');
@@ -14654,16 +14881,30 @@
             shouldRenderScene = false;
             setGlobalTopbarVisible(true);
             activeAppView = 'stripe-success';
+            updatePresetTemplateDownloadButton();
             if (stripeSuccessView) stripeSuccessView.style.display = 'block';
             verifyStripeSuccessView();
         }
 
         function openPresetPreviewView() {
+            presetApplicationVersion++;
             ensureDeferredViews();
             stopActiveCustomPdfGeneration();
             document.body.classList.add('main-3d-viewer-active');
             document.body.classList.remove('showcase-mode');
             document.body.classList.remove('customization-active');
+
+            // Synchronously open comments panel on desktop to prevent WebGL layout jump
+            const isDesktop = window.innerWidth >= 1025;
+            if (isDesktop) {
+                document.body.classList.add('comments-panel-open');
+                const overlay = document.querySelector('.pc-comments-overlay');
+                if (overlay) {
+                    overlay.classList.add('open');
+                    overlay.hidden = false;
+                }
+            }
+
             disposePresetPreviewRuntime();
             hidePresetPreviewStageSurface();
             disposeCustomPreviewRuntime();
@@ -14737,6 +14978,11 @@
         async function applyInitialViewFromRoute() {
             if (initialViewApplied) return;
             initialViewApplied = true;
+
+            const restoredAuthContext = await restoreAuthReturnContext();
+            if (restoredAuthContext) {
+                return;
+            }
 
             const requestedView = getRequestedView();
             const requestedPreset = getRememberedPresetCharacter();
@@ -16551,6 +16797,7 @@
                         await new Promise((resolve) => requestAnimationFrame(resolve));
                     }
                 } else {
+                    if (runVersion !== presetApplicationVersion) return;
                     await Promise.all(tasks.map(t => t()));
                 }
             };
@@ -16703,6 +16950,10 @@
 
         // Detectar eventos al cargar la página
         window.addEventListener('DOMContentLoaded', async () => {
+            setTimeout(() => {
+                document.body.classList.remove('no-transitions');
+            }, 150);
+
             const urlParams = new URLSearchParams(window.location.search);
 
             // Abrir pestaña Presets si viene en la URL (?tab=presets)
@@ -17952,6 +18203,16 @@
             } else if (editorPanelWrapper) {
                 editorPanelWrapper.style.display = 'none';
             }
+
+            syncCustomEditorViewportLayout();
+            queueMicrotask(() => syncCustomEditorViewportLayout());
+            if (typeof startSmoothResizeLoop === 'function') {
+                startSmoothResizeLoop(350);
+            }
+            setTimeout(() => {
+                syncCustomEditorViewportLayout();
+                if (typeof onWindowResize === 'function') onWindowResize();
+            }, 300);
         }
 
         function hideCustomBuilderFloating(element) {
@@ -18605,6 +18866,7 @@
             customBuilderState.currentStepIndex = Math.max(0, Math.min(stepIndex, getCustomBuilderSteps().length - 1));
             renderCustomBuilderStep();
             queueCustomBuilderTimer(() => onWindowResize(), 40);
+            queueCustomBuilderTimer(() => onWindowResize(), 180);
         }
 
         function stepCustomBuilderFlow(direction = 1) {
@@ -18636,6 +18898,7 @@
             showCustomBuilderFloating(customBuilderState.elements.finishedActions);
             forceMemoryCleanup();
             queueCustomBuilderTimer(() => onWindowResize(), 40);
+            queueCustomBuilderTimer(() => onWindowResize(), 180);
         }
 
         function launchCustomBuilderExperience() {
@@ -18669,6 +18932,7 @@
             }, 360);
 
             queueCustomBuilderTimer(() => onWindowResize(), 40);
+            queueCustomBuilderTimer(() => onWindowResize(), 180);
             notifyCustomPdfStateChanged('custom-builder-launch', true);
         }
 
@@ -18755,6 +19019,25 @@
 
             hideAuthError();
             hideAuthSuccess();
+        }
+
+        async function finalizeSuccessfulAuth(user, options = {}) {
+            const { profileNameOverride = '' } = options;
+
+            hideAuthModal();
+            updateAuthUI(user);
+            await syncAuthenticatedHomeUser(user);
+
+            const profileName = document.getElementById('profile-username');
+            if (profileName) {
+                const fallbackName = user?.user_metadata?.nickname || user?.email?.split('@')[0] || '';
+                profileName.textContent = profileNameOverride || fallbackName;
+            }
+
+            const restored = await restoreAuthReturnContext({ user });
+            if (!restored) {
+                openAuthenticatedHome(true);
+            }
         }
 
         function toggleUserProfile(show, targetUserId) {
@@ -18991,15 +19274,8 @@
                     showAuthError(error.message);
                 } else {
                     showAuthSuccess('Signed in successfully!');
-                    setTimeout(() => {
-                        hideAuthModal();
-                        updateAuthUI(user);
-                        syncAuthenticatedHomeUser(user);
-                        openAuthenticatedHome(true);
-                        const profileName = document.getElementById('profile-username');
-                        if (profileName && user.email) {
-                            profileName.textContent = user.user_metadata?.nickname || user.email.split('@')[0];
-                        }
+                    setTimeout(async () => {
+                        await finalizeSuccessfulAuth(user);
                     }, 1000);
                 }
             } else {
@@ -19037,13 +19313,8 @@
                         } catch (e) { console.error('Error updating profile:', e); }
                     }
                     showAuthSuccess('Account created! Welcome ' + nickname);
-                    setTimeout(() => {
-                        hideAuthModal();
-                        updateAuthUI(user);
-                        syncAuthenticatedHomeUser(user);
-                        openAuthenticatedHome(true);
-                        const profileName = document.getElementById('profile-username');
-                        if (profileName) { profileName.textContent = nickname; }
+                    setTimeout(async () => {
+                        await finalizeSuccessfulAuth(user, { profileNameOverride: nickname });
                     }, 1500);
                 }
             }
@@ -19286,6 +19557,11 @@
         window.handleAuthSubmit = handleAuthSubmit;
         window.handleGoogleSignIn = handleGoogleSignIn;
         window.handleSignOut = handleSignOut;
+        window.setAuthReturnContext = setAuthReturnContext;
+        window.getAuthReturnContext = getAuthReturnContext;
+        window.clearAuthReturnContext = clearAuthReturnContext;
+        window.restoreAuthReturnContext = restoreAuthReturnContext;
+        window.openAuthWithReturn = openAuthWithReturn;
         window.toggleUserDropdown = toggleUserDropdown;
         window.hideUserDropdown = hideUserDropdown;
         window.toggleUserProfile = toggleUserProfile;

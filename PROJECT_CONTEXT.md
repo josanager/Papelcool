@@ -39,12 +39,15 @@ Lee estos archivos en este orden antes de cambiar algo:
 - Los comentarios deben permitir lectura pública.
 - Los comentarios deben bloquear escritura a invitados.
 - Si auth empieza desde comentarios, al terminar debe reabrirse esa misma sección.
+- En escritorio, `preset-preview` queda dividido en dos: 3D a la izquierda y comentarios a la derecha.
+- En comentarios de presets, el orden por defecto es recientes primero y debe existir opción para ver los más gustados.
 
 ## Cambios recientes
 
 - Se añadió una skill local de retorno de contexto auth.
 - Se añadió una base de UI para comentarios de presets.
-- Se simplificó el diseño del panel de comentarios para móvil y desktop.
+- El panel de comentarios de presets ya se monta dentro de `preset-preview`, abierto fijo en desktop y como overlay en móvil.
+- Se añadió retorno de contexto auth para que login/registro desde comentarios vuelva al mismo preset y reabra el panel.
 - Se definió la lógica guest vs authenticated en comentarios.
 - Se reorganizó la navegación superior a Inicio, Personajes, TikTok, Personalizado y Favoritos.
 - Se integró Stripe test para pago único de personalizados. No guardar `STRIPE_SECRET_KEY` ni `STRIPE_WEBHOOK_SECRET` en archivos del repo.
