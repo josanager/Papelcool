@@ -8632,19 +8632,8 @@
 
             @media (min-width: 1024px) {
                 .pc-auth-container {
-                    flex-direction: row;
                     padding: 48px;
-                    gap: 64px;
-                    height: 100%;
                     min-height: 100vh;
-                }
-                .pc-auth-left {
-                    width: 45%;
-                    max-width: 440px;
-                }
-                .pc-auth-right {
-                    display: flex !important;
-                    width: 55%;
                 }
             }
         </style>
@@ -8725,9 +8714,6 @@
                                 <h2 class="pc-auth-card-title" data-i18n="auth-who-are-you">Who are you?</h2>
                                 <div class="pc-auth-card-title-line"></div>
                             </div>
-                            <div class="pc-auth-step-badge">
-                                <span data-i18n="auth-step-1">Step 01/02</span>
-                            </div>
                         </div>
 
                         <form id="auth-register-form-element" onsubmit="handleAuthSubmit(event)" style="display: flex; flex-direction: column; gap: 18px;">
@@ -8786,7 +8772,6 @@
 
                     <!-- Error/Success Messages -->
                     <div id="auth-error" class="pc-auth-msg-error" style="display: none;"></div>
-                    <div id="auth-success" class="pc-auth-msg-success" style="display: none;"></div>
                 </div>
 
                 <!-- LOGIN FOOTER -->
@@ -8803,31 +8788,6 @@
                     <div class="pc-auth-footer-badge" data-type="login-ref">
                         <span data-i18n="auth-have-account-text">Have account?</span>
                         <a href="#" onclick="switchAuthTab('login'); return false;" style="color: white; text-decoration: underline;" data-i18n="auth-login-link">Login!</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Side - 3D Character (hidden on mobile) -->
-            <div style="display: none; width: 55%; position: relative; align-items: center; justify-content: center; flex-direction: column;" class="pc-auth-right">
-                <div style="position: absolute; top: 10%; right: 10%; z-index: 30; background: white; border: 4.5px solid black; padding: 12px 28px; box-shadow: 6px 6px 0px 0px rgba(0,0,0,1); transform: rotate(10deg); border-radius: 16px;">
-                    <p style="color: black; font-family: 'Fredoka', sans-serif; font-weight: 800; font-size: 1.35rem; text-transform: uppercase; font-style: italic; margin: 0; letter-spacing: 0.02em;">
-                        Customize me!</p>
-                </div>
-                <div style="position: relative; width: 100%; max-width: 480px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center;">
-                    <!-- Rotating backdrop stickers -->
-                    <div style="position: absolute; inset: 16px; background: #FFE600; opacity: 0.4; border-radius: 50%; border: 4px solid black; filter: blur(4px);"></div>
-                    <div style="position: absolute; inset: 40px; background: #407BFF; opacity: 0.35; clip-path: polygon(15% 0%, 100% 10%, 85% 90%, 0% 100%); transform: rotate(45deg); border-radius: 20px;"></div>
-                    
-                    <div id="auth-modal-3d-container" style="position: relative; width: 100%; height: 100%; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 16px;">
-                        <!-- 3D character will be rendered here -->
-                    </div>
-
-                    <!-- Floating Badges -->
-                    <div style="position: absolute; top: 15%; left: -5%; width: 90px; height: 90px; background: #FF9F43; border: 4px solid black; border-radius: 50%; box-shadow: 5px 5px 0px 0px rgba(0,0,0,1); z-index: 30; display: flex; align-items: center; justify-content: center; transform: rotate(-15deg);">
-                        <span class="material-symbols-outlined" style="color: white; font-size: 44px; font-weight: bold;">star</span>
-                    </div>
-                    <div style="position: absolute; bottom: 15%; right: -5%; width: 85px; height: 85px; background: #FF4D94; border: 4px solid black; clip-path: polygon(0% 10%, 100% 0%, 90% 100%, 10% 90%); box-shadow: 5px 5px 0px 0px rgba(0,0,0,1); z-index: 30; display: flex; align-items: center; justify-content: center; transform: rotate(20deg); border-radius: 16px;">
-                        <span class="material-symbols-outlined" style="color: white; font-size: 38px; font-weight: bold;">favorite</span>
                     </div>
                 </div>
             </div>
@@ -19306,7 +19266,6 @@
                 if (registerPasswordField) registerPasswordField.value = '';
                 if (termsField) termsField.checked = false;
                 hideAuthError();
-                hideAuthSuccess();
             }
         }
 
@@ -19339,14 +19298,7 @@
                 headerBadge.textContent = langManager.getTranslation(mode === 'login' ? 'auth-join-us' : 'auth-sign-up');
             }
 
-            const stepIndicator = document.querySelector('#auth-register-form span[data-i18n^="auth-step"]');
-            if (stepIndicator) {
-                stepIndicator.setAttribute('data-i18n', 'auth-step-1');
-                langManager.updateUI();
-            }
-
             hideAuthError();
-            hideAuthSuccess();
         }
 
         async function finalizeSuccessfulAuth(user, options = {}) {
@@ -19591,7 +19543,6 @@
             }
 
             hideAuthError();
-            hideAuthSuccess();
 
             if (currentAuthMode === 'login') {
                 const email = document.getElementById('auth-email').value;
@@ -19601,10 +19552,7 @@
                 if (error) {
                     showAuthError(error.message);
                 } else {
-                    showAuthSuccess('Signed in successfully!');
-                    setTimeout(async () => {
-                        await finalizeSuccessfulAuth(user);
-                    }, 1000);
+                    await finalizeSuccessfulAuth(user);
                 }
             } else {
                 // Register mode - get values from register form
@@ -19640,10 +19588,7 @@
                             await client.auth.updateUser({ data: { nickname: nickname } });
                         } catch (e) { console.error('Error updating profile:', e); }
                     }
-                    showAuthSuccess('Account created! Welcome ' + nickname);
-                    setTimeout(async () => {
-                        await finalizeSuccessfulAuth(user, { profileNameOverride: nickname });
-                    }, 1500);
+                    await finalizeSuccessfulAuth(user, { profileNameOverride: nickname });
                 }
             }
         }
@@ -19683,19 +19628,6 @@
         function hideAuthError() {
             const errorDiv = document.getElementById('auth-error');
             if (errorDiv) errorDiv.style.display = 'none';
-        }
-
-        function showAuthSuccess(message) {
-            const successDiv = document.getElementById('auth-success');
-            if (successDiv) {
-                successDiv.textContent = message;
-                successDiv.style.display = 'block';
-            }
-        }
-
-        function hideAuthSuccess() {
-            const successDiv = document.getElementById('auth-success');
-            if (successDiv) successDiv.style.display = 'none';
         }
 
         // Auth listeners are now handled by inline onclick for maximum robustness
