@@ -11,6 +11,19 @@
 // EMAIL AUTHENTICATION
 // ============================================
 
+function getUserInitials(value, maxLength = 2) {
+    const cleaned = String(value || '').trim();
+    if (!cleaned) return '?';
+
+    const parts = cleaned.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+        return `${parts[0][0] || ''}${parts[1][0] || ''}`.toUpperCase().slice(0, maxLength);
+    }
+
+    const compact = cleaned.replace(/[^a-zA-Z0-9]/g, '');
+    return compact.slice(0, maxLength).toUpperCase() || cleaned.slice(0, maxLength).toUpperCase();
+}
+
 /**
  * Sign up a new user with email and password
  * @param {string} email - User's email
@@ -336,9 +349,8 @@ function updateAuthUI(user) {
         if (userMenu) userMenu.style.display = 'none';
         if (userEmail) userEmail.textContent = user.email;
         if (userAvatar) {
-            // Use Gravatar or first letter of email
             const nickname = user.user_metadata?.nickname || user.email?.split('@')[0] || '';
-            const initial = nickname.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || '?';
+            const initial = getUserInitials(nickname || user.email || '?');
             userAvatar.textContent = initial;
             if (homeProfileInitial) homeProfileInitial.textContent = initial;
             if (homeGreetingName && nickname) homeGreetingName.textContent = nickname;

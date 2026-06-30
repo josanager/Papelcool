@@ -8952,7 +8952,6 @@
                 <div class="fandoms-header-main">
                     <div class="fandoms-header-copy">
                         <h1>Colecciones</h1>
-                        <p>Explora los Papelcool disponibles, elige uno y entra directo al editor sin pantallas de carga.</p>
                     </div>
                 </div>
             </div>
@@ -14540,7 +14539,7 @@
                         ${getPresetCartButtonMarkup(name)}
                     </div>
                     <h3 class="fandom-name">${getPresetDisplayName(name)}</h3>
-                    <span class="fandom-price-tag">$0.00</span>
+                    <span class="fandom-price-tag">${getPresetPriceLabel(name)}</span>
                     <button class="fandom-select-btn">${getCollectionButtonLabel()}</button>
                 </div>
             `;
@@ -14629,6 +14628,177 @@
         const CUSTOM_STRIPE_DRAFT_SESSION_KEY = 'papelcool_custom_stripe_draft';
         const CUSTOM_STRIPE_DRAFT_LOCAL_KEY = 'papelcool_custom_stripe_draft_backup';
         const CUSTOM_STRIPE_DRAFT_TTL_MS = 30 * 60 * 1000;
+        const PREMIUM_PRESET_PRICE_CENTS = 500;
+        const PREMIUM_PRESET_PRICE_LABEL = '$5.00';
+        const PREMIUM_PRESET_PRODUCT_TYPE = 'papelcool_preset_template';
+        const PREMIUM_PRESET_CURRENCY = 'usd';
+        const PRESET_STRIPE_PENDING_KEY = 'papelcool_preset_pending_stripe_sessions';
+        const PRESET_STRIPE_PENDING_LOCAL_KEY = 'papelcool_preset_pending_stripe_sessions_backup';
+        const PRESET_STRIPE_UNLOCKED_KEY = 'papelcool_preset_unlocked_stripe_sessions';
+        const PRESET_STRIPE_UNLOCKED_LOCAL_KEY = 'papelcool_preset_unlocked_stripe_sessions_backup';
+        const premiumPresetNames = new Set([
+            'Villamil-faltastu',
+            'Villamil-faltastu-guitarra',
+            'Simon-faltastu',
+            'Simon-faltastu-bajo',
+            'Martin-faltastu',
+            'Martin-faltastu-bateria',
+            'Isaza-faltastu',
+            'Isaza-faltastu-guitarra',
+            'Mira',
+            'Rumi',
+            'Zoey',
+            'Jinu',
+            'Abby',
+            'Romance',
+            'Mystery',
+            'Baby'
+        ]);
+
+        function safeReadJsonStorage(storage, key) {
+            try {
+                const raw = storage.getItem(key);
+                if (!raw) return null;
+                const parsed = JSON.parse(raw);
+                return parsed && typeof parsed === 'object' ? parsed : null;
+            } catch {
+                return null;
+            }
+        }
+
+        function safeWriteJsonStorage(storage, key, value) {
+            try {
+                storage.setItem(key, JSON.stringify(value));
+            } catch (error) {
+                console.warn(`Could not persist storage key ${key}:`, error);
+            }
+        }
+
+        function safeRemoveStorageKey(storage, key) {
+            try {
+                storage.removeItem(key);
+            } catch (error) {
+                console.warn(`Could not remove storage key ${key}:`, error);
+            }
+        }
+
+        function readPresetStripeStateMap(primaryKey, backupKey) {
+            return safeReadJsonStorage(sessionStorage, primaryKey)
+                || safeReadJsonStorage(localStorage, backupKey)
+                || {};
+        }
+
+        function writePresetStripeStateMap(primaryKey, backupKey, value) {
+            safeWriteJsonStorage(sessionStorage, primaryKey, value);
+            safeWriteJsonStorage(localStorage, backupKey, value);
+        }
+
+        function isPremiumPreset(name) {
+            return premiumPresetNames.has(name);
+        }
+
+        function getPresetPriceLabel(name) {
+            return isPremiumPreset(name) ? PREMIUM_PRESET_PRICE_LABEL : '$0.00';
+        }
+
+        function getPresetStripeReturnContext(characterName = '') {
+            const params = new URLSearchParams(window.location.search);
+            const preset = params.get('preset') || '';
+            const sessionId = params.get('session_id') || '';
+            const payment = params.get('payment') || '';
+            const matchesCurrentPreset = !characterName || preset === characterName;
+            return {
+                preset,
+                sessionId,
+                payment,
+                matchesCurrentPreset
+            };
+        }
+
+        function clearPresetStripeReturnContext(characterName = '') {
+            const context = getPresetStripeReturnContext(characterName);
+            if (!context.matchesCurrentPreset) return;
+            const url = new URL(window.location.href);
+            url.searchParams.delete('payment');
+            url.searchParams.delete('session_id');
+            window.history.replaceState(window.history.state || {}, '', `${url.pathname}${url.search}${url.hash}`);
+        }
+
+        function rememberPendingPresetStripeSession(characterName, session) {
+            if (!characterName || !session?.id) return;
+            const sessions = readPresetStripeStateMap(PRESET_STRIPE_PENDING_KEY, PRESET_STRIPE_PENDING_LOCAL_KEY);
+            sessions[characterName] = {
+                characterName,
+                sessionId: session.id,
+                checkoutUrl: session.url || '',
+                createdAt: new Date().toISOString(),
+                expiresAt: Date.now() + CUSTOM_STRIPE_DRAFT_TTL_MS
+            };
+            writePresetStripeStateMap(PRESET_STRIPE_PENDING_KEY, PRESET_STRIPE_PENDING_LOCAL_KEY, sessions);
+        }
+
+        function getPendingPresetStripeSession(characterName) {
+            if (!characterName) return null;
+            const sessions = readPresetStripeStateMap(PRESET_STRIPE_PENDING_KEY, PRESET_STRIPE_PENDING_LOCAL_KEY);
+            const entry = sessions[characterName];
+            if (!entry) return null;
+            if (entry.expiresAt && Date.now() > Number(entry.expiresAt)) {
+                delete sessions[characterName];
+                writePresetStripeStateMap(PRESET_STRIPE_PENDING_KEY, PRESET_STRIPE_PENDING_LOCAL_KEY, sessions);
+                return null;
+            }
+            return entry;
+        }
+
+        function clearPendingPresetStripeSession(characterName = '') {
+            if (!characterName) {
+                safeRemoveStorageKey(sessionStorage, PRESET_STRIPE_PENDING_KEY);
+                safeRemoveStorageKey(localStorage, PRESET_STRIPE_PENDING_LOCAL_KEY);
+                return;
+            }
+            const sessions = readPresetStripeStateMap(PRESET_STRIPE_PENDING_KEY, PRESET_STRIPE_PENDING_LOCAL_KEY);
+            if (!sessions[characterName]) return;
+            delete sessions[characterName];
+            writePresetStripeStateMap(PRESET_STRIPE_PENDING_KEY, PRESET_STRIPE_PENDING_LOCAL_KEY, sessions);
+        }
+
+        function rememberUnlockedPresetTemplateSession(characterName, sessionId) {
+            if (!characterName || !sessionId) return;
+            const unlocks = readPresetStripeStateMap(PRESET_STRIPE_UNLOCKED_KEY, PRESET_STRIPE_UNLOCKED_LOCAL_KEY);
+            unlocks[characterName] = {
+                sessionId,
+                unlockedAt: new Date().toISOString()
+            };
+            writePresetStripeStateMap(PRESET_STRIPE_UNLOCKED_KEY, PRESET_STRIPE_UNLOCKED_LOCAL_KEY, unlocks);
+        }
+
+        function getUnlockedPresetTemplateSessionId(characterName) {
+            if (!characterName) return '';
+            const unlocks = readPresetStripeStateMap(PRESET_STRIPE_UNLOCKED_KEY, PRESET_STRIPE_UNLOCKED_LOCAL_KEY);
+            return unlocks[characterName]?.sessionId || '';
+        }
+
+        function getPresetStripeSuccessUrl(characterName) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('view', 'preset-preview');
+            url.searchParams.set('preset', characterName);
+            url.searchParams.set('payment', 'stripe_success');
+            url.searchParams.set('session_id', '{CHECKOUT_SESSION_ID}');
+            return url.toString().replace('%7BCHECKOUT_SESSION_ID%7D', '{CHECKOUT_SESSION_ID}');
+        }
+
+        function getPresetStripeCancelUrl(characterName) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('view', 'preset-preview');
+            url.searchParams.set('preset', characterName);
+            url.searchParams.set('payment', 'stripe_cancelled');
+            url.searchParams.delete('session_id');
+            return url.toString();
+        }
+
+        function getPresetStripeProductName(characterName) {
+            return `Plantilla Papelcool - ${getPresetDisplayName(characterName)}`;
+        }
 
         function getStripeSuccessUrl() {
             const url = new URL(window.location.href);
@@ -14674,23 +14844,25 @@
             if (mount) mount.innerHTML = contentHtml;
         }
 
-        async function createStripeCheckoutSession() {
+        async function createStripeCheckoutSession(options = {}) {
             const user = typeof getCurrentUser === 'function'
                 ? await getCurrentUser().catch(() => null)
                 : null;
+            const checkoutRequest = {
+                email: user?.email || '',
+                userId: user?.id || '',
+                orderId: options.orderId || `papelcool_custom_${Date.now()}`,
+                successUrl: options.successUrl || getStripeSuccessUrl(),
+                cancelUrl: options.cancelUrl || getStripeCancelUrl(),
+                ...options
+            };
             const response = await fetch('/api/stripe/create-checkout-session', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    email: user?.email || '',
-                    userId: user?.id || '',
-                    orderId: `papelcool_custom_${Date.now()}`,
-                    successUrl: getStripeSuccessUrl(),
-                    cancelUrl: getStripeCancelUrl()
-                })
+                body: JSON.stringify(checkoutRequest)
             });
             const payload = await response.json().catch(() => ({}));
             if (!response.ok || !payload?.url || !payload?.id) {
@@ -14900,16 +15072,17 @@
             // Populate worlds grid from banner data (collections/fandoms)
             if (worldsGrid && !worldsGrid.dataset.rendered) {
                 const worlds = [
-                    { title: "KPOP DEMON HUNTERS", image: "assets/worlds/kpop-demon-hunters-world-card.png" },
-                    { title: "MINECRAFT", image: "assets/worlds/minecraft-world-card.png" },
-                    { title: "MORAT", image: "assets/worlds/morat-world-card.png" },
+                    { title: "KPOP DEMON HUNTERS", image: "assets/worlds/kpop-demon-hunters-world-card.png", filter: "kpop" },
+                    { title: "MINECRAFT", image: "assets/worlds/minecraft-world-card.png", filter: "minecraft" },
+                    { title: "MORAT", image: "assets/worlds/morat-world-card.png", filter: "morat" },
                     { title: "DIGITAL CIRCUS", image: "assets/worlds/digital-circus-world-card.png" },
                     { title: "MIRACULOUS", image: "assets/worlds/miraculous-world-card.png" },
                     { title: "HELLO KITTY", image: "assets/worlds/hello-kitty-world-card.png" }
                 ];
                 worldsGrid.innerHTML = worlds.map(w => {
+                    const clickHandler = w.filter ? `openWorldCollection('${w.filter}')` : `navigateToView('presets')`;
                     return `
-                    <article class="lp-world-card" onclick="navigateToView('presets')">
+                    <article class="lp-world-card" onclick="${clickHandler}">
                         <div class="lp-world-img">
                             <img src="${w.image}" alt="${w.title}" onerror="this.src='webclip.png'" loading="lazy">
                         </div>
@@ -14974,7 +15147,7 @@
             if (!user) return;
 
             const nickname = user.user_metadata?.nickname || user.email?.split('@')[0] || 'Creator';
-            const initial = nickname.charAt(0).toUpperCase();
+            const initial = getUserInitials(nickname);
             const greetingName = document.getElementById('home-greeting-name');
             const globalProfileInitial = document.getElementById('global-profile-initial');
             const authUserAvatar = document.getElementById('auth-user-avatar');
@@ -15545,6 +15718,19 @@
                 .replace(/[\u0300-\u036f]/g, '');
         }
 
+        function getUserInitials(value, maxLength = 2) {
+            const cleaned = String(value || '').trim();
+            if (!cleaned) return '?';
+
+            const parts = cleaned.split(/\s+/).filter(Boolean);
+            if (parts.length >= 2) {
+                return `${parts[0][0] || ''}${parts[1][0] || ''}`.toUpperCase().slice(0, maxLength);
+            }
+
+            const compact = cleaned.replace(/[^a-zA-Z0-9]/g, '');
+            return compact.slice(0, maxLength).toUpperCase() || cleaned.slice(0, maxLength).toUpperCase();
+        }
+
         function getPresetSearchText(name, fandomKey) {
             const fandomLabel = normalizePresetSearchValue(fandomLabels[fandomKey] || 'Papelcool Original');
             const fandomGroup = fandomKey === 'minecraft'
@@ -15574,11 +15760,14 @@
             }
         }
 
-        function getPresetPdfUrl(characterName) {
+        function getPresetPdfUrl(characterName, sessionId = '') {
             const fileName = availablePresetPdfs[characterName];
             if (!fileName) return null;
             const downloadUrl = new URL('/api/preset-template-download', window.location.origin);
             downloadUrl.searchParams.set('character', characterName);
+            if (sessionId) {
+                downloadUrl.searchParams.set('session_id', sessionId);
+            }
             return downloadUrl.toString();
         }
 
@@ -16427,10 +16616,38 @@
 
             if (!shouldShow) return;
 
-            const templateUrl = getPresetPdfUrl(currentPresetCharacter);
+            const isPremium = isPremiumPreset(currentPresetCharacter);
+            const unlockedSessionId = isPremium ? getUnlockedPresetTemplateSessionId(currentPresetCharacter) : '';
+            const templateUrl = getPresetPdfUrl(currentPresetCharacter, unlockedSessionId);
             const hasTemplate = Boolean(templateUrl);
             const defaultLabel = langManager.get('download-preset-template-btn');
             const defaultMeta = langManager.get('download-preset-template-meta');
+            const stripeReturn = getPresetStripeReturnContext(currentPresetCharacter);
+            const hasStripeReturn = isPremium
+                && stripeReturn.matchesCurrentPreset
+                && stripeReturn.payment === 'stripe_success'
+                && Boolean(stripeReturn.sessionId);
+            const paymentCancelled = isPremium
+                && stripeReturn.matchesCurrentPreset
+                && stripeReturn.payment === 'stripe_cancelled';
+
+            let labelText = defaultLabel;
+            let metaText = defaultMeta;
+
+            if (hasTemplate && isPremium && !unlockedSessionId) {
+                labelText = hasStripeReturn
+                    ? (langManager.currentLang === 'es' ? 'VERIFICAR PAGO' : 'VERIFY PAYMENT')
+                    : (langManager.currentLang === 'es' ? 'PAGAR Y DESCARGAR' : 'PAY & DOWNLOAD');
+                metaText = paymentCancelled
+                    ? (langManager.currentLang === 'es' ? 'Pago cancelado • Plantilla premium 5 USD' : 'Payment cancelled • Premium template 5 USD')
+                    : hasStripeReturn
+                        ? (langManager.currentLang === 'es' ? 'Pago detectado en Stripe • Verifica para desbloquear' : 'Stripe payment detected • Verify to unlock')
+                        : (langManager.currentLang === 'es' ? 'Plantilla premium • 5 USD' : 'Premium template • 5 USD');
+            } else if (hasTemplate && isPremium && unlockedSessionId) {
+                metaText = langManager.currentLang === 'es'
+                    ? 'Plantilla premium desbloqueada'
+                    : 'Premium template unlocked';
+            }
 
             presetTemplateDownloadBtn.disabled = !hasTemplate;
             presetTemplateDownloadBtn.setAttribute('aria-disabled', hasTemplate ? 'false' : 'true');
@@ -16441,13 +16658,13 @@
 
             if (labelEl) {
                 labelEl.textContent = hasTemplate
-                    ? defaultLabel
+                    ? labelText
                     : (langManager.currentLang === 'es' ? 'PDF no disponible' : 'PDF unavailable');
             }
 
             if (metaEl) {
                 metaEl.textContent = hasTemplate
-                    ? defaultMeta
+                    ? metaText
                     : langManager.get('preset-template-missing');
             }
 
@@ -16489,13 +16706,121 @@
             updatePresetTemplateButtonBusyState(true, 'ready', 100);
         }
 
+        function isMatchingPremiumPresetStripeAccess(access, characterName) {
+            return Boolean(
+                access
+                && access.product === PREMIUM_PRESET_PRODUCT_TYPE
+                && access.productSlug === characterName
+                && Number(access.amount) === PREMIUM_PRESET_PRICE_CENTS
+                && String(access.currency || '').toLowerCase() === PREMIUM_PRESET_CURRENCY
+                && String(access.status || '').toLowerCase() === 'paid'
+            );
+        }
+
+        async function startStripeCheckoutForPremiumPreset(characterName) {
+            openStripeStatusOverlay();
+            setStripeStatus('<p>Preparando checkout seguro de Stripe...</p>');
+
+            try {
+                const session = await createStripeCheckoutSession({
+                    forceDynamicPrice: true,
+                    amount: PREMIUM_PRESET_PRICE_CENTS,
+                    currency: PREMIUM_PRESET_CURRENCY,
+                    productType: PREMIUM_PRESET_PRODUCT_TYPE,
+                    productSlug: characterName,
+                    productName: getPresetStripeProductName(characterName),
+                    orderId: `papelcool_preset_${characterName}_${Date.now()}`,
+                    successUrl: getPresetStripeSuccessUrl(characterName),
+                    cancelUrl: getPresetStripeCancelUrl(characterName)
+                });
+                rememberPendingPresetStripeSession(characterName, session);
+                window.location.assign(session.url);
+            } catch (error) {
+                const missing = error.payload?.missing;
+                const copy = missing?.STRIPE_SECRET_KEY
+                    ? 'Configura STRIPE_SECRET_KEY y STRIPE_PRICE_ID como variables del backend en Cloudflare.'
+                    : 'Revisa la configuración de Stripe y vuelve a intentarlo.';
+                setStripeStatus(`
+                    <p>No se pudo abrir Stripe. ${copy}</p>
+                    <div class="stripe-status-actions">
+                        <button type="button" class="stripe-status-btn primary" onclick="downloadPresetTemplate()">Reintentar</button>
+                        <button type="button" class="stripe-status-btn" onclick="closeStripeStatusOverlay()">Cerrar</button>
+                    </div>
+                `);
+            }
+        }
+
+        async function ensurePremiumPresetTemplateSession(characterName) {
+            const unlockedSessionId = getUnlockedPresetTemplateSessionId(characterName);
+            if (unlockedSessionId) {
+                return unlockedSessionId;
+            }
+
+            const stripeReturn = getPresetStripeReturnContext(characterName);
+            if (stripeReturn.matchesCurrentPreset && stripeReturn.payment === 'stripe_cancelled') {
+                clearPendingPresetStripeSession(characterName);
+                clearPresetStripeReturnContext(characterName);
+                updatePresetTemplateDownloadButton();
+            }
+
+            const pendingSession = getPendingPresetStripeSession(characterName);
+            const sessionIdToVerify = stripeReturn.matchesCurrentPreset && stripeReturn.sessionId
+                ? stripeReturn.sessionId
+                : (pendingSession?.sessionId || '');
+
+            if (!sessionIdToVerify) {
+                await startStripeCheckoutForPremiumPreset(characterName);
+                return null;
+            }
+
+            openStripeStatusOverlay();
+            setStripeStatus('<p>Verificando el pago en Stripe...</p>');
+
+            try {
+                const result = await verifyStripeSession(sessionIdToVerify);
+                if (!result?.active || !isMatchingPremiumPresetStripeAccess(result.access, characterName)) {
+                    setStripeStatus(`
+                        <p>El pago todavía no desbloquea esta plantilla. Si acabas de pagar, espera unos segundos y vuelve a verificar.</p>
+                        <div class="stripe-status-actions">
+                            <button type="button" class="stripe-status-btn primary" onclick="downloadPresetTemplate()">Verificar otra vez</button>
+                            <button type="button" class="stripe-status-btn" onclick="closeStripeStatusOverlay()">Cerrar</button>
+                        </div>
+                    `);
+                    return null;
+                }
+
+                rememberUnlockedPresetTemplateSession(characterName, sessionIdToVerify);
+                clearPendingPresetStripeSession(characterName);
+                clearPresetStripeReturnContext(characterName);
+                closeStripeStatusOverlay();
+                updatePresetTemplateDownloadButton();
+                return sessionIdToVerify;
+            } catch (error) {
+                setStripeStatus(`
+                    <p>No se pudo verificar el pago todavía. ${error.message || 'Inténtalo de nuevo.'}</p>
+                    <div class="stripe-status-actions">
+                        <button type="button" class="stripe-status-btn primary" onclick="downloadPresetTemplate()">Reintentar</button>
+                        <button type="button" class="stripe-status-btn" onclick="closeStripeStatusOverlay()">Cerrar</button>
+                    </div>
+                `);
+                return null;
+            }
+        }
+
         async function downloadPresetTemplate() {
             if (!currentPresetCharacter) {
                 alert(langManager.get('alert-select-preset'));
                 return;
             }
 
-            const templateUrl = getPresetPdfUrl(currentPresetCharacter);
+            const premiumSessionId = isPremiumPreset(currentPresetCharacter)
+                ? await ensurePremiumPresetTemplateSession(currentPresetCharacter)
+                : '';
+            if (isPremiumPreset(currentPresetCharacter) && !premiumSessionId) {
+                return;
+            }
+
+            const templateUrl = getPresetPdfUrl(currentPresetCharacter, premiumSessionId);
             if (!templateUrl) {
                 alert(langManager.get('preset-template-missing'));
                 return;
@@ -16748,6 +17073,15 @@
                 renderFandomsGrid(e.target.value);
             });
         }
+
+        function openWorldCollection(filter = 'all') {
+            const nextFilter = ['all', 'kpop', 'minecraft', 'morat'].includes(filter) ? filter : 'all';
+            navigateToView('presets');
+            if (fandomFilter) fandomFilter.value = nextFilter;
+            renderFandomsGrid(nextFilter);
+        }
+
+        window.openWorldCollection = openWorldCollection;
 
         if (presetSortSelect) {
             presetSortSelect.addEventListener('change', (e) => {
@@ -19441,7 +19775,7 @@
                 currentProfileUserId = user.id;
                 const nickname = user.user_metadata?.nickname || user.email.split('@')[0];
                 const email = user.email || '';
-                const initial = nickname.charAt(0).toUpperCase();
+                const initial = getUserInitials(nickname);
                 const joined = user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Ahora';
                 const favoritesCount = getFavorites().length;
 
@@ -19458,7 +19792,7 @@
                 if (profileHandle) profileHandle.textContent = `@${nickname.toLowerCase().replace(/\s+/g, '')}`;
                 if (profileEmail) profileEmail.textContent = email;
                 if (profileInitial) profileInitial.textContent = initial;
-                if (profileJoined) profileJoined.textContent = `Miembro desde ${joined}`;
+                if (profileJoined) profileJoined.textContent = joined;
                 if (profileFavoritesCount) profileFavoritesCount.textContent = String(favoritesCount);
                 if (profileCustomsCount) profileCustomsCount.textContent = '...';
                 if (profileStatus) profileStatus.textContent = 'Coleccionando favoritos y creando nuevos Papelcool.';
@@ -19498,8 +19832,8 @@
                 if (profileUsername) profileUsername.textContent = nickname;
                 if (profileHandle) profileHandle.textContent = `@${nickname.toLowerCase().replace(/\s+/g, '')}`;
                 if (profileEmail) profileEmail.textContent = profile.email || '';
-                if (profileInitial) profileInitial.textContent = nickname.charAt(0).toUpperCase();
-                if (profileJoined) profileJoined.textContent = profile.created_at ? `Miembro desde ${new Date(profile.created_at).toLocaleDateString()}` : 'Perfil público';
+                if (profileInitial) profileInitial.textContent = getUserInitials(nickname);
+                if (profileJoined) profileJoined.textContent = profile.created_at ? new Date(profile.created_at).toLocaleDateString() : 'Perfil publico';
                 if (profileFavoritesCount) profileFavoritesCount.textContent = String(getFavorites().length);
                 if (profileCustomsCount) profileCustomsCount.textContent = '...';
                 if (profileStatus) profileStatus.textContent = 'Perfil público de la comunidad Papelcool.';
@@ -20611,7 +20945,7 @@
 
                 <!-- Avatar Sticker -->
                 <div style="width: 140px; height: 140px; border-radius: 50%; border: 4px solid #000; overflow: hidden; box-shadow: 6px 6px 0 rgba(0,0,0,1); background: #FFE600; display: flex; align-items: center; justify-content: center; transform: rotate(-3deg);">
-                    <span id="profile-avatar-initial" style="font-family: 'Fredoka', sans-serif; font-size: 4rem; font-weight: 800; color: #000;">U</span>
+                    <span id="profile-avatar-initial" style="font-family: 'Fredoka', sans-serif; font-size: 3.25rem; line-height: 1; font-weight: 800; color: #000; letter-spacing: 0.04em;">US</span>
                 </div>
 
                 <div style="flex: 1; min-width: 250px;">
@@ -20619,14 +20953,14 @@
                         <h2 id="profile-username" style="font-family: 'Fredoka', sans-serif; font-size: 2.5rem; font-weight: 900; margin: 0; color: #000; text-transform: uppercase;">Username</h2>
                         <span id="profile-handle" style="font-family: 'Fredoka', sans-serif; font-size: 1.2rem; font-weight: 700; color: #FF4D94; border: 3px solid #000; border-radius: 99px; padding: 0.2rem 0.8rem; background: white; box-shadow: 3px 3px 0 #000;">@username</span>
                     </div>
-                    <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1rem;">
-                        <div style="background: #D4F0FF; border: 3px solid #000; padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 3px 3px 0 #000; text-align: center;">
-                            <strong id="profile-favorites-count" style="display: block; font-family: 'Fredoka', sans-serif; font-size: 1.5rem; color: #000;">0</strong>
-                            <span style="font-family: 'Fredoka', sans-serif; font-size: 0.9rem; color: #000; font-weight: 700; text-transform: uppercase;">Favoritos</span>
+                    <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1rem; align-items: baseline;">
+                        <div style="display: inline-flex; align-items: baseline; gap: 0.45rem;">
+                            <strong id="profile-favorites-count" style="display: block; font-family: 'Fredoka', sans-serif; font-size: 2rem; line-height: 1; color: #000;">0</strong>
+                            <span style="font-family: 'Fredoka', sans-serif; font-size: 1rem; color: #000; font-weight: 700; text-transform: uppercase;">Favoritos</span>
                         </div>
-                        <div style="background: #D4F0FF; border: 3px solid #000; padding: 0.5rem 1rem; border-radius: 12px; box-shadow: 3px 3px 0 #000; text-align: center;">
-                            <strong id="profile-customs-count" style="display: block; font-family: 'Fredoka', sans-serif; font-size: 1.5rem; color: #000;">0</strong>
-                            <span style="font-family: 'Fredoka', sans-serif; font-size: 0.9rem; color: #000; font-weight: 700; text-transform: uppercase;">Customs</span>
+                        <div style="display: inline-flex; align-items: baseline; gap: 0.45rem;">
+                            <strong id="profile-customs-count" style="display: block; font-family: 'Fredoka', sans-serif; font-size: 2rem; line-height: 1; color: #000;">0</strong>
+                            <span style="font-family: 'Fredoka', sans-serif; font-size: 1rem; color: #000; font-weight: 700; text-transform: uppercase;">Customs</span>
                         </div>
                     </div>
                     <p id="profile-status" style="font-family: 'Montserrat', sans-serif; font-size: 1.1rem; line-height: 1.45; margin: 0 0 1rem; color: #000; font-weight: 600;">Coleccionando favoritos y creando nuevos Papelcool.</p>

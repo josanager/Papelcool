@@ -1,4 +1,26 @@
+import { getStoredStripeAccessBySessionId, isPresetTemplateAccessValidForCharacter } from '../_lib/stripe-access.js';
+
 const R2_PDF_BASE_URL = 'https://pub-9432515251e743b7979ceb8e264f80ec.r2.dev/presets-pdfs/';
+const PREMIUM_PRESET_PRICE_CENTS = 500;
+const PREMIUM_PRESET_CURRENCY = 'usd';
+const premiumPresetCharacters = new Set([
+  'Villamil-faltastu',
+  'Villamil-faltastu-guitarra',
+  'Simon-faltastu',
+  'Simon-faltastu-bajo',
+  'Martin-faltastu',
+  'Martin-faltastu-bateria',
+  'Isaza-faltastu',
+  'Isaza-faltastu-guitarra',
+  'Mira',
+  'Rumi',
+  'Zoey',
+  'Jinu',
+  'Abby',
+  'Romance',
+  'Mystery',
+  'Baby'
+]);
 
 const availablePresetPdfs = Object.freeze({
   Abby: 'Abby.pdf',
@@ -30,22 +52,47 @@ const availablePresetPdfs = Object.freeze({
 });
 
 export async function onRequestGet(context) {
-  return handleRequest(context.request);
+  return handleRequest(context.request, context.env);
 }
 
 export async function onRequestHead(context) {
-  return handleRequest(context.request);
+  return handleRequest(context.request, context.env);
 }
 
-async function handleRequest(request) {
+async function handleRequest(request, env) {
   const url = new URL(request.url);
   const character = url.searchParams.get('character');
+  const sessionId = url.searchParams.get('session_id');
 
   if (!character || !availablePresetPdfs[character]) {
     return jsonResponse(
       { error: 'Template not found for this character.' },
       404
     );
+  }
+
+  if (premiumPresetCharacters.has(character)) {
+    if (!sessionId) {
+      return jsonResponse(
+        { error: 'Stripe payment is required before downloading this template.' },
+        402
+      );
+    }
+
+    const access = await getStoredStripeAccessBySessionId(env, sessionId);
+    const isValid = isPresetTemplateAccessValidForCharacter(
+      access,
+      character,
+      PREMIUM_PRESET_PRICE_CENTS,
+      PREMIUM_PRESET_CURRENCY
+    );
+
+    if (!isValid) {
+      return jsonResponse(
+        { error: 'This Stripe session does not unlock the requested premium template.' },
+        403
+      );
+    }
   }
 
   const fileName = availablePresetPdfs[character];

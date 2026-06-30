@@ -7,23 +7,24 @@ export async function handleCreateStripeCheckoutSession(request, env) {
     return jsonResponse({ error: 'Method not allowed.' }, 405, { Allow: 'POST' });
   }
 
-  const secretKey = env.STRIPE_SECRET_KEY;
-  const priceId = env.STRIPE_PRICE_ID || DEFAULT_PRICE_ID;
-  if (!secretKey || !priceId) {
-    return jsonResponse({
-      error: 'Stripe checkout is not configured.',
-      missing: {
-        STRIPE_SECRET_KEY: !secretKey,
-        STRIPE_PRICE_ID: !priceId
-      }
-    }, 503);
-  }
-
   let body = {};
   try {
     body = await request.json();
   } catch {
     body = {};
+  }
+
+  const secretKey = env.STRIPE_SECRET_KEY;
+  const priceId = env.STRIPE_PRICE_ID || DEFAULT_PRICE_ID;
+  const requiresPriceId = !body?.forceDynamicPrice;
+  if (!secretKey || (requiresPriceId && !priceId)) {
+    return jsonResponse({
+      error: 'Stripe checkout is not configured.',
+      missing: {
+        STRIPE_SECRET_KEY: !secretKey,
+        STRIPE_PRICE_ID: requiresPriceId && !priceId
+      }
+    }, 503);
   }
 
   const requestUrl = new URL(request.url);
@@ -40,20 +41,41 @@ export async function handleCreateStripeCheckoutSession(request, env) {
   );
   const customerEmail = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
   const userId = typeof body.userId === 'string' ? body.userId.trim() : '';
+  const productType = typeof body.productType === 'string' && body.productType.trim()
+    ? body.productType.trim().slice(0, 120)
+    : 'papelcool_custom_pdf';
+  const productName = typeof body.productName === 'string' && body.productName.trim()
+    ? body.productName.trim().slice(0, 120)
+    : 'Papelcool Custom PDF';
+  const productSlug = typeof body.productSlug === 'string' && body.productSlug.trim()
+    ? body.productSlug.trim().slice(0, 120)
+    : '';
+  const unitAmount = Number(body.amount || env.STRIPE_AMOUNT || DEFAULT_AMOUNT);
+  const currency = String(body.currency || env.STRIPE_CURRENCY || DEFAULT_CURRENCY).toLowerCase();
   const orderId = typeof body.orderId === 'string' && body.orderId.trim()
     ? body.orderId.trim().slice(0, 120)
     : `papelcool_custom_${Date.now()}`;
 
   const form = new URLSearchParams();
   form.set('mode', 'payment');
-  form.set('line_items[0][price]', priceId);
+  if (priceId && !body.forceDynamicPrice) {
+    form.set('line_items[0][price]', priceId);
+  } else {
+    form.set('line_items[0][price_data][currency]', currency);
+    form.set('line_items[0][price_data][unit_amount]', String(unitAmount));
+    form.set('line_items[0][price_data][product_data][name]', productName);
+  }
   form.set('line_items[0][quantity]', '1');
   form.set('success_url', successUrl);
   form.set('cancel_url', cancelUrl);
   form.set('client_reference_id', userId || orderId);
-  form.set('metadata[product]', 'papelcool_custom_pdf');
+  form.set('metadata[product]', productType);
+  form.set('metadata[product_name]', productName);
+  if (productSlug) form.set('metadata[product_slug]', productSlug);
   form.set('metadata[order_id]', orderId);
   form.set('metadata[price_id]', priceId);
+  form.set('metadata[amount]', String(unitAmount));
+  form.set('metadata[currency]', currency);
   if (userId) form.set('metadata[papelcool_user_id]', userId);
   if (customerEmail) form.set('customer_email', customerEmail);
 
@@ -194,6 +216,9 @@ function buildAccessFromStripeSession(session, source) {
     customerEmail: session.customer_details?.email || session.customer_email || null,
     userId: session.metadata?.papelcool_user_id || null,
     orderId: session.metadata?.order_id || null,
+    product: session.metadata?.product || null,
+    productName: session.metadata?.product_name || null,
+    productSlug: session.metadata?.product_slug || null,
     priceId: session.metadata?.price_id || null,
     amount: session.amount_total,
     currency: session.currency,
@@ -324,12 +349,35 @@ function sanitizeAccess(access) {
     active: access.active,
     checkoutSessionId: access.checkoutSessionId,
     paymentIntentId: access.paymentIntentId,
+    orderId: access.orderId,
+    product: access.product,
+    productName: access.productName,
+    productSlug: access.productSlug,
     amount: access.amount,
     currency: access.currency,
     status: access.status,
     source: access.source,
     createdAt: access.createdAt
   };
+}
+
+export async function getStoredStripeAccessBySessionId(env, sessionId) {
+  if (typeof sessionId !== 'string' || !sessionId.startsWith('cs_')) return null;
+  return getStoredStripeAccess(env, sessionId);
+}
+
+export function isPresetTemplateAccessValidForCharacter(access, characterName, expectedAmount = DEFAULT_AMOUNT, expectedCurrency = DEFAULT_CURRENCY) {
+  if (!access || !characterName) return false;
+  const normalizedCharacter = String(characterName).trim();
+  if (!normalizedCharacter) return false;
+
+  const amountMatches = Number(access.amount) === Number(expectedAmount);
+  const currencyMatches = String(access.currency || '').toLowerCase() === String(expectedCurrency || DEFAULT_CURRENCY).toLowerCase();
+  const statusMatches = String(access.status || '').toLowerCase() === 'paid';
+  const productMatches = access.product === 'papelcool_preset_template';
+  const slugMatches = access.productSlug === normalizedCharacter;
+
+  return Boolean(access.active) && amountMatches && currencyMatches && statusMatches && productMatches && slugMatches;
 }
 
 export function jsonResponse(payload, status = 200, extraHeaders = {}) {

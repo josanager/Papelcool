@@ -46,6 +46,44 @@ const localStripeAccessKv = {
     localStripeAccessStore.set(key, value);
   }
 };
+const PREMIUM_PRESET_PRICE_CENTS = 500;
+const PREMIUM_PRESET_CURRENCY = 'usd';
+const premiumPresetCharacters = new Set([
+  'Villamil-faltastu',
+  'Villamil-faltastu-guitarra',
+  'Simon-faltastu',
+  'Simon-faltastu-bajo',
+  'Martin-faltastu',
+  'Martin-faltastu-bateria',
+  'Isaza-faltastu',
+  'Isaza-faltastu-guitarra',
+  'Mira',
+  'Rumi',
+  'Zoey',
+  'Jinu',
+  'Abby',
+  'Romance',
+  'Mystery',
+  'Baby'
+]);
+
+async function getStoredStripeAccessBySessionId(env, sessionId) {
+  if (typeof sessionId !== 'string' || !sessionId.startsWith('cs_')) return null;
+  const raw = await env.PAPELCOOL_STRIPE_ACCESS_KV?.get?.(`stripe_access:checkout_session:${sessionId}`);
+  return raw ? JSON.parse(raw) : null;
+}
+
+function isPresetTemplateAccessValidForCharacter(access, characterName, expectedAmount = PREMIUM_PRESET_PRICE_CENTS, expectedCurrency = PREMIUM_PRESET_CURRENCY) {
+  if (!access || !characterName) return false;
+  return Boolean(
+    access.active
+    && access.product === 'papelcool_preset_template'
+    && access.productSlug === characterName
+    && Number(access.amount) === Number(expectedAmount)
+    && String(access.currency || '').toLowerCase() === String(expectedCurrency).toLowerCase()
+    && String(access.status || '').toLowerCase() === 'paid'
+  );
+}
 const presetFiles = Object.freeze({
   Abby: 'Abby.pdf',
   Alex: 'Alex.pdf',
@@ -116,11 +154,32 @@ http.createServer(async (req, res) => {
 
     if (requestUrl.pathname === '/api/preset-template-download') {
       const character = requestUrl.searchParams.get('character');
+      const sessionId = requestUrl.searchParams.get('session_id');
       const fileName = presetFiles[character];
 
       if (!fileName) {
         sendJson(res, 404, { error: 'Template not found for this character.' });
         return;
+      }
+
+      if (premiumPresetCharacters.has(character)) {
+        if (!sessionId) {
+          sendJson(res, 402, { error: 'Stripe payment is required before downloading this template.' });
+          return;
+        }
+
+        const access = await getStoredStripeAccessBySessionId(getLocalFunctionEnv(), sessionId);
+        const isValid = isPresetTemplateAccessValidForCharacter(
+          access,
+          character,
+          PREMIUM_PRESET_PRICE_CENTS,
+          PREMIUM_PRESET_CURRENCY
+        );
+
+        if (!isValid) {
+          sendJson(res, 403, { error: 'This Stripe session does not unlock the requested premium template.' });
+          return;
+        }
       }
 
       const upstream = await fetch(`${r2Base}${fileName}`, {
