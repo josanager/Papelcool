@@ -1013,9 +1013,9 @@
     <!-- Supabase for Authentication & Database -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
-    <script src="auth.js"></script>
+    <script src="auth.js?v=20260630b"></script>
     <script src="character-storage.js"></script>
-    <script src="preset-comments.js?v=20260611b"></script>
+    <script src="preset-comments.js?v=20260630e"></script>
 
     <style>
         * {
@@ -6605,13 +6605,13 @@
             .lp-world-img img {
                 width: 100%;
                 height: 100%;
-                object-fit: contain;
-                object-position: center bottom;
-                transform: scale(1.4);
+                object-fit: cover;
+                object-position: center center;
+                transform: scale(1);
                 transition: transform 0.3s;
             }
             .lp-world-card:hover .lp-world-img img {
-                transform: scale(1.52);
+                transform: scale(1.05);
             }
             .lp-world-body {
                 padding: 1.1rem;
@@ -6623,9 +6623,11 @@
             .lp-world-name {
                 font-family: 'Fredoka', sans-serif;
                 font-weight: 700;
-                font-size: 1.1rem;
+                font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+                line-height: 1.05;
                 text-transform: uppercase;
                 color: #000;
+                flex: 1;
             }
             .lp-world-cta {
                 padding: 0.55rem 1rem;
@@ -7505,23 +7507,26 @@
                 overflow: hidden;
             }
             .lp-world-img img {
-                width: 70%;
-                height: 70%;
-                object-fit: contain;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                object-position: center center;
             }
             .lp-world-body {
                 padding: 0.75rem 0.85rem;
-                text-align: center;
+                text-align: left;
                 border-top: 3px solid #000;
             }
             .lp-world-name {
                 font-family: 'Fredoka', sans-serif;
-                font-size: 0.95rem;
+                font-size: 0.84rem;
                 font-weight: 800;
                 text-transform: uppercase;
                 color: #000;
                 display: block;
                 margin-bottom: 0.35rem;
+                line-height: 1.08;
+                letter-spacing: 0.01em;
             }
             .lp-world-cta {
                 font-family: 'Fredoka', sans-serif;
@@ -9605,10 +9610,81 @@
             }, 100);
         }
 
+        function cleanupViewArtifacts(nextView) {
+            const targetView = normalizeLegacyView(nextView);
+            document.body.classList.toggle('profile-view-open', targetView === 'profile');
+
+            if (targetView !== 'preset-preview') {
+                window.presetCommentsController?.forceClose?.();
+                document.body.classList.remove('comments-panel-open');
+                document.body.style.overflow = '';
+
+                const commentsOverlay = document.querySelector('.pc-comments-overlay');
+                if (commentsOverlay) {
+                    commentsOverlay.hidden = true;
+                    commentsOverlay.classList.remove('open');
+                }
+
+                const commentsRail = document.querySelector('.pc-comments-rail');
+                if (commentsRail) commentsRail.hidden = true;
+
+                const previewStage = document.getElementById('preset-preview-stage');
+                if (previewStage) previewStage.style.right = '';
+
+                const activeCanvas = document.getElementById('canvas-container');
+                if (activeCanvas && targetView !== 'custom') {
+                    activeCanvas.style.left = '';
+                    activeCanvas.style.right = '';
+                    activeCanvas.style.width = '';
+                }
+            }
+
+            if (targetView !== 'preset-preview' && targetView !== 'custom') {
+                document.body.classList.remove(
+                    'main-3d-viewer-active',
+                    'customization-active',
+                    'custom-editor-intro',
+                    'custom-editor-open',
+                    'custom-editor-finished',
+                    'mobile-edit-mode'
+                );
+
+                const activeCanvas = document.getElementById('canvas-container');
+                if (activeCanvas) activeCanvas.style.display = 'none';
+
+                const customizeSectionEl = document.getElementById('customize-section');
+                if (customizeSectionEl) customizeSectionEl.classList.add('hidden');
+
+                const editorPanel = document.getElementById('editor-panel-wrapper');
+                if (editorPanel) editorPanel.style.display = 'none';
+            }
+
+            if (targetView !== 'profile') {
+                const profileView = document.getElementById('user-profile-view');
+                if (profileView) profileView.style.display = 'none';
+            }
+
+            if (targetView !== 'favorites') {
+                const favoritesView = document.getElementById('favorites-view');
+                if (favoritesView) favoritesView.style.display = 'none';
+            }
+
+            const mobileDropdownMenu = document.getElementById('app-mobile-dropdown-menu');
+            if (mobileDropdownMenu) mobileDropdownMenu.classList.remove('active');
+
+            const cartDropdown = document.getElementById('app-cart-dropdown');
+            if (cartDropdown) cartDropdown.classList.remove('active');
+
+            const userDropdown = document.getElementById('auth-user-dropdown');
+            if (userDropdown) userDropdown.style.display = 'none';
+        }
+        window.cleanupViewArtifacts = cleanupViewArtifacts;
+
         function navigateToView(view, options = {}) {
             performWithoutTransitions(() => {
                 view = normalizeLegacyView(view);
                 const { updateHistory = true, replaceHistory = false } = options;
+                cleanupViewArtifacts(view);
 
                 if (updateHistory) {
                     syncViewInUrl(view, replaceHistory);
@@ -14824,20 +14900,18 @@
             // Populate worlds grid from banner data (collections/fandoms)
             if (worldsGrid && !worldsGrid.dataset.rendered) {
                 const worlds = [
-                    { title: "KPOP", color: "#B8860B", art: ["Mira", "Rumi"] },
-                    { title: "MINECRAFT", color: "#8B4513", art: ["Steve", "Alex"] },
-                    { title: "MORAT", color: "#556B2F", art: ["Villamil-faltastu", "Isaza-faltastu-guitarra"] },
-                    { title: "FANTASY", color: "#6A0DAD", art: ["Mira", "Rumi"] },
-                    { title: "ARCADE", color: "#E74C3C", art: ["Steve"] },
-                    { title: "ORIGINALES", color: "#2980B9", art: ["Alex"] }
+                    { title: "KPOP DEMON HUNTERS", image: "assets/worlds/kpop-demon-hunters-world-card.png" },
+                    { title: "MINECRAFT", image: "assets/worlds/minecraft-world-card.png" },
+                    { title: "MORAT", image: "assets/worlds/morat-world-card.png" },
+                    { title: "DIGITAL CIRCUS", image: "assets/worlds/digital-circus-world-card.png" },
+                    { title: "MIRACULOUS", image: "assets/worlds/miraculous-world-card.png" },
+                    { title: "HELLO KITTY", image: "assets/worlds/hello-kitty-world-card.png" }
                 ];
                 worldsGrid.innerHTML = worlds.map(w => {
-                    const artName = w.art[0];
-                    const imgSrc = typeof getPresetIconSource === 'function' ? getPresetIconSource(artName) : 'webclip.png';
                     return `
                     <article class="lp-world-card" onclick="navigateToView('presets')">
-                        <div class="lp-world-img" style="background: ${w.color}20;">
-                            <img src="${imgSrc}" alt="${w.title}" onerror="this.src='webclip.png'" loading="lazy">
+                        <div class="lp-world-img">
+                            <img src="${w.image}" alt="${w.title}" onerror="this.src='webclip.png'" loading="lazy">
                         </div>
                         <div class="lp-world-body">
                             <span class="lp-world-name">${w.title}</span>
@@ -14924,6 +14998,7 @@
         function openAuthenticatedHome(show = true) {
             ensureDeferredViews();
             if (show) {
+                cleanupViewArtifacts('home');
                 stopActiveCustomPdfGeneration();
             }
             document.body.classList.remove('main-3d-viewer-active');
@@ -19327,6 +19402,8 @@
             const isShowing = show !== undefined ? show : profileView.style.display === 'none';
 
             if (isShowing) {
+                cleanupViewArtifacts('profile');
+                document.body.classList.add('profile-view-open');
                 profileView.style.display = 'block';
                 setGlobalTopbarVisible(true);
 
@@ -19344,6 +19421,7 @@
                     loadOtherUserProfile(targetUserId);
                 }
             } else {
+                document.body.classList.remove('profile-view-open');
                 profileView.style.display = 'none';
                 if (activeAppView === 'presets') {
                     openPresetsView();
@@ -19969,6 +20047,7 @@
         }
 
         function showFavoritesView() {
+            cleanupViewArtifacts('favorites');
             // Hide home view and profile view if open
             const homeView = document.getElementById('authenticated-home-view');
             if (homeView) homeView.classList.remove('active');

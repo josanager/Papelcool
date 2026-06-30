@@ -305,7 +305,10 @@ function updateAuthUI(user) {
             loginBtn.style.display = 'flex';
             loginBtn.textContent = 'Perfil';
             loginBtn.setAttribute('aria-label', 'Perfil');
-            loginBtn.onclick = () => toggleUserProfile(true);
+            loginBtn.onclick = () => {
+                window.cleanupViewArtifacts?.('profile');
+                toggleUserProfile(true);
+            };
         }
         if (registerBtn) {
             registerBtn.style.display = 'flex';
@@ -318,6 +321,7 @@ function updateAuthUI(user) {
             mobileLoginBtn.setAttribute('aria-label', 'Perfil');
             mobileLoginBtn.onclick = () => {
                 closeMobileMenu();
+                window.cleanupViewArtifacts?.('profile');
                 toggleUserProfile(true);
             };
         }

@@ -32,6 +32,7 @@
     const controller = {
         open: () => togglePanel(true),
         close: () => closePanel(),
+        forceClose: () => forceClosePanel(),
         refresh: (options = {}) => refreshForCurrentPreset(options),
         getState: () => ({
             activeView: state.activeView,
@@ -51,6 +52,7 @@
         buildDom();
         bindEvents();
         wrapGlobalHooks();
+        observeProfileVisibility();
         syncFromLocation();
         render();
         refreshCurrentUser()
@@ -76,6 +78,14 @@
             }
 
             .pc-comments-root [hidden] {
+                display: none !important;
+            }
+
+            body.profile-view-open .pc-comments-root {
+                display: none !important;
+            }
+
+            body:has(#user-profile-view[style*="display: block"]) .pc-comments-root {
                 display: none !important;
             }
 
@@ -176,8 +186,8 @@
                 justify-content: space-between;
                 gap: 12px;
                 padding: 14px 18px 12px;
-                border-bottom: 3px solid #000;
-                background: #FFFFFF;
+                border-bottom: 0;
+                background: #ECEFF3;
             }
 
             .pc-comments-title-wrap {
@@ -348,9 +358,11 @@
             }
 
             .pc-comment-item {
-                display: flex;
-                align-items: flex-start;
-                gap: 12px;
+                display: grid;
+                grid-template-columns: 36px minmax(0, 1fr) auto;
+                align-items: start;
+                column-gap: 10px;
+                row-gap: 0;
                 width: 100%;
                 position: relative;
                 padding: 4px 0;
@@ -375,8 +387,10 @@
                 align-items: center;
                 justify-content: center;
                 font-family: 'Fredoka', sans-serif;
-                font-size: 0.95rem;
+                font-size: 0.78rem;
                 font-weight: 800;
+                letter-spacing: 0;
+                text-transform: uppercase;
                 box-shadow: 2px 2px 0 rgba(0, 0, 0, 1);
                 flex-shrink: 0;
                 user-select: none;
@@ -386,13 +400,18 @@
                 flex-grow: 1;
                 display: flex;
                 flex-direction: column;
-                gap: 4px;
+                gap: 3px;
                 min-width: 0;
+                padding-top: 1px;
             }
 
             .pc-comment-text-wrap {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 2px;
                 font-size: 0.88rem;
-                line-height: 1.4;
+                line-height: 1.32;
                 color: #1F2937;
                 word-break: break-word;
                 white-space: pre-wrap;
@@ -407,8 +426,10 @@
                 font-size: 0.9rem;
                 font-weight: 800;
                 cursor: pointer;
-                display: inline;
-                margin-right: 6px;
+                display: inline-flex;
+                align-items: center;
+                line-height: 1.1;
+                margin: 0;
             }
 
             .pc-comment-author:hover,
@@ -419,6 +440,7 @@
             }
 
             .pc-comment-body {
+                display: block;
                 font-family: 'Montserrat', sans-serif;
                 font-weight: 500;
                 color: #374151;
@@ -427,14 +449,11 @@
             .pc-comment-meta-row {
                 display: flex;
                 align-items: center;
+                flex-wrap: wrap;
                 gap: 12px;
                 font-size: 0.76rem;
                 font-weight: 600;
                 color: #9CA3AF;
-            }
-
-            .pc-comment-time {
-                /* standard text */
             }
 
             .pc-comment-meta-action {
@@ -455,12 +474,14 @@
             }
 
             .pc-comment-likes-count {
-                /* standard text */
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
             }
 
             .pc-comment-like-btn {
                 border: 0;
-                padding: 4px;
+                padding: 0;
                 background: transparent;
                 color: #D1D5DB;
                 display: inline-flex;
@@ -470,6 +491,7 @@
                 transition: color 100ms ease, transform 100ms ease;
                 flex-shrink: 0;
                 align-self: center;
+                margin: 0;
             }
 
             .pc-comment-like-btn:hover,
@@ -493,6 +515,40 @@
                 font-variation-settings: 'FILL' 1;
             }
 
+            .pc-comment-like-count-value {
+                color: #9CA3AF;
+                font-family: 'Montserrat', sans-serif;
+                font-weight: 700;
+                line-height: 1;
+            }
+
+            .pc-comment-owner-action {
+                border: 0;
+                padding: 2px;
+                background: transparent;
+                color: #D1D5DB;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                transition: color 100ms ease, transform 100ms ease;
+                flex-shrink: 0;
+                align-self: start;
+                margin-top: 1px;
+            }
+
+            .pc-comment-owner-action:hover,
+            .pc-comment-owner-action:focus-visible {
+                color: #111827;
+                transform: scale(1.08);
+                outline: none;
+            }
+
+            .pc-comment-owner-action .material-symbols-outlined {
+                font-size: 19px;
+                line-height: 1;
+            }
+
             .pc-comment-replies {
                 padding-left: 44px;
                 display: flex;
@@ -503,9 +559,9 @@
             /* COMPOSER */
             .pc-comments-composer {
                 flex: 0 0 auto;
-                padding: 14px 18px calc(14px + env(safe-area-inset-bottom, 0px));
-                border-top: 3px solid #000;
-                background: #FFF;
+                padding: 8px 18px calc(12px + env(safe-area-inset-bottom, 0px));
+                border-top: 0;
+                background: #ECEFF3;
                 z-index: 5;
             }
 
@@ -542,44 +598,10 @@
                 color: #4B5563;
             }
 
-            .pc-comments-quick-reactions {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                overflow-x: auto;
-                padding: 0 0 10px;
-                scrollbar-width: none;
-            }
-
-            .pc-comments-quick-reactions::-webkit-scrollbar {
-                display: none;
-            }
-
-            .pc-comments-reaction {
-                border: 0;
-                width: 32px;
-                height: 32px;
-                border-radius: 50%;
-                background: transparent;
-                font-size: 1.35rem;
-                line-height: 1;
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                transition: transform 100ms ease;
-            }
-
-            .pc-comments-reaction:hover,
-            .pc-comments-reaction:focus-visible {
-                transform: scale(1.2);
-                outline: none;
-            }
-
             .pc-comments-form {
                 display: flex;
                 flex-direction: column;
-                gap: 8px;
+                gap: 0;
             }
 
             .pc-comments-input-row {
@@ -587,6 +609,7 @@
                 align-items: center;
                 gap: 10px;
                 width: 100%;
+                margin-top: 8px;
             }
 
             .pc-comments-composer-avatar {
@@ -597,8 +620,10 @@
                 background: #fff;
                 color: #000;
                 font-family: 'Fredoka', sans-serif;
-                font-size: 0.88rem;
+                font-size: 0.72rem;
                 font-weight: 800;
+                letter-spacing: 0;
+                text-transform: uppercase;
                 display: inline-flex;
                 align-items: center;
                 justify-content: center;
@@ -623,7 +648,7 @@
                 border: 0;
                 border-radius: 0;
                 background: transparent;
-                padding: 8px 0;
+                padding: 6px 0;
                 color: #111827;
                 font: 600 0.88rem/1.35 'Montserrat', sans-serif;
                 box-shadow: none;
@@ -635,10 +660,7 @@
             }
 
             .pc-comments-form-footer {
-                display: flex;
-                align-items: center;
-                justify-content: flex-end;
-                gap: 12px;
+                display: none;
             }
 
             .pc-comments-hint {
@@ -899,16 +921,6 @@
                                 <span class="material-symbols-outlined" aria-hidden="true">close</span>
                             </button>
                         </div>
-                        <div class="pc-comments-quick-reactions" aria-label="Reacciones rápidas">
-                            <button type="button" class="pc-comments-reaction" data-reaction="❤️" aria-label="Corazón">❤️</button>
-                            <button type="button" class="pc-comments-reaction" data-reaction="🙌" aria-label="Celebrar">🙌</button>
-                            <button type="button" class="pc-comments-reaction" data-reaction="🔥" aria-label="Fuego">🔥</button>
-                            <button type="button" class="pc-comments-reaction" data-reaction="👏" aria-label="Aplaudir">👏</button>
-                            <button type="button" class="pc-comments-reaction" data-reaction="😭" aria-label="Emoción">😭</button>
-                            <button type="button" class="pc-comments-reaction" data-reaction="😍" aria-label="Amor">😍</button>
-                            <button type="button" class="pc-comments-reaction" data-reaction="😮" aria-label="Sorpresa">😮</button>
-                            <button type="button" class="pc-comments-reaction" data-reaction="😂" aria-label="Risa">😂</button>
-                        </div>
                         <div class="pc-comments-guest-cta" hidden>
                             <p class="pc-comments-guest-copy">Inicia sesión o regístrate para comentar.</p>
                             <div class="pc-comments-auth-actions">
@@ -925,12 +937,6 @@
                                 <button type="submit" class="pc-comments-send-btn" data-role="submit" aria-label="Enviar comentario">
                                     <span class="material-symbols-outlined" aria-hidden="true">arrow_upward</span>
                                 </button>
-                            </div>
-                            <div class="pc-comments-form-footer">
-                                <span class="pc-comments-hint">0/${MAX_COMMENT_LENGTH}</span>
-                                <div class="pc-comments-composer-actions">
-                                    <button type="button" class="pc-comments-secondary-btn" data-action="clear">Limpiar</button>
-                                </div>
                             </div>
                         </form>
                     </footer>
@@ -953,13 +959,10 @@
         dom.sortSelect = root.querySelector('.pc-comments-sort');
         dom.replyChip = root.querySelector('.pc-comments-reply-chip');
         dom.replyChipText = root.querySelector('.pc-comments-reply-chip span');
-        dom.quickReactions = root.querySelector('.pc-comments-quick-reactions');
         dom.guestCta = root.querySelector('.pc-comments-guest-cta');
         dom.composerAvatar = root.querySelector('.pc-comments-composer-avatar');
         dom.form = root.querySelector('.pc-comments-form');
         dom.textarea = root.querySelector('.pc-comments-textarea');
-        dom.charCount = root.querySelector('.pc-comments-hint');
-        dom.clearButton = root.querySelector('[data-action="clear"]');
         dom.submitButton = root.querySelector('[data-role="submit"]');
     }
 
@@ -971,16 +974,13 @@
 
         dom.panel.querySelector('[data-action="close"]').addEventListener('click', closePanel);
         dom.panel.querySelector('[data-action="cancel-reply"]').addEventListener('click', clearReplyTarget);
-        dom.form.querySelector('[data-action="clear"]').addEventListener('click', clearComposer);
         dom.sortSelect.addEventListener('change', () => {
             state.sortMode = dom.sortSelect.value === 'popular' ? 'popular' : 'newest';
             renderCommentList();
         });
-        dom.quickReactions.addEventListener('click', handleQuickReactionClick);
         dom.guestCta.addEventListener('click', handleGuestAuthClick);
 
         dom.textarea.addEventListener('input', () => {
-            dom.charCount.textContent = `${dom.textarea.value.trim().length}/${MAX_COMMENT_LENGTH}`;
             autoSizeTextarea();
         });
 
@@ -1010,6 +1010,11 @@
                 if (action === 'reply') {
                     const author = actionButton.getAttribute('data-comment-author') || 'este comentario';
                     setReplyTarget(commentId, author);
+                    return;
+                }
+
+                if (action === 'delete') {
+                    await deleteComment(commentId);
                     return;
                 }
             }
@@ -1110,6 +1115,8 @@
     }
 
     function canShowEntryPoint() {
+        if (isProfileViewOpen()) return false;
+
         const params = new URLSearchParams(window.location.search);
         const urlView = params.get(VIEW_PARAM) || state.activeView;
         const urlPreset = params.get(PRESET_PARAM) || state.currentPreset;
@@ -1118,6 +1125,28 @@
         state.currentPreset = urlPreset || state.currentPreset;
 
         return urlView === 'preset-preview' && Boolean(urlPreset);
+    }
+
+    function isProfileViewOpen() {
+        const profileView = document.getElementById('user-profile-view');
+        if (document.body.classList.contains('profile-view-open')) return true;
+        return Boolean(profileView) && window.getComputedStyle(profileView).display !== 'none';
+    }
+
+    function observeProfileVisibility() {
+        const profileView = document.getElementById('user-profile-view');
+        if (!profileView || typeof MutationObserver !== 'function') return;
+
+        const handleProfileChange = () => {
+            if (isProfileViewOpen()) forceClosePanel();
+            else renderLayout();
+        };
+
+        new MutationObserver(handleProfileChange).observe(profileView, {
+            attributes: true,
+            attributeFilter: ['class', 'style']
+        });
+
     }
 
     function isDesktopLayout() {
@@ -1318,6 +1347,30 @@
         setTimeout(() => window.dispatchEvent(new Event('resize')), 300);
     }
 
+    function forceClosePanel() {
+        state.activeView = '';
+        state.currentPreset = null;
+        state.isOpen = false;
+        dom.overlay.hidden = true;
+        dom.overlay.classList.remove('open');
+        dom.rail.hidden = true;
+        dom.root.dataset.activeView = '';
+        dom.root.dataset.currentPreset = '';
+        dom.root.dataset.entryVisible = 'false';
+        document.body.classList.remove('comments-panel-open');
+        document.body.style.overflow = '';
+
+        const canvasContainer = document.getElementById('canvas-container');
+        if (canvasContainer) {
+            canvasContainer.style.left = '';
+            canvasContainer.style.right = '';
+            canvasContainer.style.width = '';
+        }
+
+        const previewStage = document.getElementById('preset-preview-stage');
+        if (previewStage) previewStage.style.right = '';
+    }
+
     function setReplyTarget(commentId, author) {
         state.replyToId = commentId;
         state.replyToAuthor = author || 'este comentario';
@@ -1333,7 +1386,6 @@
 
     function clearComposer() {
         dom.textarea.value = '';
-        dom.charCount.textContent = `0/${MAX_COMMENT_LENGTH}`;
         autoSizeTextarea();
         clearReplyTarget();
     }
@@ -1350,7 +1402,6 @@
 
         const currentValue = dom.textarea.value.trim();
         dom.textarea.value = currentValue ? `${currentValue} ${emoji}` : emoji;
-        dom.charCount.textContent = `${dom.textarea.value.trim().length}/${MAX_COMMENT_LENGTH}`;
         autoSizeTextarea();
         dom.textarea.focus();
     }
@@ -1475,6 +1526,35 @@
         } catch (error) {
             renderStatus(error?.message || 'No se pudo actualizar el like.', 'error');
             console.error('Preset comment like error:', error);
+        }
+    }
+
+    async function deleteComment(commentId) {
+        if (!commentId || !state.currentUser) return;
+
+        const comment = state.comments.find((item) => item.id === commentId);
+        if (!comment || comment.user_id !== state.currentUser.id) return;
+
+        const client = typeof window.getSupabaseClient === 'function' ? window.getSupabaseClient() : null;
+        if (!client) return;
+
+        try {
+            const { error } = await client
+                .from(COMMENTS_TABLE)
+                .delete()
+                .eq('id', commentId)
+                .eq('user_id', state.currentUser.id);
+
+            if (error) throw error;
+
+            if (state.replyToId === commentId) {
+                clearReplyTarget();
+            }
+
+            await refreshForCurrentPreset({ force: true });
+        } catch (error) {
+            renderStatus(error?.message || 'No se pudo eliminar el comentario.', 'error');
+            console.error('Preset comment delete error:', error);
         }
     }
 
@@ -1649,41 +1729,62 @@
     }
 
     function getAvatarColor(userId) {
-        const colors = ['#FF4D94', '#FFE600', '#407BFF', '#2ECC71'];
-        if (!userId) return colors[0];
-        const index = Math.abs(hashCode(userId)) % colors.length;
-        return colors[index];
+        const seed = String(userId || 'papelcool-avatar');
+        const hash = Math.abs(hashCode(seed));
+        const hue = hash % 360;
+        const saturation = 64 + (hash % 12);
+        const lightness = 54 + (hash % 10);
+        return `hsl(${hue}deg ${saturation}% ${lightness}%)`;
+    }
+
+    function getAvatarLabel(name) {
+        const raw = String(name || '').trim();
+        if (!raw) return 'PC';
+
+        const parts = raw.split(/\s+/).filter(Boolean);
+        if (parts.length >= 2) {
+            return `${parts[0][0] || ''}${parts[1][0] || ''}`.toUpperCase();
+        }
+
+        const compact = raw.replace(/[^a-zA-Z0-9]/g, '');
+        return compact.slice(0, 2).toUpperCase() || raw.slice(0, 2).toUpperCase();
     }
 
     function renderCommentNode(comment, depth) {
         const profile = state.profiles.get(comment.user_id) || null;
         const authorName = escapeHtml(profile?.nickname || 'Coleccionista');
-        const initial = escapeHtml((profile?.nickname || 'P').charAt(0).toUpperCase());
+        const avatarLabel = escapeHtml(getAvatarLabel(profile?.nickname || 'Coleccionista'));
         const body = escapeHtml(comment.body || '').replace(/\n/g, '<br>');
         const likeCount = state.likeCounts.get(comment.id) || 0;
         const liked = state.likedCommentIds.has(comment.id);
-        const timeLabel = formatRelativeTime(comment.created_at);
         const highlighted = state.highlightedCommentId === comment.id;
         const avatarBg = getAvatarColor(comment.user_id || authorName);
+        const isOwner = Boolean(state.currentUser?.id) && state.currentUser.id === comment.user_id;
 
         return `
             <div class="pc-comment-row" data-comment-node-id="${escapeAttribute(comment.id)}">
                 <article class="pc-comment-item ${highlighted ? 'is-highlighted' : ''}" data-comment-id="${escapeAttribute(comment.id)}">
-                    <div class="pc-comment-avatar" style="background: ${avatarBg};">${initial}</div>
+                    <div class="pc-comment-avatar" style="background: ${avatarBg};">${avatarLabel}</div>
                     <div class="pc-comment-content">
                         <div class="pc-comment-text-wrap">
                             <button type="button" class="pc-comment-author" data-author-id="${escapeAttribute(comment.user_id || '')}">${authorName}</button>
                             <span class="pc-comment-body">${body}</span>
                         </div>
                         <div class="pc-comment-meta-row">
-                            <span class="pc-comment-time">${escapeHtml(timeLabel)}</span>
-                            <span class="pc-comment-likes-count">${likeCount} ${likeCount === 1 ? 'me gusta' : 'me gusta'}</span>
+                            <span class="pc-comment-likes-count">
+                                <button type="button" class="pc-comment-like-btn ${liked ? 'is-active' : ''}" data-comment-action="like" data-comment-id="${escapeAttribute(comment.id)}" aria-label="Me gusta">
+                                    <span class="material-symbols-outlined" aria-hidden="true">${liked ? 'favorite' : 'favorite_border'}</span>
+                                </button>
+                                <span class="pc-comment-like-count-value">${likeCount}</span>
+                            </span>
                             <button type="button" class="pc-comment-meta-action" data-comment-action="reply" data-comment-id="${escapeAttribute(comment.id)}" data-comment-author="${authorName}">Responder</button>
                         </div>
                     </div>
-                    <button type="button" class="pc-comment-like-btn ${liked ? 'is-active' : ''}" data-comment-action="like" data-comment-id="${escapeAttribute(comment.id)}" aria-label="Me gusta">
-                        <span class="material-symbols-outlined" aria-hidden="true">${liked ? 'favorite' : 'favorite_border'}</span>
-                    </button>
+                    ${isOwner ? `
+                        <button type="button" class="pc-comment-owner-action" data-comment-action="delete" data-comment-id="${escapeAttribute(comment.id)}" aria-label="Eliminar comentario">
+                            <span class="material-symbols-outlined" aria-hidden="true">delete</span>
+                        </button>
+                    ` : ''}
                 </article>
                 ${comment.children && comment.children.length > 0 ? `
                     <div class="pc-comment-replies">
@@ -1701,13 +1802,12 @@
         const userName = state.currentUser?.user_metadata?.nickname
             || state.currentUser?.email?.split('@')[0]
             || 'P';
-        dom.composerAvatar.textContent = userName.charAt(0).toUpperCase();
+        dom.composerAvatar.textContent = getAvatarLabel(userName);
         if (isAuthenticated && state.currentUser?.id) {
             dom.composerAvatar.style.background = getAvatarColor(state.currentUser.id);
         } else {
             dom.composerAvatar.style.background = '#FFFFFF';
         }
-        dom.quickReactions.hidden = !isAuthenticated || state.isSetupMissing;
         dom.guestCta.hidden = isAuthenticated || state.isSetupMissing;
         dom.form.hidden = !isAuthenticated || state.isSetupMissing;
         dom.textarea.readOnly = !isAuthenticated;
@@ -1723,9 +1823,6 @@
         dom.submitButton.innerHTML = isAuthenticated
             ? '<span class="material-symbols-outlined" aria-hidden="true">arrow_upward</span>'
             : 'Entrar';
-        dom.charCount.textContent = `${dom.textarea.value.trim().length}/${MAX_COMMENT_LENGTH}`;
-        dom.charCount.hidden = !isAuthenticated;
-        dom.clearButton.hidden = !dom.textarea.value.trim() && !state.replyToId;
         autoSizeTextarea();
     }
 
