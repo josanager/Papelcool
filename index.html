@@ -424,6 +424,30 @@
             filter: drop-shadow(6px 5px 0 rgba(115, 125, 132, 0.58));
         }
 
+        .preset-icon-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 1.05;
+            letter-spacing: 0.02em;
+            color: #000;
+            background: rgba(255, 255, 255, 0.92);
+            border: 2px dashed #000;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+
+        .fandom-image-container .preset-icon-placeholder {
+            width: 72%;
+            height: 72%;
+            padding: 0.75rem;
+            font-size: 0.92rem;
+        }
+
         .fandom-info {
             padding: clamp(0.62rem, 4.6cqw, 0.9rem) clamp(0.58rem, 4.2cqw, 0.85rem) clamp(0.68rem, 4.9cqw, 0.95rem);
             display: flex;
@@ -801,6 +825,16 @@
             border-radius: 12px;
         }
 
+        .pc-cart-item .preset-icon-placeholder {
+            width: 54px;
+            height: 54px;
+            padding: 0.35rem;
+            font-size: 0.52rem;
+            background: #fff;
+            border-style: solid;
+            flex-shrink: 0;
+        }
+
         .pc-cart-item-name {
             min-width: 0;
             font-family: 'Fredoka', sans-serif;
@@ -1161,6 +1195,14 @@
             width: 88%;
             height: 88%;
             object-fit: contain;
+        }
+
+        .pc-favorite-card-thumb .preset-icon-placeholder {
+            width: 88%;
+            height: 88%;
+            padding: 0.6rem;
+            font-size: 0.74rem;
+            background: #fff;
         }
 
         .pc-favorite-card-title {
@@ -5349,6 +5391,15 @@
             filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.18));
         }
 
+        .pc-home-art-cluster .preset-icon-placeholder {
+            width: 78px;
+            height: 78px;
+            padding: 0.55rem;
+            font-size: 0.64rem;
+            background: #fff;
+            filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.18));
+        }
+
         .pc-home-category-strip,
         .pc-home-section {
             padding: 1.2rem;
@@ -8971,6 +9022,8 @@
                     <span>Fandom</span>
                     <select id="fandom-filter">
                         <option value="all">Todos</option>
+                        <option value="camilo">Camilo</option>
+                        <option value="miraculous">Miraculous</option>
                         <option value="morat">Morat</option>
                         <option value="minecraft">Minecraft</option>
                         <option value="kpop">Kpop Demon Hunters</option>
@@ -10026,8 +10079,13 @@
         let currentHairRightURL = null; // Por defecto 'None'
         let currentHairUpURL = null; // Por defecto 'None'
 
+        let currentBeardFrontURL = null; // Por defecto 'None'
+        let currentBeardLeftURL = null; // Por defecto 'None'
+        let currentBeardRightURL = null; // Por defecto 'None'
+
         let currentTorsoFrontURL = null; // Por defecto 'None'
         let currentTorsoBackURL = null; // Por defecto 'None'
+        let currentInstrumentURL = null; // Por defecto 'None'
 
         let currentArmLeftURL = null; // Por defecto 'None'
         let currentArmRightURL = null; // Por defecto 'None'
@@ -10324,8 +10382,12 @@
         let hairLeftMesh = null;
         let hairRightMesh = null;
         let hairUpMesh = null;
+        let beardFrontMesh = null;
+        let beardLeftMesh = null;
+        let beardRightMesh = null;
         let torsoFrontMesh = null;
         let torsoBackMesh = null;
+        let instrumentMesh = null;
         let armLeftFrontMesh = null;
         let armLeftBackMesh = null;
         let armRightFrontMesh = null;
@@ -10341,7 +10403,9 @@
             earLeft: 0,
             earRight: 0,
             hair: 0,
+            beard: 0,
             torso: 0,
+            instrument: 0,
             armLeft: 0,
             armRight: 0,
             legLeft: 0,
@@ -11279,6 +11343,20 @@
             keys.forEach((key) => clearPresetPreviewOverlay(key));
         }
 
+        function extractHexColorFromTextureUrl(textureUrl) {
+            if (!textureUrl) return null;
+            const match = String(textureUrl).match(/-([0-9a-fA-F]{6})(?=\.(svg|png|jpg|jpeg|webp)(?:$|[?#]))/i);
+            return match ? `#${match[1].toUpperCase()}` : null;
+        }
+
+        function getTextureColorOverride(...textureUrls) {
+            for (const textureUrl of textureUrls) {
+                const color = extractHexColorFromTextureUrl(textureUrl);
+                if (color) return color;
+            }
+            return null;
+        }
+
         function buildPresetCharacterConfig(characterName) {
             const baseSkin = '#F7D5CF';
             const characterTextures = getPresetCharacterTextures(characterName);
@@ -11294,6 +11372,11 @@
                 hiddenOverlays: [],
                 hideArms: false
             };
+
+            config.colors.head = getTextureColorOverride(characterTextures.eyeTexture?.url) || config.colors.head;
+            config.colors.torso = getTextureColorOverride(characterTextures.torsoTexture?.frontUrl, characterTextures.torsoTexture?.backUrl) || config.colors.torso;
+            config.colors.arms = getTextureColorOverride(characterTextures.armTexture?.leftUrl, characterTextures.armTexture?.rightUrl) || config.colors.arms;
+            config.colors.legs = getTextureColorOverride(characterTextures.legTexture?.leftUrl, characterTextures.legTexture?.rightUrl) || config.colors.legs;
 
             if (characterName === 'Baby') {
                 config.colors.head = '#FFEBE8';
@@ -11323,6 +11406,9 @@
                 config.armTexture = null;
                 config.hideArms = true;
                 config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
+            } else if (characterName === 'Ladybug' || characterName === 'Catnoir') {
+                config.hiddenOverlays.push('eyebrows');
+                config.eyebrowTexture = null;
             }
 
             if (characterName === 'Alex') {
@@ -11450,6 +11536,26 @@
                 clearPresetPreviewGroup(['hair-front', 'hair-back', 'hair-left', 'hair-right', 'hair-up']);
             }
 
+            if (config.beardTexture?.frontUrl) {
+                textureTasks.push(overlay('beard-front', parts.head, config.beardTexture.frontUrl, {
+                    position: [0, 1.029, 1.129],
+                    planeHeight: 2.256
+                }));
+                textureTasks.push(overlay('beard-left', parts.head, config.beardTexture.leftUrl, {
+                    position: [-1.13, 1.029, 0],
+                    rotation: [0, Math.PI / 2, 0],
+                    scale: [-1, 1, 1],
+                    planeHeight: 2.256
+                }));
+                textureTasks.push(overlay('beard-right', parts.head, config.beardTexture.rightUrl, {
+                    position: [1.13, 1.029, 0],
+                    rotation: [0, -Math.PI / 2, 0],
+                    planeHeight: 2.256
+                }));
+            } else {
+                clearPresetPreviewGroup(['beard-front', 'beard-left', 'beard-right']);
+            }
+
             if (config.torsoTexture?.frontUrl) {
                 textureTasks.push(overlay('torso-front', parts.torso, config.torsoTexture.frontUrl, {
                     position: [0, -1.176, 0.453],
@@ -11462,6 +11568,15 @@
                 }));
             } else {
                 clearPresetPreviewGroup(['torso-front', 'torso-back']);
+            }
+
+            if (config.instrumentTexture?.url) {
+                textureTasks.push(overlay('instrument', parts.torso, config.instrumentTexture.url, {
+                    position: [0, -1.176, 0.453],
+                    planeHeight: 2.145
+                }));
+            } else {
+                clearPresetPreviewGroup(['instrument']);
             }
 
             if (config.armTexture && !config.hideArms) {
@@ -13019,6 +13134,177 @@
             }
         }
 
+        function changeBeardTexture(frontUrl, leftUrl, rightUrl, isInitialLoad = false) {
+            if (!modelParts.head) return;
+            const textureVersion = nextCustomTextureVersion('beard');
+            currentBeardFrontURL = frontUrl;
+            currentBeardLeftURL = leftUrl;
+            currentBeardRightURL = rightUrl;
+            notifyCustomPdfStateChanged('beard-texture');
+
+            if (frontUrl === null) {
+                if (beardFrontMesh) {
+                    modelParts.head.remove(beardFrontMesh);
+                    if (beardFrontMesh.material.map) beardFrontMesh.material.map.dispose();
+                    beardFrontMesh.material.dispose();
+                    beardFrontMesh.geometry.dispose();
+                    beardFrontMesh = null;
+                }
+                if (beardLeftMesh) {
+                    modelParts.head.remove(beardLeftMesh);
+                    if (beardLeftMesh.material.map) beardLeftMesh.material.map.dispose();
+                    beardLeftMesh.material.dispose();
+                    beardLeftMesh.geometry.dispose();
+                    beardLeftMesh = null;
+                }
+                if (beardRightMesh) {
+                    modelParts.head.remove(beardRightMesh);
+                    if (beardRightMesh.material.map) beardRightMesh.material.map.dispose();
+                    beardRightMesh.material.dispose();
+                    beardRightMesh.geometry.dispose();
+                    beardRightMesh = null;
+                }
+                forceMemoryCleanup();
+                return;
+            }
+
+            if (isMobileDevice && !isInitialLoad) {
+                if (beardFrontMesh) {
+                    modelParts.head.remove(beardFrontMesh);
+                    if (beardFrontMesh.material.map) beardFrontMesh.material.map.dispose();
+                    beardFrontMesh.material.dispose();
+                    beardFrontMesh.geometry.dispose();
+                    beardFrontMesh = null;
+                }
+                if (beardLeftMesh) {
+                    modelParts.head.remove(beardLeftMesh);
+                    if (beardLeftMesh.material.map) beardLeftMesh.material.map.dispose();
+                    beardLeftMesh.material.dispose();
+                    beardLeftMesh.geometry.dispose();
+                    beardLeftMesh = null;
+                }
+                if (beardRightMesh) {
+                    modelParts.head.remove(beardRightMesh);
+                    if (beardRightMesh.material.map) beardRightMesh.material.map.dispose();
+                    beardRightMesh.material.dispose();
+                    beardRightMesh.geometry.dispose();
+                    beardRightMesh = null;
+                }
+                forceMemoryCleanup();
+            }
+
+            if (frontUrl) {
+                loadOptimizedTexture(frontUrl,
+                    (texture) => {
+                        if (!isCurrentCustomTextureVersion('beard', textureVersion) || currentBeardFrontURL !== frontUrl || currentBeardLeftURL !== leftUrl || currentBeardRightURL !== rightUrl) {
+                            texture.dispose();
+                            return;
+                        }
+
+                        if (isInitialLoad || !beardFrontMesh) {
+                            const beardMaterial = new THREE.MeshBasicMaterial({
+                                map: texture,
+                                transparent: true,
+                                side: THREE.DoubleSide,
+                                alphaTest: 0.5
+                            });
+                            const planeHeight = 2.256;
+                            const aspect = texture.image.width / texture.image.height;
+                            const planeWidth = planeHeight * aspect;
+                            const beardGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                            beardFrontMesh = new THREE.Mesh(beardGeometry, beardMaterial);
+                            beardFrontMesh.position.set(0, 1.029, 1.129);
+                            modelParts.head.add(beardFrontMesh);
+                        } else {
+                            const oldMap = beardFrontMesh.material.map;
+                            beardFrontMesh.material.map = texture;
+                            beardFrontMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        }
+                    },
+                    undefined,
+                    (error) => {
+                        console.error("No se pudo cargar la textura frontal de la barba.", error);
+                    }
+                );
+            }
+
+            if (leftUrl) {
+                loadOptimizedTexture(leftUrl,
+                    (texture) => {
+                        if (!isCurrentCustomTextureVersion('beard', textureVersion) || currentBeardFrontURL !== frontUrl || currentBeardLeftURL !== leftUrl || currentBeardRightURL !== rightUrl) {
+                            texture.dispose();
+                            return;
+                        }
+
+                        if (isInitialLoad || !beardLeftMesh) {
+                            const beardMaterial = new THREE.MeshBasicMaterial({
+                                map: texture,
+                                transparent: true,
+                                side: THREE.DoubleSide,
+                                alphaTest: 0.5
+                            });
+                            const planeHeight = 2.256;
+                            const aspect = texture.image.width / texture.image.height;
+                            const planeWidth = planeHeight * aspect;
+                            const beardGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                            beardLeftMesh = new THREE.Mesh(beardGeometry, beardMaterial);
+                            beardLeftMesh.position.set(-1.13, 1.029, 0);
+                            beardLeftMesh.rotation.y = Math.PI / 2;
+                            beardLeftMesh.scale.x = -1;
+                            modelParts.head.add(beardLeftMesh);
+                        } else {
+                            const oldMap = beardLeftMesh.material.map;
+                            beardLeftMesh.material.map = texture;
+                            beardLeftMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        }
+                    },
+                    undefined,
+                    (error) => {
+                        console.error("No se pudo cargar la textura izquierda de la barba.", error);
+                    }
+                );
+            }
+
+            if (rightUrl) {
+                loadOptimizedTexture(rightUrl,
+                    (texture) => {
+                        if (!isCurrentCustomTextureVersion('beard', textureVersion) || currentBeardFrontURL !== frontUrl || currentBeardLeftURL !== leftUrl || currentBeardRightURL !== rightUrl) {
+                            texture.dispose();
+                            return;
+                        }
+
+                        if (isInitialLoad || !beardRightMesh) {
+                            const beardMaterial = new THREE.MeshBasicMaterial({
+                                map: texture,
+                                transparent: true,
+                                side: THREE.DoubleSide,
+                                alphaTest: 0.5
+                            });
+                            const planeHeight = 2.256;
+                            const aspect = texture.image.width / texture.image.height;
+                            const planeWidth = planeHeight * aspect;
+                            const beardGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                            beardRightMesh = new THREE.Mesh(beardGeometry, beardMaterial);
+                            beardRightMesh.position.set(1.13, 1.029, 0);
+                            beardRightMesh.rotation.y = -Math.PI / 2;
+                            modelParts.head.add(beardRightMesh);
+                        } else {
+                            const oldMap = beardRightMesh.material.map;
+                            beardRightMesh.material.map = texture;
+                            beardRightMesh.material.needsUpdate = true;
+                            if (oldMap && oldMap !== texture) oldMap.dispose();
+                        }
+                    },
+                    undefined,
+                    (error) => {
+                        console.error("No se pudo cargar la textura derecha de la barba.", error);
+                    }
+                );
+            }
+        }
+
         // updateHairCarousel removed
 
 
@@ -13135,6 +13421,68 @@
                 undefined,
                 (error) => {
                     console.error("No se pudo cargar la textura trasera del torso.", error);
+                }
+            );
+        }
+
+        function changeInstrumentTexture(url, isInitialLoad = false) {
+            if (!modelParts.torso) return;
+            const textureVersion = nextCustomTextureVersion('instrument');
+            currentInstrumentURL = url;
+            notifyCustomPdfStateChanged('instrument-texture');
+
+            if (url === null) {
+                if (instrumentMesh) {
+                    modelParts.torso.remove(instrumentMesh);
+                    if (instrumentMesh.material.map) instrumentMesh.material.map.dispose();
+                    instrumentMesh.material.dispose();
+                    instrumentMesh.geometry.dispose();
+                    instrumentMesh = null;
+                }
+                forceMemoryCleanup();
+                return;
+            }
+
+            if (isMobileDevice && !isInitialLoad && instrumentMesh) {
+                modelParts.torso.remove(instrumentMesh);
+                if (instrumentMesh.material.map) instrumentMesh.material.map.dispose();
+                instrumentMesh.material.dispose();
+                instrumentMesh.geometry.dispose();
+                instrumentMesh = null;
+                forceMemoryCleanup();
+            }
+
+            loadOptimizedTexture(url,
+                (texture) => {
+                    if (!isCurrentCustomTextureVersion('instrument', textureVersion) || currentInstrumentURL !== url) {
+                        texture.dispose();
+                        return;
+                    }
+
+                    if (isInitialLoad || !instrumentMesh) {
+                        const instrumentMaterial = new THREE.MeshBasicMaterial({
+                            map: texture,
+                            transparent: true,
+                            side: THREE.DoubleSide,
+                            alphaTest: 0.5
+                        });
+                        const planeHeight = 2.145;
+                        const aspect = texture.image.width / texture.image.height;
+                        const planeWidth = planeHeight * aspect;
+                        const instrumentGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
+                        instrumentMesh = new THREE.Mesh(instrumentGeometry, instrumentMaterial);
+                        instrumentMesh.position.set(0, -1.176, 0.453);
+                        modelParts.torso.add(instrumentMesh);
+                    } else {
+                        const oldMap = instrumentMesh.material.map;
+                        instrumentMesh.material.map = texture;
+                        instrumentMesh.material.needsUpdate = true;
+                        if (oldMap && oldMap !== texture) oldMap.dispose();
+                    }
+                },
+                undefined,
+                (error) => {
+                    console.error("No se pudo cargar la textura del instrumento.", error);
                 }
             );
         }
@@ -14399,6 +14747,7 @@
         ];
 
         const authenticatedHomeCollections = [
+            'Camilo',
             'Steve', 'Alex', 'Zombie', 'Skeleton', 'Creeper', 'Enderman',
             'Baby', 'Mystery', 'Romance', 'Abby', 'Jinu', 'Zoey',
             'Rumi', 'Mira'
@@ -14426,7 +14775,27 @@
         ];
 
         function getPresetIconSource(name) {
-            return (typeof presetIcons !== 'undefined' && presetIcons[name]) ? presetIcons[name] : 'logo.svg';
+            return (typeof presetIcons !== 'undefined' && presetIcons[name]) ? presetIcons[name] : null;
+        }
+
+        function getPresetIconMarkup(name, options = {}) {
+            const {
+                imageClass = '',
+                loading = 'lazy',
+                fallbackSrc = 'webclip.png',
+                placeholderClass = ''
+            } = options;
+            const iconSrc = getPresetIconSource(name);
+
+            if (!iconSrc) {
+                const classes = ['preset-icon-placeholder', placeholderClass].filter(Boolean).join(' ');
+                return `<div class="${classes}">Sin ícono</div>`;
+            }
+
+            const imageClassAttr = imageClass ? ` class="${imageClass}"` : '';
+            const loadingAttr = loading ? ` loading="${loading}"` : '';
+            const onErrorAttr = fallbackSrc ? ` onerror="this.src='${fallbackSrc}'"` : '';
+            return `<img${imageClassAttr} src="${iconSrc}" alt="${getPresetDisplayName(name)}"${loadingAttr}${onErrorAttr}>`;
         }
 
         function getPresetDisplayName(name) {
@@ -14438,7 +14807,10 @@
 
         function getOrderedPresetNames() {
             if (typeof presetCharacterOrder !== 'undefined' && Array.isArray(presetCharacterOrder)) {
-                return presetCharacterOrder.filter((name) => typeof presetIcons !== 'undefined' && presetIcons[name]);
+                return presetCharacterOrder.slice();
+            }
+            if (typeof presetCharacterDisplayNames !== 'undefined') {
+                return Object.keys(presetCharacterDisplayNames);
             }
             return (typeof presetIcons !== 'undefined') ? Object.keys(presetIcons) : [];
         }
@@ -14483,7 +14855,7 @@
         function createPresetArtCluster(names, imageClass = '') {
             return `
                 <div class="pc-home-art-cluster">
-                    ${names.map(name => `<img class="${imageClass}" src="${getPresetIconSource(name)}" alt="${getPresetDisplayName(name)}" loading="lazy">`).join('')}
+                    ${names.map(name => getPresetIconMarkup(name, { imageClass, placeholderClass: 'preset-icon-placeholder--cluster' })).join('')}
                 </div>
             `;
         }
@@ -14515,8 +14887,7 @@
         }
 
         function getLatestPresetNames(limit = 6, sourceNames = getOrderedPresetNames()) {
-            const validNames = sourceNames.filter((name) => typeof presetIcons !== 'undefined' && presetIcons[name]);
-            return validNames.slice(0, limit);
+            return sourceNames.filter(Boolean).slice(0, limit);
         }
 
         function getPresetCardMarkup(name, options = {}) {
@@ -14531,7 +14902,7 @@
                 ${badgeText ? `<div class="fandom-badge">${badgeText}</div>` : ''}
                 ${favoriteMarkup}
                 <div class="fandom-image-container">
-                    <img src="${getPresetIconSource(name)}" alt="${getPresetDisplayName(name)}"${imageLoading} onerror="this.src='webclip.png'">
+                    ${getPresetIconMarkup(name, { loading: options.lazyImage ? 'lazy' : '', placeholderClass: 'preset-icon-placeholder--fandom' })}
                 </div>
                 <div class="fandom-info">
                     <div class="fandom-meta-row">
@@ -15076,7 +15447,7 @@
                     { title: "MINECRAFT", image: "assets/worlds/minecraft-world-card.png", filter: "minecraft" },
                     { title: "MORAT", image: "assets/worlds/morat-world-card.png", filter: "morat" },
                     { title: "DIGITAL CIRCUS", image: "assets/worlds/digital-circus-world-card.png" },
-                    { title: "MIRACULOUS", image: "assets/worlds/miraculous-world-card.png" },
+                    { title: "MIRACULOUS", image: "assets/worlds/miraculous-world-card.png", filter: "miraculous" },
                     { title: "HELLO KITTY", image: "assets/worlds/hello-kitty-world-card.png" }
                 ];
                 worldsGrid.innerHTML = worlds.map(w => {
@@ -15679,6 +16050,7 @@
         const characterFandoms = (typeof presetCharacterFandoms !== 'undefined')
             ? presetCharacterFandoms
             : {
+                'Ladybug': 'miraculous', 'Catnoir': 'miraculous', 'Camilo': 'camilo',
                 'Steve': 'minecraft', 'Alex': 'minecraft', 'Zombie': 'minecraft',
                 'Skeleton': 'minecraft', 'Creeper': 'minecraft', 'Enderman': 'minecraft',
                 'Baby': 'kpop', 'Mystery': 'kpop', 'Romance': 'kpop',
@@ -15687,9 +16059,11 @@
             };
 
         const fandomLabels = {
+            'camilo': 'Camilo',
             'minecraft': 'Minecraft Collection',
             'kpop': 'Kpop Demon Hunters',
-            'morat': 'Morat'
+            'morat': 'Morat',
+            'miraculous': 'Miraculous'
         };
 
         let globalPresetSearchQuery = '';
@@ -15735,8 +16109,12 @@
             const fandomLabel = normalizePresetSearchValue(fandomLabels[fandomKey] || 'Papelcool Original');
             const fandomGroup = fandomKey === 'minecraft'
                 ? 'minecraft steve alex zombie skeleton creeper enderman'
+                : fandomKey === 'camilo'
+                    ? 'camilo'
                 : fandomKey === 'kpop'
                     ? 'kpop demon hunters baby mystery romance abby jinu zoey rumi mira'
+                    : fandomKey === 'miraculous'
+                        ? 'miraculous ladybug cat noir catnoir'
                     : fandomKey === 'morat'
                         ? 'morat villamil simon martin isaza faltas tu mas de lo que aposte guitarra bajo bateria'
                     : 'papelcool original';
@@ -15994,17 +16372,21 @@
                 { file: 'template-textures-layer.svg', colorKey: null, textureName: 'leg-right-back', layer: 6 },
                 { file: 'template-textures-layer.svg', colorKey: null, textureName: 'torso-front', layer: 7 },
                 { file: 'template-textures-layer.svg', colorKey: null, textureName: 'torso-back', layer: 7 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'instrument', layer: 7 },
                 { file: 'template-textures-layer.svg', colorKey: null, textureName: 'hair-left', layer: 7 },
                 { file: 'template-textures-layer.svg', colorKey: null, textureName: 'hair-right', layer: 7 },
                 { file: 'template-textures-layer.svg', colorKey: null, textureName: 'hair-up', layer: 7 },
                 { file: 'template-textures-layer.svg', colorKey: null, textureName: 'ear-left', layer: 8 },
-                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'ear-right', layer: 8 }
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'ear-right', layer: 8 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'beard-left', layer: 8 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'beard-right', layer: 8 }
             ],
             page2: [
                 { file: 'template-head-2.svg', colorKey: 'headColor', textureName: null, layer: 1 },
                 { file: 'template-textures-layer.svg', colorKey: null, textureName: 'eyes', layer: 2 },
                 { file: 'template-textures-layer.svg', colorKey: null, textureName: 'eyebrows', layer: 2 },
                 { file: 'template-textures-layer.svg', colorKey: null, textureName: 'nose', layer: 2 },
+                { file: 'template-textures-layer.svg', colorKey: null, textureName: 'beard-front', layer: 2 },
                 { file: 'template-textures-layer.svg', colorKey: null, textureName: 'hair-front', layer: 2 },
                 { file: 'template-textures-layer.svg', colorKey: null, textureName: 'hair-back', layer: 2 },
                 { file: 'template-textures-layer.svg', colorKey: null, textureName: 'hair-back-2', layer: 2 }
@@ -16017,6 +16399,9 @@
             'nose': { offsetX: 1413.9, offsetY: 759.9, width: 680.1, height: 680.1, rotation: 0, flipX: false },
             'ear-left': { offsetX: 2023.6, offsetY: 999.7, width: 680.1, height: 680.1, rotation: 45, flipX: true },
             'ear-right': { offsetX: 580.9, offsetY: 2442.4, width: 680.1, height: 680.1, rotation: -135, flipX: false },
+            'beard-front': { offsetX: 1413.9, offsetY: 759.9, width: 680.1, height: 680.1, rotation: 0, flipX: false },
+            'beard-left': { offsetX: 2023.6, offsetY: 999.7, width: 680.1, height: 680.1, rotation: 45, flipX: true },
+            'beard-right': { offsetX: 580.9, offsetY: 2442.4, width: 680.1, height: 680.1, rotation: -135, flipX: false },
             'hair-front': { offsetX: 916.8, offsetY: 403, width: 1674.2, height: 1674.2, rotation: 0, flipX: false },
             'hair-back': { offsetX: 2046.2, offsetY: 403, width: 1674.2, height: 1674.2, rotation: 0, flipX: false },
             'hair-back-2': { offsetX: 1461.7, offsetY: 403, width: 1674.2, height: 1674.2, rotation: 0, flipX: true },
@@ -16032,7 +16417,8 @@
             'leg-right-front': { offsetX: 2556.6, offsetY: 1979.7, width: 637.3, height: 637.3, rotation: -45, flipX: false },
             'leg-right-back': { offsetX: 2817.6, offsetY: 1339.3, width: 637.3, height: 637.3, rotation: 135, flipX: false },
             'torso-front': { offsetX: 2556.6, offsetY: 1979.7, width: 637.3, height: 637.3, rotation: -45, flipX: false },
-            'torso-back': { offsetX: 2817.6, offsetY: 1339.3, width: 637.3, height: 637.3, rotation: 135, flipX: false }
+            'torso-back': { offsetX: 2817.6, offsetY: 1339.3, width: 637.3, height: 637.3, rotation: 135, flipX: false },
+            'instrument': { offsetX: 2556.6, offsetY: 1979.7, width: 637.3, height: 637.3, rotation: -45, flipX: false }
         });
 
         const pdfTemplateSourceCache = new Map();
@@ -16144,12 +16530,16 @@
                     nose: currentNoseTextureURL,
                     'torso-front': currentTorsoFrontURL,
                     'torso-back': currentTorsoBackURL,
+                    instrument: currentInstrumentURL,
                     'hair-front': currentHairFrontURL,
                     'hair-back': currentHairBackURL,
                     'hair-back-2': currentHairBackURL,
                     'hair-left': currentHairLeftURL,
                     'hair-right': currentHairRightURL,
                     'hair-up': currentHairUpURL,
+                    'beard-front': currentBeardFrontURL,
+                    'beard-left': currentBeardLeftURL,
+                    'beard-right': currentBeardRightURL,
                     'arm-left-front': currentArmLeftURL,
                     'arm-left-back': currentArmLeftURL,
                     'arm-right-front': currentArmRightURL,
@@ -16948,11 +17338,10 @@
             }
 
             cartList.innerHTML = favorites.map((name) => {
-                const iconSrc = (typeof presetIcons !== 'undefined' && presetIcons[name]) ? presetIcons[name] : 'logo.svg';
                 return `
                     <div class="pc-cart-item">
                         <button type="button" class="pc-cart-open-btn" onclick="openCartCharacter('${name}')">
-                            <img src="${iconSrc}" alt="${getPresetDisplayName(name)}" loading="lazy">
+                            ${getPresetIconMarkup(name, { placeholderClass: 'preset-icon-placeholder--cart' })}
                             <span class="pc-cart-item-name">${getPresetDisplayName(name)}</span>
                         </button>
                         <span class="pc-cart-item-price">$0.00</span>
@@ -17075,7 +17464,7 @@
         }
 
         function openWorldCollection(filter = 'all') {
-            const nextFilter = ['all', 'kpop', 'minecraft', 'morat'].includes(filter) ? filter : 'all';
+            const nextFilter = ['all', 'camilo', 'miraculous', 'kpop', 'minecraft', 'morat'].includes(filter) ? filter : 'all';
             navigateToView('presets');
             if (fandomFilter) fandomFilter.value = nextFilter;
             renderFandomsGrid(nextFilter);
@@ -17232,7 +17621,7 @@
 
         let presetApplicationVersion = 0;
 
-        function collectPresetTextureUrls({ eyeTexture, eyebrowTexture, noseTexture, hairTexture, torsoTexture, armTexture, legTexture }) {
+        function collectPresetTextureUrls({ eyeTexture, eyebrowTexture, noseTexture, hairTexture, beardTexture, torsoTexture, instrumentTexture, armTexture, legTexture }) {
             const urls = [];
             const pushIfValid = (value) => {
                 if (typeof value === 'string' && value.trim()) urls.push(value);
@@ -17246,8 +17635,12 @@
             pushIfValid(hairTexture?.leftUrl);
             pushIfValid(hairTexture?.rightUrl);
             pushIfValid(hairTexture?.upUrl);
+            pushIfValid(beardTexture?.frontUrl);
+            pushIfValid(beardTexture?.leftUrl);
+            pushIfValid(beardTexture?.rightUrl);
             pushIfValid(torsoTexture?.frontUrl);
             pushIfValid(torsoTexture?.backUrl);
+            pushIfValid(instrumentTexture?.url);
             pushIfValid(armTexture?.leftUrl);
             pushIfValid(armTexture?.rightUrl);
             pushIfValid(legTexture?.leftUrl);
@@ -17291,6 +17684,7 @@
         // Función para aplicar personaje preestablecido (OPTIMIZADA PARA MÓVIL)
         async function applyPresetCharacter(characterName) {
             const runVersion = ++presetApplicationVersion;
+            const presetConfig = buildPresetCharacterConfig(characterName);
 
             // Aplicar color de piel más claro (#F7D5CF) a todos los personajes preestablecidos
             const lightestSkinColor = new THREE.Color('#F7D5CF');
@@ -17327,16 +17721,21 @@
                 legsColor = new THREE.Color('#08C21F');
             }
 
+            headColor = new THREE.Color(presetConfig.colors.head);
+            torsoColor = new THREE.Color(presetConfig.colors.torso);
+            armsColor = new THREE.Color(presetConfig.colors.arms);
+            legsColor = new THREE.Color(presetConfig.colors.legs);
+
             // === RESTAURAR ESTADO INICIAL (RESET) ===
             // 1. Asegurar que todas las partes removibles estén adheridas a la cabeza
             if (modelParts.head) {
-                [earLeftMesh, earRightMesh, eyebrowsMesh, hairFrontMesh, hairBackMesh, hairLeftMesh, hairRightMesh, hairUpMesh, eyesMesh].forEach(mesh => {
+                [earLeftMesh, earRightMesh, eyebrowsMesh, hairFrontMesh, hairBackMesh, hairLeftMesh, hairRightMesh, hairUpMesh, beardFrontMesh, beardLeftMesh, beardRightMesh, eyesMesh].forEach(mesh => {
                     if (mesh && !mesh.parent) {
                         modelParts.head.add(mesh);
                     }
                 });
                 // Asegurar visibilidad por defecto (se ajustará abajo si es necesario ocultar)
-                [earLeftMesh, earRightMesh, eyebrowsMesh, hairFrontMesh, hairBackMesh, hairLeftMesh, hairRightMesh, hairUpMesh].forEach(mesh => {
+                [earLeftMesh, earRightMesh, eyebrowsMesh, hairFrontMesh, hairBackMesh, hairLeftMesh, hairRightMesh, hairUpMesh, beardFrontMesh, beardLeftMesh, beardRightMesh].forEach(mesh => {
                     if (mesh) mesh.visible = true;
                 });
             }
@@ -17354,7 +17753,8 @@
                     if (child.isMesh && child.material) {
                         if (child !== earLeftMesh && child !== earRightMesh &&
                             child !== hairFrontMesh && child !== hairBackMesh &&
-                            child !== hairLeftMesh && child !== hairRightMesh && child !== hairUpMesh) {
+                            child !== hairLeftMesh && child !== hairRightMesh && child !== hairUpMesh &&
+                            child !== beardFrontMesh && child !== beardLeftMesh && child !== beardRightMesh) {
                             if (Array.isArray(child.material)) {
                                 child.material.forEach(mat => { if (mat.color) mat.color.copy(headColor); });
                             } else {
@@ -17369,7 +17769,7 @@
             if (modelParts.torso) {
                 modelParts.torso.traverse((child) => {
                     if (child.isMesh && child.material && child.material.color) {
-                        if (child !== torsoFrontMesh && child !== torsoBackMesh) {
+                        if (child !== torsoFrontMesh && child !== torsoBackMesh && child !== instrumentMesh) {
                             if (Array.isArray(child.material)) {
                                 child.material.forEach(mat => { if (mat.color) mat.color.copy(torsoColor); });
                             } else {
@@ -17423,11 +17823,13 @@
                 eyebrowTexture,
                 noseTexture,
                 hairTexture,
+                beardTexture,
                 torsoTexture,
+                instrumentTexture,
                 armTexture,
                 legTexture,
                 earTexture
-            } = getPresetCharacterTextures(characterName);
+            } = presetConfig;
 
             // Manejo de características especiales y fallbacks
             if (characterName === 'Alex') {
@@ -17466,6 +17868,24 @@
                 [earLeftMesh, earRightMesh, eyebrowsMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
             }
 
+            if (!beardTexture?.frontUrl) {
+                beardFrontMesh = removeOverlayMesh(modelParts.head, beardFrontMesh);
+                beardLeftMesh = removeOverlayMesh(modelParts.head, beardLeftMesh);
+                beardRightMesh = removeOverlayMesh(modelParts.head, beardRightMesh);
+                currentBeardFrontURL = null;
+                currentBeardLeftURL = null;
+                currentBeardRightURL = null;
+            }
+
+            if (!instrumentTexture?.url) {
+                instrumentMesh = removeOverlayMesh(modelParts.torso, instrumentMesh);
+                currentInstrumentURL = null;
+            }
+
+            if (presetConfig.hideArms) {
+                modelParts.arms.forEach((arm) => { if (arm) arm.visible = false; });
+            }
+
             // APLICACIÓN DE TEXTURAS (SERIALIZADA PARA MÓVIL)
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
@@ -17483,7 +17903,12 @@
                     currentHairUpURL = hairTexture.upUrl;
                     changeHairTexture(hairTexture.frontUrl, hairTexture.backUrl, hairTexture.leftUrl, hairTexture.rightUrl, hairTexture.upUrl);
                 });
+                if (beardTexture) tasks.push(async () => {
+                    currentBeardFrontURL = beardTexture.frontUrl; currentBeardLeftURL = beardTexture.leftUrl; currentBeardRightURL = beardTexture.rightUrl;
+                    changeBeardTexture(beardTexture.frontUrl, beardTexture.leftUrl, beardTexture.rightUrl);
+                });
                 if (torsoTexture) tasks.push(async () => { currentTorsoFrontURL = torsoTexture.frontUrl; currentTorsoBackURL = torsoTexture.backUrl; changeTorsoClothing(torsoTexture.frontUrl, torsoTexture.backUrl); });
+                if (instrumentTexture) tasks.push(async () => { currentInstrumentURL = instrumentTexture.url; changeInstrumentTexture(instrumentTexture.url); });
                 if (armTexture) tasks.push(async () => { currentArmLeftURL = armTexture.leftUrl; currentArmRightURL = armTexture.rightUrl; changeArmClothing('left', armTexture.leftUrl); changeArmClothing('right', armTexture.rightUrl); });
                 if (legTexture) tasks.push(async () => { currentLegLeftURL = legTexture.leftUrl; currentLegRightURL = legTexture.rightUrl; changeLegClothing('left', legTexture.leftUrl); changeLegClothing('right', legTexture.rightUrl); });
 
@@ -17505,7 +17930,9 @@
                 noseTexture,
                 earTexture,
                 hairTexture,
+                beardTexture,
                 torsoTexture,
+                instrumentTexture,
                 armTexture,
                 legTexture
             });
@@ -17800,7 +18227,9 @@
                     // Excluir meshes de texturas SVG
                     const isTextureMesh = [
                         eyesMesh, eyebrowsMesh, noseMesh, earLeftMesh, earRightMesh,
-                        hairFrontMesh, hairBackMesh, torsoFrontMesh, torsoBackMesh,
+                        hairFrontMesh, hairBackMesh, hairLeftMesh, hairRightMesh, hairUpMesh,
+                        beardFrontMesh, beardLeftMesh, beardRightMesh,
+                        torsoFrontMesh, torsoBackMesh, instrumentMesh,
                         armLeftFrontMesh, armLeftBackMesh, armRightFrontMesh, armRightBackMesh,
                         legLeftFrontMesh, legLeftBackMesh, legRightFrontMesh, legRightBackMesh
                     ].includes(child);
@@ -17895,6 +18324,8 @@
                     return currentTorsoFrontURL;
                 case 'torso-back':
                     return currentTorsoBackURL;
+                case 'instrument':
+                    return currentInstrumentURL;
                 // Cabello - front, back, left, right, up
                 case 'hair-front':
                     return currentHairFrontURL;
@@ -17907,6 +18338,12 @@
                     return currentHairRightURL;
                 case 'hair-up':
                     return currentHairUpURL;
+                case 'beard-front':
+                    return currentBeardFrontURL;
+                case 'beard-left':
+                    return currentBeardLeftURL;
+                case 'beard-right':
+                    return currentBeardRightURL;
                 // Brazos - front y back usan la misma textura pero se posicionan diferente
                 case 'arm-left-front':
                 case 'arm-left-back':
@@ -18415,11 +18852,14 @@
                     { file: 'template-textures-layer.svg', color: null, textureName: 'leg-right-back', layer: 6 },
                     { file: 'template-textures-layer.svg', color: null, textureName: 'torso-front', layer: 7 },
                     { file: 'template-textures-layer.svg', color: null, textureName: 'torso-back', layer: 7 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'instrument', layer: 7 },
                     { file: 'template-textures-layer.svg', color: null, textureName: 'hair-left', layer: 7 },
                     { file: 'template-textures-layer.svg', color: null, textureName: 'hair-right', layer: 7 },
                     { file: 'template-textures-layer.svg', color: null, textureName: 'hair-up', layer: 7 },
                     { file: 'template-textures-layer.svg', color: null, textureName: 'ear-left', layer: 8 },
-                    { file: 'template-textures-layer.svg', color: null, textureName: 'ear-right', layer: 8 }
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'ear-right', layer: 8 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'beard-left', layer: 8 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'beard-right', layer: 8 }
                 ];
 
                 // ============================================
@@ -18431,6 +18871,9 @@
                     'nose': { offsetX: 1413.9, offsetY: 759.9, width: 680.1, height: 680.1, rotation: 0, flipX: false },
                     'ear-left': { offsetX: 2023.6, offsetY: 999.7, width: 680.1, height: 680.1, rotation: 45, flipX: true },
                     'ear-right': { offsetX: 580.9, offsetY: 2442.4, width: 680.1, height: 680.1, rotation: -135, flipX: false },
+                    'beard-front': { offsetX: 1413.9, offsetY: 759.9, width: 680.1, height: 680.1, rotation: 0, flipX: false },
+                    'beard-left': { offsetX: 2023.6, offsetY: 999.7, width: 680.1, height: 680.1, rotation: 45, flipX: true },
+                    'beard-right': { offsetX: 580.9, offsetY: 2442.4, width: 680.1, height: 680.1, rotation: -135, flipX: false },
                     'hair-front': { offsetX: 916.8, offsetY: 403, width: 1674.2, height: 1674.2, rotation: 0, flipX: false },
                     'hair-back': { offsetX: 2046.2, offsetY: 403, width: 1674.2, height: 1674.2, rotation: 0, flipX: false },
                     'hair-back-2': { offsetX: 1461.7, offsetY: 403, width: 1674.2, height: 1674.2, rotation: 0, flipX: true },
@@ -18446,7 +18889,8 @@
                     'leg-right-front': { offsetX: 2556.6, offsetY: 1979.7, width: 637.3, height: 637.3, rotation: -45, flipX: false },
                     'leg-right-back': { offsetX: 2817.6, offsetY: 1339.3, width: 637.3, height: 637.3, rotation: 135, flipX: false },
                     'torso-front': { offsetX: 2556.6, offsetY: 1979.7, width: 637.3, height: 637.3, rotation: -45, flipX: false },
-                    'torso-back': { offsetX: 2817.6, offsetY: 1339.3, width: 637.3, height: 637.3, rotation: 135, flipX: false }
+                    'torso-back': { offsetX: 2817.6, offsetY: 1339.3, width: 637.3, height: 637.3, rotation: 135, flipX: false },
+                    'instrument': { offsetX: 2556.6, offsetY: 1979.7, width: 637.3, height: 637.3, rotation: -45, flipX: false }
                 };
 
                 // Ordenar templates por layer
@@ -18506,6 +18950,7 @@
                     { file: 'template-textures-layer.svg', color: null, textureName: 'eyes', layer: 2 },
                     { file: 'template-textures-layer.svg', color: null, textureName: 'eyebrows', layer: 2 },
                     { file: 'template-textures-layer.svg', color: null, textureName: 'nose', layer: 2 },
+                    { file: 'template-textures-layer.svg', color: null, textureName: 'beard-front', layer: 2 },
                     { file: 'template-textures-layer.svg', color: null, textureName: 'hair-front', layer: 2 },
                     { file: 'template-textures-layer.svg', color: null, textureName: 'hair-back', layer: 2 },
                     { file: 'template-textures-layer.svg', color: null, textureName: 'hair-back-2', layer: 2 }
@@ -18789,7 +19234,9 @@
                     nose: 'Nose',
                     ears: 'Ears',
                     hair: 'Hair',
+                    beard: 'Beard',
                     torso: 'Torso',
+                    instrument: 'Instrument',
                     armLeft: 'Left arm',
                     armRight: 'Right arm',
                     legLeft: 'Left leg',
@@ -18826,7 +19273,9 @@
                 nose: 'Nariz',
                 ears: 'Orejas',
                 hair: 'Cabello',
+                beard: 'Barba',
                 torso: 'Torso',
+                instrument: 'Instrumento',
                 armLeft: 'Brazo izquierdo',
                 armRight: 'Brazo derecho',
                 legLeft: 'Pierna izquierda',
@@ -18850,19 +19299,25 @@
 
         function getCustomBuilderSteps() {
             const copy = getCustomBuilderCopy();
+            const applyTextureColorTarget = (target, textureUrl) => {
+                const color = extractHexColorFromTextureUrl(textureUrl);
+                if (color) applyColorToCustomizationTarget(target, color);
+            };
 
             return [
                 { id: 'skin', title: copy.skin },
-                { id: 'eyes', title: copy.eyes, items: eyeTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentEyeTextureURL === item.url, apply: (item) => { currentEyeTextureURL = item.url; changeEyeTexture(item.url); } },
+                { id: 'eyes', title: copy.eyes, items: eyeTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentEyeTextureURL === item.url, apply: (item) => { currentEyeTextureURL = item.url; changeEyeTexture(item.url); applyTextureColorTarget('head', item.url); } },
                 { id: 'eyebrows', title: copy.eyebrows, items: eyebrowTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentEyebrowTextureURL === item.url, apply: (item) => { currentEyebrowTextureURL = item.url; changeEyebrowTexture(item.url); } },
                 { id: 'nose', title: copy.nose, items: noseTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentNoseTextureURL === item.url, apply: (item) => { currentNoseTextureURL = item.url; changeNoseTexture(item.url); } },
                 { id: 'ears', title: copy.ears, items: earTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentEarTextureURL === item.url, apply: (item) => { currentEarTextureURL = item.url; changeEarTexture('left', item.url); changeEarTexture('right', item.url); } },
                 { id: 'hair', title: copy.hair, items: hairTextures || [], preview: (item) => item.preview || item.frontUrl || item.leftUrl, isSelected: (item) => currentHairFrontURL === item.frontUrl && currentHairBackURL === item.backUrl && currentHairLeftURL === item.leftUrl && currentHairRightURL === item.rightUrl && currentHairUpURL === item.upUrl, apply: (item) => { currentHairFrontURL = item.frontUrl; currentHairBackURL = item.backUrl; currentHairLeftURL = item.leftUrl; currentHairRightURL = item.rightUrl; currentHairUpURL = item.upUrl; changeHairTexture(item.frontUrl, item.backUrl, item.leftUrl, item.rightUrl, item.upUrl); } },
-                { id: 'torso', title: copy.torso, items: torsoClothingTextures || [], preview: (item) => item.preview || item.frontUrl, isSelected: (item) => currentTorsoFrontURL === item.frontUrl && currentTorsoBackURL === item.backUrl, apply: (item) => { currentTorsoFrontURL = item.frontUrl; currentTorsoBackURL = item.backUrl; changeTorsoClothing(item.frontUrl, item.backUrl); } },
-                { id: 'arm-left', title: copy.armLeft, items: armTextures || [], preview: (item) => item.preview || item.leftUrl, isSelected: (item) => currentArmLeftURL === item.leftUrl, apply: (item) => { currentArmLeftURL = item.leftUrl; changeArmClothing('left', item.leftUrl); } },
-                { id: 'arm-right', title: copy.armRight, items: armTextures || [], preview: (item) => item.preview || item.rightUrl, isSelected: (item) => currentArmRightURL === item.rightUrl, apply: (item) => { currentArmRightURL = item.rightUrl; changeArmClothing('right', item.rightUrl); } },
-                { id: 'leg-left', title: copy.legLeft, items: legTextures || [], preview: (item) => item.preview || item.leftUrl, isSelected: (item) => currentLegLeftURL === item.leftUrl, apply: (item) => { currentLegLeftURL = item.leftUrl; changeLegClothing('left', item.leftUrl); } },
-                { id: 'leg-right', title: copy.legRight, items: legTextures || [], preview: (item) => item.preview || item.rightUrl, isSelected: (item) => currentLegRightURL === item.rightUrl, apply: (item) => { currentLegRightURL = item.rightUrl; changeLegClothing('right', item.rightUrl); } }
+                { id: 'torso', title: copy.torso, items: torsoClothingTextures || [], preview: (item) => item.preview || item.frontUrl, isSelected: (item) => currentTorsoFrontURL === item.frontUrl && currentTorsoBackURL === item.backUrl, apply: (item) => { currentTorsoFrontURL = item.frontUrl; currentTorsoBackURL = item.backUrl; changeTorsoClothing(item.frontUrl, item.backUrl); applyTextureColorTarget('torso', item.frontUrl || item.backUrl); } },
+                { id: 'arm-left', title: copy.armLeft, items: armTextures || [], preview: (item) => item.preview || item.leftUrl, isSelected: (item) => currentArmLeftURL === item.leftUrl, apply: (item) => { currentArmLeftURL = item.leftUrl; changeArmClothing('left', item.leftUrl); applyTextureColorTarget('arm-l', item.leftUrl); } },
+                { id: 'arm-right', title: copy.armRight, items: armTextures || [], preview: (item) => item.preview || item.rightUrl, isSelected: (item) => currentArmRightURL === item.rightUrl, apply: (item) => { currentArmRightURL = item.rightUrl; changeArmClothing('right', item.rightUrl); applyTextureColorTarget('arm-r', item.rightUrl); } },
+                { id: 'leg-left', title: copy.legLeft, items: legTextures || [], preview: (item) => item.preview || item.leftUrl, isSelected: (item) => currentLegLeftURL === item.leftUrl, apply: (item) => { currentLegLeftURL = item.leftUrl; changeLegClothing('left', item.leftUrl); applyTextureColorTarget('leg-l', item.leftUrl); } },
+                { id: 'leg-right', title: copy.legRight, items: legTextures || [], preview: (item) => item.preview || item.rightUrl, isSelected: (item) => currentLegRightURL === item.rightUrl, apply: (item) => { currentLegRightURL = item.rightUrl; changeLegClothing('right', item.rightUrl); applyTextureColorTarget('leg-r', item.rightUrl); } },
+                { id: 'beard', title: copy.beard, items: beardTextures || [], preview: (item) => item.preview || item.frontUrl || item.leftUrl, isSelected: (item) => currentBeardFrontURL === item.frontUrl && currentBeardLeftURL === item.leftUrl && currentBeardRightURL === item.rightUrl, apply: (item) => { currentBeardFrontURL = item.frontUrl; currentBeardLeftURL = item.leftUrl; currentBeardRightURL = item.rightUrl; changeBeardTexture(item.frontUrl, item.leftUrl, item.rightUrl); } },
+                { id: 'instrument', title: copy.instrument, items: instrumentTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentInstrumentURL === item.url, apply: (item) => { currentInstrumentURL = item.url; changeInstrumentTexture(item.url); } }
             ];
         }
 
@@ -19019,6 +19474,10 @@
             hairLeftMesh = removeOverlayMesh(modelParts.head, hairLeftMesh);
             hairRightMesh = removeOverlayMesh(modelParts.head, hairRightMesh);
             hairUpMesh = removeOverlayMesh(modelParts.head, hairUpMesh);
+            beardFrontMesh = removeOverlayMesh(modelParts.head, beardFrontMesh);
+            beardLeftMesh = removeOverlayMesh(modelParts.head, beardLeftMesh);
+            beardRightMesh = removeOverlayMesh(modelParts.head, beardRightMesh);
+            instrumentMesh = removeOverlayMesh(modelParts.torso, instrumentMesh);
 
             currentEyeTextureURL = null;
             currentEyebrowTextureURL = null;
@@ -19030,8 +19489,12 @@
             currentHairLeftURL = null;
             currentHairRightURL = null;
             currentHairUpURL = null;
+            currentBeardFrontURL = null;
+            currentBeardLeftURL = null;
+            currentBeardRightURL = null;
 
             changeTorsoClothing(null, null);
+            changeInstrumentTexture(null);
             changeArmClothing('left', null);
             changeArmClothing('right', null);
             changeLegClothing('left', null);
@@ -19039,6 +19502,7 @@
 
             currentTorsoFrontURL = null;
             currentTorsoBackURL = null;
+            currentInstrumentURL = null;
             currentArmLeftURL = null;
             currentArmRightURL = null;
             currentLegLeftURL = null;
@@ -19114,7 +19578,8 @@
             const textureMeshes = [
                 eyesMesh, eyebrowsMesh, noseMesh, earLeftMesh, earRightMesh,
                 hairFrontMesh, hairBackMesh, hairLeftMesh, hairRightMesh, hairUpMesh,
-                torsoFrontMesh, torsoBackMesh,
+                beardFrontMesh, beardLeftMesh, beardRightMesh,
+                torsoFrontMesh, torsoBackMesh, instrumentMesh,
                 armLeftFrontMesh, armLeftBackMesh, armRightFrontMesh, armRightBackMesh,
                 legLeftFrontMesh, legLeftBackMesh, legRightFrontMesh, legRightBackMesh
             ];
@@ -19246,8 +19711,12 @@
             currentHairLeftURL = textureUrls['hair-left'] || null;
             currentHairRightURL = textureUrls['hair-right'] || null;
             currentHairUpURL = textureUrls['hair-up'] || null;
+            currentBeardFrontURL = textureUrls['beard-front'] || null;
+            currentBeardLeftURL = textureUrls['beard-left'] || null;
+            currentBeardRightURL = textureUrls['beard-right'] || null;
             currentTorsoFrontURL = textureUrls['torso-front'] || null;
             currentTorsoBackURL = textureUrls['torso-back'] || null;
+            currentInstrumentURL = textureUrls.instrument || null;
             currentArmLeftURL = textureUrls['arm-left-front'] || textureUrls['arm-left-back'] || null;
             currentArmRightURL = textureUrls['arm-right-front'] || textureUrls['arm-right-back'] || null;
             currentLegLeftURL = textureUrls['leg-left-front'] || textureUrls['leg-left-back'] || null;
@@ -19259,7 +19728,9 @@
             changeEarTexture('left', currentEarTextureURL);
             changeEarTexture('right', currentEarTextureURL);
             changeHairTexture(currentHairFrontURL, currentHairBackURL, currentHairLeftURL, currentHairRightURL, currentHairUpURL);
+            changeBeardTexture(currentBeardFrontURL, currentBeardLeftURL, currentBeardRightURL);
             changeTorsoClothing(currentTorsoFrontURL, currentTorsoBackURL);
+            changeInstrumentTexture(currentInstrumentURL);
             changeArmClothing('left', currentArmLeftURL);
             changeArmClothing('right', currentArmRightURL);
             changeLegClothing('left', currentLegLeftURL);
@@ -20301,14 +20772,13 @@
         }
 
         function getFavoriteCardMarkup(name, context = 'profile') {
-            const iconSrc = (typeof presetIcons !== 'undefined' && presetIcons[name]) ? presetIcons[name] : 'logo.svg';
             return `
                 <article class="pc-favorite-card" onclick="openFavoriteCharacter('${name}', '${context}')">
                     <button type="button" class="pc-home-icon pc-favorite-heart ${isFavorite(name) ? 'active' : ''}" data-favorite-name="${name}" aria-label="Favorito" onclick="event.stopPropagation(); toggleFavorite('${name}', this)">
                         <span class="material-symbols-outlined">star</span>
                     </button>
                     <div class="pc-favorite-card-thumb">
-                        <img src="${iconSrc}" alt="${getPresetDisplayName(name)}" loading="lazy">
+                        ${getPresetIconMarkup(name, { placeholderClass: 'preset-icon-placeholder--favorite' })}
                     </div>
                     <h3 class="pc-favorite-card-title">${getPresetDisplayName(name)}</h3>
                 </article>

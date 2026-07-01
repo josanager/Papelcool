@@ -24,6 +24,12 @@ const kpopTextureUrl = (character, ...segments) =>
 const moratTextureUrl = (character, ...segments) =>
     textureRepoUrl('Elementos', 'Texturas', 'Morat', character, ...segments);
 
+const miraculousTextureUrl = (character, ...segments) =>
+    textureRepoUrl('Elementos', 'Texturas', 'Miraculous', character, ...segments);
+
+const camiloTextureUrl = (...segments) =>
+    textureRepoUrl('Elementos', 'Texturas', 'Camilo', ...segments);
+
 const basicTextureUrl = (...segments) =>
     textureRepoUrl('Elementos', 'Texturas', 'Basic-Textures', ...segments);
 
@@ -41,7 +47,9 @@ function getPresetCharacterTextures(characterName) {
         noseTexture: getTextureByName(noseTextures, characterName) || getTextureByName(noseTextures, 'Default'),
         earTexture: getTextureByName(earTextures, characterName),
         hairTexture: getTextureByName(hairTextures, characterName),
+        beardTexture: getTextureByName(beardTextures, characterName),
         torsoTexture: getTextureByName(torsoClothingTextures, characterName),
+        instrumentTexture: getTextureByName(instrumentTextures, characterName),
         armTexture: getTextureByName(armTextures, characterName),
         legTexture: getTextureByName(legTextures, characterName)
     };
@@ -50,6 +58,30 @@ function getPresetCharacterTextures(characterName) {
 // --- CATALOGO DE PERSONAJES PREESTABLECIDOS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const presetCatalog = Object.freeze([
+    {
+        name: 'Ladybug',
+        displayName: 'Ladybug',
+        fandom: 'miraculous',
+        has3dModel: true,
+        pdfFile: null,
+        icon: null
+    },
+    {
+        name: 'Catnoir',
+        displayName: 'Cat Noir',
+        fandom: 'miraculous',
+        has3dModel: true,
+        pdfFile: null,
+        icon: null
+    },
+    {
+        name: 'Camilo',
+        displayName: 'Camilo',
+        fandom: 'camilo',
+        has3dModel: true,
+        pdfFile: null,
+        icon: camiloTextureUrl('Camilo-icon.svg')
+    },
     {
         name: 'Villamil-masdeloqueaposte',
         displayName: 'Villamil Más de lo que aposté',
@@ -284,6 +316,9 @@ function hasPresetCharacter3dModel(characterName) {
 // --- DATA PARA OJOS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const eyeTextures = [
+    { name: 'Ladybug', url: miraculousTextureUrl('Ladybug', 'eyes', 'Ladybug-eyes-FAC9B1.svg') },
+    { name: 'Catnoir', url: miraculousTextureUrl('Catnoir', 'eyes', 'Catnoir-eyes-FFCC9E.svg') },
+    { name: 'Camilo', url: camiloTextureUrl('eyes', 'Camilo-eyes-FCCD9B.svg') },
     { name: 'Steve', url: minecraftTextureUrl('Steve', 'eyes', 'Steve-eyes.svg') },
     { name: 'Alex', url: minecraftTextureUrl('Alex', 'eyes', 'Alex-eyes.svg') },
     { name: 'Zombie', url: minecraftTextureUrl('Zombie', 'eyes', 'Zombie-eyes.svg') },
@@ -298,12 +333,13 @@ const eyeTextures = [
     { name: 'Female', url: basicTextureUrl('eyes', 'Female-eyes.svg') },
     { name: 'Zoey', url: kpopTextureUrl('Zoey', 'eyes', 'Zoey-eyes.svg') },
     { name: 'Rumi', url: kpopTextureUrl('Rumi', 'eyes', 'Rumi-eyes.svg') },
-    { name: 'Mira', url: kpopTextureUrl('Mira', 'eyes', 'Mira-eyes.svg') }
+    { name: 'Mira', url: kpopTextureUrl('Mira', 'eyes', 'Mira-eyes-F7D5CF.svg') }
 ];
 
 // --- DATA PARA CEJAS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const eyebrowTextures = [
+    { name: 'Camilo', url: camiloTextureUrl('eyebrown', 'Camilo-eyebrown.svg') },
     { name: 'Baby', url: kpopTextureUrl('Baby', 'eyebrows', 'Baby-eyebrown.svg') },
     { name: 'Romance', url: kpopTextureUrl('Romance', 'eyebrows', 'Romance-eyebrown.svg') },
     { name: 'Abby', url: kpopTextureUrl('Abby', 'eyebrows', 'Abby-eyebrown.svg') },
@@ -317,6 +353,7 @@ const eyebrowTextures = [
 
 // --- DATA PARA NARIZ ---
 const noseTextures = [
+    { name: 'Camilo', url: camiloTextureUrl('nose', 'Camilo-nose.svg') },
     { name: 'Steve', url: minecraftTextureUrl('Steve', 'nose', 'Steve-nose.svg') },
     { name: 'Alex', url: minecraftTextureUrl('Alex', 'nose', 'Alex-nose.svg') },
     { name: 'Zombie', url: minecraftTextureUrl('Zombie', 'nose', 'Zombie-nose.svg') },
@@ -329,6 +366,9 @@ const noseTextures = [
 // --- DATA PARA OREJAS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const earTextures = [
+    { name: 'Ladybug', url: miraculousTextureUrl('Ladybug', 'ears', 'Ladybug-ears.svg') },
+    { name: 'Catnoir', url: miraculousTextureUrl('Catnoir', 'ears', 'Catnoir-ears.svg') },
+    { name: 'Camilo', url: camiloTextureUrl('ears', 'Camilo-ears.svg') },
     { name: 'Baby', url: kpopTextureUrl('Baby', 'ears', 'Baby-ears.svg') },
     { name: 'Mystery', url: kpopTextureUrl('Mystery', 'ears', 'Mystery-ears.svg') },
     { name: 'Abby', url: kpopTextureUrl('Abby', 'ears', 'Abby-ears.svg') },
@@ -343,6 +383,30 @@ const earTextures = [
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const hairTextures = [
     { name: 'None', frontUrl: null, backUrl: null, leftUrl: null, rightUrl: null, upUrl: null },
+    {
+        name: 'Ladybug',
+        frontUrl: miraculousTextureUrl('Ladybug', 'hair', 'Ladybug-hair-front.svg'),
+        backUrl: miraculousTextureUrl('Ladybug', 'hair', 'Ladybug-hair-back.svg'),
+        leftUrl: miraculousTextureUrl('Ladybug', 'hair', 'Ladybug-hair-left.svg'),
+        rightUrl: miraculousTextureUrl('Ladybug', 'hair', 'Ladybug-hair-right.svg'),
+        upUrl: miraculousTextureUrl('Ladybug', 'hair', 'Ladybug-hair-up.svg')
+    },
+    {
+        name: 'Catnoir',
+        frontUrl: miraculousTextureUrl('Catnoir', 'hair', 'Catnoir-hair-front.svg'),
+        backUrl: miraculousTextureUrl('Catnoir', 'hair', 'Catnoir-hair-back.svg'),
+        leftUrl: miraculousTextureUrl('Catnoir', 'hair', 'Catnoir-hair-left.svg'),
+        rightUrl: miraculousTextureUrl('Catnoir', 'hair', 'Catnoir-hair-right.svg'),
+        upUrl: miraculousTextureUrl('Catnoir', 'hair', 'Catnoir-hair-up.svg')
+    },
+    {
+        name: 'Camilo',
+        frontUrl: camiloTextureUrl('hair', 'Camilo-hair-front.svg'),
+        backUrl: camiloTextureUrl('hair', 'Camilo-hair-back.svg'),
+        leftUrl: camiloTextureUrl('hair', 'Camilo-hair-left.svg'),
+        rightUrl: camiloTextureUrl('hair', 'Camilo-hair-right.svg'),
+        upUrl: camiloTextureUrl('hair', 'Camilo-hair-up.svg')
+    },
     {
         name: 'Steve',
         frontUrl: minecraftTextureUrl('Steve', 'hair', 'Steve-hair-front.svg'),
@@ -449,10 +513,25 @@ const hairTextures = [
     }
 ];
 
+// --- DATA PARA BARBAS ---
+// ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
+const beardTextures = [
+    { name: 'None', frontUrl: null, leftUrl: null, rightUrl: null },
+    {
+        name: 'Camilo',
+        frontUrl: camiloTextureUrl('beard', 'Camilo-beard-front.svg'),
+        leftUrl: camiloTextureUrl('beard', 'Camilo-beard.svg'),
+        rightUrl: camiloTextureUrl('beard', 'Camilo-beard.svg')
+    }
+];
+
 // --- DATA PARA VESTIMENTA DEL TORSO ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const torsoClothingTextures = [
     { name: 'None', frontUrl: null, backUrl: null },
+    { name: 'Ladybug', frontUrl: miraculousTextureUrl('Ladybug', 'torso', 'Ladybug-torso-front-FF0000.svg'), backUrl: miraculousTextureUrl('Ladybug', 'torso', 'Ladybug-torso-back-FF0000.svg') },
+    { name: 'Catnoir', frontUrl: miraculousTextureUrl('Catnoir', 'torso', 'Catnoir-torso-front-101010.svg'), backUrl: miraculousTextureUrl('Catnoir', 'torso', 'Catnoir-torso-back-101010.svg') },
+    { name: 'Camilo', frontUrl: camiloTextureUrl('torso', 'Camilo-torso-front-F6F6F7.svg'), backUrl: camiloTextureUrl('torso', 'Camilo-torso-back-F6F6F7.svg') },
     { name: 'Steve', frontUrl: minecraftTextureUrl('Steve', 'torso', 'Steve-torso-front.svg'), backUrl: minecraftTextureUrl('Steve', 'torso', 'Steve-torso-back.svg') },
     { name: 'Alex', frontUrl: minecraftTextureUrl('Alex', 'torso', 'Alex-torso-front.svg'), backUrl: minecraftTextureUrl('Alex', 'torso', 'Alex-torso-back.svg') },
     { name: 'Zombie', frontUrl: minecraftTextureUrl('Zombie', 'torso', 'Zombie-torso-front.svg'), backUrl: minecraftTextureUrl('Zombie', 'torso', 'Zombie-torso-back.svg') },
@@ -466,13 +545,23 @@ const torsoClothingTextures = [
     { name: 'Jinu', frontUrl: kpopTextureUrl('Jinu', 'torso', 'Jinu-torso-front.svg'), backUrl: kpopTextureUrl('Jinu', 'torso', 'Jinu-torso-back.svg') },
     { name: 'Zoey', frontUrl: kpopTextureUrl('Zoey', 'torso', 'Zoey-torso-front.svg'), backUrl: kpopTextureUrl('Zoey', 'torso', 'Zoey-torso-back.svg') },
     { name: 'Rumi', frontUrl: kpopTextureUrl('Rumi', 'torso', 'Rumi-torso-front.svg'), backUrl: kpopTextureUrl('Rumi', 'torso', 'Rumi-torso-back.svg') },
-    { name: 'Mira', frontUrl: kpopTextureUrl('Mira', 'torso', 'Mira-torso-front.svg'), backUrl: kpopTextureUrl('Mira', 'torso', 'Mira-torso-back.svg') }
+    { name: 'Mira', frontUrl: kpopTextureUrl('Mira', 'torso', 'Mira-torso-front-243266.svg'), backUrl: kpopTextureUrl('Mira', 'torso', 'Mira-torso-back-243266.svg') }
+];
+
+// --- DATA PARA INSTRUMENTOS ---
+// ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
+const instrumentTextures = [
+    { name: 'None', url: null },
+    { name: 'Camilo', url: camiloTextureUrl('Camilo-instrument.svg') }
 ];
 
 // --- DATA PARA ESTILOS DE BRAZOS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const armTextures = [
     { name: 'None', leftUrl: null, rightUrl: null },
+    { name: 'Ladybug', leftUrl: miraculousTextureUrl('Ladybug', 'arms', 'Ladybug-arm-left-FF0000.svg'), rightUrl: miraculousTextureUrl('Ladybug', 'arms', 'Ladybug-arm-right-FF0000.svg') },
+    { name: 'Catnoir', leftUrl: miraculousTextureUrl('Catnoir', 'arms', 'Catnoir-arm-left-101010.svg'), rightUrl: miraculousTextureUrl('Catnoir', 'arms', 'Catnoir-arm-right-101010.svg') },
+    { name: 'Camilo', leftUrl: camiloTextureUrl('arms', 'Camilo-arm-left-FCCD9B.svg'), rightUrl: camiloTextureUrl('arms', 'Camilo-arm-right-FCCD9B.svg') },
     { name: 'Steve', leftUrl: minecraftTextureUrl('Steve', 'arms', 'Steve-arm-left.svg'), rightUrl: minecraftTextureUrl('Steve', 'arms', 'Steve-arm-right.svg') },
     { name: 'Alex', leftUrl: minecraftTextureUrl('Alex', 'arms', 'Alex-arm-left.svg'), rightUrl: minecraftTextureUrl('Alex', 'arms', 'Alex-arm-right.svg') },
     { name: 'Zombie', leftUrl: minecraftTextureUrl('Zombie', 'arms', 'Zombie-arm-left.svg'), rightUrl: minecraftTextureUrl('Zombie', 'arms', 'Zombie-arm-right.svg') },
@@ -484,13 +573,16 @@ const armTextures = [
     { name: 'Jinu', leftUrl: kpopTextureUrl('Jinu', 'arms', 'Jinu-arm-left.svg'), rightUrl: kpopTextureUrl('Jinu', 'arms', 'Jinu-arm-right.svg') },
     { name: 'Zoey', leftUrl: kpopTextureUrl('Zoey', 'arms', 'Zoey-arm-left.svg'), rightUrl: kpopTextureUrl('Zoey', 'arms', 'Zoey-arm-right.svg') },
     { name: 'Rumi', leftUrl: kpopTextureUrl('Rumi', 'arms', 'Rumi-arm-left.svg'), rightUrl: kpopTextureUrl('Rumi', 'arms', 'Rumi-arm-right.svg') },
-    { name: 'Mira', leftUrl: kpopTextureUrl('Mira', 'arms', 'Mira-arm-left.svg'), rightUrl: kpopTextureUrl('Mira', 'arms', 'Mira-arm-right.svg') }
+    { name: 'Mira', leftUrl: kpopTextureUrl('Mira', 'arms', 'Mira-arm-left-F7D5CF.svg'), rightUrl: kpopTextureUrl('Mira', 'arms', 'Mira-arm-right-F7D5CF.svg') }
 ];
 
 // --- DATA PARA ESTILOS DE PIERNAS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const legTextures = [
     { name: 'None', leftUrl: null, rightUrl: null },
+    { name: 'Ladybug', leftUrl: miraculousTextureUrl('Ladybug', 'legs', 'Ladybug-leg-left-FF0000.svg'), rightUrl: miraculousTextureUrl('Ladybug', 'legs', 'Ladybug-leg-right-FF0000.svg') },
+    { name: 'Catnoir', leftUrl: miraculousTextureUrl('Catnoir', 'legs', 'Catnoir-leg-left-101010.svg'), rightUrl: miraculousTextureUrl('Catnoir', 'legs', 'Catnoir-leg-right-101010.svg') },
+    { name: 'Camilo', leftUrl: camiloTextureUrl('legs', 'Camilo-leg-left-C6A87F.svg'), rightUrl: camiloTextureUrl('legs', 'Camilo-leg-right-C6A87F.svg') },
     { name: 'Steve', leftUrl: minecraftTextureUrl('Steve', 'legs', 'Steve-leg-left.svg'), rightUrl: minecraftTextureUrl('Steve', 'legs', 'Steve-leg-right.svg') },
     { name: 'Alex', leftUrl: minecraftTextureUrl('Alex', 'legs', 'Alex-leg-left.svg'), rightUrl: minecraftTextureUrl('Alex', 'legs', 'Alex-leg-right.svg') },
     { name: 'Zombie', leftUrl: minecraftTextureUrl('Zombie', 'legs', 'Zombie-leg-left.svg'), rightUrl: minecraftTextureUrl('Zombie', 'legs', 'Zombie-leg-right.svg') },
@@ -503,7 +595,7 @@ const legTextures = [
     { name: 'Jinu', leftUrl: kpopTextureUrl('Jinu', 'legs', 'Jinu-leg-left.svg'), rightUrl: kpopTextureUrl('Jinu', 'legs', 'Jinu-leg-right.svg') },
     { name: 'Zoey', leftUrl: kpopTextureUrl('Zoey', 'legs', 'Zoey-leg-left.svg'), rightUrl: kpopTextureUrl('Zoey', 'legs', 'Zoey-leg-right.svg') },
     { name: 'Rumi', leftUrl: kpopTextureUrl('Rumi', 'legs', 'Rumi-legs-left.svg'), rightUrl: kpopTextureUrl('Rumi', 'legs', 'Rumi-legs-right.svg') },
-    { name: 'Mira', leftUrl: kpopTextureUrl('Mira', 'legs', 'Mira-legs-left.svg'), rightUrl: kpopTextureUrl('Mira', 'legs', 'Mira-legs-right.svg') }
+    { name: 'Mira', leftUrl: kpopTextureUrl('Mira', 'legs', 'Mira-legs-left-360624.svg'), rightUrl: kpopTextureUrl('Mira', 'legs', 'Mira-legs-right-360624.svg') }
 ];
 
 /* ============================================

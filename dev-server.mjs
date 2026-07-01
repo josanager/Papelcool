@@ -127,6 +127,38 @@ const mimeTypes = {
   '.svg': 'image/svg+xml'
 };
 
+function resolveStaticPath(baseRoot, pathname, defaultFile = 'index.html') {
+  const decodedPath = decodeURIComponent(pathname);
+  const requestedPath = path.join(baseRoot, decodedPath);
+
+  if (!requestedPath.startsWith(baseRoot)) {
+    return null;
+  }
+
+  if (fs.existsSync(requestedPath) && fs.statSync(requestedPath).isDirectory()) {
+    return path.join(requestedPath, defaultFile);
+  }
+
+  return requestedPath;
+}
+
+function sendStaticFile(res, filePath, extraHeaders = {}) {
+  fs.readFile(filePath, (error, data) => {
+    if (error) {
+      res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
+      res.end('Not found');
+      return;
+    }
+
+    const ext = path.extname(filePath).toLowerCase();
+    res.writeHead(200, {
+      'Content-Type': mimeTypes[ext] || 'application/octet-stream',
+      ...extraHeaders
+    });
+    res.end(data);
+  });
+}
+
 http.createServer(async (req, res) => {
   try {
     const requestUrl = new URL(req.url || '/', `http://localhost:${port}`);
@@ -224,31 +256,15 @@ http.createServer(async (req, res) => {
     }
 
     const pathname = requestUrl.pathname === '/' ? '/index.html' : requestUrl.pathname;
-    const filePath = path.join(root, decodeURIComponent(pathname));
+    const filePath = resolveStaticPath(root, pathname);
 
-    if (!filePath.startsWith(root)) {
+    if (!filePath) {
       res.writeHead(403, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('Forbidden');
       return;
     }
 
-    const finalPath = fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()
-      ? path.join(filePath, 'index.html')
-      : filePath;
-
-    fs.readFile(finalPath, (error, data) => {
-      if (error) {
-        res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
-        res.end('Not found');
-        return;
-      }
-
-      const ext = path.extname(finalPath).toLowerCase();
-      res.writeHead(200, {
-        'Content-Type': mimeTypes[ext] || 'application/octet-stream'
-      });
-      res.end(data);
-    });
+    sendStaticFile(res, filePath);
   } catch (error) {
     res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end(String(error.stack || error));
