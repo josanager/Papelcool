@@ -319,7 +319,7 @@ const eyeTextures = [
     { name: 'Ladybug', url: miraculousTextureUrl('Ladybug', 'eyes', 'Ladybug-eyes-FAC9B1.svg') },
     { name: 'Catnoir', url: miraculousTextureUrl('Catnoir', 'eyes', 'Catnoir-eyes-FFCC9E.svg') },
     { name: 'Camilo', url: camiloTextureUrl('eyes', 'Camilo-eyes-FCCD9B.svg') },
-    { name: 'Steve', url: minecraftTextureUrl('Steve', 'eyes', 'Steve-eyes.svg') },
+    { name: 'Steve', url: minecraftTextureUrl('Steve', 'eyes', 'Steve-eyes-C59E75.svg') },
     { name: 'Alex', url: minecraftTextureUrl('Alex', 'eyes', 'Alex-eyes.svg') },
     { name: 'Zombie', url: minecraftTextureUrl('Zombie', 'eyes', 'Zombie-eyes.svg') },
     { name: 'Skeleton', url: minecraftTextureUrl('Skeleton', 'eyes', 'Skeleton-eyes.svg') },
@@ -331,24 +331,24 @@ const eyeTextures = [
     { name: 'Jinu', url: kpopTextureUrl('Jinu', 'eyes', 'Jinu-eyes.svg') },
     { name: 'Male', url: basicTextureUrl('eyes', 'Male-eyes.svg') },
     { name: 'Female', url: basicTextureUrl('eyes', 'Female-eyes.svg') },
-    { name: 'Zoey', url: kpopTextureUrl('Zoey', 'eyes', 'Zoey-eyes.svg') },
-    { name: 'Rumi', url: kpopTextureUrl('Rumi', 'eyes', 'Rumi-eyes.svg') },
+    { name: 'Zoey', url: kpopTextureUrl('Zoey', 'eyes', 'Zoey-eyes-F7D5CF.svg') },
+    { name: 'Rumi', url: kpopTextureUrl('Rumi', 'eyes', 'Rumi-eyes-F7D5CF.svg') },
     { name: 'Mira', url: kpopTextureUrl('Mira', 'eyes', 'Mira-eyes-F7D5CF.svg') }
 ];
 
 // --- DATA PARA CEJAS ---
 // ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
 const eyebrowTextures = [
-    { name: 'Camilo', url: camiloTextureUrl('eyebrown', 'Camilo-eyebrown.svg') },
-    { name: 'Baby', url: kpopTextureUrl('Baby', 'eyebrows', 'Baby-eyebrown.svg') },
-    { name: 'Romance', url: kpopTextureUrl('Romance', 'eyebrows', 'Romance-eyebrown.svg') },
-    { name: 'Abby', url: kpopTextureUrl('Abby', 'eyebrows', 'Abby-eyebrown.svg') },
-    { name: 'Jinu', url: kpopTextureUrl('Jinu', 'eyebrows', 'Jinu-eyebrown.svg') },
-    { name: 'Male', url: basicTextureUrl('eyebrows', 'Male-eyebrown.svg') },
-    { name: 'Female', url: basicTextureUrl('eyebrows', 'Female-eyebrown.svg') },
-    { name: 'Zoey', url: kpopTextureUrl('Zoey', 'eyebrows', 'Zoey-eyebrown.svg') },
-    { name: 'Rumi', url: kpopTextureUrl('Rumi', 'eyebrows', 'Rumi-eyebrown.svg') },
-    { name: 'Mira', url: kpopTextureUrl('Mira', 'eyebrows', 'Mira-eyebrown.svg') }
+    { name: 'Camilo', url: camiloTextureUrl('eyebrows', 'Camilo-eyebrows.svg') },
+    { name: 'Baby', url: kpopTextureUrl('Baby', 'eyebrows', 'Baby-eyebrows.svg') },
+    { name: 'Romance', url: kpopTextureUrl('Romance', 'eyebrows', 'Romance-eyebrows.svg') },
+    { name: 'Abby', url: kpopTextureUrl('Abby', 'eyebrows', 'Abby-eyebrows.svg') },
+    { name: 'Jinu', url: kpopTextureUrl('Jinu', 'eyebrows', 'Jinu-eyebrows.svg') },
+    { name: 'Male', url: basicTextureUrl('eyebrows', 'Male-eyebrows.svg') },
+    { name: 'Female', url: basicTextureUrl('eyebrows', 'Female-eyebrows.svg') },
+    { name: 'Zoey', url: kpopTextureUrl('Zoey', 'eyebrows', 'Zoey-eyebrows.svg') },
+    { name: 'Rumi', url: kpopTextureUrl('Rumi', 'eyebrows', 'Rumi-eyebrows.svg') },
+    { name: 'Mira', url: kpopTextureUrl('Mira', 'eyebrows', 'Mira-eyebrows.svg') }
 ];
 
 // --- DATA PARA NARIZ ---
@@ -532,7 +532,7 @@ const torsoClothingTextures = [
     { name: 'Ladybug', frontUrl: miraculousTextureUrl('Ladybug', 'torso', 'Ladybug-torso-front-FF0000.svg'), backUrl: miraculousTextureUrl('Ladybug', 'torso', 'Ladybug-torso-back-FF0000.svg') },
     { name: 'Catnoir', frontUrl: miraculousTextureUrl('Catnoir', 'torso', 'Catnoir-torso-front-101010.svg'), backUrl: miraculousTextureUrl('Catnoir', 'torso', 'Catnoir-torso-back-101010.svg') },
     { name: 'Camilo', frontUrl: camiloTextureUrl('torso', 'Camilo-torso-front-F6F6F7.svg'), backUrl: camiloTextureUrl('torso', 'Camilo-torso-back-F6F6F7.svg') },
-    { name: 'Steve', frontUrl: minecraftTextureUrl('Steve', 'torso', 'Steve-torso-front.svg'), backUrl: minecraftTextureUrl('Steve', 'torso', 'Steve-torso-back.svg') },
+    { name: 'Steve', frontUrl: minecraftTextureUrl('Steve', 'torso', 'Steve-torso-front-00AFAF.svg'), backUrl: minecraftTextureUrl('Steve', 'torso', 'Steve-torso-back-00AFAF.svg') },
     { name: 'Alex', frontUrl: minecraftTextureUrl('Alex', 'torso', 'Alex-torso-front.svg'), backUrl: minecraftTextureUrl('Alex', 'torso', 'Alex-torso-back.svg') },
     { name: 'Zombie', frontUrl: minecraftTextureUrl('Zombie', 'torso', 'Zombie-torso-front.svg'), backUrl: minecraftTextureUrl('Zombie', 'torso', 'Zombie-torso-back.svg') },
     { name: 'Skeleton', frontUrl: minecraftTextureUrl('Skeleton', 'torso', 'Skeleton-torso-front.svg'), backUrl: minecraftTextureUrl('Skeleton', 'torso', 'Skeleton-torso-back.svg') },
@@ -544,7 +544,7 @@ const torsoClothingTextures = [
     { name: 'Abby', frontUrl: kpopTextureUrl('Abby', 'torso', 'Abby-torso-front.svg'), backUrl: kpopTextureUrl('Abby', 'torso', 'Abby-torso-back.svg') },
     { name: 'Jinu', frontUrl: kpopTextureUrl('Jinu', 'torso', 'Jinu-torso-front.svg'), backUrl: kpopTextureUrl('Jinu', 'torso', 'Jinu-torso-back.svg') },
     { name: 'Zoey', frontUrl: kpopTextureUrl('Zoey', 'torso', 'Zoey-torso-front.svg'), backUrl: kpopTextureUrl('Zoey', 'torso', 'Zoey-torso-back.svg') },
-    { name: 'Rumi', frontUrl: kpopTextureUrl('Rumi', 'torso', 'Rumi-torso-front.svg'), backUrl: kpopTextureUrl('Rumi', 'torso', 'Rumi-torso-back.svg') },
+    { name: 'Rumi', frontUrl: kpopTextureUrl('Rumi', 'torso', 'Rumi-torso-front.svg'), backUrl: kpopTextureUrl('Rumi', 'torso', 'Rumi-torso-back-FAB823.svg') },
     { name: 'Mira', frontUrl: kpopTextureUrl('Mira', 'torso', 'Mira-torso-front-243266.svg'), backUrl: kpopTextureUrl('Mira', 'torso', 'Mira-torso-back-243266.svg') }
 ];
 
@@ -562,7 +562,7 @@ const armTextures = [
     { name: 'Ladybug', leftUrl: miraculousTextureUrl('Ladybug', 'arms', 'Ladybug-arm-left-FF0000.svg'), rightUrl: miraculousTextureUrl('Ladybug', 'arms', 'Ladybug-arm-right-FF0000.svg') },
     { name: 'Catnoir', leftUrl: miraculousTextureUrl('Catnoir', 'arms', 'Catnoir-arm-left-101010.svg'), rightUrl: miraculousTextureUrl('Catnoir', 'arms', 'Catnoir-arm-right-101010.svg') },
     { name: 'Camilo', leftUrl: camiloTextureUrl('arms', 'Camilo-arm-left-FCCD9B.svg'), rightUrl: camiloTextureUrl('arms', 'Camilo-arm-right-FCCD9B.svg') },
-    { name: 'Steve', leftUrl: minecraftTextureUrl('Steve', 'arms', 'Steve-arm-left.svg'), rightUrl: minecraftTextureUrl('Steve', 'arms', 'Steve-arm-right.svg') },
+    { name: 'Steve', leftUrl: minecraftTextureUrl('Steve', 'arms', 'Steve-arm-left-C59E75.svg'), rightUrl: minecraftTextureUrl('Steve', 'arms', 'Steve-arm-right-C59E75.svg') },
     { name: 'Alex', leftUrl: minecraftTextureUrl('Alex', 'arms', 'Alex-arm-left.svg'), rightUrl: minecraftTextureUrl('Alex', 'arms', 'Alex-arm-right.svg') },
     { name: 'Zombie', leftUrl: minecraftTextureUrl('Zombie', 'arms', 'Zombie-arm-left.svg'), rightUrl: minecraftTextureUrl('Zombie', 'arms', 'Zombie-arm-right.svg') },
     { name: 'Skeleton', leftUrl: minecraftTextureUrl('Skeleton', 'arms', 'Skeleton-arm-left.svg'), rightUrl: minecraftTextureUrl('Skeleton', 'arms', 'Skeleton-arm-right.svg') },
@@ -571,8 +571,8 @@ const armTextures = [
     { name: 'Romance', leftUrl: kpopTextureUrl('Romance', 'arms', 'Romance-arm-left.svg'), rightUrl: kpopTextureUrl('Romance', 'arms', 'Romance-arm-right.svg') },
     { name: 'Abby', leftUrl: kpopTextureUrl('Abby', 'arms', 'Abby-arm-left.svg'), rightUrl: kpopTextureUrl('Abby', 'arms', 'Abby-arm-right.svg') },
     { name: 'Jinu', leftUrl: kpopTextureUrl('Jinu', 'arms', 'Jinu-arm-left.svg'), rightUrl: kpopTextureUrl('Jinu', 'arms', 'Jinu-arm-right.svg') },
-    { name: 'Zoey', leftUrl: kpopTextureUrl('Zoey', 'arms', 'Zoey-arm-left.svg'), rightUrl: kpopTextureUrl('Zoey', 'arms', 'Zoey-arm-right.svg') },
-    { name: 'Rumi', leftUrl: kpopTextureUrl('Rumi', 'arms', 'Rumi-arm-left.svg'), rightUrl: kpopTextureUrl('Rumi', 'arms', 'Rumi-arm-right.svg') },
+    { name: 'Zoey', leftUrl: kpopTextureUrl('Zoey', 'arms', 'Zoey-arm-left-F7D5CF.svg'), rightUrl: kpopTextureUrl('Zoey', 'arms', 'Zoey-arm-right-F7D5CF.svg') },
+    { name: 'Rumi', leftUrl: kpopTextureUrl('Rumi', 'arms', 'Rumi-arm-left-F7D5CF.svg'), rightUrl: kpopTextureUrl('Rumi', 'arms', 'Rumi-arm-right-F7D5CF.svg') },
     { name: 'Mira', leftUrl: kpopTextureUrl('Mira', 'arms', 'Mira-arm-left-F7D5CF.svg'), rightUrl: kpopTextureUrl('Mira', 'arms', 'Mira-arm-right-F7D5CF.svg') }
 ];
 
@@ -583,7 +583,7 @@ const legTextures = [
     { name: 'Ladybug', leftUrl: miraculousTextureUrl('Ladybug', 'legs', 'Ladybug-leg-left-FF0000.svg'), rightUrl: miraculousTextureUrl('Ladybug', 'legs', 'Ladybug-leg-right-FF0000.svg') },
     { name: 'Catnoir', leftUrl: miraculousTextureUrl('Catnoir', 'legs', 'Catnoir-leg-left-101010.svg'), rightUrl: miraculousTextureUrl('Catnoir', 'legs', 'Catnoir-leg-right-101010.svg') },
     { name: 'Camilo', leftUrl: camiloTextureUrl('legs', 'Camilo-leg-left-C6A87F.svg'), rightUrl: camiloTextureUrl('legs', 'Camilo-leg-right-C6A87F.svg') },
-    { name: 'Steve', leftUrl: minecraftTextureUrl('Steve', 'legs', 'Steve-leg-left.svg'), rightUrl: minecraftTextureUrl('Steve', 'legs', 'Steve-leg-right.svg') },
+    { name: 'Steve', leftUrl: minecraftTextureUrl('Steve', 'legs', 'Steve-leg-left-4639A4.svg'), rightUrl: minecraftTextureUrl('Steve', 'legs', 'Steve-leg-right-4639A4.svg') },
     { name: 'Alex', leftUrl: minecraftTextureUrl('Alex', 'legs', 'Alex-leg-left.svg'), rightUrl: minecraftTextureUrl('Alex', 'legs', 'Alex-leg-right.svg') },
     { name: 'Zombie', leftUrl: minecraftTextureUrl('Zombie', 'legs', 'Zombie-leg-left.svg'), rightUrl: minecraftTextureUrl('Zombie', 'legs', 'Zombie-leg-right.svg') },
     { name: 'Skeleton', leftUrl: minecraftTextureUrl('Skeleton', 'legs', 'Skeleton-leg-left.svg'), rightUrl: minecraftTextureUrl('Skeleton', 'legs', 'Skeleton-leg-right.svg') },
@@ -593,8 +593,8 @@ const legTextures = [
     { name: 'Romance', leftUrl: kpopTextureUrl('Romance', 'legs', 'Romance-leg-left.svg'), rightUrl: kpopTextureUrl('Romance', 'legs', 'Romance-leg-right.svg') },
     { name: 'Abby', leftUrl: kpopTextureUrl('Abby', 'legs', 'Abby-leg-left.svg'), rightUrl: kpopTextureUrl('Abby', 'legs', 'Abby-leg-right.svg') },
     { name: 'Jinu', leftUrl: kpopTextureUrl('Jinu', 'legs', 'Jinu-leg-left.svg'), rightUrl: kpopTextureUrl('Jinu', 'legs', 'Jinu-leg-right.svg') },
-    { name: 'Zoey', leftUrl: kpopTextureUrl('Zoey', 'legs', 'Zoey-leg-left.svg'), rightUrl: kpopTextureUrl('Zoey', 'legs', 'Zoey-leg-right.svg') },
-    { name: 'Rumi', leftUrl: kpopTextureUrl('Rumi', 'legs', 'Rumi-legs-left.svg'), rightUrl: kpopTextureUrl('Rumi', 'legs', 'Rumi-legs-right.svg') },
+    { name: 'Zoey', leftUrl: kpopTextureUrl('Zoey', 'legs', 'Zoey-leg-left-16275C.svg'), rightUrl: kpopTextureUrl('Zoey', 'legs', 'Zoey-leg-right-16275C.svg') },
+    { name: 'Rumi', leftUrl: kpopTextureUrl('Rumi', 'legs', 'Rumi-legs-left-292827.svg'), rightUrl: kpopTextureUrl('Rumi', 'legs', 'Rumi-legs-right-292827.svg') },
     { name: 'Mira', leftUrl: kpopTextureUrl('Mira', 'legs', 'Mira-legs-left-360624.svg'), rightUrl: kpopTextureUrl('Mira', 'legs', 'Mira-legs-right-360624.svg') }
 ];
 

@@ -11385,10 +11385,6 @@
             } else if (characterName === 'Mystery') {
                 config.colors.head = '#91C9FA';
             } else if (characterName === 'Steve') {
-                config.colors.head = '#AF7E5C';
-                config.colors.torso = '#00A9AF';
-                config.colors.arms = '#AF7E5C';
-                config.colors.legs = '#4332A0';
                 config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
             } else if (characterName === 'Enderman') {
                 config.colors.head = '#000000';
@@ -11473,16 +11469,18 @@
 
             if (config.eyeTexture?.url && !config.hiddenOverlays.includes('eyes')) {
                 textureTasks.push(overlay('eyes', parts.head, config.eyeTexture.url, {
-                    position: [0, 1.029, 1.129],
+                    position: [0, 1.029, 1.1285],
                     planeHeight: 2.256
                 }));
             }
 
             if (config.eyebrowTexture?.url && !config.hiddenOverlays.includes('eyebrows')) {
                 textureTasks.push(overlay('eyebrows', parts.head, config.eyebrowTexture.url, {
-                    position: [0, 1.029, 1.129],
+                    position: [0, 1.029, 1.1295],
                     planeHeight: 2.256
                 }));
+            } else {
+                clearPresetPreviewGroup(['eyebrows']);
             }
 
             if (config.noseTexture?.url && !config.hiddenOverlays.includes('nose')) {
@@ -11510,7 +11508,7 @@
 
             if (config.hairTexture?.frontUrl) {
                 textureTasks.push(overlay('hair-front', parts.head, config.hairTexture.frontUrl, {
-                    position: [0, 0.563, 1.1285],
+                    position: [0, 0.563, 1.129],
                     planeHeight: 5.556
                 }));
                 textureTasks.push(overlay('hair-back', parts.head, config.hairTexture.backUrl, {
@@ -11801,7 +11799,7 @@
                 plan.push({ key: 'eyes', parent: parts.head, url: eyeTexture.url, options: { position: [0, 1.029, 1.129], planeHeight: 2.256 } });
             }
             if (eyebrowTexture?.url && parts.head) {
-                plan.push({ key: 'eyebrows', parent: parts.head, url: eyebrowTexture.url, options: { position: [0, 1.029, 1.129], planeHeight: 2.256 } });
+                plan.push({ key: 'eyebrows', parent: parts.head, url: eyebrowTexture.url, options: { position: [0, 1.029, 1.1295], planeHeight: 2.256 } });
             }
             if (noseTexture?.url && parts.head) {
                 plan.push({
@@ -12570,7 +12568,7 @@
                         const planeWidth = planeHeight * aspect;
                         const eyeGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         eyesMesh = new THREE.Mesh(eyeGeometry, eyeMaterial);
-                        eyesMesh.position.set(0, 1.029, 1.129);
+                        eyesMesh.position.set(0, 1.029, 1.1285);
                         modelParts.head.add(eyesMesh);
                     } else {
                         // Actualizar textura del mesh existente (móvil y desktop)
@@ -12615,6 +12613,12 @@
             currentEyebrowTextureURL = url;
             notifyCustomPdfStateChanged('eyebrows-texture');
 
+            if (url === null) {
+                eyebrowsMesh = removeOverlayMesh(modelParts.head, eyebrowsMesh);
+                requestCustomRender(isLowPowerMobile ? 14 : 22);
+                return;
+            }
+
             loadOptimizedTexture(url,
                 (texture) => {
                     if (!isCurrentCustomTextureVersion('eyebrows', textureVersion) || currentEyebrowTextureURL !== url) {
@@ -12630,7 +12634,7 @@
                         const planeWidth = planeHeight * aspect;
                         const eyebrowGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         eyebrowsMesh = new THREE.Mesh(eyebrowGeometry, eyebrowMaterial);
-                        eyebrowsMesh.position.set(0, 1.029, 1.129);
+                        eyebrowsMesh.position.set(0, 1.029, 1.1295);
                         modelParts.head.add(eyebrowsMesh);
                     } else {
                         // Actualizar textura del mesh existente
@@ -12956,7 +12960,7 @@
                         const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         hairFrontMesh = new THREE.Mesh(hairGeometry, hairMaterial);
                         // Posición del cabello frontal
-                        hairFrontMesh.position.set(0, 0.563, 1.1285);
+                        hairFrontMesh.position.set(0, 0.563, 1.129);
                         modelParts.head.add(hairFrontMesh);
                     } else {
                         // Solo actualiza la textura si el mesh ya existe
@@ -17882,6 +17886,12 @@
                 currentInstrumentURL = null;
             }
 
+            if (presetConfig.hiddenOverlays.includes('eyebrows') || !eyebrowTexture?.url) {
+                eyebrowsMesh = removeOverlayMesh(modelParts.head, eyebrowsMesh);
+                currentEyebrowTextureURL = null;
+                eyebrowTexture = null;
+            }
+
             if (presetConfig.hideArms) {
                 modelParts.arms.forEach((arm) => { if (arm) arm.visible = false; });
             }
@@ -17894,7 +17904,11 @@
                 const tasks = [];
 
                 if (eyeTexture) tasks.push(async () => { currentEyeTextureURL = eyeTexture.url; changeEyeTexture(eyeTexture.url); });
-                if (eyebrowTexture) tasks.push(async () => { currentEyebrowTextureURL = eyebrowTexture.url; changeEyebrowTexture(eyebrowTexture.url); });
+                if (eyebrowTexture) {
+                    tasks.push(async () => { currentEyebrowTextureURL = eyebrowTexture.url; changeEyebrowTexture(eyebrowTexture.url); });
+                } else {
+                    tasks.push(async () => { currentEyebrowTextureURL = null; changeEyebrowTexture(null); });
+                }
                 if (noseTexture) tasks.push(async () => { currentNoseTextureURL = noseTexture.url; changeNoseTexture(noseTexture.url); });
                 if (earTexture) tasks.push(async () => { currentEarTextureURL = earTexture.url; changeEarTexture('left', earTexture.url); changeEarTexture('right', earTexture.url); });
                 if (hairTexture) tasks.push(async () => {
