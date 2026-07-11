@@ -1,0 +1,126 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2350 1000" role="img" aria-label="Playful circus stage background">
+  <defs>
+    <!-- Background wall gradient -->
+    <linearGradient id="back" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffd573"/>
+      <stop offset="55%" stop-color="#ffb840"/>
+      <stop offset="100%" stop-color="#f38415"/>
+    </linearGradient>
+    
+    <!-- Central spotlight glow -->
+    <radialGradient id="spot" cx="50%" cy="36%" r="52%">
+      <stop offset="0%" stop-color="#fffceb"/>
+      <stop offset="42%" stop-color="#fffceb" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#fffceb" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Circus Wall Background -->
+  <rect width="2350" height="1000" fill="url(#back)"/>
+
+  <!-- Circus Tent Vertical Stripes (Background pattern) -->
+  <g fill="#f29c38" opacity="0.35">
+    <polygon points="100,0 200,0 150,1000 50,1000"/>
+    <polygon points="300,0 400,0 350,1000 250,1000"/>
+    <polygon points="500,0 600,0 550,1000 450,1000"/>
+    <polygon points="700,0 800,0 750,1000 650,1000"/>
+    <polygon points="900,0 1000,0 950,1000 850,1000"/>
+    <polygon points="1100,0 1200,0 1150,1000 1050,1000"/>
+    <polygon points="1300,0 1400,0 1350,1000 1250,1000"/>
+    <polygon points="1500,0 1600,0 1550,1000 1450,1000"/>
+    <polygon points="1700,0 1800,0 1750,1000 1650,1000"/>
+    <polygon points="1900,0 2000,0 1950,1000 1850,1000"/>
+    <polygon points="2100,0 2200,0 2150,1000 2050,1000"/>
+  </g>
+
+  <!-- Spotlight Cone -->
+  <rect width="2350" height="1000" fill="url(#spot)"/>
+
+  <!-- Hanging Bunting Garland (Flags) at the top -->
+  <g stroke="#000" stroke-width="5" stroke-linejoin="miter">
+    <!-- Flags string -->
+    <path d="M0 40 Q 600 160, 1175 100 Q 1750 160, 2350 40" fill="none" stroke-width="6"/>
+    
+    <!-- Flag triangles (Alternating Cyan, Red, Yellow) -->
+    <polygon points="150,75 220,85 185,150" fill="#33ccff"/>
+    <polygon points="350,102 420,108 385,175" fill="#FF4D94"/>
+    <polygon points="550,120 620,122 585,190" fill="#FFE600"/>
+    <polygon points="750,125 820,122 785,192" fill="#33ccff"/>
+    <polygon points="950,118 1020,112 985,180" fill="#FF4D94"/>
+    
+    <polygon points="1350,112 1420,118 1385,180" fill="#FFE600"/>
+    <polygon points="1550,122 1620,125 1585,192" fill="#33ccff"/>
+    <polygon points="1750,122 1820,120 1785,190" fill="#FF4D94"/>
+    <polygon points="1950,108 2020,102 1985,175" fill="#FFE600"/>
+    <polygon points="2150,85 2220,75 2185,150" fill="#33ccff"/>
+  </g>
+
+  <!-- Stage Curtains Left & Right (Sticker Style with shadows) -->
+  <!-- Left Curtain shadow -->
+  <path d="M0 0h360l140 300-60 700H0Z" fill="#000" opacity="0.2" transform="translate(8, 8)"/>
+  <!-- Left Curtain -->
+  <path d="M0 0h350l130 300-60 700H0Z" fill="#d71313" stroke="#000" stroke-width="7" stroke-linejoin="miter"/>
+  <!-- Curtains highlights/shadow lines -->
+  <path d="M120 0 L 220 300 L 170 1000" fill="none" stroke="#b10b0b" stroke-width="12" opacity="0.7"/>
+  <path d="M240 0 L 320 300 L 270 1000" fill="none" stroke="#ff4f4f" stroke-width="8" opacity="0.6"/>
+
+  <!-- Right Curtain shadow -->
+  <path d="M2350 0h-360l-140 300 60 700h440Z" fill="#000" opacity="0.2" transform="translate(8, 8)"/>
+  <!-- Right Curtain -->
+  <path d="M2350 0h-350l-130 300 60 700h420Z" fill="#d71313" stroke="#000" stroke-width="7" stroke-linejoin="miter"/>
+  <!-- Curtains highlights/shadow lines -->
+  <path d="M2230 0 L 2130 300 L 2180 1000" fill="none" stroke="#b10b0b" stroke-width="12" opacity="0.7"/>
+  <path d="M2110 0 L 2030 300 L 2080 1000" fill="none" stroke="#ff4f4f" stroke-width="8" opacity="0.6"/>
+
+  <!-- Stage Floor (Wooden planks) -->
+  <!-- Shadow first -->
+  <rect x="0" y="790" width="2350" height="210" fill="#000" opacity="0.3" transform="translate(0, 8)"/>
+  <!-- Floor base -->
+  <rect x="0" y="790" width="2350" height="210" fill="#50230e" stroke="#000" stroke-width="6"/>
+  <!-- Thick black border under curtain layer -->
+  <path d="M0 804h2350" stroke="#000" stroke-width="20"/>
+
+  <!-- Ringmaster Stage Platform (Concentric ellipses) -->
+  <!-- Shadow first -->
+  <g fill="#000" opacity="0.2" transform="translate(10, 10)">
+    <ellipse cx="1175" cy="760" rx="520" ry="140"/>
+  </g>
+  <!-- Ellipse Platform borders -->
+  <g stroke="#000" stroke-width="6" stroke-linejoin="miter">
+    <ellipse cx="1175" cy="760" rx="520" ry="140" fill="#f1b73c"/>
+    <ellipse cx="1175" cy="760" rx="450" ry="110" fill="#ffd777"/>
+  </g>
+  
+  <!-- Outer platform inner line -->
+  <ellipse cx="1175" cy="760" rx="485" ry="125" fill="none" stroke="#fff" stroke-width="4" opacity="0.3"/>
+  <path d="M725 760a450 110 0 0 0 900 0" fill="none" stroke="#fff1b0" stroke-width="20" opacity="0.5"/>
+
+  <!-- Circus Columns Left & Right (Blue pillars with yellow accents) -->
+  <g stroke="#000" stroke-width="6" stroke-linejoin="miter">
+    <!-- Pillar Left shadow -->
+    <path d="M260 820h180v-130l-80-80-100 80Z" fill="#000" opacity="0.25" stroke="none" transform="translate(8, 8)"/>
+    <!-- Pillar Left -->
+    <path d="M260 820h180v-130l-80-80-100 80Z" fill="#1b56d8"/>
+    <rect x="320" y="680" width="88" height="140" fill="#FFE600"/>
+
+    <!-- Pillar Right shadow -->
+    <path d="M1910 820h180v-150l-80-75-100 75Z" fill="#000" opacity="0.25" stroke="none" transform="translate(8, 8)"/>
+    <!-- Pillar Right -->
+    <path d="M1910 820h180v-150l-80-75-100 75Z" fill="#1b56d8"/>
+    <rect x="1980" y="650" width="86" height="170" fill="#FFE600"/>
+  </g>
+
+  <!-- Floating Star & Diamond Stickers (Pop Art style) -->
+  <g stroke="#000" stroke-width="4" stroke-linejoin="miter">
+    <!-- Stars Left -->
+    <polygon points="630,300 645,310 660,300 645,325" fill="#33ccff" transform="scale(1.2) translate(-110, -50)"/>
+    <polygon points="760,260 770,270 780,260 770,280" fill="#ff4f1f" transform="scale(1.3) translate(-180, -40)"/>
+    <!-- Star center-left -->
+    <polygon points="1060,122 1080,140 1100,122 1080,158" fill="#FFE600"/>
+    <polygon points="1300,120 1320,138 1340,120 1320,156" fill="#FFE600"/>
+    
+    <!-- Diamonds Right -->
+    <polygon points="1720,290 1735,270 1750,290 1735,310" fill="#33ccff"/>
+    <polygon points="1580,360 1600,340 1620,360 1600,380" fill="#ff4f1f"/>
+  </g>
+</svg>

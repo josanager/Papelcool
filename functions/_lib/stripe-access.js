@@ -1,6 +1,15 @@
 const DEFAULT_PRICE_ID = 'price_1Tex7DBVQGUgz1N1Xg9eEcyc';
 const DEFAULT_AMOUNT = 500;
 const DEFAULT_CURRENCY = 'usd';
+const PRESET_PRODUCT = 'papelcool_preset_template';
+const CUSTOM_PRODUCT = 'papelcool_custom_pdf';
+const ALLOWED_PRESET_SLUGS = new Set([
+  'Villamil-faltastu', 'Villamil-faltastu-guitarra',
+  'Simon-faltastu', 'Simon-faltastu-bajo',
+  'Martin-faltastu', 'Martin-faltastu-bateria',
+  'Isaza-faltastu', 'Isaza-faltastu-guitarra',
+  'Mira', 'Rumi', 'Zoey', 'Jinu', 'Abby', 'Romance', 'Mystery', 'Baby'
+]);
 
 export async function handleCreateStripeCheckoutSession(request, env) {
   if (request.method !== 'POST') {
@@ -16,7 +25,9 @@ export async function handleCreateStripeCheckoutSession(request, env) {
 
   const secretKey = env.STRIPE_SECRET_KEY;
   const priceId = env.STRIPE_PRICE_ID || DEFAULT_PRICE_ID;
-  const requiresPriceId = !body?.forceDynamicPrice;
+  const requestedProduct = typeof body.productType === 'string' ? body.productType.trim() : '';
+  const isPresetPurchase = requestedProduct === PRESET_PRODUCT;
+  const requiresPriceId = !isPresetPurchase;
   if (!secretKey || (requiresPriceId && !priceId)) {
     return jsonResponse({
       error: 'Stripe checkout is not configured.',
@@ -41,24 +52,29 @@ export async function handleCreateStripeCheckoutSession(request, env) {
   );
   const customerEmail = typeof body.email === 'string' ? body.email.trim().toLowerCase() : '';
   const userId = typeof body.userId === 'string' ? body.userId.trim() : '';
-  const productType = typeof body.productType === 'string' && body.productType.trim()
-    ? body.productType.trim().slice(0, 120)
-    : 'papelcool_custom_pdf';
-  const productName = typeof body.productName === 'string' && body.productName.trim()
-    ? body.productName.trim().slice(0, 120)
+  const requestedSlug = typeof body.productSlug === 'string' ? body.productSlug.trim() : '';
+  if (isPresetPurchase && !ALLOWED_PRESET_SLUGS.has(requestedSlug)) {
+    return jsonResponse({ error: 'Unknown premium preset.' }, 400);
+  }
+
+  const productType = isPresetPurchase ? PRESET_PRODUCT : CUSTOM_PRODUCT;
+  const productName = isPresetPurchase
+    ? `Plantilla Papelcool - ${requestedSlug}`
     : 'Papelcool Custom PDF';
-  const productSlug = typeof body.productSlug === 'string' && body.productSlug.trim()
-    ? body.productSlug.trim().slice(0, 120)
-    : '';
-  const unitAmount = Number(body.amount || env.STRIPE_AMOUNT || DEFAULT_AMOUNT);
-  const currency = String(body.currency || env.STRIPE_CURRENCY || DEFAULT_CURRENCY).toLowerCase();
+  const productSlug = isPresetPurchase ? requestedSlug : '';
+  // Price and currency are server-owned. Never trust checkout totals supplied by the browser.
+  const unitAmount = Number(env.STRIPE_AMOUNT || DEFAULT_AMOUNT);
+  const currency = String(env.STRIPE_CURRENCY || DEFAULT_CURRENCY).toLowerCase();
+  if (!Number.isInteger(unitAmount) || unitAmount < 50 || !/^[a-z]{3}$/.test(currency)) {
+    return jsonResponse({ error: 'Stripe price configuration is invalid.' }, 503);
+  }
   const orderId = typeof body.orderId === 'string' && body.orderId.trim()
     ? body.orderId.trim().slice(0, 120)
     : `papelcool_custom_${Date.now()}`;
 
   const form = new URLSearchParams();
   form.set('mode', 'payment');
-  if (priceId && !body.forceDynamicPrice) {
+  if (priceId && !isPresetPurchase) {
     form.set('line_items[0][price]', priceId);
   } else {
     form.set('line_items[0][price_data][currency]', currency);

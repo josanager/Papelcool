@@ -1,3 +1,12 @@
 {
-  "type": "module"
+  "name": "papelcool",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:css": "tailwindcss -c tailwind.config.cjs -i styles/tailwind-input.css -o assets/css/tailwind.css --minify",
+    "watch:css": "tailwindcss -c tailwind.config.cjs -i styles/tailwind-input.css -o assets/css/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "3.4.17"
+  }
 }

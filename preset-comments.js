@@ -1206,24 +1206,19 @@
             const userIds = [...new Set(comments.map((comment) => comment.user_id).filter(Boolean))];
             const commentIds = comments.map((comment) => comment.id);
 
-            let profiles = [];
-            if (userIds.length > 0) {
-                const { data: profileRows, error: profilesError } = await withTimeout(
+            const missingUserIds = userIds.filter((userId) => !state.profiles.has(userId));
+            const profilesPromise = missingUserIds.length > 0
+                ? withTimeout(
                     client
                         .from('profiles')
                         .select('id, nickname, avatar_url')
-                        .in('id', userIds),
+                        .in('id', missingUserIds),
                     REQUEST_TIMEOUT_MS,
                     'La carga de perfiles tardó demasiado.'
-                );
-
-                if (profilesError) throw profilesError;
-                profiles = Array.isArray(profileRows) ? profileRows : [];
-            }
-
-            let likes = [];
-            if (commentIds.length > 0) {
-                const { data: likeRows, error: likesError } = await withTimeout(
+                )
+                : Promise.resolve({ data: [], error: null });
+            const likesPromise = commentIds.length > 0
+                ? withTimeout(
                     client
                         .from(COMMENT_LIKES_TABLE)
                         .select('comment_id, user_id')
@@ -1231,14 +1226,24 @@
                         .limit(2000),
                     REQUEST_TIMEOUT_MS,
                     'La carga de likes tardó demasiado.'
-                );
+                )
+                : Promise.resolve({ data: [], error: null });
 
-                if (likesError) throw likesError;
-                likes = Array.isArray(likeRows) ? likeRows : [];
-            }
+            const [profilesResult, likesResult] = await Promise.all([profilesPromise, likesPromise]);
+            if (profilesResult.error) throw profilesResult.error;
+            if (likesResult.error) throw likesResult.error;
+            const profiles = Array.isArray(profilesResult.data) ? profilesResult.data : [];
+            const likes = Array.isArray(likesResult.data) ? likesResult.data : [];
 
-            state.comments = comments;
-            state.profiles = new Map(profiles.map((profile) => [profile.id, profile]));
+            const pendingComments = state.comments.filter((comment) =>
+                comment?._optimistic === true && comment.preset_slug === state.currentPreset
+            );
+            const serverIds = new Set(comments.map((comment) => comment.id));
+            state.comments = [
+                ...comments,
+                ...pendingComments.filter((comment) => !serverIds.has(comment.id))
+            ];
+            profiles.forEach((profile) => state.profiles.set(profile.id, profile));
             state.likeCounts = buildLikeCounts(likes);
             state.likedCommentIds = buildLikedCommentIds(likes, state.currentUser?.id || null);
             state.hasLoadError = false;
@@ -1465,14 +1470,44 @@
         const client = typeof window.getSupabaseClient === 'function' ? window.getSupabaseClient() : null;
         if (!client) return;
 
+        const originalReplyToId = state.replyToId || null;
+        const originalReplyToAuthor = state.replyToAuthor || '';
+        const optimisticId = `pending-${state.currentUser.id}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+        const optimisticComment = {
+            id: optimisticId,
+            preset_slug: state.currentPreset,
+            parent_id: originalReplyToId,
+            user_id: state.currentUser.id,
+            body,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            _optimistic: true
+        };
+        const nickname = state.currentUser.user_metadata?.nickname
+            || state.currentUser.email?.split('@')[0]
+            || 'Coleccionista';
+        if (!state.profiles.has(state.currentUser.id)) {
+            state.profiles.set(state.currentUser.id, {
+                id: state.currentUser.id,
+                nickname,
+                avatar_url: state.currentUser.user_metadata?.avatar_url || null
+            });
+        }
+
+        // Mostrar primero y confirmar después: la red nunca bloquea la respuesta visual.
+        state.comments.push(optimisticComment);
+        state.likeCounts.set(optimisticId, 0);
         state.isSubmitting = true;
+        clearComposer();
+        render();
+        highlightComment(optimisticId);
         dom.submitButton.disabled = true;
         dom.submitButton.textContent = '...';
 
         try {
             const payload = {
                 preset_slug: state.currentPreset,
-                parent_id: state.replyToId || null,
+                parent_id: originalReplyToId,
                 user_id: state.currentUser.id,
                 body
             };
@@ -1480,15 +1515,29 @@
             const { data: insertedComment, error } = await client
                 .from(COMMENTS_TABLE)
                 .insert(payload)
-                .select('id')
+                .select('id, preset_slug, parent_id, body, user_id, created_at, updated_at')
                 .single();
             if (error) throw error;
 
-            clearComposer();
-            await refreshForCurrentPreset({ force: true });
-            highlightComment(insertedComment?.id || null);
+            const optimisticIndex = state.comments.findIndex((comment) => comment.id === optimisticId);
+            if (optimisticIndex !== -1 && insertedComment?.id) {
+                state.comments.splice(optimisticIndex, 1, insertedComment);
+                state.likeCounts.delete(optimisticId);
+                state.likeCounts.set(insertedComment.id, 0);
+                render();
+                highlightComment(insertedComment.id);
+            }
         } catch (error) {
+            state.comments = state.comments.filter((comment) => comment.id !== optimisticId);
+            state.likeCounts.delete(optimisticId);
+            if (!dom.textarea.value.trim()) {
+                dom.textarea.value = body;
+                state.replyToId = originalReplyToId;
+                state.replyToAuthor = originalReplyToAuthor;
+            }
             renderStatus(error?.message || 'No se pudo publicar el comentario.', 'error');
+            render();
+            dom.textarea.focus();
             console.error('Preset comment insert error:', error);
         } finally {
             state.isSubmitting = false;
@@ -1758,12 +1807,13 @@
         const likeCount = state.likeCounts.get(comment.id) || 0;
         const liked = state.likedCommentIds.has(comment.id);
         const highlighted = state.highlightedCommentId === comment.id;
+        const isPending = comment._optimistic === true;
         const avatarBg = getAvatarColor(comment.user_id || authorName);
         const isOwner = Boolean(state.currentUser?.id) && state.currentUser.id === comment.user_id;
 
         return `
             <div class="pc-comment-row" data-comment-node-id="${escapeAttribute(comment.id)}">
-                <article class="pc-comment-item ${highlighted ? 'is-highlighted' : ''}" data-comment-id="${escapeAttribute(comment.id)}">
+                <article class="pc-comment-item ${highlighted ? 'is-highlighted' : ''}" data-comment-id="${escapeAttribute(comment.id)}" ${isPending ? 'aria-label="Enviando comentario"' : ''}>
                     <div class="pc-comment-avatar" style="background: ${avatarBg};">${avatarLabel}</div>
                     <div class="pc-comment-content">
                         <div class="pc-comment-text-wrap">
@@ -1772,15 +1822,17 @@
                         </div>
                         <div class="pc-comment-meta-row">
                             <span class="pc-comment-likes-count">
-                                <button type="button" class="pc-comment-like-btn ${liked ? 'is-active' : ''}" data-comment-action="like" data-comment-id="${escapeAttribute(comment.id)}" aria-label="Me gusta">
+                                <button type="button" class="pc-comment-like-btn ${liked ? 'is-active' : ''}" data-comment-action="like" data-comment-id="${escapeAttribute(comment.id)}" aria-label="Me gusta" ${isPending ? 'disabled' : ''}>
                                     <span class="material-symbols-outlined" aria-hidden="true">${liked ? 'favorite' : 'favorite_border'}</span>
                                 </button>
                                 <span class="pc-comment-like-count-value">${likeCount}</span>
                             </span>
-                            <button type="button" class="pc-comment-meta-action" data-comment-action="reply" data-comment-id="${escapeAttribute(comment.id)}" data-comment-author="${authorName}">Responder</button>
+                            ${isPending
+                                ? '<span class="pc-comment-meta-action" role="status">Enviando…</span>'
+                                : `<button type="button" class="pc-comment-meta-action" data-comment-action="reply" data-comment-id="${escapeAttribute(comment.id)}" data-comment-author="${authorName}">Responder</button>`}
                         </div>
                     </div>
-                    ${isOwner ? `
+                    ${isOwner && !isPending ? `
                         <button type="button" class="pc-comment-owner-action" data-comment-action="delete" data-comment-id="${escapeAttribute(comment.id)}" aria-label="Eliminar comentario">
                             <span class="material-symbols-outlined" aria-hidden="true">delete</span>
                         </button>

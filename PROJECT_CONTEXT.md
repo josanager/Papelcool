@@ -32,7 +32,9 @@ Lee estos archivos en este orden antes de cambiar algo:
 
 - Existe flujo de presets 3D con vista `preset-preview`.
 - Existe vista separada `tiktok` para filtros/videos de TikTok; no debe vivir dentro de la landing.
-- Existe flujo de pago Stripe en modo test para el editor custom: pago único de 5 USD antes de descargar el PDF personalizado.
+- Existe flujo de pago Stripe en modo test para el editor custom: pago único de 5 USD antes de solicitar el PDF personalizado.
+- La plantilla custom se genera fuera de la web mediante una API asíncrona configurada con `TEMPLATE_GENERATOR_URL`.
+- Cloudflare valida el pago, sanea el manifiesto y firma las peticiones al generador; el navegador nunca recibe el secreto externo.
 - Stripe usa Pages Functions `/api/stripe/create-checkout-session`, `/api/stripe/verify-session` y `/api/stripe/webhook`; las claves secretas solo van en variables de Cloudflare.
 - Existe auth con Supabase.
 - Existe sistema de comentarios en implementación para presets.
@@ -51,6 +53,7 @@ Lee estos archivos en este orden antes de cambiar algo:
 - Se definió la lógica guest vs authenticated en comentarios.
 - Se reorganizó la navegación superior a Inicio, Personajes, TikTok, Personalizado y Favoritos.
 - Se integró Stripe test para pago único de personalizados. No guardar `STRIPE_SECRET_KEY` ni `STRIPE_WEBHOOK_SECRET` en archivos del repo.
+- Se desacopló la generación de PDFs custom mediante `/api/custom-template-job` y `/api/custom-template-download`.
 
 ## Cómo mantener este archivo
 

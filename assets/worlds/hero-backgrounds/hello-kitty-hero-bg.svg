@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2350 1000" role="img" aria-label="Kawaii pastel room background">
+  <defs>
+    <!-- Wall background color -->
+    <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffb8d0"/>
+      <stop offset="50%" stop-color="#ffd1e3"/>
+      <stop offset="100%" stop-color="#ffbad0"/>
+    </linearGradient>
+    
+    <!-- Central soft room glow -->
+    <radialGradient id="roomGlow" cx="50%" cy="45%" r="42%">
+      <stop offset="0%" stop-color="#fff5f9"/>
+      <stop offset="100%" stop-color="#fff5f9" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Pink Wall -->
+  <rect width="2350" height="1000" fill="url(#wall)"/>
+
+  <!-- Kawaii Wall Grid Pattern (Polka dots) -->
+  <g fill="#ff9ebd" opacity="0.3">
+    <circle cx="100" cy="100" r="10"/>
+    <circle cx="300" cy="100" r="10"/>
+    <circle cx="500" cy="100" r="10"/>
+    <circle cx="700" cy="100" r="10"/>
+    <circle cx="900" cy="100" r="10"/>
+    <circle cx="1100" cy="100" r="10"/>
+    <circle cx="1300" cy="100" r="10"/>
+    <circle cx="1500" cy="100" r="10"/>
+    <circle cx="1700" cy="100" r="10"/>
+    <circle cx="1900" cy="100" r="10"/>
+    <circle cx="2100" cy="100" r="10"/>
+    <circle cx="2300" cy="100" r="10"/>
+
+    <circle cx="200" cy="250" r="10"/>
+    <circle cx="400" cy="250" r="10"/>
+    <circle cx="600" cy="250" r="10"/>
+    <circle cx="800" cy="250" r="10"/>
+    <circle cx="1000" cy="250" r="10"/>
+    <circle cx="1200" cy="250" r="10"/>
+    <circle cx="1400" cy="250" r="10"/>
+    <circle cx="1600" cy="250" r="10"/>
+    <circle cx="1800" cy="250" r="10"/>
+    <circle cx="2000" cy="250" r="10"/>
+    <circle cx="2200" cy="250" r="10"/>
+
+    <circle cx="100" cy="400" r="10"/>
+    <circle cx="300" cy="400" r="10"/>
+    <circle cx="500" cy="400" r="10"/>
+    <circle cx="700" cy="400" r="10"/>
+    <circle cx="900" cy="400" r="10"/>
+    <circle cx="1100" cy="400" r="10"/>
+    <circle cx="1300" cy="400" r="10"/>
+    <circle cx="1500" cy="400" r="10"/>
+    <circle cx="1700" cy="400" r="10"/>
+    <circle cx="1900" cy="400" r="10"/>
+    <circle cx="2100" cy="400" r="10"/>
+    <circle cx="2300" cy="400" r="10"/>
+  </g>
+
+  <!-- Room Glow -->
+  <rect width="2350" height="1000" fill="url(#roomGlow)"/>
+
+  <!-- Floating Sticker Clouds (Sticker style with shadows) -->
+  <g fill="#ffffff" stroke="#000" stroke-width="5" stroke-linejoin="miter">
+    <!-- Cloud Left shadow -->
+    <path d="M260 168c0-36 30-66 66-66 10-26 36-44 66-44 36 0 66 25 74 60 40 2 72 34 72 74H260c0-14 0-16 0-24Z" fill="#000" opacity="0.2" stroke="none" transform="translate(6, 6)"/>
+    <!-- Cloud Left -->
+    <path d="M260 168c0-36 30-66 66-66 10-26 36-44 66-44 36 0 66 25 74 60 40 2 72 34 72 74H260c0-14 0-16 0-24Z" fill="#fff"/>
+    
+    <!-- Cloud Right shadow -->
+    <path d="M1700 146c0-32 28-58 60-58 10-24 34-40 60-40 34 0 62 24 70 56 34 2 62 30 62 64h-252c0-10 0-12 0-22Z" fill="#000" opacity="0.2" stroke="none" transform="translate(6, 6)"/>
+    <!-- Cloud Right -->
+    <path d="M1700 146c0-32 28-58 60-58 10-24 34-40 60-40 34 0 62 24 70 56 34 2 62 30 62 64h-252c0-10 0-12 0-22Z" fill="#fff"/>
+  </g>
+
+  <!-- Hanging Cloud waves (Curtain borders) -->
+  <!-- Shadow first -->
+  <path d="M0 760c150-145 285-210 470-210 134 0 248 35 360 110 126-96 252-140 402-140 166 0 298 44 436 146 102-74 216-106 350-106 140 0 252 42 332 110v330H0Z" fill="#000" opacity="0.15" transform="translate(0, 10)"/>
+  <!-- Waves -->
+  <g fill="#fff5fa" stroke="#000" stroke-width="6" stroke-linejoin="miter">
+    <path d="M0 760c150-145 285-210 470-210 134 0 248 35 360 110 126-96 252-140 402-140 166 0 298 44 436 146 102-74 216-106 350-106 140 0 252 42 332 110v330H0Z"/>
+    <path d="M0 640c110-90 200-130 324-130 102 0 180 22 274 76 112-82 230-120 366-120 132 0 244 36 352 114 110-74 214-106 334-106 148 0 272 54 426 166v360H0Z" fill="#ffedf4" opacity="0.82"/>
+  </g>
+
+  <!-- Room Wooden Floor -->
+  <!-- Shadow first -->
+  <rect x="0" y="820" width="2350" height="180" fill="#000" opacity="0.25" transform="translate(0, 8)"/>
+  <!-- Floor base -->
+  <rect x="0" y="820" width="2350" height="180" fill="#f5ceba" stroke="#000" stroke-width="6"/>
+
+  <!-- Round Pastel Pink Rug under Character -->
+  <g stroke="#000" stroke-width="5" stroke-linejoin="miter">
+    <ellipse cx="1180" cy="815" rx="420" ry="86" fill="#ffe2eb"/>
+    <ellipse cx="1180" cy="815" rx="350" ry="62" fill="#ffcbdc"/>
+  </g>
+
+  <!-- Kawaii Pastel Furniture/Drawers (Sticker style with hard shadows & borders) -->
+  <g stroke="#000" stroke-width="7" stroke-linejoin="miter">
+    <!-- Drawer Left shadow -->
+    <rect x="170" y="410" width="190" height="300" rx="22" fill="#000" opacity="0.2" stroke="none" transform="translate(8, 8)"/>
+    <!-- Drawer Left -->
+    <rect x="170" y="410" width="190" height="300" rx="22" fill="#ffacc5"/>
+    <rect x="195" y="460" width="140" height="40" rx="10" fill="#fff" stroke-width="4"/>
+    <circle cx="265" cy="480" r="8" fill="#ffacc5"/>
+    <rect x="195" y="540" width="140" height="40" rx="10" fill="#fff" stroke-width="4"/>
+    <circle cx="265" cy="560" r="8" fill="#ffacc5"/>
+    <rect x="195" y="620" width="140" height="40" rx="10" fill="#fff" stroke-width="4"/>
+    <circle cx="265" cy="640" r="8" fill="#ffacc5"/>
+
+    <!-- Drawer Right shadow -->
+    <rect x="1910" y="330" width="220" height="350" rx="24" fill="#000" opacity="0.2" stroke="none" transform="translate(8, 8)"/>
+    <!-- Drawer Right -->
+    <rect x="1910" y="330" width="220" height="350" rx="24" fill="#ffb8cf"/>
+    <!-- Drawer shelves -->
+    <rect x="1940" y="380" width="160" height="46" rx="12" fill="#fff" stroke-width="4"/>
+    <circle cx="220" cy="220" r="8" fill="#ffb8cf" transform="translate(1800, 183)"/>
+    <rect x="1940" y="460" width="160" height="46" rx="12" fill="#fff" stroke-width="4"/>
+    <circle cx="220" cy="220" r="8" fill="#ffb8cf" transform="translate(1800, 263)"/>
+    <rect x="1940" y="540" width="160" height="46" rx="12" fill="#fff" stroke-width="4"/>
+    <circle cx="220" cy="220" r="8" fill="#ffb8cf" transform="translate(1800, 343)"/>
+
+    <!-- Toy Box shadow -->
+    <rect x="1780" y="610" width="190" height="190" rx="18" fill="#000" opacity="0.2" stroke="none" transform="translate(8, 8)"/>
+    <!-- Toy Box -->
+    <rect x="1780" y="610" width="190" height="190" rx="18" fill="#ffacc5"/>
+    <path d="M1820 660 L 1930 660 M 1820 700 L 1930 700" stroke="#000" stroke-width="5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Hanging Bows and Stars (Cute accents) -->
+  <g stroke="#000" stroke-width="4" stroke-linejoin="miter">
+    <!-- Pink Bow Left shadow -->
+    <path d="M640 118c-18 0-30 12-30 30 0 8 2 14 6 20-16 2-28 14-28 30 0 18 14 32 32 32 12 0 22-6 28-16 6 10 16 16 28 16 18 0 32-14 32-32 0-16-12-28-28-30 4-6 6-12 6-20 0-18-12-30-30-30-10 0-18 4-26 12-8-8-16-12-26-12Z" fill="#000" opacity="0.2" stroke="none" transform="translate(6, 6)"/>
+    <!-- Pink Bow Left -->
+    <path d="M640 118c-18 0-30 12-30 30 0 8 2 14 6 20-16 2-28 14-28 30 0 18 14 32 32 32 12 0 22-6 28-16 6 10 16 16 28 16 18 0 32-14 32-32 0-16-12-28-28-30 4-6 6-12 6-20 0-18-12-30-30-30-10 0-18 4-26 12-8-8-16-12-26-12Z" fill="#ff7da6"/>
+    <circle cx="640" cy="165" r="12" fill="#fff"/>
+    
+    <!-- Pink Bow Right shadow -->
+    <path d="M1870 132c-18 0-30 12-30 30 0 8 2 14 6 20-16 2-28 14-28 30 0 18 14 32 32 32 12 0 22-6 28-16 6 10 16 16 28 16 18 0 32-14 32-32 0-16-12-28-28-30 4-6 6-12 6-20 0-18-12-30-30-30-10 0-18 4-26 12-8-8-16-12-26-12Z" fill="#000" opacity="0.2" stroke="none" transform="translate(6, 6)"/>
+    <!-- Pink Bow Right -->
+    <path d="M1870 132c-18 0-30 12-30 30 0 8 2 14 6 20-16 2-28 14-28 30 0 18 14 32 32 32 12 0 22-6 28-16 6 10 16 16 28 16 18 0 32-14 32-32 0-16-12-28-28-30 4-6 6-12 6-20 0-18-12-30-30-30-10 0-18 4-26 12-8-8-16-12-26-12Z" fill="#ff7da6"/>
+    <circle cx="1870" cy="179" r="12" fill="#fff"/>
+  </g>
+</svg>

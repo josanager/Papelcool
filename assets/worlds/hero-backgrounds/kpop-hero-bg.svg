@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2350 1000" role="img" aria-label="Neon fantasy skyline background">
+  <defs>
+    <!-- Sky Gradient -->
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#060829"/>
+      <stop offset="50%" stop-color="#141052"/>
+      <stop offset="100%" stop-color="#3d0a5d"/>
+    </linearGradient>
+    
+    <!-- Floor Gradient -->
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b0a24"/>
+      <stop offset="100%" stop-color="#02030a"/>
+    </linearGradient>
+
+    <!-- Glowing Pink Gradient -->
+    <linearGradient id="beamR" x1="1" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#ff4da3" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#ff4da3" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#ff4da3" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Glowing Blue Gradient -->
+    <linearGradient id="beamL" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0%" stop-color="#33ccff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#33ccff" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#33ccff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background Sky -->
+  <rect width="2350" height="1000" fill="url(#sky)"/>
+
+  <!-- Neon Grid / Concentric Circles (Concert Vibe) -->
+  <g fill="none" stroke="#ff4da3" stroke-opacity="0.25" stroke-width="3">
+    <circle cx="1175" cy="380" r="450"/>
+    <circle cx="1175" cy="380" r="320" stroke="#33ccff" stroke-opacity="0.3"/>
+    <circle cx="1175" cy="380" r="200"/>
+  </g>
+
+  <!-- Big Neon Heart Sticker in Sky -->
+  <!-- Shadow first -->
+  <path d="M1175 190 C1140 130, 1050 130, 1010 180 C970 230, 990 320, 1175 410 C1360 320, 1380 230, 1340 180 C1300 130, 1210 130, 1175 190 Z" fill="#000" opacity="0.35" transform="translate(10, 10)"/>
+  <!-- Outer stroke / glow -->
+  <path d="M1175 190 C1140 130, 1050 130, 1010 180 C970 230, 990 320, 1175 410 C1360 320, 1380 230, 1340 180 C1300 130, 1210 130, 1175 190 Z" fill="#FF4D94" stroke="#000" stroke-width="8"/>
+  <path d="M1175 220 C1150 170, 1080 170, 1050 210 C1020 250, 1030 310, 1175 380 C1320 310, 1330 250, 1300 210 C1270 170, 1200 170, 1175 220 Z" fill="#ffacd2"/>
+
+  <!-- Glowing Laser Beams -->
+  <g opacity="0.75">
+    <path d="M150 900 480 100 650 900Z" fill="url(#beamL)"/>
+    <path d="M500 900 820 50 1050 900Z" fill="url(#beamR)"/>
+    <path d="M1300 900 1530 50 1850 900Z" fill="url(#beamL)"/>
+    <path d="M1700 900 2020 100 2200 900Z" fill="url(#beamR)"/>
+  </g>
+
+  <!-- City Skylines (Concert Background silhouette) -->
+  <!-- Back skyline (Dark Blue) -->
+  <g fill="#0b0a24" opacity="0.8">
+    <path d="M0 760h180v-100h55v100h78v-170h66v170h120v-90h58v90h152v-210h84v210h220v-140h70v140h350v-180h80v180h240v-110h60v110h250v-150h90v150h120v240H0Z"/>
+  </g>
+
+  <!-- Front Skyline with thick borders & windows (Sticker Pop-Art Style) -->
+  <!-- Shadow first -->
+  <path d="M0 760 h2350 v240 h-2350 Z" fill="#000" opacity="0.2" transform="translate(8, 8)"/>
+  
+  <g fill="#141336" stroke="#000" stroke-width="6" stroke-linejoin="miter">
+    <!-- City silhouette path -->
+    <path d="M0 760 h90 v-150 h55 v150 h78 v-210 h66 v210 h62 v-125 h58 v125 h120 v-180 h44 v180 h84 v-250 h72 v250 h90 v-145 h51 v145 h180 v-170 h62 v170 h59 v-225 h69 v225 h290 v-190 h54 v190 h83 v-240 h72 v240 h120 v-160 h56 v160 h180 v-120 h44 v120 h67 v-175 h71 v175 h100 v240 H0 Z"/>
+  </g>
+
+  <!-- Glowing Windows (Neon Yellow & Cyan Squares) -->
+  <g fill="#FFE600">
+    <rect x="25" y="660" width="12" height="20"/>
+    <rect x="50" y="660" width="12" height="20"/>
+    <rect x="25" y="700" width="12" height="20"/>
+    <rect x="50" y="700" width="12" height="20"/>
+    
+    <rect x="175" y="580" width="16" height="16"/>
+    <rect x="175" y="610" width="16" height="16"/>
+    <rect x="175" y="640" width="16" height="16"/>
+
+    <rect x="495" y="620" width="14" height="24" fill="#33ccff"/>
+    <rect x="525" y="620" width="14" height="24" fill="#33ccff"/>
+    <rect x="495" y="660" width="14" height="24" fill="#33ccff"/>
+    <rect x="525" y="660" width="14" height="24" fill="#33ccff"/>
+    
+    <rect x="830" y="570" width="15" height="15"/>
+    <rect x="855" y="570" width="15" height="15"/>
+    <rect x="830" y="600" width="15" height="15"/>
+    <rect x="855" y="600" width="15" height="15"/>
+    
+    <rect x="1540" y="560" width="16" height="16" fill="#33ccff"/>
+    <rect x="1540" y="590" width="16" height="16" fill="#33ccff"/>
+    <rect x="1540" y="620" width="16" height="16" fill="#33ccff"/>
+  </g>
+
+  <!-- Concert Floor (Stage) -->
+  <!-- Shadow first -->
+  <rect x="0" y="810" width="2350" height="190" fill="#000" opacity="0.3" transform="translate(0, 8)"/>
+  <rect x="0" y="810" width="2350" height="190" fill="url(#floor)" stroke="#000" stroke-width="6"/>
+
+  <!-- Stage Grid/Perspective Lines -->
+  <g stroke="#ff4da3" stroke-width="2" opacity="0.4">
+    <line x1="200" y1="810" x2="-200" y2="1000"/>
+    <line x1="600" y1="810" x2="200" y2="1000"/>
+    <line x1="1000" y1="810" x2="800" y2="1000"/>
+    <line x1="1350" y1="810" x2="1550" y2="1000"/>
+    <line x1="1750" y1="810" x2="2150" y2="1000"/>
+  </g>
+
+  <!-- Glowing neon stage edge -->
+  <line x1="0" y1="810" x2="2350" y2="810" stroke="#33ccff" stroke-width="8"/>
+
+  <!-- Audience Crowd Silhouettes (Concert feel) -->
+  <g fill="#070814" opacity="0.95">
+    <!-- Center platform/barrier -->
+    <path d="M1240 1000c88-84 194-132 322-132 128 0 235 48 323 132Z"/>
+    
+    <!-- Audience hands & heads silhouettes -->
+    <!-- Left crowd -->
+    <path d="M50 1000 Q 80 940, 110 1000 M 140 1000 Q 165 920, 190 1000 Q 210 930, 230 1000 M 280 1000 Q 300 950, 320 1000"/>
+    <path d="M80 970 l 10-30 h5 l-10 30 Z" stroke="#070814" stroke-width="6" stroke-linecap="round"/>
+    <path d="M200 960 l 15-40 h5 l-15 40 Z" stroke="#070814" stroke-width="6" stroke-linecap="round"/>
+
+    <!-- Right crowd -->
+    <path d="M2100 1000 Q 2125 930, 2150 1000 M 2180 1000 Q 2210 940, 2240 1000 M 2270 1000 Q 2295 925, 2320 1000"/>
+    <path d="M2130 960 l -15-40 h-5 l 15 40 Z" stroke="#070814" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <!-- Sparkles & Floating Neon Stars (Sticker style) -->
+  <g fill="#33ccff" stroke="#000" stroke-width="3" stroke-linejoin="miter">
+    <!-- Star Left -->
+    <path d="M290 200 l 10 10 l -10 10 l -10 -10 Z"/>
+    <!-- Star Right -->
+    <path d="M2040 210 l 12 12 l -12 12 l -12 -12 Z" fill="#ff4da3"/>
+    
+    <!-- Musical Note Left -->
+    <path d="M480 150 v 25 a 8 8 0 1 1 -10 -5 h 10 Z" fill="#FFE600"/>
+    
+    <!-- Musical Note Right -->
+    <path d="M1850 160 v 25 a 8 8 0 1 1 -10 -5 h 10 Z" fill="#FFE600" transform="scale(-1, 1) translate(-3700, 0)"/>
+  </g>
+</svg>

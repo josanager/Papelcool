@@ -6,6 +6,11 @@ import {
   handleStripeWebhook,
   handleVerifyStripeCheckoutSession
 } from './functions/_lib/stripe-access.js';
+import {
+  createCustomTemplateJob,
+  downloadCustomTemplateJob,
+  getCustomTemplateJob
+} from './functions/_lib/custom-template-jobs.js';
 
 const root = process.cwd();
 
@@ -36,7 +41,7 @@ try {
 }
 
 const port = Number(process.env.PORT || 8001);
-const r2Base = 'https://pub-9432515251e743b7979ceb8e264f80ec.r2.dev/presets-pdfs/';
+const r2Base = process.env.PRESET_PDFS_DEV_BASE_URL || '';
 const localStripeAccessStore = new Map();
 const localStripeAccessKv = {
   async get(key) {
@@ -184,6 +189,22 @@ http.createServer(async (req, res) => {
       return;
     }
 
+    if (requestUrl.pathname === '/api/custom-template-job') {
+      const webRequest = await toWebRequest(req, requestUrl);
+      const response = req.method === 'POST'
+        ? await createCustomTemplateJob(webRequest, getLocalFunctionEnv())
+        : await getCustomTemplateJob(webRequest, getLocalFunctionEnv());
+      await sendWebResponse(res, response);
+      return;
+    }
+
+    if (requestUrl.pathname === '/api/custom-template-download') {
+      const webRequest = await toWebRequest(req, requestUrl);
+      const response = await downloadCustomTemplateJob(webRequest, getLocalFunctionEnv());
+      await sendWebResponse(res, response);
+      return;
+    }
+
     if (requestUrl.pathname === '/api/preset-template-download') {
       const character = requestUrl.searchParams.get('character');
       const sessionId = requestUrl.searchParams.get('session_id');
@@ -191,6 +212,13 @@ http.createServer(async (req, res) => {
 
       if (!fileName) {
         sendJson(res, 404, { error: 'Template not found for this character.' });
+        return;
+      }
+
+      if (!r2Base) {
+        sendJson(res, 503, {
+          error: 'Set PRESET_PDFS_DEV_BASE_URL to test PDF downloads locally.'
+        });
         return;
       }
 
@@ -214,7 +242,7 @@ http.createServer(async (req, res) => {
         }
       }
 
-      const upstream = await fetch(`${r2Base}${fileName}`, {
+      const upstream = await fetch(`${r2Base.replace(/\/?$/, '/')}${fileName}`, {
         method: req.method === 'HEAD' ? 'HEAD' : 'GET',
         headers: {
           Accept: 'application/pdf'

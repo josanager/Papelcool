@@ -14,8 +14,7 @@
     </script>
 
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#00a1e0">
@@ -33,8 +32,8 @@
     <link rel="apple-touch-icon" sizes="152x152" href="webclip.png">
     <link rel="apple-touch-icon" sizes="120x120" href="webclip.png">
     <link rel="apple-touch-icon" sizes="76x76" href="webclip.png">
-    <!-- Tailwind CSS para un diseño moderno y adaptable -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind precompilado: evita generar estilos en el navegador. -->
+    <link rel="stylesheet" href="assets/css/tailwind.css?v=20260710">
     <!-- Google Fonts para un estilo futurista - Optimizado -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -82,31 +81,6 @@
             });
         }
 
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "sticker-yellow": "#FFE600",
-                        "sticker-pink": "#FF4D94",
-                        "sticker-blue": "#407BFF",
-                        "sticker-green": "#2ECC71",
-                        "sticker-orange": "#FF9F43",
-                        "paper-white": "#FFFFFF",
-                        "grid-blue": "#D1E9FF",
-                    },
-                    fontFamily: {
-                        "display": ["Fredoka", "sans-serif"],
-                        "handwritten": ["Caveat", "cursive"]
-                    },
-                    boxShadow: {
-                        'sticker': '8px 8px 0px 0px rgba(0, 0, 0, 1)',
-                        'sticker-sm': '4px 4px 0px 0px rgba(0, 0, 0, 1)',
-                        'card-stack': '12px 12px 0px 0px rgba(0, 0, 0, 0.15)',
-                    }
-                },
-            },
-        }
     </script>
     <noscript>
         <link
@@ -313,6 +287,7 @@
             min-width: 0;
             height: auto;
             container-type: inline-size;
+            will-change: transform;
         }
 
         .fandom-card:hover {
@@ -323,6 +298,18 @@
         .fandom-card:active {
             transform: translate(4px, 4px);
             box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);
+        }
+
+        @media (hover: none) {
+            .fandom-card:active {
+                transform: translate(-2px, -2px);
+                box-shadow: 12px 12px 0 rgba(0, 0, 0, 1);
+            }
+
+            .fandom-card:active .fandom-image-container img {
+                transform: scale(1.4);
+                filter: drop-shadow(6px 5px 0 rgba(115, 125, 132, 0.58));
+            }
         }
 
         .fandom-badge {
@@ -352,6 +339,10 @@
             font-variation-settings: 'FILL' 0;
             font-size: clamp(1.15rem, 9.1cqw, 1.95rem);
             line-height: 1;
+            border: 0;
+            padding: 0;
+            background: transparent;
+            cursor: pointer;
         }
 
         .fandom-heart::after {
@@ -485,70 +476,31 @@
             gap: 0.5rem;
         }
 
-        .fandom-cart-btn {
-            position: relative;
-            width: clamp(26px, 9cqw, 34px);
-            height: clamp(26px, 9cqw, 34px);
-            border: 2px solid #000;
-            border-radius: 999px;
-            background: #fff;
-            color: #000;
+        .fandom-like-count {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            box-shadow: 2px 2px 0 #000;
-            cursor: pointer;
-            flex: 0 0 auto;
-            z-index: 30;
-            pointer-events: auto;
-            transition: background 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
-        }
-
-        .fandom-cart-btn .material-symbols-outlined {
-            font-size: clamp(1rem, 5cqw, 1.25rem);
-            line-height: 1;
-        }
-
-        .fandom-cart-btn::after {
-            content: "Añadir a carrito";
-            position: absolute;
-            top: calc(100% + 8px);
-            right: 0;
-            width: max-content;
-            max-width: 150px;
-            padding: 0.42rem 0.58rem;
-            border: 2px solid #000;
-            border-radius: 8px;
-            background: #fff;
-            color: #000;
-            box-shadow: 3px 3px 0 rgba(0, 0, 0, 1);
+            gap: clamp(0.15rem, 1.1cqw, 0.28rem);
+            color: #E9337A;
             font-family: 'Fredoka', sans-serif;
-            font-size: 0.68rem;
+            font-size: clamp(0.75rem, 3.6cqw, 0.9rem);
             font-weight: 800;
             line-height: 1;
-            text-transform: uppercase;
             white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(-3px);
-            transition: opacity 0.16s ease, transform 0.16s ease;
-            z-index: 20;
+            flex: 0 0 auto;
+            border: 0;
+            padding: 0;
+            background: transparent;
+            cursor: pointer;
         }
 
-        .fandom-cart-btn:hover,
-        .fandom-cart-btn.active {
-            background: #FFE600;
+        .fandom-like-count .material-symbols-outlined {
+            font-size: clamp(1.08rem, 5.2cqw, 1.3rem);
+            line-height: 1;
+            font-variation-settings: 'FILL' 0;
         }
 
-        .fandom-cart-btn:hover {
-            transform: translate(-1px, -1px);
-            box-shadow: 3px 3px 0 #000;
-        }
-
-        .fandom-cart-btn:hover::after,
-        .fandom-cart-btn:focus-visible::after {
-            opacity: 1;
-            transform: translateY(0);
+        .fandom-like-count.active .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1;
         }
 
         .fandom-name {
@@ -559,6 +511,10 @@
             text-transform: uppercase;
             margin: 0;
             line-height: 1.05;
+            min-height: 2.1em;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
         }
 
         .fandom-price-tag {
@@ -570,7 +526,7 @@
             border: 0;
             background: transparent;
             font-family: 'Fredoka', sans-serif;
-            font-size: clamp(0.95rem, 5.2cqw, 1.25rem);
+            font-size: clamp(1.12rem, 6.2cqw, 1.42rem);
             font-weight: 900;
             line-height: 1;
             color: #000;
@@ -1039,17 +995,17 @@
     <!-- jsPDF para generación de PDFs -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
     <!-- Canvas Confetti para animación de celebración -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
 
     <!-- Character & Texture Data - Archivo separado para organización -->
-    <script src="character-data.js?v=1.1"></script>
+    <script src="character-data.js?v=1.1" defer></script>
 
     <!-- Supabase for Authentication & Database -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="supabase-config.js"></script>
-    <script src="auth.js?v=20260630b"></script>
-    <script src="character-storage.js"></script>
-    <script src="preset-comments.js?v=20260630e"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="supabase-config.js" defer></script>
+    <script src="auth.js?v=20260630b" defer></script>
+    <script src="character-storage.js" defer></script>
+    <script src="preset-comments.js?v=20260630e" defer></script>
 
     <style>
         * {
@@ -1144,9 +1100,164 @@
             scrollbar-width: none;
         }
 
+        /* ── Profile Hero (no panel, directly on gradient) ── */
+        .pc-profile-hero {
+            display: flex;
+            align-items: center;
+            gap: 1.75rem;
+            padding: 0 0.5rem 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pc-profile-avatar {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            border: 4px solid #000;
+            overflow: hidden;
+            box-shadow: 6px 6px 0 rgba(0, 0, 0, 0.85);
+            background: #FFE600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transform: rotate(-3deg);
+        }
+
+        .pc-profile-avatar span {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.8rem;
+            line-height: 1;
+            font-weight: 800;
+            color: #000;
+            letter-spacing: 0.04em;
+        }
+
+        .pc-profile-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .pc-profile-name-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pc-profile-name {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin: 0;
+            color: #fff;
+            text-transform: uppercase;
+            text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+            line-height: 1.1;
+        }
+
+        .pc-profile-handle {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #FFE600;
+        }
+
+        .pc-profile-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+            margin-bottom: 0.75rem;
+            align-items: baseline;
+        }
+
+        .pc-profile-stat {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 0.35rem;
+        }
+
+        .pc-profile-stat strong {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.6rem;
+            line-height: 1;
+            color: #fff;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .pc-profile-stat span {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .pc-profile-bio {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.95rem;
+            line-height: 1.45;
+            margin: 0 0 0.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        .pc-profile-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .pc-profile-meta span {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ── Profile Tabs (flat, underline style) ── */
+        .pc-profile-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 1.75rem;
+            border-bottom: 3px solid rgba(0, 0, 0, 0.15);
+        }
+
+        .pc-profile-tab {
+            flex: 1;
+            max-width: 220px;
+            text-align: center;
+            padding: 0.85rem 1.25rem;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.55);
+            background: transparent;
+            border: none;
+            border-bottom: 4px solid transparent;
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+            margin-bottom: -3px;
+            letter-spacing: 0.5px;
+        }
+
+        .pc-profile-tab:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .pc-profile-tab.active {
+            color: #fff;
+            border-bottom-color: #FFE600;
+        }
+
+        /* ── Favorites Grid (bigger cards, 3 cols on desktop) ── */
         .pc-favorites-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             column-gap: 1.25rem;
             row-gap: 1.5rem;
             overflow: visible;
@@ -1159,11 +1270,11 @@
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 0.9rem;
+            padding: 1rem;
             background: #fff;
             border: 3px solid #000;
-            border-radius: 18px;
-            box-shadow: 4px 4px 0 rgba(0, 0, 0, 1);
+            border-radius: 20px;
+            box-shadow: 5px 5px 0 rgba(0, 0, 0, 1);
             cursor: pointer;
             transition: transform 0.18s ease, box-shadow 0.18s ease;
             min-height: 100%;
@@ -1174,43 +1285,48 @@
         }
 
         .pc-favorite-card:hover {
-            transform: translate(-2px, -2px);
-            box-shadow: 6px 6px 0 rgba(0, 0, 0, 1);
+            transform: translate(-2px, -3px);
+            box-shadow: 7px 8px 0 rgba(0, 0, 0, 1);
+        }
+
+        .pc-favorite-card:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 rgba(0, 0, 0, 1);
         }
 
         .pc-favorite-card-thumb {
             width: 100%;
+            aspect-ratio: 1 / 1;
             display: flex;
             align-items: center;
             justify-content: center;
             background: #D1E9FF;
             border: 2px solid #000;
-            border-radius: 12px;
-            margin-bottom: 0.7rem;
+            border-radius: 14px;
+            margin-bottom: 0.85rem;
             overflow: hidden;
-            flex: 0 0 58.95%;
         }
 
         .pc-favorite-card-thumb img {
-            width: 88%;
-            height: 88%;
+            width: 85%;
+            height: 85%;
             object-fit: contain;
         }
 
         .pc-favorite-card-thumb .preset-icon-placeholder {
-            width: 88%;
-            height: 88%;
+            width: 85%;
+            height: 85%;
             padding: 0.6rem;
-            font-size: 0.74rem;
+            font-size: 0.8rem;
             background: #fff;
         }
 
         .pc-favorite-card-title {
             margin: 0;
             font-family: 'Fredoka', sans-serif;
-            font-size: clamp(0.78rem, 4.6cqw, 0.98rem);
+            font-size: clamp(0.9rem, 4.6cqw, 1.15rem);
             font-weight: 700;
-            line-height: 1.06;
+            line-height: 1.1;
             text-align: center;
             color: #111827;
             text-transform: uppercase;
@@ -1219,11 +1335,11 @@
 
         .pc-favorite-heart {
             position: absolute;
-            top: clamp(8px, 3.4cqw, 10px);
-            right: clamp(8px, 3.4cqw, 10px);
+            top: clamp(10px, 3.4cqw, 14px);
+            right: clamp(10px, 3.4cqw, 14px);
             z-index: 12;
-            width: clamp(30px, 13.5cqw, 40px);
-            height: clamp(30px, 13.5cqw, 40px);
+            width: clamp(34px, 13.5cqw, 44px);
+            height: clamp(34px, 13.5cqw, 44px);
             border-width: 2px;
             border-radius: clamp(10px, 4.8cqw, 14px);
             color: #94A3B8;
@@ -1238,36 +1354,80 @@
         .pc-favorites-empty {
             text-align: center;
             padding: 3rem 1rem;
-            color: #666;
+            color: rgba(255, 255, 255, 0.7);
             font-family: 'Fredoka', sans-serif;
         }
 
-        .pc-profile-hero {
-            display: grid;
-            grid-template-columns: 120px minmax(0, 1fr);
-            gap: 1.25rem;
-            align-items: start;
-            margin: 0 1rem 1.5rem;
+        .pc-favorites-empty .material-symbols-outlined {
+            color: #FFE600 !important;
         }
 
+        .pc-favorites-empty p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* ── Profile Mobile ── */
         @media (max-width: 768px) {
+            .pc-profile-hero {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 1rem;
+                padding: 0 0 1.25rem;
+            }
+
+            .pc-profile-avatar {
+                width: 90px;
+                height: 90px;
+            }
+
+            .pc-profile-avatar span {
+                font-size: 2.2rem;
+            }
+
+            .pc-profile-name-row {
+                justify-content: center;
+            }
+
+            .pc-profile-name {
+                font-size: 1.65rem;
+            }
+
+            .pc-profile-stats {
+                justify-content: center;
+            }
+
+            .pc-profile-meta {
+                justify-content: center;
+            }
+
+            .pc-profile-tabs {
+                margin-bottom: 1.25rem;
+            }
+
+            .pc-profile-tab {
+                font-size: 0.95rem;
+                padding: 0.7rem 1rem;
+            }
+
             .pc-favorites-grid {
-                column-gap: 1rem;
-                row-gap: 1.25rem;
+                grid-template-columns: repeat(2, 1fr);
+                column-gap: 0.85rem;
+                row-gap: 1rem;
             }
 
             .pc-favorite-card {
-                padding: 0.7rem;
+                padding: 0.75rem;
+                border-radius: 18px;
             }
 
             .pc-favorite-card-title {
-                font-size: 0.88rem;
+                font-size: clamp(0.82rem, 4.6cqw, 1rem);
             }
 
-            .pc-profile-hero {
-                grid-template-columns: 1fr;
-                justify-items: center;
-                text-align: center;
+            .pc-favorite-card-thumb {
+                border-radius: 12px;
+                margin-bottom: 0.65rem;
             }
         }
 
@@ -1594,7 +1754,6 @@
         @media (max-width: 1279px) {
 
             #fandoms-grid,
-            .pc-favorites-grid,
             .presets-grid,
             .pc-home-collection-fandom-grid {
                 grid-template-columns: repeat(4, 1fr);
@@ -1645,7 +1804,6 @@
 
         @media (max-width: 900px) {
             #fandoms-grid,
-            .pc-favorites-grid,
             .presets-grid,
             .pc-home-collection-fandom-grid {
                 grid-template-columns: repeat(3, 1fr);
@@ -1660,7 +1818,6 @@
             }
 
             #fandoms-grid,
-            .pc-favorites-grid,
             .presets-grid,
             .pc-home-collection-fandom-grid {
                 grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -6445,22 +6602,31 @@
             .lp-hero {
                 width: 100%;
                 min-height: 520px;
-                background:
-                    radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.15) 0%, transparent 60%),
-                    linear-gradient(180deg, #37BDF7 0%, #0A92E8 100%);
+                background: #1fa4ee;
                 border-bottom: 5px solid #000;
                 position: relative;
                 overflow: hidden;
+                isolation: isolate;
+            }
+            .lp-hero::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(90deg, rgba(7, 20, 40, 0.66) 0%, rgba(7, 20, 40, 0.3) 42%, rgba(7, 20, 40, 0) 100%);
+                pointer-events: none;
+                z-index: 1;
             }
             .lp-hero-inner {
-                width: min(1400px, 100%);
+                width: min(1600px, 100%);
                 margin: 0 auto;
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 align-items: center;
                 min-height: 520px;
-                padding: 2rem;
-                gap: 2rem;
+                padding: clamp(2rem, 3vw, 3.25rem);
+                gap: clamp(2rem, 3vw, 3.75rem);
+                position: relative;
+                z-index: 2;
             }
             .lp-hero-copy {
                 z-index: 2;
@@ -6468,13 +6634,13 @@
             }
             .lp-hero-copy h1 {
                 font-family: 'Fredoka', sans-serif;
-                font-size: clamp(2.5rem, 3.5vw, 4rem);
+                font-size: clamp(3.5rem, 4.8vw, 5.95rem);
                 font-weight: 900;
                 line-height: 1.05;
                 color: #fff;
                 text-transform: uppercase;
                 text-shadow: 4px 4px 0 rgba(0,0,0,0.35);
-                margin: 0 0 1rem;
+                margin: 0 0 clamp(2.5rem, 3.5vw, 3.6rem);
                 max-width: 14ch;
             }
             .lp-hero-copy p {
@@ -6490,7 +6656,13 @@
             .lp-hero-ctas {
                 display: flex;
                 flex-wrap: wrap;
-                gap: 1rem;
+                gap: clamp(1rem, 1.1vw, 1.25rem);
+            }
+            .lp-hero-ctas .lp-btn {
+                flex: 0 0 auto;
+                min-width: 0;
+                padding: 1.08rem 1.6rem;
+                font-size: 1.08rem;
             }
             .lp-btn {
                 display: inline-flex;
@@ -6524,15 +6696,72 @@
             .lp-btn--dark { background: #111827; color: #FFE600; }
             .lp-hero-3d-slot {
                 position: relative;
-                min-height: 420px;
+                height: clamp(540px, 40vw, 850px);
                 border-radius: 28px;
                 overflow: hidden;
+                z-index: 2;
+            }
+        }
+
+        @media (min-width: 769px) and (min-aspect-ratio: 16/9) {
+            .lp-hero {
+                min-height: auto;
+                aspect-ratio: 2.35 / 1;
+            }
+            .lp-hero-inner {
+                min-height: 100%;
             }
         }
 
         @keyframes lp-float {
             0%, 100% { transform: translateY(0) rotate(-15deg); }
             50% { transform: translateY(-12px) rotate(-10deg); }
+        }
+
+        .lp-hero-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .lp-hero-bg-slide {
+            position: absolute;
+            inset: 0;
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            opacity: 0;
+            transition: opacity 1.1s ease;
+            will-change: opacity;
+        }
+        .lp-hero-bg-slide.is-active {
+            opacity: 1;
+        }
+        .lp-hero .funko-showcase-stage::before {
+            display: none;
+        }
+        .lp-btn__inner {
+            display: grid;
+            grid-template-columns: 1.2rem minmax(0, 1fr) 1.2rem;
+            align-items: center;
+            width: 100%;
+            gap: 0.5rem;
+        }
+        .lp-btn__label {
+            text-align: center;
+            white-space: nowrap;
+        }
+        .lp-btn__icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.2rem;
+            height: 1.2rem;
+            line-height: 1;
+        }
+        .lp-btn__icon--placeholder {
+            visibility: hidden;
         }
 
         /* --- BENEFITS STRIP --- */
@@ -6725,7 +6954,9 @@
                 overflow-x: auto;
                 scroll-snap-type: x mandatory;
                 gap: 1.5rem;
-                padding-bottom: 1.25rem;
+                padding: 1rem 1rem 1.75rem;
+                margin: -1rem;
+                scroll-padding-inline: 1rem;
                 scroll-behavior: smooth;
                 -webkit-overflow-scrolling: touch;
             }
@@ -6988,62 +7219,62 @@
             }
         }
 
-        /* --- HOW IT WORKS --- */
+        /* --- TOP DOWNLOADS --- */
         @media (min-width: 769px) {
-            .lp-how-section {
+            .lp-top-downloads-section {
                 background: linear-gradient(180deg, #fff 0%, #F0F9FF 100%);
                 border-bottom: 4px solid #000;
             }
-            .lp-steps-grid {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr);
-                gap: 1.5rem;
-                counter-reset: step-counter;
-            }
-            .lp-step-card {
-                text-align: center;
-                padding: 2rem 1.2rem;
-                border: 4px solid #000;
-                border-radius: 24px;
-                background: #fff;
-                box-shadow: 6px 6px 0 rgba(0,0,0,1);
-                transition: all 0.2s ease;
-                position: relative;
-            }
-            .lp-step-card:hover {
-                transform: translateY(-4px);
-                box-shadow: 10px 10px 0 rgba(0,0,0,1);
-            }
-            .lp-step-number {
-                width: 56px;
-                height: 56px;
-                border: 4px solid #000;
-                border-radius: 50%;
-                background: #FFE600;
-                box-shadow: 4px 4px 0 rgba(0,0,0,1);
+            .lp-top-downloads-header {
                 display: flex;
                 align-items: center;
-                justify-content: center;
-                font-family: 'Fredoka', sans-serif;
-                font-weight: 900;
-                font-size: 1.5rem;
-                color: #000;
-                margin: 0 auto 1rem;
+                justify-content: space-between;
+                gap: 1.5rem;
+                margin-bottom: 2rem;
             }
-            .lp-step-title {
+            .lp-top-downloads-header .lp-section-title {
+                margin: 0;
+                text-align: left;
+            }
+            .lp-top-downloads-header .lp-section-title::after {
+                margin-left: 0;
+            }
+            .lp-top-downloads-grid {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 1.5rem;
+            }
+            .lp-top-downloads-grid .fandom-card {
+                min-width: 0;
+            }
+            .lp-top-downloads-grid .fandom-image-container {
+                min-height: 220px;
+            }
+            .lp-download-rank {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                margin-top: 0.85rem;
                 font-family: 'Fredoka', sans-serif;
+                font-size: 0.76rem;
                 font-weight: 700;
-                font-size: 1.05rem;
                 text-transform: uppercase;
                 color: #000;
-                margin-bottom: 0.5rem;
             }
-            .lp-step-text {
-                font-family: 'Montserrat', sans-serif;
-                font-size: 0.88rem;
-                color: #555;
-                font-weight: 500;
-                line-height: 1.45;
+            .lp-download-rank-badge {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 2rem;
+                height: 2rem;
+                padding: 0 0.55rem;
+                border: 3px solid #000;
+                border-radius: 999px;
+                background: #FFE600;
+                box-shadow: 3px 3px 0 rgba(0,0,0,1);
+            }
+            .lp-download-rank-count {
+                opacity: 0.72;
             }
         }
 
@@ -7396,18 +7627,27 @@
             .lp-hero {
                 width: 100%;
                 min-height: auto;
-                background:
-                    radial-gradient(ellipse at 50% 30%, rgba(255,255,255,0.12) 0%, transparent 60%),
-                    linear-gradient(180deg, #37BDF7 0%, #0A92E8 100%);
+                background: #1fa4ee;
                 border-bottom: 4px solid #000;
                 position: relative;
                 overflow: hidden;
+                isolation: isolate;
+            }
+            .lp-hero::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                background: linear-gradient(180deg, rgba(7, 20, 40, 0.62) 0%, rgba(7, 20, 40, 0.18) 40%, rgba(7, 20, 40, 0) 100%);
+                pointer-events: none;
+                z-index: 1;
             }
             .lp-hero-inner {
                 display: flex;
                 flex-direction: column;
                 padding: 2rem 1.25rem 1rem;
                 gap: 1rem;
+                position: relative;
+                z-index: 2;
             }
             .lp-hero-copy {
                 z-index: 2;
@@ -7416,13 +7656,13 @@
             }
             .lp-hero-copy h1 {
                 font-family: 'Fredoka', sans-serif;
-                font-size: 2.5rem;
+                font-size: clamp(3.25rem, 14vw, 3.95rem);
                 font-weight: 900;
                 line-height: 1.08;
                 color: #fff;
                 text-transform: uppercase;
                 text-shadow: 3px 3px 0 rgba(0,0,0,0.35);
-                margin: 0 0 0.85rem;
+                margin: 0 0 clamp(2rem, 7vw, 2.35rem);
             }
             .lp-hero-copy p {
                 font-family: 'Montserrat', sans-serif;
@@ -7436,36 +7676,57 @@
             }
             .lp-hero-ctas {
                 display: flex;
-                gap: 0.75rem;
+                flex-wrap: nowrap;
                 justify-content: center;
-                flex-wrap: wrap;
+                gap: 0.6rem;
+                align-items: center;
+            }
+            .lp-hero-ctas .lp-btn {
+                min-width: 0;
+                width: auto;
+                flex: 0 1 auto;
+                padding: 0.85rem 0.9rem;
+                font-size: 0.86rem;
             }
             .lp-hero-3d-slot {
                 position: relative;
                 width: 100%;
-                height: 280px;
+                height: clamp(380px, 100vw, 480px);
                 border-radius: 20px;
                 overflow: hidden;
+                z-index: 2;
             }
 
             /* --- Shared button base (mobile) --- */
             .lp-btn {
                 display: inline-flex;
                 align-items: center;
-                gap: 0.5rem;
                 font-family: 'Fredoka', sans-serif;
-                font-size: 0.95rem;
+                font-size: 0.86rem;
                 font-weight: 800;
                 text-transform: uppercase;
-                letter-spacing: 0.06em;
-                padding: 0.85rem 1.6rem;
+                letter-spacing: 0.02em;
+                padding: 0.8rem 1rem;
                 border: 3px solid #000;
                 border-radius: 999px;
                 cursor: pointer;
                 box-shadow: 3px 3px 0 rgba(0,0,0,1);
                 transition: transform 0.12s, box-shadow 0.12s;
-                min-height: 44px;
+                min-height: 52px;
                 -webkit-tap-highlight-color: transparent;
+            }
+            .lp-btn__inner {
+                grid-template-columns: 1rem minmax(0, 1fr) 1rem;
+                gap: 0.35rem;
+            }
+            .lp-btn__label {
+                font-size: 0.86rem;
+                line-height: 1.05;
+            }
+            .lp-btn__icon {
+                width: 1rem;
+                height: 1rem;
+                font-size: 1rem;
             }
             .lp-btn:active {
                 transform: translate(2px, 2px);
@@ -7618,7 +7879,8 @@
                 overflow-x: auto;
                 scroll-snap-type: x mandatory;
                 gap: 1rem;
-                padding: 0 1.25rem 1rem;
+                padding: 1rem 1.25rem 1.5rem;
+                scroll-padding-inline: 1.25rem;
                 scroll-behavior: smooth;
                 -webkit-overflow-scrolling: touch;
             }
@@ -7849,55 +8111,63 @@
                 border-radius: 8px;
             }
 
-            /* --- HOW IT WORKS (2x2 grid) --- */
-            .lp-how-section {
+            /* --- TOP DOWNLOADS --- */
+            .lp-top-downloads-section {
                 padding: 2.5rem 0;
                 background: #fff;
                 border-bottom: 4px solid #000;
             }
-            .lp-steps-grid {
+            .lp-top-downloads-header {
+                padding: 0 1.25rem;
+                margin-bottom: 1.5rem;
+            }
+            .lp-top-downloads-header .lp-section-title {
+                margin-bottom: 0;
+            }
+            .lp-top-downloads-header .lp-section-title::after {
+                margin-top: 0.55rem;
+            }
+            .lp-top-downloads-header .lp-btn {
+                display: none;
+            }
+            .lp-top-downloads-grid {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 1rem;
+                padding: 0 1.25rem;
             }
-            .lp-step-card {
-                background: #fff;
-                border: 3px solid #000;
-                border-radius: 16px;
-                padding: 1.25rem;
-                text-align: center;
-                box-shadow: 3px 3px 0 rgba(0,0,0,1);
+            .lp-top-downloads-grid .fandom-card {
+                min-width: 0;
             }
-            .lp-step-number {
-                width: 42px;
-                height: 42px;
-                background: #FFE600;
-                color: #000;
-                border: 3px solid #000;
-                border-radius: 50%;
+            .lp-top-downloads-grid .fandom-image-container {
+                min-height: 150px;
+            }
+            .lp-download-rank {
                 display: flex;
                 align-items: center;
-                justify-content: center;
+                gap: 0.45rem;
+                margin-top: 0.65rem;
                 font-family: 'Fredoka', sans-serif;
-                font-size: 1.25rem;
-                font-weight: 900;
-                margin: 0 auto 0.6rem;
+                font-size: 0.7rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                color: #000;
+            }
+            .lp-download-rank-badge {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-width: 1.7rem;
+                height: 1.7rem;
+                padding: 0 0.45rem;
+                background: #FFE600;
+                color: #000;
+                border: 2px solid #000;
+                border-radius: 999px;
                 box-shadow: 2px 2px 0 rgba(0,0,0,1);
             }
-            .lp-step-title {
-                font-family: 'Fredoka', sans-serif;
-                font-size: 0.95rem;
-                font-weight: 800;
-                color: #000;
-                text-transform: uppercase;
-                margin-bottom: 0.3rem;
-            }
-            .lp-step-text {
-                font-family: 'Montserrat', sans-serif;
-                font-size: 0.82rem;
-                color: #555;
-                line-height: 1.4;
-                font-weight: 500;
+            .lp-download-rank-count {
+                opacity: 0.72;
             }
 
             /* --- SOCIAL PROOF + FAQ (stacked) --- */
@@ -8664,7 +8934,7 @@
             .pc-auth-footer-badge a:hover {
                 color: #FFE600;
             }
-            
+
             .pc-auth-footer-badge[data-type="login-ref"] {
                 background: #407BFF;
                 transform: rotate(-1deg);
@@ -8816,7 +9086,7 @@
                             <div class="pc-auth-social-row">
                                 <button onclick="handleGoogleSignIn()" class="pc-auth-social-btn" aria-label="Google">
                                     <svg width="24" height="24" viewBox="0 0 24 24">
-                                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92(3.28-4.74 3.28-8.09z" fill="#4285F4" />
+                                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
                                         <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-1 .67-2.28 1.07-3.71 1.07-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
                                         <path d="M5.84 14.11c-.22-.67-.35-1.39-.35-2.11s.13-1.44.35-2.11V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l3.66-2.83z" fill="#FBBC05" />
                                         <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.83c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
@@ -8887,10 +9157,7 @@
     <div id="pdf-progress-container" class="pdf-progress-overlay hidden">
         <div class="pdf-progress-modal">
             <button type="button" id="pdf-progress-close" class="pdf-progress-close" aria-label="Cerrar">
-                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 6 6 18"></path>
-                    <path d="m6 6 12 12"></path>
-                </svg>
+                <span class="material-symbols-outlined">close</span>
             </button>
             <div id="pdf-preparing-text" class="pdf-preparing-text" data-i18n="preparing-pdf">Preparing PDF...</div>
             <div id="pdf-progress-bar-container" class="pdf-progress-bar-container">
@@ -8900,9 +9167,7 @@
 
             <!-- Botón de descarga DENTRO del modal (oculto inicialmente) -->
             <button type="button" id="final-download-btn" class="final-download-btn-modal hidden">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z" />
-                </svg>
+                <span class="material-symbols-outlined">download</span>
                 <span data-i18n="download-pdf-btn">DOWNLOAD PDF</span>
             </button>
             <div id="pdf-download-message" class="pdf-download-message hidden" data-i18n="download-message">
@@ -8952,38 +9217,28 @@
         <button type="button" id="back-to-showcase-btn"
             class="preset-action-btn w-12 h-12 bg-white border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-yellow transition-colors group"
             aria-label="Volver al showcase">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                class="w-6 h-6 group-hover:scale-110 transition-transform">
-                <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
-            </svg>
+            <span class="material-symbols-outlined w-6 h-6 group-hover:scale-110 transition-transform flex items-center justify-center" style="font-size:24px;line-height:24px;">arrow_back</span>
         </button>
 
         <!-- Botón 2: Modo juego -->
         <button type="button" id="play-mode-btn-desktop-moved"
             class="preset-action-btn play-mode-btn w-12 h-12 bg-white border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-pink transition-colors group"
             aria-label="Modo juego">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"
-                class="w-6 h-6 group-hover:scale-110 transition-transform">
-                <path d="M8 5.14v14l11-7z" />
-            </svg>
+            <span class="material-symbols-outlined w-6 h-6 group-hover:scale-110 transition-transform flex items-center justify-center" style="font-size:24px;line-height:24px;">play_arrow</span>
         </button>
 
         <!-- Botón 3: Descargar PDF -->
         <button type="button" id="download-pdf-btn-moved"
             class="preset-action-btn w-12 h-12 bg-white border-4 border-black rounded-full shadow-sticker-sm flex items-center justify-center hover:bg-sticker-blue transition-colors group"
             aria-label="Descargar PDF">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M5 20h14v-2H5m14-9h-4V3H9v6H5l7 7z" />
-            </svg>
+            <span class="material-symbols-outlined w-6 h-6 group-hover:scale-110 transition-transform flex items-center justify-center" style="font-size:24px;line-height:24px;">download</span>
         </button>
     </div>
 
     <!-- Botones de showcase inicial (sin overlay) -->
 
     <button type="button" id="preset-template-download" class="preset-template-download" aria-label="Descargar plantilla PDF">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M12 3a1 1 0 0 1 1 1v8.59l2.3-2.29a1 1 0 1 1 1.4 1.41l-4 3.99a1 1 0 0 1-1.4 0l-4-3.99a1 1 0 1 1 1.4-1.41L11 12.59V4a1 1 0 0 1 1-1ZM5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1Z"/>
-        </svg>
+        <span class="material-symbols-outlined" aria-hidden="true" style="font-size: 24px; margin-right: 0.5rem;">download</span>
         <span class="preset-template-download-copy">
             <span class="preset-template-download-label" data-i18n="download-preset-template-btn">Descargar plantilla</span>
             <span class="preset-template-download-meta" data-i18n="download-preset-template-meta">PDF listo para imprimir</span>
@@ -9023,6 +9278,7 @@
                     <select id="fandom-filter">
                         <option value="all">Todos</option>
                         <option value="camilo">Camilo</option>
+                        <option value="gorilla-tag">Gorilla Tag</option>
                         <option value="miraculous">Miraculous</option>
                         <option value="morat">Morat</option>
                         <option value="minecraft">Minecraft</option>
@@ -9787,6 +10043,9 @@
         let appMode = 'edit';
         let activeAppView = 'showcase';
         let currentProfileUserId = null;
+        const publicProfileCache = new Map();
+        const PUBLIC_PROFILE_CACHE_TTL_MS = 2 * 60 * 1000;
+        let profileLoadVersion = 0;
         let currentMainPart = 'torso';
         let currentHeadPart = null;
         let keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false, ' ': false };
@@ -9922,7 +10181,7 @@
         // Detectar si es móvil para reducir calidad y memoria
         const isMobileDevice = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         const isLowPowerMobile = isMobileDevice || window.innerWidth <= 768;
-        const pixelRatio = isLowPowerMobile ? Math.min(window.devicePixelRatio || 1, 1.2) : Math.min(window.devicePixelRatio || 1, 1.8);
+        const pixelRatio = isLowPowerMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.8);
         let shouldRenderScene = true;
         let lastFrameTimestamp = 0;
         let customRenderBurstFrames = 0;
@@ -10014,19 +10273,20 @@
 
         function applyPresetPreviewPerformanceProfile() {
             const inPresetPreview = activeAppView === 'preset-preview';
-            const useLowPowerPresetProfile = isLowPowerMobile && inPresetPreview;
+            const usePresetProfile = inPresetPreview;
 
-            // En preset-preview móvil reducimos costo por pixel en iluminación dinámica.
+            // Las luces no proyectan sombras y tienen un coste pequeño. Mantenerlas
+            // visibles evita que la cara cambie entre escritorio y móvil.
             supplementalLights.forEach((light) => {
-                light.visible = !useLowPowerPresetProfile;
+                light.visible = true;
             });
 
-            controls.enableDamping = !useLowPowerPresetProfile;
-            controls.enablePan = !useLowPowerPresetProfile;
-            controls.rotateSpeed = useLowPowerPresetProfile ? 0.85 : 1.0;
-            controls.zoomSpeed = useLowPowerPresetProfile ? 0.8 : 1.0;
+            controls.enableDamping = true;
+            controls.enablePan = !usePresetProfile;
+            controls.rotateSpeed = 1.0;
+            controls.zoomSpeed = 1.0;
 
-            requestCustomRender(useLowPowerPresetProfile ? 26 : 18);
+            requestCustomRender(isLowPowerMobile && usePresetProfile ? 26 : 18);
         }
 
         // Referencia al grid para poder alternar visibilidad (DISABLED - clean background)
@@ -10238,6 +10498,60 @@
             return texture;
         }
 
+        function createOverlayMaterial(texture, extra = {}) {
+            return new THREE.MeshBasicMaterial({
+                map: texture,
+                transparent: true,
+                side: THREE.DoubleSide,
+                alphaTest: 0.5,
+                ...extra
+            });
+        }
+
+        const SHARED_OVERLAY_LAYOUTS = Object.freeze({
+            eyes: Object.freeze({ position: Object.freeze([0, 0.563, 1.129]), planeHeight: 5.556 }),
+            eyebrows: Object.freeze({ position: Object.freeze([0, 1.029, 1.13]), planeHeight: 2.256 }),
+            nose: Object.freeze({ position: Object.freeze([0, 1.029, 1.1285]), planeHeight: 2.256 }),
+            'ear-left': Object.freeze({ position: Object.freeze([-1.13, 1.029, 0]), rotation: Object.freeze([0, Math.PI / 2, 0]), scale: Object.freeze([-1, 1, 1]), planeHeight: 2.256 }),
+            'ear-right': Object.freeze({ position: Object.freeze([1.13, 1.029, 0]), rotation: Object.freeze([0, -Math.PI / 2, 0]), planeHeight: 2.256 }),
+            'hair-front': Object.freeze({ position: Object.freeze([0, 0.563, 1.1295]), planeHeight: 5.556 }),
+            'hair-back': Object.freeze({ position: Object.freeze([0, 0.563, -1.1285]), planeHeight: 5.556 }),
+            'hair-left': Object.freeze({ position: Object.freeze([-1.1285, 1.029, 0]), rotation: Object.freeze([0, -Math.PI / 2, 0]), planeHeight: 2.256 }),
+            'hair-right': Object.freeze({ position: Object.freeze([1.1285, 1.029, 0]), rotation: Object.freeze([0, Math.PI / 2, 0]), planeHeight: 2.256 }),
+            'hair-up': Object.freeze({ position: Object.freeze([0, 2.157, 0]), rotation: Object.freeze([-Math.PI / 2, 0, 0]), planeHeight: 2.256 }),
+            'beard-front': Object.freeze({ position: Object.freeze([0, 0.563, 1.129]), planeHeight: 5.556 }),
+            'beard-left': Object.freeze({ position: Object.freeze([-1.13, 1.029, 0]), planeHeight: 2.256 }),
+            'beard-right': Object.freeze({ position: Object.freeze([1.13, 1.029, 0]), planeHeight: 2.256 }),
+            'torso-front': Object.freeze({ position: Object.freeze([0, -1.176, 0.453]), planeHeight: 2.145 }),
+            'torso-back': Object.freeze({ position: Object.freeze([0, -1.176, -0.453]), rotation: Object.freeze([0, Math.PI, 0]), planeHeight: 2.145 }),
+            'arm-left-front': Object.freeze({ position: Object.freeze([-1.288, -0.934, -0.001]), rotation: Object.freeze([0, Math.PI, 0]), planeHeight: 1.677 }),
+            'arm-left-back': Object.freeze({ position: Object.freeze([-1.288, -0.934, 0.006]), rotation: Object.freeze([0, Math.PI, 0]), planeHeight: 1.677 }),
+            'arm-right-front': Object.freeze({ position: Object.freeze([-1.288, -0.934, 0.001]), planeHeight: 1.677 }),
+            'arm-right-back': Object.freeze({ position: Object.freeze([-1.288, -0.934, -0.006]), planeHeight: 1.677 }),
+            'leg-left-front': Object.freeze({ position: Object.freeze([0, -1.176, 0.452]), planeHeight: 2.145 }),
+            'leg-left-back': Object.freeze({ position: Object.freeze([0, -1.176, -0.452]), planeHeight: 2.145 }),
+            'leg-right-front': Object.freeze({ position: Object.freeze([0, -1.176, 0.452]), rotation: Object.freeze([0, Math.PI, 0]), planeHeight: 2.145 }),
+            'leg-right-back': Object.freeze({ position: Object.freeze([0, -1.176, -0.452]), rotation: Object.freeze([0, Math.PI, 0]), planeHeight: 2.145 }),
+            instrument: Object.freeze({ position: Object.freeze([0, 0.563, 0.4535]), planeHeight: 5.556 })
+        });
+
+        function getSharedOverlayLayout(key) {
+            return SHARED_OVERLAY_LAYOUTS[key] || null;
+        }
+
+        function getSharedOverlayOptions(key, extraOptions = {}) {
+            const layout = getSharedOverlayLayout(key);
+            if (!layout) return extraOptions;
+
+            return {
+                position: [...layout.position],
+                ...(layout.rotation ? { rotation: [...layout.rotation] } : {}),
+                ...(layout.scale ? { scale: [...layout.scale] } : {}),
+                planeHeight: layout.planeHeight,
+                ...extraOptions
+            };
+        }
+
         // NOTA: SVG son vectoriales y se escalan perfectamente sin pérdida de calidad
         // No requieren redimensionamiento ni compresión
         // Esto ahorra memoria RAM y mejora el rendimiento
@@ -10291,7 +10605,10 @@
         }
 
         // Función para cargar texturas SVG únicamente
-        function loadOptimizedTexture(url, onLoad, onError) {
+        function loadOptimizedTexture(url, onLoad, maybeOnProgress, maybeOnError) {
+            const onError = typeof maybeOnError === 'function'
+                ? maybeOnError
+                : (typeof maybeOnProgress === 'function' ? maybeOnProgress : undefined);
             // En custom y preset-preview usamos el mismo presupuesto de raster y caché
             // del showcase del landing para igualar calidad/coste entre viewers 3D.
             if (activeAppView === 'custom' || activeAppView === 'preset-preview') {
@@ -10428,7 +10745,10 @@
         const presetPreviewTextureCache = new Map();
         const MAX_PRESET_PREVIEW_TEXTURES = isLowPowerMobile ? 4 : 10;
         const showcaseTextureCache = new Map();
-        const MAX_SHOWCASE_TEXTURES = isLowPowerMobile ? 5 : 14;
+        // Una entrada almacena el raster original a la resolución existente, no una copia reducida.
+        // El límite cubre un personaje completo para evitar expulsiones durante el mismo cambio.
+        const MAX_SHOWCASE_TEXTURES = isLowPowerMobile ? 12 : 24;
+        const showcaseTextureLoads = new Map();
         const presetPreviewRuntime = {
             stageEl: null,
             mountEl: null,
@@ -10717,7 +11037,9 @@
             }
 
             const target = Math.round(longSide * dpr * multiplier);
-            return Math.max(256, Math.min(isLowPowerMobile ? 640 : 960, target));
+            const isFaceDetail = normalizedUrl.includes('/eyes/') || normalizedUrl.includes('/eyebrow') || normalizedUrl.includes('/nose/');
+            const minimum = isLowPowerMobile && isFaceDetail ? 512 : 256;
+            return Math.max(minimum, Math.min(isLowPowerMobile ? 640 : 960, target));
         }
 
         function createShowcaseTexture(source) {
@@ -10731,21 +11053,12 @@
             return texture;
         }
 
-        function loadShowcaseTexture(url) {
-            return new Promise((resolve, reject) => {
-                if (!url) {
-                    resolve(null);
-                    return;
-                }
+        function loadShowcaseRasterSource(url, targetLongSide, cacheKey) {
+            const cachedSource = getShowcaseTextureSource(cacheKey);
+            if (cachedSource) return Promise.resolve(cachedSource);
+            if (showcaseTextureLoads.has(cacheKey)) return showcaseTextureLoads.get(cacheKey);
 
-                const targetLongSide = getShowcaseRasterLongSide(url);
-                const cacheKey = `${url}::${targetLongSide}`;
-                const cachedSource = getShowcaseTextureSource(cacheKey);
-                if (cachedSource) {
-                    resolve(createShowcaseTexture(cachedSource));
-                    return;
-                }
-
+            const loadPromise = new Promise((resolve, reject) => {
                 const img = new Image();
                 img.crossOrigin = 'anonymous';
 
@@ -10772,12 +11085,24 @@
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
                     rememberShowcaseTexture(cacheKey, canvas);
-                    resolve(createShowcaseTexture(canvas));
+                    resolve(canvas);
                 };
 
                 img.onerror = (error) => reject(error);
                 img.src = url;
-            });
+            }).finally(() => showcaseTextureLoads.delete(cacheKey));
+
+            showcaseTextureLoads.set(cacheKey, loadPromise);
+            return loadPromise;
+        }
+
+        async function loadShowcaseTexture(url) {
+            if (!url) return null;
+            const targetLongSide = getShowcaseRasterLongSide(url);
+            const cacheKey = `${url}::${targetLongSide}`;
+            const source = await loadShowcaseRasterSource(url, targetLongSide, cacheKey);
+            // Cada material conserva su propia Texture; el raster pesado sí se comparte.
+            return createShowcaseTexture(source);
         }
 
         function extractModelPartsFromRoot(root) {
@@ -11309,12 +11634,7 @@
                     const planeWidth = planeHeight * aspect;
 
                     if (!existingMesh || !existingMesh.parent) {
-                        const material = new THREE.MeshBasicMaterial({
-                            map: texture,
-                            transparent: true,
-                            side: THREE.DoubleSide,
-                            alphaTest: 0.45
-                        });
+                        const material = createOverlayMaterial(texture, { alphaTest: 0.45 });
                         const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         const mesh = new THREE.Mesh(geometry, material);
                         mesh.position.set(options.position?.[0] || 0, options.position?.[1] || 0, options.position?.[2] || 0);
@@ -11467,17 +11787,40 @@
 
             const textureTasks = [];
 
+            const eyesLayout = getSharedOverlayLayout('eyes');
+            const eyebrowsLayout = getSharedOverlayLayout('eyebrows');
+            const noseLayout = getSharedOverlayLayout('nose');
+            const hairFrontLayout = getSharedOverlayLayout('hair-front');
+            const hairBackLayout = getSharedOverlayLayout('hair-back');
+            const hairLeftLayout = getSharedOverlayLayout('hair-left');
+            const hairRightLayout = getSharedOverlayLayout('hair-right');
+            const hairUpLayout = getSharedOverlayLayout('hair-up');
+            const beardFrontLayout = getSharedOverlayLayout('beard-front');
+            const beardLeftLayout = getSharedOverlayLayout('beard-left');
+            const beardRightLayout = getSharedOverlayLayout('beard-right');
+            const torsoFrontLayout = getSharedOverlayLayout('torso-front');
+            const torsoBackLayout = getSharedOverlayLayout('torso-back');
+            const armLeftFrontLayout = getSharedOverlayLayout('arm-left-front');
+            const armLeftBackLayout = getSharedOverlayLayout('arm-left-back');
+            const armRightFrontLayout = getSharedOverlayLayout('arm-right-front');
+            const armRightBackLayout = getSharedOverlayLayout('arm-right-back');
+            const legLeftFrontLayout = getSharedOverlayLayout('leg-left-front');
+            const legLeftBackLayout = getSharedOverlayLayout('leg-left-back');
+            const legRightFrontLayout = getSharedOverlayLayout('leg-right-front');
+            const legRightBackLayout = getSharedOverlayLayout('leg-right-back');
+            const instrumentLayout = getSharedOverlayLayout('instrument');
+
             if (config.eyeTexture?.url && !config.hiddenOverlays.includes('eyes')) {
                 textureTasks.push(overlay('eyes', parts.head, config.eyeTexture.url, {
-                    position: [0, 1.029, 1.1285],
-                    planeHeight: 2.256
+                    position: [...eyesLayout.position],
+                    planeHeight: eyesLayout.planeHeight
                 }));
             }
 
             if (config.eyebrowTexture?.url && !config.hiddenOverlays.includes('eyebrows')) {
                 textureTasks.push(overlay('eyebrows', parts.head, config.eyebrowTexture.url, {
-                    position: [0, 1.029, 1.1295],
-                    planeHeight: 2.256
+                    position: [...eyebrowsLayout.position],
+                    planeHeight: eyebrowsLayout.planeHeight
                 }));
             } else {
                 clearPresetPreviewGroup(['eyebrows']);
@@ -11485,22 +11828,17 @@
 
             if (config.noseTexture?.url && !config.hiddenOverlays.includes('nose')) {
                 textureTasks.push(overlay('nose', parts.head, config.noseTexture.url, {
-                    position: [0, 1.029, 1.129],
-                    planeHeight: 2.256
+                    position: [...noseLayout.position],
+                    planeHeight: noseLayout.planeHeight
                 }));
             }
 
             if (config.earTexture?.url && !config.hiddenOverlays.includes('ear-left') && !config.hiddenOverlays.includes('ear-right')) {
                 textureTasks.push(overlay('ear-left', parts.head, config.earTexture.url, {
-                    position: [-1.13, 1.029, 0],
-                    rotation: [0, Math.PI / 2, 0],
-                    scale: [-1, 1, 1],
-                    planeHeight: 2.256
+                    ...getSharedOverlayOptions('ear-left')
                 }));
                 textureTasks.push(overlay('ear-right', parts.head, config.earTexture.url, {
-                    position: [1.13, 1.029, 0],
-                    rotation: [0, -Math.PI / 2, 0],
-                    planeHeight: 2.256
+                    ...getSharedOverlayOptions('ear-right')
                 }));
             } else {
                 clearPresetPreviewGroup(['ear-left', 'ear-right']);
@@ -11508,27 +11846,27 @@
 
             if (config.hairTexture?.frontUrl) {
                 textureTasks.push(overlay('hair-front', parts.head, config.hairTexture.frontUrl, {
-                    position: [0, 0.563, 1.129],
-                    planeHeight: 5.556
+                    position: [...hairFrontLayout.position],
+                    planeHeight: hairFrontLayout.planeHeight
                 }));
                 textureTasks.push(overlay('hair-back', parts.head, config.hairTexture.backUrl, {
-                    position: [0, 0.563, -1.1285],
-                    planeHeight: 5.556
+                    position: [...hairBackLayout.position],
+                    planeHeight: hairBackLayout.planeHeight
                 }));
                 textureTasks.push(overlay('hair-left', parts.head, config.hairTexture.leftUrl, {
-                    position: [-1.1285, 1.029, 0],
+                    position: [...hairLeftLayout.position],
                     rotation: [0, -Math.PI / 2, 0],
-                    planeHeight: 2.256
+                    planeHeight: hairLeftLayout.planeHeight
                 }));
                 textureTasks.push(overlay('hair-right', parts.head, config.hairTexture.rightUrl, {
-                    position: [1.1285, 1.029, 0],
+                    position: [...hairRightLayout.position],
                     rotation: [0, Math.PI / 2, 0],
-                    planeHeight: 2.256
+                    planeHeight: hairRightLayout.planeHeight
                 }));
                 textureTasks.push(overlay('hair-up', parts.head, config.hairTexture.upUrl, {
-                    position: [0, 2.157, 0],
+                    position: [...hairUpLayout.position],
                     rotation: [-Math.PI / 2, 0, 0],
-                    planeHeight: 2.256
+                    planeHeight: hairUpLayout.planeHeight
                 }));
             } else {
                 clearPresetPreviewGroup(['hair-front', 'hair-back', 'hair-left', 'hair-right', 'hair-up']);
@@ -11536,19 +11874,19 @@
 
             if (config.beardTexture?.frontUrl) {
                 textureTasks.push(overlay('beard-front', parts.head, config.beardTexture.frontUrl, {
-                    position: [0, 1.029, 1.129],
-                    planeHeight: 2.256
+                    position: [...beardFrontLayout.position],
+                    planeHeight: beardFrontLayout.planeHeight
                 }));
                 textureTasks.push(overlay('beard-left', parts.head, config.beardTexture.leftUrl, {
-                    position: [-1.13, 1.029, 0],
+                    position: [...beardLeftLayout.position],
                     rotation: [0, Math.PI / 2, 0],
                     scale: [-1, 1, 1],
-                    planeHeight: 2.256
+                    planeHeight: beardLeftLayout.planeHeight
                 }));
                 textureTasks.push(overlay('beard-right', parts.head, config.beardTexture.rightUrl, {
-                    position: [1.13, 1.029, 0],
+                    position: [...beardRightLayout.position],
                     rotation: [0, -Math.PI / 2, 0],
-                    planeHeight: 2.256
+                    planeHeight: beardRightLayout.planeHeight
                 }));
             } else {
                 clearPresetPreviewGroup(['beard-front', 'beard-left', 'beard-right']);
@@ -11556,13 +11894,13 @@
 
             if (config.torsoTexture?.frontUrl) {
                 textureTasks.push(overlay('torso-front', parts.torso, config.torsoTexture.frontUrl, {
-                    position: [0, -1.176, 0.453],
-                    planeHeight: 2.145
+                    position: [...torsoFrontLayout.position],
+                    planeHeight: torsoFrontLayout.planeHeight
                 }));
                 textureTasks.push(overlay('torso-back', parts.torso, config.torsoTexture.backUrl, {
-                    position: [0, -1.176, -0.453],
+                    position: [...torsoBackLayout.position],
                     rotation: [0, Math.PI, 0],
-                    planeHeight: 2.145
+                    planeHeight: torsoBackLayout.planeHeight
                 }));
             } else {
                 clearPresetPreviewGroup(['torso-front', 'torso-back']);
@@ -11570,8 +11908,8 @@
 
             if (config.instrumentTexture?.url) {
                 textureTasks.push(overlay('instrument', parts.torso, config.instrumentTexture.url, {
-                    position: [0, -1.176, 0.453],
-                    planeHeight: 2.145
+                    position: [...instrumentLayout.position],
+                    planeHeight: instrumentLayout.planeHeight
                 }));
             } else {
                 clearPresetPreviewGroup(['instrument']);
@@ -11579,22 +11917,22 @@
 
             if (config.armTexture && !config.hideArms) {
                 textureTasks.push(overlay('arm-left-front', rightArm, config.armTexture.leftUrl, {
-                    position: [-1.288, -0.934, -0.001],
-                    rotation: [0, Math.PI, 0],
-                    planeHeight: 1.677
+                    position: [...armLeftFrontLayout.position],
+                    rotation: [...armLeftFrontLayout.rotation],
+                    planeHeight: armLeftFrontLayout.planeHeight
                 }));
                 textureTasks.push(overlay('arm-left-back', rightArm, config.armTexture.leftUrl, {
-                    position: [-1.288, -0.934, 0.006],
-                    rotation: [0, Math.PI, 0],
-                    planeHeight: 1.677
+                    position: [...armLeftBackLayout.position],
+                    rotation: [...armLeftBackLayout.rotation],
+                    planeHeight: armLeftBackLayout.planeHeight
                 }));
                 textureTasks.push(overlay('arm-right-front', leftArm, config.armTexture.rightUrl, {
-                    position: [-1.288, -0.934, 0.001],
-                    planeHeight: 1.677
+                    position: [...armRightFrontLayout.position],
+                    planeHeight: armRightFrontLayout.planeHeight
                 }));
                 textureTasks.push(overlay('arm-right-back', leftArm, config.armTexture.rightUrl, {
-                    position: [-1.288, -0.934, -0.006],
-                    planeHeight: 1.677
+                    position: [...armRightBackLayout.position],
+                    planeHeight: armRightBackLayout.planeHeight
                 }));
             } else {
                 clearPresetPreviewGroup(['arm-left-front', 'arm-left-back', 'arm-right-front', 'arm-right-back']);
@@ -11602,22 +11940,22 @@
 
             if (config.legTexture) {
                 textureTasks.push(overlay('leg-left-front', leftLeg, config.legTexture.leftUrl, {
-                    position: [0, -1.176, 0.452],
-                    planeHeight: 2.145
+                    position: [...legLeftFrontLayout.position],
+                    planeHeight: legLeftFrontLayout.planeHeight
                 }));
                 textureTasks.push(overlay('leg-left-back', leftLeg, config.legTexture.leftUrl, {
-                    position: [0, -1.176, -0.452],
-                    planeHeight: 2.145
+                    position: [...legLeftBackLayout.position],
+                    planeHeight: legLeftBackLayout.planeHeight
                 }));
                 textureTasks.push(overlay('leg-right-front', rightLeg, config.legTexture.rightUrl, {
-                    position: [0, -1.176, 0.452],
-                    rotation: [0, Math.PI, 0],
-                    planeHeight: 2.145
+                    position: [...legRightFrontLayout.position],
+                    rotation: [...legRightFrontLayout.rotation],
+                    planeHeight: legRightFrontLayout.planeHeight
                 }));
                 textureTasks.push(overlay('leg-right-back', rightLeg, config.legTexture.rightUrl, {
-                    position: [0, -1.176, -0.452],
-                    rotation: [0, Math.PI, 0],
-                    planeHeight: 2.145
+                    position: [...legRightBackLayout.position],
+                    rotation: [...legRightBackLayout.rotation],
+                    planeHeight: legRightBackLayout.planeHeight
                 }));
             } else {
                 clearPresetPreviewGroup(['leg-left-front', 'leg-left-back', 'leg-right-front', 'leg-right-back']);
@@ -11746,12 +12084,7 @@
                     const existingMesh = showcaseRuntime.overlays[key];
 
                     if (!existingMesh || !existingMesh.parent) {
-                        const material = new THREE.MeshBasicMaterial({
-                            map: texture,
-                            transparent: true,
-                            side: THREE.DoubleSide,
-                            alphaTest: 0.45
-                        });
+                        const material = createOverlayMaterial(texture, { alphaTest: 0.45 });
                         const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         const mesh = new THREE.Mesh(geometry, material);
                         mesh.userData.colorWithHead = options.colorWithHead === true;
@@ -11796,66 +12129,62 @@
             const plan = [];
 
             if (eyeTexture?.url && parts.head) {
-                plan.push({ key: 'eyes', parent: parts.head, url: eyeTexture.url, options: { position: [0, 1.029, 1.129], planeHeight: 2.256 } });
+                plan.push({ key: 'eyes', parent: parts.head, url: eyeTexture.url, options: getSharedOverlayOptions('eyes') });
             }
             if (eyebrowTexture?.url && parts.head) {
-                plan.push({ key: 'eyebrows', parent: parts.head, url: eyebrowTexture.url, options: { position: [0, 1.029, 1.1295], planeHeight: 2.256 } });
+                plan.push({ key: 'eyebrows', parent: parts.head, url: eyebrowTexture.url, options: getSharedOverlayOptions('eyebrows') });
             }
             if (noseTexture?.url && parts.head) {
                 plan.push({
                     key: 'nose',
                     parent: parts.head,
                     url: noseTexture.url,
-                    options: {
-                        position: [0, 1.029, 1.129],
-                        planeHeight: 2.256,
-                        colorWithHead: noseTexture.name === 'Default'
-                    }
+                    options: getSharedOverlayOptions('nose', { colorWithHead: noseTexture.name === 'Default' })
                 });
             }
             if (earTexture?.url && parts.head) {
                 plan.push(
-                    { key: 'ear-left', parent: parts.head, url: earTexture.url, options: { position: [-1.13, 1.029, 0], rotation: [0, Math.PI / 2, 0], scale: [-1, 1, 1], planeHeight: 2.256 } },
-                    { key: 'ear-right', parent: parts.head, url: earTexture.url, options: { position: [1.13, 1.029, 0], rotation: [0, -Math.PI / 2, 0], planeHeight: 2.256 } }
+                    { key: 'ear-left', parent: parts.head, url: earTexture.url, options: getSharedOverlayOptions('ear-left') },
+                    { key: 'ear-right', parent: parts.head, url: earTexture.url, options: getSharedOverlayOptions('ear-right') }
                 );
             }
             if (hairTexture?.frontUrl && parts.head) {
                 plan.push(
-                    { key: 'hair-front', parent: parts.head, url: hairTexture.frontUrl, options: { position: [0, 0.563, 1.1285], planeHeight: 5.556 } },
-                    { key: 'hair-back', parent: parts.head, url: hairTexture.backUrl, options: { position: [0, 0.563, -1.1285], planeHeight: 5.556 } },
-                    { key: 'hair-left', parent: parts.head, url: hairTexture.leftUrl, options: { position: [-1.1285, 1.029, 0], rotation: [0, -Math.PI / 2, 0], planeHeight: 2.256 } },
-                    { key: 'hair-right', parent: parts.head, url: hairTexture.rightUrl, options: { position: [1.1285, 1.029, 0], rotation: [0, Math.PI / 2, 0], planeHeight: 2.256 } },
-                    { key: 'hair-up', parent: parts.head, url: hairTexture.upUrl, options: { position: [0, 2.157, 0], rotation: [-Math.PI / 2, 0, 0], planeHeight: 2.256 } }
+                    { key: 'hair-front', parent: parts.head, url: hairTexture.frontUrl, options: getSharedOverlayOptions('hair-front') },
+                    { key: 'hair-back', parent: parts.head, url: hairTexture.backUrl, options: getSharedOverlayOptions('hair-back') },
+                    { key: 'hair-left', parent: parts.head, url: hairTexture.leftUrl, options: getSharedOverlayOptions('hair-left') },
+                    { key: 'hair-right', parent: parts.head, url: hairTexture.rightUrl, options: getSharedOverlayOptions('hair-right') },
+                    { key: 'hair-up', parent: parts.head, url: hairTexture.upUrl, options: getSharedOverlayOptions('hair-up') }
                 );
             }
             if (torsoTexture?.frontUrl && parts.torso) {
                 plan.push(
-                    { key: 'torso-front', parent: parts.torso, url: torsoTexture.frontUrl, options: { position: [0, -1.176, 0.453], planeHeight: 2.145 } },
-                    { key: 'torso-back', parent: parts.torso, url: torsoTexture.backUrl, options: { position: [0, -1.176, -0.453], rotation: [0, Math.PI, 0], planeHeight: 2.145 } }
+                    { key: 'torso-front', parent: parts.torso, url: torsoTexture.frontUrl, options: getSharedOverlayOptions('torso-front') },
+                    { key: 'torso-back', parent: parts.torso, url: torsoTexture.backUrl, options: getSharedOverlayOptions('torso-back') }
                 );
             }
             if (armTextureLeft && rightArm) {
                 plan.push(
-                    { key: 'arm-left-front', parent: rightArm, url: armTextureLeft.leftUrl, options: { position: [-1.288, -0.934, -0.001], rotation: [0, Math.PI, 0], planeHeight: 1.677 } },
-                    { key: 'arm-left-back', parent: rightArm, url: armTextureLeft.leftUrl, options: { position: [-1.288, -0.934, 0.006], rotation: [0, Math.PI, 0], planeHeight: 1.677 } }
+                    { key: 'arm-left-front', parent: rightArm, url: armTextureLeft.leftUrl, options: getSharedOverlayOptions('arm-left-front') },
+                    { key: 'arm-left-back', parent: rightArm, url: armTextureLeft.leftUrl, options: getSharedOverlayOptions('arm-left-back') }
                 );
             }
             if (armTextureRight && leftArm) {
                 plan.push(
-                    { key: 'arm-right-front', parent: leftArm, url: armTextureRight.rightUrl, options: { position: [-1.288, -0.934, 0.001], planeHeight: 1.677 } },
-                    { key: 'arm-right-back', parent: leftArm, url: armTextureRight.rightUrl, options: { position: [-1.288, -0.934, -0.006], planeHeight: 1.677 } }
+                    { key: 'arm-right-front', parent: leftArm, url: armTextureRight.rightUrl, options: getSharedOverlayOptions('arm-right-front') },
+                    { key: 'arm-right-back', parent: leftArm, url: armTextureRight.rightUrl, options: getSharedOverlayOptions('arm-right-back') }
                 );
             }
             if (legTextureLeft && leftLeg) {
                 plan.push(
-                    { key: 'leg-left-front', parent: leftLeg, url: legTextureLeft.leftUrl, options: { position: [0, -1.176, 0.452], planeHeight: 2.145 } },
-                    { key: 'leg-left-back', parent: leftLeg, url: legTextureLeft.leftUrl, options: { position: [0, -1.176, -0.452], planeHeight: 2.145 } }
+                    { key: 'leg-left-front', parent: leftLeg, url: legTextureLeft.leftUrl, options: getSharedOverlayOptions('leg-left-front') },
+                    { key: 'leg-left-back', parent: leftLeg, url: legTextureLeft.leftUrl, options: getSharedOverlayOptions('leg-left-back') }
                 );
             }
             if (legTextureRight && rightLeg) {
                 plan.push(
-                    { key: 'leg-right-front', parent: rightLeg, url: legTextureRight.rightUrl, options: { position: [0, -1.176, 0.452], rotation: [0, Math.PI, 0], planeHeight: 2.145 } },
-                    { key: 'leg-right-back', parent: rightLeg, url: legTextureRight.rightUrl, options: { position: [0, -1.176, -0.452], rotation: [0, Math.PI, 0], planeHeight: 2.145 } }
+                    { key: 'leg-right-front', parent: rightLeg, url: legTextureRight.rightUrl, options: getSharedOverlayOptions('leg-right-front') },
+                    { key: 'leg-right-back', parent: rightLeg, url: legTextureRight.rightUrl, options: getSharedOverlayOptions('leg-right-back') }
                 );
             }
 
@@ -12419,9 +12748,9 @@
                     if (btn) {
                         const iconSpan = btn.querySelector('.button-inner span');
                         if (iconSpan) {
-                            iconSpan.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M14 19h4V5h-4M6 19h4V5H6z"/></svg>';
+                            iconSpan.innerHTML = '<span class="material-symbols-outlined w-6 h-6 group-hover:scale-110 transition-transform flex items-center justify-center" style="font-size:24px;line-height:24px;">pause</span>';
                         } else {
-                            btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M14 19h4V5h-4M6 19h4V5H6z"/></svg>';
+                            btn.innerHTML = '<span class="material-symbols-outlined w-6 h-6 group-hover:scale-110 transition-transform flex items-center justify-center" style="font-size:24px;line-height:24px;">pause</span>';
                         }
                     }
                 });
@@ -12486,9 +12815,9 @@
                     if (btn) {
                         const iconSpan = btn.querySelector('.button-inner span');
                         if (iconSpan) {
-                            iconSpan.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.14v14l11-7z"/></svg>';
+                            iconSpan.innerHTML = '<span class="material-symbols-outlined w-6 h-6 group-hover:scale-110 transition-transform flex items-center justify-center" style="font-size:24px;line-height:24px;">play_arrow</span>';
                         } else {
-                            btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.14v14l11-7z"/></svg>';
+                            btn.innerHTML = '<span class="material-symbols-outlined w-6 h-6 group-hover:scale-110 transition-transform flex items-center justify-center" style="font-size:24px;line-height:24px;">play_arrow</span>';
                         }
                     }
                 });
@@ -12549,6 +12878,7 @@
         function changeEyeTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
             const textureVersion = nextCustomTextureVersion('eyes');
+            const eyesLayout = getSharedOverlayLayout('eyes');
             currentEyeTextureURL = url;
             notifyCustomPdfStateChanged('eyes-texture');
 
@@ -12562,13 +12892,13 @@
                     // SOLUCIÓN 3: Reutilizar mesh existente para evitar superposición
                     if (isInitialLoad || !eyesMesh) {
                         // Creación inicial de los ojos
-                        const eyeMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide, alphaTest: 0.5 });
-                        const planeHeight = 2.256;
+                        const eyeMaterial = createOverlayMaterial(texture);
+                        const planeHeight = eyesLayout.planeHeight;
                         const aspect = texture.image.width / texture.image.height;
                         const planeWidth = planeHeight * aspect;
                         const eyeGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         eyesMesh = new THREE.Mesh(eyeGeometry, eyeMaterial);
-                        eyesMesh.position.set(0, 1.029, 1.1285);
+                        eyesMesh.position.set(...eyesLayout.position);
                         modelParts.head.add(eyesMesh);
                     } else {
                         // Actualizar textura del mesh existente (móvil y desktop)
@@ -12586,6 +12916,8 @@
                             forceMemoryCleanup();
                         }
                     }
+
+                    requestCustomRender(isLowPowerMobile ? 14 : 22);
                 },
                 undefined,
                 (error) => {
@@ -12610,6 +12942,7 @@
         function changeEyebrowTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
             const textureVersion = nextCustomTextureVersion('eyebrows');
+            const eyebrowsLayout = getSharedOverlayLayout('eyebrows');
             currentEyebrowTextureURL = url;
             notifyCustomPdfStateChanged('eyebrows-texture');
 
@@ -12628,13 +12961,13 @@
 
                     if (isInitialLoad || !eyebrowsMesh) {
                         // Creación inicial de las cejas
-                        const eyebrowMaterial = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide, alphaTest: 0.5 });
-                        const planeHeight = 2.256;
+                        const eyebrowMaterial = createOverlayMaterial(texture);
+                        const planeHeight = eyebrowsLayout.planeHeight;
                         const aspect = texture.image.width / texture.image.height;
                         const planeWidth = planeHeight * aspect;
                         const eyebrowGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         eyebrowsMesh = new THREE.Mesh(eyebrowGeometry, eyebrowMaterial);
-                        eyebrowsMesh.position.set(0, 1.029, 1.1295);
+                        eyebrowsMesh.position.set(...eyebrowsLayout.position);
                         modelParts.head.add(eyebrowsMesh);
                     } else {
                         // Actualizar textura del mesh existente
@@ -12652,6 +12985,8 @@
                             forceMemoryCleanup();
                         }
                     }
+
+                    requestCustomRender(isLowPowerMobile ? 14 : 22);
                 },
                 undefined,
                 (error) => {
@@ -12676,6 +13011,7 @@
         function changeNoseTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
             const textureVersion = nextCustomTextureVersion('nose');
+            const noseLayout = getSharedOverlayLayout('nose');
             currentNoseTextureURL = url;
             notifyCustomPdfStateChanged('nose-texture');
 
@@ -12688,33 +13024,29 @@
 
                     if (isInitialLoad || !noseMesh) {
                         // Creación inicial de la nariz con color aplicable
-                        const noseMaterial = new THREE.MeshBasicMaterial({
-                            map: texture,
-                            transparent: true,
-                            side: THREE.DoubleSide,
-                            alphaTest: 0.5,
+                        const noseMaterial = createOverlayMaterial(texture, {
                             color: 0xffffff // Color base que se puede modificar
                         });
                         // Mismas dimensiones que los ojos
-                        const planeHeight = 2.256;
+                        const planeHeight = noseLayout.planeHeight;
                         const aspect = texture.image.width / texture.image.height;
                         const planeWidth = planeHeight * aspect;
                         const noseGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         noseMesh = new THREE.Mesh(noseGeometry, noseMaterial);
-                        // Misma posición que los ojos
-                        noseMesh.position.set(0, 1.029, 1.129);
+                        noseMesh.userData.colorWithHead = shouldColorNoseWithHead(url);
+                        noseMesh.position.set(...noseLayout.position);
                         modelParts.head.add(noseMesh);
 
-                        // Aplicar el color inicial de la cabeza (50% más oscuro)
+                        // Aplicar el color inicial de la cabeza solo si esta nariz usa el tono de la cabeza
                         if (modelParts.head && modelParts.head.material && modelParts.head.material.color) {
                             applyNoseColor(modelParts.head.material.color.getHex());
                         } else {
-                            // Si no hay color de cabeza definido, usar blanco con 50% oscuridad
                             applyNoseColor(0xffffff);
                         }
                     } else {
                         // Actualizar textura del mesh existente
                         const oldMap = noseMesh.material.map;
+                        noseMesh.userData.colorWithHead = shouldColorNoseWithHead(url);
                         noseMesh.material.map = texture;
                         noseMesh.material.needsUpdate = true;
 
@@ -12723,11 +13055,19 @@
                             oldMap.dispose();
                         }
 
+                        if (modelParts.head && modelParts.head.material && modelParts.head.material.color) {
+                            applyNoseColor(modelParts.head.material.color.getHex());
+                        } else {
+                            applyNoseColor(0xffffff);
+                        }
+
                         // Limpiar memoria en móvil
                         if (isMobileDevice) {
                             forceMemoryCleanup();
                         }
                     }
+
+                    requestCustomRender(isLowPowerMobile ? 14 : 22);
                 },
                 undefined,
                 (error) => {
@@ -12746,9 +13086,20 @@
             );
         }
 
+        function shouldColorNoseWithHead(textureUrl) {
+            const defaultNoseTexture = getTextureByName(noseTextures, 'Default');
+            return Boolean(textureUrl && defaultNoseTexture?.url && textureUrl === defaultNoseTexture.url);
+        }
+
         // Función para aplicar color a la nariz (25% más oscuro que la cabeza)
         function applyNoseColor(headColorHex) {
             if (!noseMesh) return;
+
+            if (!noseMesh.userData?.colorWithHead) {
+                noseMesh.material.color.setHex(0xffffff);
+                noseMesh.material.needsUpdate = true;
+                return;
+            }
 
             // Convertir el color hex a RGB
             const color = new THREE.Color(headColorHex);
@@ -12771,6 +13122,7 @@
         function changeEarTexture(side, url, isInitialLoad = false) {
             if (!modelParts.head) return;
             const versionKey = side === 'left' ? 'earLeft' : 'earRight';
+            const earLayout = getSharedOverlayLayout(`ear-${side}`);
             const textureVersion = nextCustomTextureVersion(versionKey);
             currentEarTextureURL = url;
             notifyCustomPdfStateChanged(`ear-${side}-texture`);
@@ -12786,27 +13138,21 @@
 
                     if (isInitialLoad || !currentEarMesh) {
                         // Creación inicial de la oreja
-                        const earMaterial = new THREE.MeshBasicMaterial({
-                            map: texture,
-                            transparent: true,
-                            side: THREE.DoubleSide,
-                            alphaTest: 0.5
-                        });
-                        const planeHeight = 2.256;
+                        const earMaterial = createOverlayMaterial(texture);
+                        const planeHeight = earLayout.planeHeight;
                         const aspect = texture.image.width / texture.image.height;
                         const planeWidth = planeHeight * aspect;
                         const earGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         const newEarMesh = new THREE.Mesh(earGeometry, earMaterial);
 
                         // Posición y rotación según el lado
+                        newEarMesh.position.set(...earLayout.position);
+                        if (earLayout.rotation) newEarMesh.rotation.set(...earLayout.rotation);
+                        if (earLayout.scale) newEarMesh.scale.set(...earLayout.scale);
+
                         if (side === 'left') {
-                            newEarMesh.position.set(-1.13, 1.029, 0); // Lado izquierdo
-                            newEarMesh.rotation.y = Math.PI / 2; // Rotar 90 grados hacia la izquierda
-                            newEarMesh.scale.x = -1; // Invertir horizontalmente para oreja izquierda
                             earLeftMesh = newEarMesh;
                         } else {
-                            newEarMesh.position.set(1.13, 1.029, 0); // Lado derecho
-                            newEarMesh.rotation.y = -Math.PI / 2; // Rotar 90 grados hacia la derecha
                             earRightMesh = newEarMesh;
                         }
 
@@ -12830,6 +13176,8 @@
                             forceMemoryCleanup();
                         }
                     }
+
+                    requestCustomRender(isLowPowerMobile ? 14 : 22);
                 },
                 undefined,
                 (error) => {
@@ -12850,6 +13198,11 @@
         function changeHairTexture(frontUrl, backUrl, leftUrl, rightUrl, upUrl, isInitialLoad = false) {
             if (!modelParts.head) return;
             const textureVersion = nextCustomTextureVersion('hair');
+            const hairFrontLayout = getSharedOverlayLayout('hair-front');
+            const hairBackLayout = getSharedOverlayLayout('hair-back');
+            const hairLeftLayout = getSharedOverlayLayout('hair-left');
+            const hairRightLayout = getSharedOverlayLayout('hair-right');
+            const hairUpLayout = getSharedOverlayLayout('hair-up');
             currentHairFrontURL = frontUrl;
             currentHairBackURL = backUrl;
             currentHairLeftURL = leftUrl;
@@ -12948,19 +13301,13 @@
 
                     if (isInitialLoad || !hairFrontMesh) {
                         // Creación inicial del cabello frontal
-                        const hairMaterial = new THREE.MeshBasicMaterial({
-                            map: texture,
-                            transparent: true,
-                            side: THREE.DoubleSide,
-                            alphaTest: 0.5
-                        });
-                        const planeHeight = 5.556;
+                        const hairMaterial = createOverlayMaterial(texture);
+                        const planeHeight = hairFrontLayout.planeHeight;
                         const aspect = texture.image.width / texture.image.height;
                         const planeWidth = planeHeight * aspect;
                         const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         hairFrontMesh = new THREE.Mesh(hairGeometry, hairMaterial);
-                        // Posición del cabello frontal
-                        hairFrontMesh.position.set(0, 0.563, 1.129);
+                        hairFrontMesh.position.set(...hairFrontLayout.position);
                         modelParts.head.add(hairFrontMesh);
                     } else {
                         // Solo actualiza la textura si el mesh ya existe
@@ -12969,6 +13316,8 @@
                         hairFrontMesh.material.needsUpdate = true;
                         if (oldMap && oldMap !== texture) oldMap.dispose();
                     }
+
+                    requestCustomRender(isLowPowerMobile ? 14 : 22);
                 },
                 undefined,
                 (error) => {
@@ -12986,19 +13335,13 @@
 
                     if (isInitialLoad || !hairBackMesh) {
                         // Creación inicial del cabello trasero
-                        const hairMaterial = new THREE.MeshBasicMaterial({
-                            map: texture,
-                            transparent: true,
-                            side: THREE.DoubleSide,
-                            alphaTest: 0.5
-                        });
-                        const planeHeight = 5.556;
+                        const hairMaterial = createOverlayMaterial(texture);
+                        const planeHeight = hairBackLayout.planeHeight;
                         const aspect = texture.image.width / texture.image.height;
                         const planeWidth = planeHeight * aspect;
                         const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         hairBackMesh = new THREE.Mesh(hairGeometry, hairMaterial);
-                        // Posición del cabello trasero (detrás de la cabeza)
-                        hairBackMesh.position.set(0, 0.563, -1.1285);
+                        hairBackMesh.position.set(...hairBackLayout.position);
                         modelParts.head.add(hairBackMesh);
                     } else {
                         // Solo actualiza la textura si el mesh ya existe
@@ -13007,6 +13350,8 @@
                         hairBackMesh.material.needsUpdate = true;
                         if (oldMap && oldMap !== texture) oldMap.dispose();
                     }
+
+                    requestCustomRender(isLowPowerMobile ? 14 : 22);
                 },
                 undefined,
                 (error) => {
@@ -13024,20 +13369,14 @@
                         }
 
                         if (isInitialLoad || !hairLeftMesh) {
-                            // Creación inicial del cabello izquierdo (mismo tamaño que ojos)
-                            const hairMaterial = new THREE.MeshBasicMaterial({
-                                map: texture,
-                                transparent: true,
-                                side: THREE.DoubleSide,
-                                alphaTest: 0.5
-                            });
-                            const planeHeight = 2.256; // Mismo tamaño que eyes
+                            // Creación inicial del cabello izquierdo
+                            const hairMaterial = createOverlayMaterial(texture);
+                            const planeHeight = hairLeftLayout.planeHeight;
                             const aspect = texture.image.width / texture.image.height;
                             const planeWidth = planeHeight * aspect;
                             const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                             hairLeftMesh = new THREE.Mesh(hairGeometry, hairMaterial);
-                            // Posición del cabello izquierdo (lado izquierdo de la cabeza)
-                            hairLeftMesh.position.set(-1.1285, 1.029, 0);
+                            hairLeftMesh.position.set(...hairLeftLayout.position);
                             hairLeftMesh.rotation.y = -Math.PI / 2; // Rotar 90 grados
                             modelParts.head.add(hairLeftMesh);
                         } else {
@@ -13047,6 +13386,8 @@
                             hairLeftMesh.material.needsUpdate = true;
                             if (oldMap && oldMap !== texture) oldMap.dispose();
                         }
+
+                        requestCustomRender(isLowPowerMobile ? 14 : 22);
                     },
                     undefined,
                     (error) => {
@@ -13065,20 +13406,14 @@
                         }
 
                         if (isInitialLoad || !hairRightMesh) {
-                            // Creación inicial del cabello derecho (mismo tamaño que ojos)
-                            const hairMaterial = new THREE.MeshBasicMaterial({
-                                map: texture,
-                                transparent: true,
-                                side: THREE.DoubleSide,
-                                alphaTest: 0.5
-                            });
-                            const planeHeight = 2.256; // Mismo tamaño que eyes
+                            // Creación inicial del cabello derecho
+                            const hairMaterial = createOverlayMaterial(texture);
+                            const planeHeight = hairRightLayout.planeHeight;
                             const aspect = texture.image.width / texture.image.height;
                             const planeWidth = planeHeight * aspect;
                             const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                             hairRightMesh = new THREE.Mesh(hairGeometry, hairMaterial);
-                            // Posición del cabello derecho (lado derecho de la cabeza)
-                            hairRightMesh.position.set(1.1285, 1.029, 0);
+                            hairRightMesh.position.set(...hairRightLayout.position);
                             hairRightMesh.rotation.y = Math.PI / 2; // Rotar -90 grados
                             modelParts.head.add(hairRightMesh);
                         } else {
@@ -13088,6 +13423,8 @@
                             hairRightMesh.material.needsUpdate = true;
                             if (oldMap && oldMap !== texture) oldMap.dispose();
                         }
+
+                        requestCustomRender(isLowPowerMobile ? 14 : 22);
                     },
                     undefined,
                     (error) => {
@@ -13106,20 +13443,14 @@
                         }
 
                         if (isInitialLoad || !hairUpMesh) {
-                            // Creación inicial del cabello superior (como techo, mismo tamaño que eyes)
-                            const hairMaterial = new THREE.MeshBasicMaterial({
-                                map: texture,
-                                transparent: true,
-                                side: THREE.DoubleSide,
-                                alphaTest: 0.5
-                            });
-                            const planeHeight = 2.256; // Mismo tamaño que eyes
+                            // Creación inicial del cabello superior
+                            const hairMaterial = createOverlayMaterial(texture);
+                            const planeHeight = hairUpLayout.planeHeight;
                             const aspect = texture.image.width / texture.image.height;
                             const planeWidth = planeHeight * aspect;
                             const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                             hairUpMesh = new THREE.Mesh(hairGeometry, hairMaterial);
-                            // Posición del cabello superior (arriba de la cabeza, rotado para ser horizontal)
-                            hairUpMesh.position.set(0, 2.157, 0);
+                            hairUpMesh.position.set(...hairUpLayout.position);
                             hairUpMesh.rotation.x = -Math.PI / 2; // Rotar 90 grados para que sea horizontal
                             modelParts.head.add(hairUpMesh);
                         } else {
@@ -13129,6 +13460,8 @@
                             hairUpMesh.material.needsUpdate = true;
                             if (oldMap && oldMap !== texture) oldMap.dispose();
                         }
+
+                        requestCustomRender(isLowPowerMobile ? 14 : 22);
                     },
                     undefined,
                     (error) => {
@@ -13141,6 +13474,9 @@
         function changeBeardTexture(frontUrl, leftUrl, rightUrl, isInitialLoad = false) {
             if (!modelParts.head) return;
             const textureVersion = nextCustomTextureVersion('beard');
+            const beardFrontLayout = getSharedOverlayLayout('beard-front');
+            const beardLeftLayout = getSharedOverlayLayout('beard-left');
+            const beardRightLayout = getSharedOverlayLayout('beard-right');
             currentBeardFrontURL = frontUrl;
             currentBeardLeftURL = leftUrl;
             currentBeardRightURL = rightUrl;
@@ -13206,18 +13542,13 @@
                         }
 
                         if (isInitialLoad || !beardFrontMesh) {
-                            const beardMaterial = new THREE.MeshBasicMaterial({
-                                map: texture,
-                                transparent: true,
-                                side: THREE.DoubleSide,
-                                alphaTest: 0.5
-                            });
-                            const planeHeight = 2.256;
+                            const beardMaterial = createOverlayMaterial(texture);
+                            const planeHeight = beardFrontLayout.planeHeight;
                             const aspect = texture.image.width / texture.image.height;
                             const planeWidth = planeHeight * aspect;
                             const beardGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                             beardFrontMesh = new THREE.Mesh(beardGeometry, beardMaterial);
-                            beardFrontMesh.position.set(0, 1.029, 1.129);
+                            beardFrontMesh.position.set(...beardFrontLayout.position);
                             modelParts.head.add(beardFrontMesh);
                         } else {
                             const oldMap = beardFrontMesh.material.map;
@@ -13225,6 +13556,8 @@
                             beardFrontMesh.material.needsUpdate = true;
                             if (oldMap && oldMap !== texture) oldMap.dispose();
                         }
+
+                        requestCustomRender(isLowPowerMobile ? 14 : 22);
                     },
                     undefined,
                     (error) => {
@@ -13242,18 +13575,13 @@
                         }
 
                         if (isInitialLoad || !beardLeftMesh) {
-                            const beardMaterial = new THREE.MeshBasicMaterial({
-                                map: texture,
-                                transparent: true,
-                                side: THREE.DoubleSide,
-                                alphaTest: 0.5
-                            });
-                            const planeHeight = 2.256;
+                            const beardMaterial = createOverlayMaterial(texture);
+                            const planeHeight = beardLeftLayout.planeHeight;
                             const aspect = texture.image.width / texture.image.height;
                             const planeWidth = planeHeight * aspect;
                             const beardGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                             beardLeftMesh = new THREE.Mesh(beardGeometry, beardMaterial);
-                            beardLeftMesh.position.set(-1.13, 1.029, 0);
+                            beardLeftMesh.position.set(...beardLeftLayout.position);
                             beardLeftMesh.rotation.y = Math.PI / 2;
                             beardLeftMesh.scale.x = -1;
                             modelParts.head.add(beardLeftMesh);
@@ -13263,6 +13591,8 @@
                             beardLeftMesh.material.needsUpdate = true;
                             if (oldMap && oldMap !== texture) oldMap.dispose();
                         }
+
+                        requestCustomRender(isLowPowerMobile ? 14 : 22);
                     },
                     undefined,
                     (error) => {
@@ -13280,18 +13610,13 @@
                         }
 
                         if (isInitialLoad || !beardRightMesh) {
-                            const beardMaterial = new THREE.MeshBasicMaterial({
-                                map: texture,
-                                transparent: true,
-                                side: THREE.DoubleSide,
-                                alphaTest: 0.5
-                            });
-                            const planeHeight = 2.256;
+                            const beardMaterial = createOverlayMaterial(texture);
+                            const planeHeight = beardRightLayout.planeHeight;
                             const aspect = texture.image.width / texture.image.height;
                             const planeWidth = planeHeight * aspect;
                             const beardGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                             beardRightMesh = new THREE.Mesh(beardGeometry, beardMaterial);
-                            beardRightMesh.position.set(1.13, 1.029, 0);
+                            beardRightMesh.position.set(...beardRightLayout.position);
                             beardRightMesh.rotation.y = -Math.PI / 2;
                             modelParts.head.add(beardRightMesh);
                         } else {
@@ -13300,6 +13625,8 @@
                             beardRightMesh.material.needsUpdate = true;
                             if (oldMap && oldMap !== texture) oldMap.dispose();
                         }
+
+                        requestCustomRender(isLowPowerMobile ? 14 : 22);
                     },
                     undefined,
                     (error) => {
@@ -13315,6 +13642,8 @@
         function changeTorsoClothing(frontUrl, backUrl, isInitialLoad = false) {
             if (!modelParts.torso) return;
             const textureVersion = nextCustomTextureVersion('torso');
+            const torsoFrontLayout = getSharedOverlayLayout('torso-front');
+            const torsoBackLayout = getSharedOverlayLayout('torso-back');
             currentTorsoFrontURL = frontUrl;
             currentTorsoBackURL = backUrl;
             notifyCustomPdfStateChanged('torso-texture');
@@ -13367,18 +13696,13 @@
                     }
 
                     if (isInitialLoad || !torsoFrontMesh) {
-                        const clothingMaterial = new THREE.MeshBasicMaterial({
-                            map: texture,
-                            transparent: true,
-                            side: THREE.DoubleSide,
-                            alphaTest: 0.5
-                        });
-                        const planeHeight = 2.145;
+                        const clothingMaterial = createOverlayMaterial(texture);
+                        const planeHeight = torsoFrontLayout.planeHeight;
                         const aspect = texture.image.width / texture.image.height;
                         const planeWidth = planeHeight * aspect;
                         const clothingGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         torsoFrontMesh = new THREE.Mesh(clothingGeometry, clothingMaterial);
-                        torsoFrontMesh.position.set(0, -1.176, 0.453); // Torso frontal
+                        torsoFrontMesh.position.set(...torsoFrontLayout.position);
                         modelParts.torso.add(torsoFrontMesh);
                     } else {
                         const oldMap = torsoFrontMesh.material.map;
@@ -13386,6 +13710,8 @@
                         torsoFrontMesh.material.needsUpdate = true;
                         if (oldMap && oldMap !== texture) oldMap.dispose();
                     }
+
+                    requestCustomRender(isLowPowerMobile ? 14 : 22);
                 },
                 undefined,
                 (error) => {
@@ -13402,18 +13728,13 @@
                     }
 
                     if (isInitialLoad || !torsoBackMesh) {
-                        const clothingMaterial = new THREE.MeshBasicMaterial({
-                            map: texture,
-                            transparent: true,
-                            side: THREE.DoubleSide,
-                            alphaTest: 0.5
-                        });
-                        const planeHeight = 2.145;
+                        const clothingMaterial = createOverlayMaterial(texture);
+                        const planeHeight = torsoBackLayout.planeHeight;
                         const aspect = texture.image.width / texture.image.height;
                         const planeWidth = planeHeight * aspect;
                         const clothingGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         torsoBackMesh = new THREE.Mesh(clothingGeometry, clothingMaterial);
-                        torsoBackMesh.position.set(0, -1.176, -0.453); // Torso trasero (Z invertido)
+                        torsoBackMesh.position.set(...torsoBackLayout.position);
                         modelParts.torso.add(torsoBackMesh);
                     } else {
                         const oldMap = torsoBackMesh.material.map;
@@ -13421,6 +13742,8 @@
                         torsoBackMesh.material.needsUpdate = true;
                         if (oldMap && oldMap !== texture) oldMap.dispose();
                     }
+
+                    requestCustomRender(isLowPowerMobile ? 14 : 22);
                 },
                 undefined,
                 (error) => {
@@ -13432,6 +13755,7 @@
         function changeInstrumentTexture(url, isInitialLoad = false) {
             if (!modelParts.torso) return;
             const textureVersion = nextCustomTextureVersion('instrument');
+            const instrumentLayout = getSharedOverlayLayout('instrument');
             currentInstrumentURL = url;
             notifyCustomPdfStateChanged('instrument-texture');
 
@@ -13464,18 +13788,13 @@
                     }
 
                     if (isInitialLoad || !instrumentMesh) {
-                        const instrumentMaterial = new THREE.MeshBasicMaterial({
-                            map: texture,
-                            transparent: true,
-                            side: THREE.DoubleSide,
-                            alphaTest: 0.5
-                        });
-                        const planeHeight = 2.145;
+                        const instrumentMaterial = createOverlayMaterial(texture);
+                        const planeHeight = instrumentLayout.planeHeight;
                         const aspect = texture.image.width / texture.image.height;
                         const planeWidth = planeHeight * aspect;
                         const instrumentGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         instrumentMesh = new THREE.Mesh(instrumentGeometry, instrumentMaterial);
-                        instrumentMesh.position.set(0, -1.176, 0.453);
+                        instrumentMesh.position.set(...instrumentLayout.position);
                         modelParts.torso.add(instrumentMesh);
                     } else {
                         const oldMap = instrumentMesh.material.map;
@@ -13483,6 +13802,8 @@
                         instrumentMesh.material.needsUpdate = true;
                         if (oldMap && oldMap !== texture) oldMap.dispose();
                     }
+
+                    requestCustomRender(isLowPowerMobile ? 14 : 22);
                 },
                 undefined,
                 (error) => {
@@ -13536,6 +13857,7 @@
                     }
                 }
                 forceMemoryCleanup();
+                requestCustomRender(isLowPowerMobile ? 14 : 22);
                 return;
             }
 
@@ -13579,12 +13901,7 @@
 
                     if (isInitialLoad || !liveFrontMesh) {
                         // Creación inicial del estilo de pierna frontal
-                        const clothingMaterial = new THREE.MeshBasicMaterial({
-                            map: texture,
-                            transparent: true,
-                            side: THREE.DoubleSide,
-                            alphaTest: 0.5
-                        });
+                        const clothingMaterial = createOverlayMaterial(texture);
                         const planeHeight = 2.145;
                         const aspect = texture.image.width / texture.image.height;
                         const planeWidth = planeHeight * aspect;
@@ -13615,6 +13932,8 @@
                             if (oldMap && oldMap !== texture) oldMap.dispose();
                         }
                     }
+
+                    requestCustomRender(isLowPowerMobile ? 14 : 22);
                 },
                 undefined,
                 (error) => {
@@ -13635,12 +13954,7 @@
 
                     if (isInitialLoad || !liveBackMesh) {
                         // Creación inicial del estilo de pierna trasera (duplicado)
-                        const clothingMaterial = new THREE.MeshBasicMaterial({
-                            map: texture,
-                            transparent: true,
-                            side: THREE.DoubleSide,
-                            alphaTest: 0.5
-                        });
+                        const clothingMaterial = createOverlayMaterial(texture);
                         const planeHeight = 2.145;
                         const aspect = texture.image.width / texture.image.height;
                         const planeWidth = planeHeight * aspect;
@@ -13671,6 +13985,8 @@
                             if (oldMap && oldMap !== texture) oldMap.dispose();
                         }
                     }
+
+                    requestCustomRender(isLowPowerMobile ? 14 : 22);
                 },
                 undefined,
                 (error) => {
@@ -13736,6 +14052,7 @@
                     }
                 }
                 forceMemoryCleanup();
+                requestCustomRender(isLowPowerMobile ? 14 : 22);
                 return;
             }
 
@@ -13778,12 +14095,7 @@
                     const liveFrontMesh = side === 'left' ? armLeftFrontMesh : armRightFrontMesh;
 
                     if (isInitialLoad || !liveFrontMesh) {
-                        const clothingMaterial = new THREE.MeshBasicMaterial({
-                            map: texture,
-                            transparent: true,
-                            side: THREE.DoubleSide,
-                            alphaTest: 0.5
-                        });
+                        const clothingMaterial = createOverlayMaterial(texture);
                         const aspect = texture.image.width / texture.image.height;
                         const planeWidth = armSize * aspect;
                         const clothingGeometry = new THREE.PlaneGeometry(planeWidth, armSize);
@@ -13813,6 +14125,8 @@
                             if (oldMap && oldMap !== texture) oldMap.dispose();
                         }
                     }
+
+                    requestCustomRender(isLowPowerMobile ? 14 : 22);
                 },
                 undefined,
                 (error) => {
@@ -13832,12 +14146,7 @@
                     const liveBackMesh = side === 'left' ? armLeftBackMesh : armRightBackMesh;
 
                     if (isInitialLoad || !liveBackMesh) {
-                        const clothingMaterial = new THREE.MeshBasicMaterial({
-                            map: texture,
-                            transparent: true,
-                            side: THREE.DoubleSide,
-                            alphaTest: 0.5
-                        });
+                        const clothingMaterial = createOverlayMaterial(texture);
                         const aspect = texture.image.width / texture.image.height;
                         const planeWidth = armSize * aspect;
                         const clothingGeometry = new THREE.PlaneGeometry(planeWidth, armSize);
@@ -13867,6 +14176,8 @@
                             if (oldMap && oldMap !== texture) oldMap.dispose();
                         }
                     }
+
+                    requestCustomRender(isLowPowerMobile ? 14 : 22);
                 },
                 undefined,
                 (error) => {
@@ -14115,7 +14426,7 @@
             const nowMs = performance.now();
             const isCustomEditingView = activeAppView === 'custom' && appMode !== 'play';
             const isPresetPreviewView = activeAppView === 'preset-preview' && appMode !== 'play';
-            const mobileFrameBudget = isPresetPreviewView ? (1000 / 24) : (1000 / 30);
+            const mobileFrameBudget = isPresetPreviewView ? (1000 / 50) : (1000 / 30);
 
             if (isLowPowerMobile && nowMs - lastFrameTimestamp < mobileFrameBudget) {
                 return;
@@ -14874,14 +15185,18 @@
 
         function getPresetFavoriteButtonMarkup(name, isFav, forceRender = false) {
             if (!forceRender && !canUseFavorites()) return '';
-            return `<button class="fandom-heart material-symbols-outlined ${isFav ? 'active' : ''}" data-favorite-name="${name}" onclick="event.stopPropagation(); toggleFavorite('${name}', this)">star</button>`;
+            const icon = 'star';
+            const label = isFav ? 'Quitar de favoritos' : 'Añadir a favoritos';
+            return `<button type="button" class="fandom-heart material-symbols-outlined ${isFav ? 'active' : ''}" data-favorite-name="${name}" aria-label="${label}" aria-pressed="${isFav}" onclick="event.stopPropagation(); toggleFavorite('${name}', this)">${icon}</button>`;
         }
 
-        function getPresetCartButtonMarkup(name) {
-            const isInCart = typeof isCartItem === 'function' && isCartItem(name);
+        function getPresetLikeCountMarkup(name) {
+            const count = getPresetLikeCount(name);
+            const liked = isPresetLiked(name);
             return `
-                <button type="button" class="fandom-cart-btn ${isInCart ? 'active' : ''}" data-cart-name="${name}" aria-label="Añadir a carrito">
-                    <span class="material-symbols-outlined">shopping_cart</span>
+                <button type="button" class="fandom-like-count ${liked ? 'active' : ''}" data-like-count-name="${name}" aria-label="${liked ? 'Quitar like' : 'Dar like'}; ${count} ${count === 1 ? 'like' : 'likes'}" aria-pressed="${liked}" onclick="event.stopPropagation(); togglePresetLike('${name}', this)">
+                    <span class="material-symbols-outlined" aria-hidden="true">favorite</span>
+                    <span data-like-count-value>${count}</span>
                 </button>
             `;
         }
@@ -14894,11 +15209,106 @@
             return sourceNames.filter(Boolean).slice(0, limit);
         }
 
+        const PRESET_DOWNLOAD_COUNTS_KEY = 'papelcool:preset-download-counts:v1';
+        const PRESET_LIKE_COUNTS_KEY = 'papelcool:preset-like-counts:v1';
+        const PRESET_LIKED_NAMES_KEY = 'papelcool:preset-liked-names:v1';
+
+        function getPresetLikedNames() {
+            try {
+                const raw = JSON.parse(localStorage.getItem(PRESET_LIKED_NAMES_KEY) || '[]');
+                return Array.isArray(raw) ? [...new Set(raw.filter(Boolean))] : [];
+            } catch {
+                return [];
+            }
+        }
+
+        function savePresetLikedNames(names) {
+            try {
+                localStorage.setItem(PRESET_LIKED_NAMES_KEY, JSON.stringify([...new Set(names.filter(Boolean))]));
+            } catch {}
+        }
+
+        function isPresetLiked(name) {
+            return getPresetLikedNames().includes(name);
+        }
+
+        function readPresetLikeCounts() {
+            try {
+                const raw = localStorage.getItem(PRESET_LIKE_COUNTS_KEY);
+                const parsed = raw ? JSON.parse(raw) : {};
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch {
+                return {};
+            }
+        }
+
+        function writePresetLikeCounts(counts) {
+            try {
+                localStorage.setItem(PRESET_LIKE_COUNTS_KEY, JSON.stringify(counts));
+            } catch {}
+        }
+
+        function getPresetLikeCount(name) {
+            const count = Number(readPresetLikeCounts()[name]);
+            return Number.isFinite(count) && count > 0 ? count : 0;
+        }
+
+        function updatePresetLikeCount(name, delta) {
+            if (!name || !delta) return getPresetLikeCount(name);
+            const counts = readPresetLikeCounts();
+            const nextCount = Math.max(0, (Number(counts[name]) || 0) + delta);
+            counts[name] = nextCount;
+            writePresetLikeCounts(counts);
+            return nextCount;
+        }
+
+        function readPresetDownloadCounts() {
+            try {
+                const raw = localStorage.getItem(PRESET_DOWNLOAD_COUNTS_KEY);
+                const parsed = raw ? JSON.parse(raw) : {};
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch {
+                return {};
+            }
+        }
+
+        function writePresetDownloadCounts(counts) {
+            try {
+                localStorage.setItem(PRESET_DOWNLOAD_COUNTS_KEY, JSON.stringify(counts));
+            } catch {}
+        }
+
+        function getPresetDownloadCount(name) {
+            const counts = readPresetDownloadCounts();
+            return Number.isFinite(Number(counts[name])) ? Number(counts[name]) : 0;
+        }
+
+        function incrementPresetDownloadCount(name) {
+            if (!name) return 0;
+            const counts = readPresetDownloadCounts();
+            const nextCount = (Number(counts[name]) || 0) + 1;
+            counts[name] = nextCount;
+            writePresetDownloadCounts(counts);
+            return nextCount;
+        }
+
+        function getTopDownloadedPresetNames(limit = 8) {
+            const names = getOrderedPresetNames().filter(Boolean);
+            return names
+                .map((name, index) => ({ name, count: getPresetDownloadCount(name), index }))
+                .sort((a, b) => {
+                    if (b.count !== a.count) return b.count - a.count;
+                    return a.index - b.index;
+                })
+                .slice(0, limit)
+                .map((entry) => entry.name);
+        }
+
         function getPresetCardMarkup(name, options = {}) {
             const fandomKey = characterFandoms[name] || 'other';
             const fandomLabel = fandomLabels[fandomKey] || 'Papelcool Original';
             const isFav = isFavorite(name);
-            const favoriteMarkup = (options.showFavorite || canUseFavorites()) ? getPresetFavoriteButtonMarkup(name, isFav, true) : '';
+            const favoriteMarkup = getPresetFavoriteButtonMarkup(name, isFav, true);
             const badgeText = options.badgeText || (shouldShowPresetNewBadge(name) ? 'New' : '');
             const imageLoading = options.lazyImage ? ' loading="lazy"' : '';
 
@@ -14911,13 +15321,38 @@
                 <div class="fandom-info">
                     <div class="fandom-meta-row">
                         <span class="fandom-tag">${fandomLabel}</span>
-                        ${getPresetCartButtonMarkup(name)}
+                        ${getPresetLikeCountMarkup(name)}
                     </div>
                     <h3 class="fandom-name">${getPresetDisplayName(name)}</h3>
                     <span class="fandom-price-tag">${getPresetPriceLabel(name)}</span>
                     <button class="fandom-select-btn">${getCollectionButtonLabel()}</button>
                 </div>
             `;
+        }
+
+        function getTopDownloadMetaMarkup(name, rankIndex) {
+            const count = getPresetDownloadCount(name);
+            return `
+                <div class="lp-download-rank">
+                    <span class="lp-download-rank-badge">#${rankIndex + 1}</span>
+                    <span class="lp-download-rank-count">${count} descarga${count === 1 ? '' : 's'}</span>
+                </div>
+            `;
+        }
+
+        function createPresetCardElement(name, options = {}) {
+            const card = document.createElement('div');
+            card.className = 'fandom-card';
+            card.innerHTML = `${getPresetCardMarkup(name, options)}${options.metaMarkup || ''}`;
+
+            card.addEventListener('click', async () => {
+                if (window.setPresetCharacter) {
+                    navigateToView('preset-preview');
+                    await window.setPresetCharacter(name);
+                }
+            });
+
+            return card;
         }
 
         const homeTikTokEmbeds = [
@@ -15429,11 +15864,40 @@
         window.verifyStripeSuccessView = verifyStripeSuccessView;
         window.closeStripeStatusOverlay = closeStripeStatusOverlay;
 
+        let lpHeroBackgroundRotationTimer = null;
+
+        function startLpHeroBackgroundRotation() {
+            const slides = Array.from(document.querySelectorAll('.lp-hero-bg-slide'));
+            if (slides.length === 0) return;
+
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('is-active', index === 0);
+            });
+
+            if (lpHeroBackgroundRotationTimer) {
+                clearInterval(lpHeroBackgroundRotationTimer);
+            }
+
+            if (slides.length === 1) return;
+
+            let activeIndex = 0;
+            lpHeroBackgroundRotationTimer = window.setInterval(() => {
+                slides[activeIndex].classList.remove('is-active');
+                activeIndex = (activeIndex + 1) % slides.length;
+                slides[activeIndex].classList.add('is-active');
+            }, 5000);
+        }
+
+        window.addEventListener('load', startLpHeroBackgroundRotation);
+
         function renderAuthenticatedHome() {
             ensureDeferredViews();
             const heroSlot = document.getElementById('lp-hero-3d-slot');
             const worldsGrid = document.getElementById('lp-worlds-grid');
             const bestsellersGrid = document.getElementById('lp-bestsellers-grid');
+            const topDownloadsGrid = document.getElementById('lp-top-downloads-grid');
+
+            startLpHeroBackgroundRotation();
 
             // Inject 3D showcase into hero if not already present
             if (heroSlot && !heroSlot.querySelector('#home-showcase-scene')) {
@@ -15476,31 +15940,26 @@
                 if (presetNames.length > 0) {
                     bestsellersGrid.innerHTML = '';
                     presetNames.forEach((name) => {
-                        const card = document.createElement('div');
-                        card.className = 'fandom-card';
-                        card.innerHTML = getPresetCardMarkup(name, { lazyImage: true, showFavorite: true });
-
-                        const cardCartBtn = card.querySelector('.fandom-cart-btn');
-                        if (cardCartBtn) {
-                            cardCartBtn.addEventListener('click', (event) => {
-                                event.stopPropagation();
-                                addPresetToCart(name, cardCartBtn);
-                            });
-                        }
-
-                        card.addEventListener('click', async () => {
-                            if (window.setPresetCharacter) {
-                                navigateToView('preset-preview');
-                                await window.setPresetCharacter(name);
-                            }
-                        });
-
-                        bestsellersGrid.appendChild(card);
+                        bestsellersGrid.appendChild(createPresetCardElement(name, { lazyImage: true, showFavorite: true }));
                     });
                     bestsellersGrid.dataset.rendered = 'true';
                     syncFavoriteButtons();
                     syncCartButtons();
                 }
+            }
+
+            if (topDownloadsGrid) {
+                const topDownloadedNames = getTopDownloadedPresetNames(8);
+                topDownloadsGrid.innerHTML = '';
+                topDownloadedNames.forEach((name, index) => {
+                    topDownloadsGrid.appendChild(createPresetCardElement(name, {
+                        lazyImage: true,
+                        showFavorite: true,
+                        metaMarkup: getTopDownloadMetaMarkup(name, index)
+                    }));
+                });
+                syncFavoriteButtons();
+                syncCartButtons();
             }
         }
 
@@ -16054,7 +16513,7 @@
         const characterFandoms = (typeof presetCharacterFandoms !== 'undefined')
             ? presetCharacterFandoms
             : {
-                'Ladybug': 'miraculous', 'Catnoir': 'miraculous', 'Camilo': 'camilo',
+                'ZocoVR': 'gorilla-tag', 'Ladybug': 'miraculous', 'Catnoir': 'miraculous', 'Camilo': 'camilo',
                 'Steve': 'minecraft', 'Alex': 'minecraft', 'Zombie': 'minecraft',
                 'Skeleton': 'minecraft', 'Creeper': 'minecraft', 'Enderman': 'minecraft',
                 'Baby': 'kpop', 'Mystery': 'kpop', 'Romance': 'kpop',
@@ -16064,6 +16523,7 @@
 
         const fandomLabels = {
             'camilo': 'Camilo',
+            'gorilla-tag': 'Gorilla Tag',
             'minecraft': 'Minecraft Collection',
             'kpop': 'Kpop Demon Hunters',
             'morat': 'Morat',
@@ -16115,6 +16575,8 @@
                 ? 'minecraft steve alex zombie skeleton creeper enderman'
                 : fandomKey === 'camilo'
                     ? 'camilo'
+                : fandomKey === 'gorilla-tag'
+                    ? 'gorilla tag zocovr zoco vr'
                 : fandomKey === 'kpop'
                     ? 'kpop demon hunters baby mystery romance abby jinu zoey rumi mira'
                     : fandomKey === 'miraculous'
@@ -17258,6 +17720,9 @@
                         triggerBrowserBlobDownload(pdfBlob, filename);
                     }
                 }
+
+                incrementPresetDownloadCount(currentPresetCharacter);
+                renderAuthenticatedHome();
             } catch (error) {
                 clearReadyPresetTemplateBlob();
                 if (error?.name !== 'AbortError') {
@@ -17296,14 +17761,6 @@
                 card.innerHTML = `
                     ${getPresetCardMarkup(name)}
                 `;
-
-                const cardCartBtn = card.querySelector('.fandom-cart-btn');
-                if (cardCartBtn) {
-                    cardCartBtn.addEventListener('click', (event) => {
-                        event.stopPropagation();
-                        addPresetToCart(name, cardCartBtn);
-                    });
-                }
 
                 card.addEventListener('click', async () => {
                     if (window.setPresetCharacter) {
@@ -17468,7 +17925,7 @@
         }
 
         function openWorldCollection(filter = 'all') {
-            const nextFilter = ['all', 'camilo', 'miraculous', 'kpop', 'minecraft', 'morat'].includes(filter) ? filter : 'all';
+            const nextFilter = ['all', 'camilo', 'gorilla-tag', 'miraculous', 'kpop', 'minecraft', 'morat'].includes(filter) ? filter : 'all';
             navigateToView('presets');
             if (fandomFilter) fandomFilter.value = nextFilter;
             renderFandomsGrid(nextFilter);
@@ -17665,7 +18122,10 @@
                         }
                         resolve();
                     },
-                    reject
+                    (error) => {
+                        console.warn('Preset texture preload failed:', url, error);
+                        reject(error);
+                    }
                 );
             });
         }
@@ -17673,16 +18133,24 @@
         async function preloadPresetTextures(urls, runVersion) {
             if (!Array.isArray(urls) || urls.length === 0) return;
 
-            // En móvil: precarga serial para evitar picos de memoria por múltiples rasterizaciones 2K simultáneas.
+            // En móvil limitamos concurrencia sin serializar toda la espera. La resolución no cambia.
             if (isLowPowerMobile) {
-                for (const url of urls) {
-                    if (runVersion !== presetApplicationVersion) return;
-                    await loadOptimizedTextureAsync(url);
-                }
+                let cursor = 0;
+                const worker = async () => {
+                    while (cursor < urls.length && runVersion === presetApplicationVersion) {
+                        const url = urls[cursor++];
+                        try {
+                            await loadOptimizedTextureAsync(url);
+                        } catch (error) {
+                            console.warn('Skipping failed preset texture preload on mobile:', url, error);
+                        }
+                    }
+                };
+                await Promise.all([worker(), worker()]);
                 return;
             }
 
-            await Promise.all(urls.map((url) => loadOptimizedTextureAsync(url)));
+            await Promise.allSettled(urls.map((url) => loadOptimizedTextureAsync(url)));
         }
 
         // Función para aplicar personaje preestablecido (OPTIMIZADA PARA MÓVIL)
@@ -18144,7 +18612,58 @@
             activePdfJobController = createPdfJobController();
 
             try {
-                generatedPdfBlob = await generateCustomPdfBlobFromPreparedState(activePdfJobController, updatePdfProgressModal);
+                const sessionId = String(downloadId || '').startsWith('cs_')
+                    ? downloadId
+                    : (customCheckoutState.sessionId || getVerifiedStripeSessionId());
+                if (!sessionId) throw new Error('No hay una sesión de pago verificada.');
+
+                const manifest = buildCurrentCustomPdfSnapshot();
+                const createResponse = await fetch('/api/custom-template-job', {
+                    method: 'POST',
+                    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId, manifest })
+                });
+                const created = await createResponse.json().catch(() => ({}));
+                if (!createResponse.ok || !created.jobId) {
+                    throw new Error(created.error || 'No se pudo iniciar la generación externa.');
+                }
+
+                const jobId = created.jobId;
+                const deadline = Date.now() + 2 * 60 * 1000;
+                let completed = false;
+                while (Date.now() < deadline) {
+                    activePdfJobController?.throwIfCancelled?.();
+                    const statusResponse = await fetch(`/api/custom-template-job?job_id=${encodeURIComponent(jobId)}&session_id=${encodeURIComponent(sessionId)}`, {
+                        headers: { Accept: 'application/json' },
+                        cache: 'no-store'
+                    });
+                    const status = await statusResponse.json().catch(() => ({}));
+                    if (!statusResponse.ok) throw new Error(status.error || 'No se pudo consultar la plantilla.');
+                    updatePdfProgressModal(status.status === 'queued' ? Math.max(5, status.progress || 0) : status.progress || 10);
+                    if (status.status === 'failed') throw new Error(status.error || 'El generador no pudo crear la plantilla.');
+                    if (status.status === 'completed') {
+                        completed = true;
+                        break;
+                    }
+                    await new Promise((resolve) => window.setTimeout(resolve, 1200));
+                }
+                if (!completed) throw new Error('La generación está tardando demasiado. Inténtalo de nuevo.');
+
+                activePdfJobController?.throwIfCancelled?.();
+                updatePdfProgressModal(98);
+                const downloadResponse = await fetch(`/api/custom-template-download?job_id=${encodeURIComponent(jobId)}&session_id=${encodeURIComponent(sessionId)}`, {
+                    headers: { Accept: 'application/pdf' },
+                    cache: 'no-store'
+                });
+                if (!downloadResponse.ok) {
+                    const payload = await downloadResponse.json().catch(() => ({}));
+                    throw new Error(payload.error || 'No se pudo descargar la plantilla generada.');
+                }
+                generatedPdfBlob = await downloadResponse.blob();
+                if (generatedPdfBlob.type !== 'application/pdf' || generatedPdfBlob.size < 5) {
+                    throw new Error('El generador devolvió un archivo inválido.');
+                }
+                updatePdfProgressModal(100);
                 activePdfJobController?.throwIfCancelled?.();
 
                 const filename = 'Papelcool-Custom.pdf';
@@ -18162,9 +18681,9 @@
                     return;
                 }
 
-                console.error(`Error al generar PDF (${downloadId}):`, error);
+                console.error(`Error al generar PDF externo (${downloadId}):`, error);
                 resetPdfProgressModal();
-                alert('Hubo un error al generar el PDF. Por favor, intenta de nuevo.');
+                alert(error?.message || 'Hubo un error al generar el PDF. Por favor, intenta de nuevo.');
                 window.history.replaceState({}, document.title, window.location.pathname);
 	            } finally {
 	                activePdfJobController = null;
@@ -18732,7 +19251,7 @@
 
                 // Botón de cierre (X)
                 const closeBtn = document.createElement('button');
-                closeBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>';
+                closeBtn.innerHTML = '<span class="material-symbols-outlined">close</span>';
                 closeBtn.style.cssText = 'position:absolute;top:15px;right:15px;color:white;cursor:pointer;background:#FF4D94;border:4px solid black;box-shadow:4px 4px 0px 0px rgba(0,0,0,1);padding:5px;transition:all 0.2s ease;border-radius:50%;display:flex;align-items:center;justify-content:center;';
                 closeBtn.onmouseover = () => {
                     closeBtn.style.transform = 'scale(1.1) rotate(90deg)';
@@ -20292,16 +20811,24 @@
         async function loadOtherUserProfile(userId) {
             const client = getSupabaseClient();
             if (!client) return;
+            const loadVersion = ++profileLoadVersion;
 
             try {
-                // Fetch profile info
-                const { data: profile, error } = await client
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', userId)
-                    .single();
-
-                if (error) throw error;
+                const cached = publicProfileCache.get(userId);
+                let profile = cached && Date.now() - cached.createdAt < PUBLIC_PROFILE_CACHE_TTL_MS
+                    ? cached.profile
+                    : null;
+                if (!profile) {
+                    const { data, error } = await client
+                        .from('profiles')
+                        .select('id, nickname, avatar_url, created_at')
+                        .eq('id', userId)
+                        .single();
+                    if (error) throw error;
+                    profile = data;
+                    publicProfileCache.set(userId, { profile, createdAt: Date.now() });
+                }
+                if (loadVersion !== profileLoadVersion || currentProfileUserId !== userId) return;
 
                 // Update UI
                 const profileUsername = document.getElementById('profile-username');
@@ -20327,6 +20854,7 @@
 
                 // Load that user's characters
                 const result = await loadUserCharacters(userId);
+                if (loadVersion !== profileLoadVersion || currentProfileUserId !== userId) return;
                 if (profileCustomsCount) profileCustomsCount.textContent = String(result?.data?.length || 0);
             } catch (err) {
                 console.error('Error loading other profile:', err);
@@ -20365,6 +20893,7 @@
             const resultsContainer = document.getElementById('creator-search-results');
             const resultsList = document.getElementById('results-list');
             let debounceTimer;
+            let searchVersion = 0;
 
             if (searchInput) {
                 searchInput.addEventListener('input', (e) => {
@@ -20372,12 +20901,15 @@
                     const query = e.target.value.trim();
 
                     if (query.length < 2) {
+                        searchVersion += 1;
                         resultsContainer.classList.add('hidden');
                         return;
                     }
 
                     debounceTimer = setTimeout(async () => {
+                        const requestVersion = ++searchVersion;
                         const results = await searchCreators(query);
+                        if (requestVersion !== searchVersion || searchInput.value.trim() !== query) return;
                         renderSearchResults(results);
                     }, 300);
                 });
@@ -20559,6 +21091,27 @@
         // MY CHARACTERS UI
         // ============================================
 
+        function escapeUserContent(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function safeCharacterId(value) {
+            const id = String(value || '');
+            return /^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(id) ? id : '';
+        }
+
+        function safeThumbnailSource(value) {
+            const source = String(value || '').trim();
+            if (/^https:\/\//i.test(source) || /^blob:/i.test(source)) return source;
+            if (/^data:image\/(?:png|jpe?g|webp);base64,/i.test(source)) return source;
+            return 'logo.svg';
+        }
+
         async function openMyCharacters() {
             hideUserDropdown();
             const modal = document.getElementById('my-characters-modal');
@@ -20599,17 +21152,38 @@
                 card.onmouseover = () => { card.style.transform = 'scale(1.05) rotate(-2deg)'; };
                 card.onmouseout = () => { card.style.transform = 'scale(1) rotate(0deg)'; };
 
-                const thumbnail = char.thumbnail || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23334" width="100" height="100"/><text x="50" y="55" text-anchor="middle" fill="%23ffee00" font-size="40">?</text></svg>';
-
+                const id = safeCharacterId(char.id);
+                const thumbnail = safeThumbnailSource(char.thumbnail);
+                const name = String(char.name || 'Sin nombre').slice(0, 80);
                 card.innerHTML = `
-                    <img src="${thumbnail}" alt="${char.name}" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; margin-bottom: 8px;">
-                    <div style="color: black; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 4px; text-transform: uppercase;">${char.name}</div>
-                    <div style="color: #6B7280; font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.8rem;">${new Date(char.created_at).toLocaleDateString()}</div>
-                    <div style="display: flex; gap: 5px; margin-top: 8px;">
-                        <button onclick="event.stopPropagation(); loadSavedCharacter('${char.id}')" style="flex: 1; padding: 6px; background: #FFE600; border: 3px solid black; border-radius: 12px; color: black; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 0.8rem; text-transform: uppercase; cursor: pointer; box-shadow: 2px 2px 0px 0px rgba(0,0,0,1); transition: transform 0.2s;" data-i18n="cat-load-btn" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">Load</button>
-                        <button onclick="event.stopPropagation(); deleteSavedCharacter('${char.id}')" style="padding: 6px 12px; background: #FF4D94; border: 3px solid black; border-radius: 12px; color: white; font-size: 1rem; cursor: pointer; box-shadow: 2px 2px 0px 0px rgba(0,0,0,1); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"><span class="material-symbols-outlined" style="font-size: 18px;">delete</span></button>
-                    </div>
+                    <img alt="" style="width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 8px; margin-bottom: 8px;">
+                    <div class="saved-character-name" style="color: black; font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 4px; text-transform: uppercase;"></div>
+                    <div class="saved-character-date" style="color: #6B7280; font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.8rem;"></div>
+                    <div class="saved-character-actions" style="display: flex; gap: 5px; margin-top: 8px;"></div>
                 `;
+                const image = card.querySelector('img');
+                image.src = thumbnail;
+                image.alt = name;
+                card.querySelector('.saved-character-name').textContent = name;
+                const createdAt = new Date(char.created_at);
+                card.querySelector('.saved-character-date').textContent = Number.isNaN(createdAt.getTime()) ? '' : createdAt.toLocaleDateString();
+
+                const actions = card.querySelector('.saved-character-actions');
+                const loadButton = document.createElement('button');
+                loadButton.type = 'button';
+                loadButton.textContent = 'Load';
+                loadButton.dataset.i18n = 'cat-load-btn';
+                loadButton.style.cssText = 'flex:1;padding:6px;background:#FFE600;border:3px solid black;border-radius:12px;color:black;font-family:Fredoka,sans-serif;font-weight:700;font-size:.8rem;text-transform:uppercase;cursor:pointer;box-shadow:2px 2px 0 #000';
+                loadButton.disabled = !id;
+                loadButton.addEventListener('click', (event) => { event.stopPropagation(); if (id) loadSavedCharacter(id); });
+                const deleteButton = document.createElement('button');
+                deleteButton.type = 'button';
+                deleteButton.setAttribute('aria-label', 'Eliminar personaje');
+                deleteButton.innerHTML = '<span class="material-symbols-outlined" aria-hidden="true" style="font-size:18px">delete</span>';
+                deleteButton.style.cssText = 'padding:6px 12px;background:#FF4D94;border:3px solid black;border-radius:12px;color:white;cursor:pointer;box-shadow:2px 2px 0 #000';
+                deleteButton.disabled = !id;
+                deleteButton.addEventListener('click', (event) => { event.stopPropagation(); if (id) deleteSavedCharacter(id); });
+                actions.append(loadButton, deleteButton);
 
                 listContainer.appendChild(card);
             });
@@ -20778,10 +21352,23 @@
                 button.classList.toggle('active', active);
                 if (button.classList.contains('fandom-heart')) {
                     button.textContent = 'star';
+                    button.setAttribute('aria-label', active ? 'Quitar de favoritos' : 'Añadir a favoritos');
+                    button.setAttribute('aria-pressed', String(active));
                     button.style.color = active ? '#FFC700' : '#000';
                 } else {
                     button.style.color = active ? '#FF4D94' : '';
                 }
+            });
+
+            document.querySelectorAll('[data-like-count-name]').forEach((counter) => {
+                const name = counter.dataset.likeCountName;
+                const count = getPresetLikeCount(name);
+                const liked = isPresetLiked(name);
+                const value = counter.querySelector('[data-like-count-value]');
+                if (value) value.textContent = count;
+                counter.classList.toggle('active', liked);
+                counter.setAttribute('aria-pressed', String(liked));
+                counter.setAttribute('aria-label', `${liked ? 'Quitar like' : 'Dar like'}; ${count} ${count === 1 ? 'like' : 'likes'}`);
             });
         }
 
@@ -20833,7 +21420,18 @@
         renderCartDropdown();
 
         function toggleFavorite(characterName, btnElement) {
-            if (!canUseFavorites()) return;
+            if (!canUseFavorites()) {
+                const url = new URL(window.location.href);
+                const view = normalizeLegacyView(
+                    url.searchParams.get('view') || getViewFromPathname(url.pathname) || 'showcase'
+                );
+                openAuthWithReturn('login', {
+                    view,
+                    url: window.location.href,
+                    source: 'preset-like'
+                });
+                return;
+            }
 
             const favorites = getFavorites();
             const nextFavorites = favorites.includes(characterName)
@@ -20847,6 +21445,8 @@
                 btnElement.classList.toggle('active', active);
                 if (btnElement.classList.contains('fandom-heart')) {
                     btnElement.textContent = 'star';
+                    btnElement.setAttribute('aria-label', active ? 'Quitar de favoritos' : 'Añadir a favoritos');
+                    btnElement.setAttribute('aria-pressed', String(active));
                     btnElement.style.color = active ? '#FFC700' : '#000';
                 } else {
                     btnElement.style.color = active ? '#FF4D94' : '';
@@ -20854,6 +21454,33 @@
             }
 
             refreshFavoritesUI();
+        }
+
+        function togglePresetLike(characterName, btnElement) {
+            if (!canUseFavorites()) {
+                const url = new URL(window.location.href);
+                const view = normalizeLegacyView(
+                    url.searchParams.get('view') || getViewFromPathname(url.pathname) || 'showcase'
+                );
+                openAuthWithReturn('login', {
+                    view,
+                    url: window.location.href,
+                    source: 'preset-like'
+                });
+                return;
+            }
+
+            const likedNames = getPresetLikedNames();
+            const wasLiked = likedNames.includes(characterName);
+            const nextLikedNames = wasLiked
+                ? likedNames.filter((name) => name !== characterName)
+                : [...likedNames, characterName];
+
+            savePresetLikedNames(nextLikedNames);
+            updatePresetLikeCount(characterName, wasLiked ? -1 : 1);
+            syncFavoriteButtons();
+
+            if (btnElement) btnElement.blur();
         }
 
         function openFavoriteCharacter(name, context = 'profile') {
@@ -20921,17 +21548,17 @@
         window.openFavoritesView = showFavoritesView;
 
         function switchProfileTab(tabId) {
-            // Update active styling
+            // Update active styling using classList
             const favTab = document.getElementById('tab-favorites');
             const custTab = document.getElementById('tab-customs');
 
             if (tabId === 'favorites') {
-                favTab.style.backgroundColor = '#FFE600';
-                custTab.style.backgroundColor = 'transparent';
+                favTab.classList.add('active');
+                custTab.classList.remove('active');
                 if(window.renderProfileFavorites) window.renderProfileFavorites();
             } else {
-                custTab.style.backgroundColor = '#FFE600';
-                favTab.style.backgroundColor = 'transparent';
+                custTab.classList.add('active');
+                favTab.classList.remove('active');
                 if(window.renderProfileCustoms) window.renderProfileCustoms();
             }
         }
@@ -20971,16 +21598,29 @@
 
             contentArea.innerHTML = `
                 <div class="pc-favorites-grid">
-                    ${customs.map(char => `
-                        <article class="pc-favorite-card" onclick="loadSavedCharacter('${char.id}'); document.getElementById('user-profile-view').style.display='none';">
+                    ${customs.map(char => {
+                        const id = safeCharacterId(char.id);
+                        const name = escapeUserContent(String(char.name || 'Sin nombre').slice(0, 80));
+                        const thumbnail = escapeUserContent(safeThumbnailSource(char.thumbnail));
+                        return `
+                        <article class="pc-favorite-card" data-saved-character-id="${id}">
                             <div class="pc-favorite-card-thumb">
-                                <img src="${char.thumbnail || 'logo.svg'}" alt="${char.name}" loading="lazy">
+                                <img src="${thumbnail}" alt="${name}" loading="lazy" decoding="async">
                             </div>
-                            <h3 class="pc-favorite-card-title">${char.name}</h3>
+                            <h3 class="pc-favorite-card-title">${name}</h3>
                         </article>
-                    `).join('')}
+                    `;}).join('')}
                 </div>
             `;
+            contentArea.querySelectorAll('[data-saved-character-id]').forEach((card) => {
+                const id = safeCharacterId(card.dataset.savedCharacterId);
+                if (!id) return;
+                card.addEventListener('click', async () => {
+                    await loadSavedCharacter(id);
+                    const profileView = document.getElementById('user-profile-view');
+                    if (profileView) profileView.style.display = 'none';
+                });
+            });
         }
 
         window.switchProfileTab = switchProfileTab;
@@ -21155,19 +21795,24 @@
 
             <!-- ===== HERO ===== -->
             <section class="lp-hero" id="lp-hero">
+                <div class="lp-hero-bg" aria-hidden="true">
+                    <div class="lp-hero-bg-slide is-active" style="background-image: url('assets/worlds/hero-backgrounds/kpop-hero-bg.png');"></div>
+                    <div class="lp-hero-bg-slide" style="background-image: url('assets/worlds/hero-backgrounds/minecraft-hero-bg.png');"></div>
+                    <div class="lp-hero-bg-slide" style="background-image: url('assets/worlds/hero-backgrounds/morat-hero-bg.png');"></div>
+                    <div class="lp-hero-bg-slide" style="background-image: url('assets/worlds/hero-backgrounds/digital-circus-hero-bg.png');"></div>
+                    <div class="lp-hero-bg-slide" style="background-image: url('assets/worlds/hero-backgrounds/miraculous-hero-bg.png');"></div>
+                    <div class="lp-hero-bg-slide" style="background-image: url('assets/worlds/hero-backgrounds/hello-kitty-hero-bg.png');"></div>
+                    <div class="lp-hero-bg-slide" style="background-image: url('assets/worlds/hero-backgrounds/fnaf-hero-bg.png');"></div>
+                    <div class="lp-hero-bg-slide" style="background-image: url('assets/worlds/hero-backgrounds/enchanted-forest-hero-bg.png');"></div>
+                    <div class="lp-hero-bg-slide" style="background-image: url('assets/worlds/hero-backgrounds/retro-arcade-hero-bg.png');"></div>
+                    <div class="lp-hero-bg-slide" style="background-image: url('assets/worlds/hero-backgrounds/underwater-city-hero-bg.png');"></div>
+                </div>
                 <div class="lp-hero-inner">
                     <div class="lp-hero-copy">
-                        <h1>Arma tus personajes favoritos en papel</h1>
-                        <p>Kits de papel para coleccionar, armar y dar vida a tu imaginación.</p>
+                        <h1>Armalo como quieras!!</h1>
                         <div class="lp-hero-ctas">
-                            <button type="button" class="lp-btn lp-btn--pink" onclick="navigateToView('presets')">
-                                <span class="material-symbols-outlined" style="font-size: 1.2rem;">shopping_cart</span>
-                                Comprar ahora
-                            </button>
-                            <button type="button" class="lp-btn lp-btn--yellow" onclick="navigateToView('presets')">
-                                Explorar mundos
-                                <span class="material-symbols-outlined" style="font-size: 1.2rem;">arrow_forward</span>
-                            </button>
+                            <button type="button" class="lp-btn lp-btn--pink" onclick="navigateToView('presets')">Comprar ahora</button>
+                            <button type="button" class="lp-btn lp-btn--yellow" onclick="navigateToView('custom')">Crea el tuyo</button>
                         </div>
                     </div>
                     <div class="lp-hero-3d-slot" id="lp-hero-3d-slot">
@@ -21175,34 +21820,6 @@
                     </div>
                 </div>
             </section>
-
-            <!-- ===== BENEFITS STRIP ===== -->
-            <div class="lp-benefits" id="lp-benefits">
-                <div class="lp-benefit-item">
-                    <div class="lp-benefit-icon">🧩</div>
-                    <div>
-                        <div class="lp-benefit-title">Fácil de armar</div>
-                    </div>
-                </div>
-                <div class="lp-benefit-item">
-                    <div class="lp-benefit-icon">🌿</div>
-                    <div>
-                        <div class="lp-benefit-title">Papel Eco-Friendly</div>
-                    </div>
-                </div>
-                <div class="lp-benefit-item">
-                    <div class="lp-benefit-icon">⭐</div>
-                    <div>
-                        <div class="lp-benefit-title">Ideal para coleccionar</div>
-                    </div>
-                </div>
-                <div class="lp-benefit-item">
-                    <div class="lp-benefit-icon">✂️</div>
-                    <div>
-                        <div class="lp-benefit-title">Sin pegamento difícil</div>
-                    </div>
-                </div>
-            </div>
 
             <!-- ===== WORLDS / CATEGORIES ===== -->
             <section class="lp-worlds-section">
@@ -21254,31 +21871,18 @@
                 </div>
             </section>
 
-            <!-- ===== HOW IT WORKS ===== -->
-            <section class="lp-how-section">
-                <div class="lp-section" id="lp-how">
-                    <h2 class="lp-section-title">Cómo funciona</h2>
-                    <div class="lp-steps-grid">
-                        <div class="lp-step-card">
-                            <div class="lp-step-number">1</div>
-                            <div class="lp-step-title">Elige tu kit</div>
-                            <div class="lp-step-text">Explora mundos y encuentra tu personaje favorito.</div>
-                        </div>
-                        <div class="lp-step-card">
-                            <div class="lp-step-number">2</div>
-                            <div class="lp-step-title">Dobla y arma</div>
-                            <div class="lp-step-text">Sigue las instrucciones ilustradas y arma paso a paso.</div>
-                        </div>
-                        <div class="lp-step-card">
-                            <div class="lp-step-number">3</div>
-                            <div class="lp-step-title">Personaliza</div>
-                            <div class="lp-step-text">Añade accesorios, caras, detalles y hazlo tuyo.</div>
-                        </div>
-                        <div class="lp-step-card">
-                            <div class="lp-step-number">4</div>
-                            <div class="lp-step-title">Exhibe y colecciona</div>
-                            <div class="lp-step-text">Ponlo en tu escritorio, repisa o vitrina.</div>
-                        </div>
+            <!-- ===== TOP DOWNLOADS ===== -->
+            <section class="lp-top-downloads-section">
+                <div class="lp-section" id="lp-top-downloads">
+                    <div class="lp-top-downloads-header">
+                        <h2 class="lp-section-title">Los más descargados</h2>
+                        <button type="button" class="lp-btn lp-btn--white" onclick="navigateToView('presets')" style="font-size: 0.85rem; padding: 0.7rem 1.2rem; box-shadow: 4px 4px 0 rgba(0,0,0,1);">
+                            Ver todos
+                            <span class="material-symbols-outlined" style="font-size: 1rem;">arrow_forward</span>
+                        </button>
+                    </div>
+                    <div class="lp-top-downloads-grid" id="lp-top-downloads-grid">
+                        <!-- Injected by JS based on local preset download ranking -->
                     </div>
                 </div>
             </section>
@@ -21425,41 +22029,47 @@
         <div style="position: fixed; bottom: -50px; left: -50px; width: 400px; height: 400px; background: #407BFF; opacity: 0.15; clip-path: polygon(5% 15%, 95% 0%, 100% 85%, 15% 100%); transform: rotate(-12deg); pointer-events: none; z-index: 0;"></div>
 
         <div class="pc-home-shell" style="min-height: 100vh; padding: 6rem 2rem 2rem; max-width: 900px; margin: 0 auto; position: relative; z-index: 10;">
-            <section class="ui-panel" style="background: white; border: 4px solid black; border-radius: 20px; box-shadow: 8px 8px 0px 0px rgba(0, 0, 0, 1); padding: 2rem; display: flex; flex-wrap: wrap; gap: 2rem; align-items: center; margin-bottom: 2rem; position: relative;">
 
+            <!-- Redesigned Profile Hero -->
+            <div class="pc-profile-hero">
                 <!-- Avatar Sticker -->
-                <div style="width: 140px; height: 140px; border-radius: 50%; border: 4px solid #000; overflow: hidden; box-shadow: 6px 6px 0 rgba(0,0,0,1); background: #FFE600; display: flex; align-items: center; justify-content: center; transform: rotate(-3deg);">
-                    <span id="profile-avatar-initial" style="font-family: 'Fredoka', sans-serif; font-size: 3.25rem; line-height: 1; font-weight: 800; color: #000; letter-spacing: 0.04em;">US</span>
+                <div class="pc-profile-avatar">
+                    <span id="profile-avatar-initial">US</span>
                 </div>
 
-                <div style="flex: 1; min-width: 250px;">
-                    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem;">
-                        <h2 id="profile-username" style="font-family: 'Fredoka', sans-serif; font-size: 2.5rem; font-weight: 900; margin: 0; color: #000; text-transform: uppercase;">Username</h2>
-                        <span id="profile-handle" style="font-family: 'Fredoka', sans-serif; font-size: 1.2rem; font-weight: 700; color: #FF4D94; border: 3px solid #000; border-radius: 99px; padding: 0.2rem 0.8rem; background: white; box-shadow: 3px 3px 0 #000;">@username</span>
+                <!-- Profile Info -->
+                <div class="pc-profile-info">
+                    <div class="pc-profile-name-row">
+                        <h2 id="profile-username" class="pc-profile-name">Username</h2>
+                        <span id="profile-handle" class="pc-profile-handle">@username</span>
                     </div>
-                    <div style="display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1rem; align-items: baseline;">
-                        <div style="display: inline-flex; align-items: baseline; gap: 0.45rem;">
-                            <strong id="profile-favorites-count" style="display: block; font-family: 'Fredoka', sans-serif; font-size: 2rem; line-height: 1; color: #000;">0</strong>
-                            <span style="font-family: 'Fredoka', sans-serif; font-size: 1rem; color: #000; font-weight: 700; text-transform: uppercase;">Favoritos</span>
+
+                    <div class="pc-profile-stats">
+                        <div class="pc-profile-stat">
+                            <strong id="profile-favorites-count">0</strong>
+                            <span>Favoritos</span>
                         </div>
-                        <div style="display: inline-flex; align-items: baseline; gap: 0.45rem;">
-                            <strong id="profile-customs-count" style="display: block; font-family: 'Fredoka', sans-serif; font-size: 2rem; line-height: 1; color: #000;">0</strong>
-                            <span style="font-family: 'Fredoka', sans-serif; font-size: 1rem; color: #000; font-weight: 700; text-transform: uppercase;">Customs</span>
+                        <div class="pc-profile-stat">
+                            <strong id="profile-customs-count">0</strong>
+                            <span>Customs</span>
                         </div>
                     </div>
-                    <p id="profile-status" style="font-family: 'Montserrat', sans-serif; font-size: 1.1rem; line-height: 1.45; margin: 0 0 1rem; color: #000; font-weight: 600;">Coleccionando favoritos y creando nuevos Papelcool.</p>
-                    <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
-                        <span id="profile-email" style="font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 700; color: #555;"></span>
-                        <span id="profile-joined" style="font-family: 'Montserrat', sans-serif; font-size: 0.95rem; font-weight: 700; color: #555;"></span>
+
+                    <p id="profile-status" class="pc-profile-bio">Coleccionando favoritos y creando nuevos Papelcool.</p>
+
+                    <div class="pc-profile-meta">
+                        <span id="profile-email"></span>
+                        <span id="profile-joined"></span>
                     </div>
                 </div>
-            </section>
+            </div>
 
-            <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 2rem;">
-                <button id="tab-favorites" class="icon-btn active" style="flex: 1; max-width: 250px; text-align: center; justify-content: center; padding: 1rem; font-family: 'Fredoka', sans-serif; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; background: #FFE600; cursor: pointer; border: 4px solid #000; box-shadow: 4px 4px 0 #000; border-radius: 12px; transition: transform 0.1s;" onmousedown="this.style.transform='translate(2px, 2px)'; this.style.boxShadow='2px 2px 0 #000';" onmouseup="this.style.transform='translate(0, 0)'; this.style.boxShadow='4px 4px 0 #000';" onclick="switchProfileTab('favorites')">
+            <!-- Redesigned Flat Underline Tabs -->
+            <div class="pc-profile-tabs">
+                <button id="tab-favorites" class="pc-profile-tab active" onclick="switchProfileTab('favorites')">
                     Favoritos
                 </button>
-                <button id="tab-customs" class="icon-btn" style="flex: 1; max-width: 250px; text-align: center; justify-content: center; padding: 1rem; font-family: 'Fredoka', sans-serif; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; background: white; cursor: pointer; border: 4px solid #000; box-shadow: 4px 4px 0 #000; border-radius: 12px; transition: transform 0.1s;" onmousedown="this.style.transform='translate(2px, 2px)'; this.style.boxShadow='2px 2px 0 #000';" onmouseup="this.style.transform='translate(0, 0)'; this.style.boxShadow='4px 4px 0 #000';" onclick="switchProfileTab('customs')">
+                <button id="tab-customs" class="pc-profile-tab" onclick="switchProfileTab('customs')">
                     Customs
                 </button>
             </div>

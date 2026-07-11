@@ -1,6 +1,6 @@
 import { getStoredStripeAccessBySessionId, isPresetTemplateAccessValidForCharacter } from '../_lib/stripe-access.js';
 
-const R2_PDF_BASE_URL = 'https://pub-9432515251e743b7979ceb8e264f80ec.r2.dev/presets-pdfs/';
+const DEFAULT_R2_PREFIX = 'presets-pdfs/';
 const PREMIUM_PRESET_PRICE_CENTS = 500;
 const PREMIUM_PRESET_CURRENCY = 'usd';
 const premiumPresetCharacters = new Set([
@@ -95,46 +95,55 @@ async function handleRequest(request, env) {
     }
   }
 
-  const fileName = availablePresetPdfs[character];
-  const upstreamUrl = `${R2_PDF_BASE_URL}${fileName}`;
-  const upstreamResponse = await fetch(upstreamUrl, {
-    method: request.method === 'HEAD' ? 'HEAD' : 'GET',
-    headers: {
-      Accept: 'application/pdf'
-    }
-  });
-
-  if (!upstreamResponse.ok) {
+  const bucket = env.PRESET_PDFS_BUCKET;
+  if (!bucket || typeof bucket.get !== 'function' || typeof bucket.head !== 'function') {
     return jsonResponse(
-      { error: 'Unable to fetch template from storage.' },
-      upstreamResponse.status === 404 ? 404 : 502
+      { error: 'Private template storage is not configured.' },
+      503
     );
   }
 
+  const fileName = availablePresetPdfs[character];
+  const prefix = normalizeR2Prefix(env.PRESET_PDFS_PREFIX);
+  const objectKey = `${prefix}${fileName}`;
+  const object = request.method === 'HEAD'
+    ? await bucket.head(objectKey)
+    : await bucket.get(objectKey);
+
+  if (!object) {
+    return jsonResponse({ error: 'Template not found in private storage.' }, 404);
+  }
+
   const headers = new Headers();
-  headers.set('Content-Type', upstreamResponse.headers.get('Content-Type') || 'application/pdf');
+  headers.set('Content-Type', object.httpMetadata?.contentType || 'application/pdf');
   headers.set('Content-Disposition', `attachment; filename="${fileName}"`);
-  headers.set('Cache-Control', 'public, max-age=300');
+  headers.set('Cache-Control', premiumPresetCharacters.has(character)
+    ? 'private, no-store'
+    : 'private, max-age=300');
+  headers.set('X-Content-Type-Options', 'nosniff');
 
-  const contentLength = upstreamResponse.headers.get('Content-Length');
-  if (contentLength) {
-    headers.set('Content-Length', contentLength);
+  if (Number.isFinite(object.size)) {
+    headers.set('Content-Length', String(object.size));
   }
 
-  const etag = upstreamResponse.headers.get('ETag');
-  if (etag) {
-    headers.set('ETag', etag);
+  if (object.httpEtag || object.etag) {
+    headers.set('ETag', object.httpEtag || `"${object.etag}"`);
   }
 
-  const lastModified = upstreamResponse.headers.get('Last-Modified');
-  if (lastModified) {
-    headers.set('Last-Modified', lastModified);
+  if (object.uploaded instanceof Date) {
+    headers.set('Last-Modified', object.uploaded.toUTCString());
   }
 
-  return new Response(request.method === 'HEAD' ? null : upstreamResponse.body, {
+  return new Response(request.method === 'HEAD' ? null : object.body, {
     status: 200,
     headers
   });
+}
+
+function normalizeR2Prefix(value) {
+  if (typeof value !== 'string') return DEFAULT_R2_PREFIX;
+  const trimmed = value.trim().replace(/^\/+|\/+$/g, '');
+  return trimmed ? `${trimmed}/` : '';
 }
 
 function jsonResponse(payload, status) {

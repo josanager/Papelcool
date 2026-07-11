@@ -239,6 +239,12 @@ async function searchCreators(query) {
     const client = getSupabaseClient();
     if (!client || !query || query.length < 2) return [];
 
+    const normalizedQuery = query.trim().toLocaleLowerCase();
+    const cached = creatorSearchCache.get(normalizedQuery);
+    if (cached && Date.now() - cached.createdAt < CREATOR_SEARCH_CACHE_TTL_MS) {
+        return cached.data;
+    }
+
     try {
         const { data, error } = await client
             .from('profiles')
@@ -251,12 +257,18 @@ async function searchCreators(query) {
             return [];
         }
 
-        return data;
+        const results = Array.isArray(data) ? data : [];
+        creatorSearchCache.set(normalizedQuery, { data: results, createdAt: Date.now() });
+        if (creatorSearchCache.size > 30) creatorSearchCache.delete(creatorSearchCache.keys().next().value);
+        return results;
     } catch (err) {
         console.error('Search exception:', err);
         return [];
     }
 }
+
+const creatorSearchCache = new Map();
+const CREATOR_SEARCH_CACHE_TTL_MS = 60 * 1000;
 /**
  * Check if a nickname is already taken in the profiles table
  * @param {string} nickname - The nickname to check
