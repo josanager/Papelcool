@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2350 1000" role="img" aria-label="Warm acoustic studio background">
+  <defs>
+    <!-- Wall color gradient -->
+    <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4a2712"/>
+      <stop offset="50%" stop-color="#734a20"/>
+      <stop offset="100%" stop-color="#2b1509"/>
+    </linearGradient>
+    
+    <!-- Warm light cone gradient -->
+    <radialGradient id="lightCone" cx="50%" cy="0%" r="80%">
+      <stop offset="0%" stop-color="#FFE600" stop-opacity="0.35"/>
+      <stop offset="50%" stop-color="#ffb84d" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#ffb84d" stop-opacity="0"/>
+    </radialGradient>
+    
+    <!-- Floor gradient -->
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3d2113"/>
+      <stop offset="100%" stop-color="#1c0d06"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Studio Wall -->
+  <rect width="2350" height="1000" fill="url(#wall)"/>
+
+  <!-- Acoustic Wall Panels (Background details) -->
+  <g fill="none" stroke="#220e05" stroke-width="4" opacity="0.6">
+    <!-- Vertically divided panels -->
+    <line x1="335" y1="0" x2="335" y2="770"/>
+    <line x1="670" y1="0" x2="670" y2="770"/>
+    <line x1="1005" y1="0" x2="1005" y2="770"/>
+    <line x1="1340" y1="0" x2="1340" y2="770"/>
+    <line x1="1675" y1="0" x2="1675" y2="770"/>
+    <line x1="2010" y1="0" x2="2010" y2="770"/>
+  </g>
+
+  <!-- Hanging Vinyl Records (Sticker Style) -->
+  <g stroke="#000" stroke-width="5" stroke-linejoin="miter">
+    <!-- Vinyl 1 Left -->
+    <circle cx="200" cy="300" r="60" fill="#111"/>
+    <circle cx="200" cy="300" r="22" fill="#FF4D94"/>
+    <circle cx="200" cy="300" r="6" fill="#fff"/>
+    
+    <!-- Vinyl 2 Right -->
+    <circle cx="2150" cy="300" r="60" fill="#111"/>
+    <circle cx="2150" cy="300" r="22" fill="#33ccff"/>
+    <circle cx="2150" cy="300" r="6" fill="#fff"/>
+  </g>
+
+  <!-- Warm Light Rays Cones from Above -->
+  <g opacity="0.8">
+    <polygon points="290,190 100,770 480,770" fill="url(#lightCone)"/>
+    <polygon points="918,198 700,770 1130,770" fill="url(#lightCone)"/>
+    <polygon points="1556,196 1320,770 1780,770" fill="url(#lightCone)"/>
+    <polygon points="2192,192 1950,770 2350,770" fill="url(#lightCone)"/>
+  </g>
+
+  <!-- Hanging Lamps (Bulbs & Cables with borders & shadows) -->
+  <!-- Shadows first -->
+  <g stroke="#000" stroke-width="8" opacity="0.25" transform="translate(6, 6)">
+    <path d="M220 0 L290 190 M520 0 L595 180 M840 0 L918 198 M1160 0 L1240 176 M1480 0 L1556 196 M1800 0 L1878 180 M2120 0 L2192 192"/>
+    <circle cx="290" cy="190" r="16" fill="#000"/>
+    <circle cx="595" cy="180" r="16" fill="#000"/>
+    <circle cx="918" cy="198" r="16" fill="#000"/>
+    <circle cx="1240" cy="176" r="16" fill="#000"/>
+    <circle cx="1556" cy="196" r="16" fill="#000"/>
+    <circle cx="1878" cy="180" r="16" fill="#000"/>
+    <circle cx="2192" cy="192" r="16" fill="#000"/>
+  </g>
+  <!-- Lamps -->
+  <g stroke="#000" stroke-width="6" stroke-linecap="round">
+    <path d="M220 0 L290 190 M520 0 L595 180 M840 0 L918 198 M1160 0 L1240 176 M1480 0 L1556 196 M1800 0 L1878 180 M2120 0 L2192 192"/>
+  </g>
+  <g fill="#FFE600" stroke="#000" stroke-width="5">
+    <circle cx="290" cy="190" r="16"/>
+    <circle cx="595" cy="180" r="16"/>
+    <circle cx="918" cy="198" r="16"/>
+    <circle cx="1240" cy="176" r="16"/>
+    <circle cx="1556" cy="196" r="16"/>
+    <circle cx="1878" cy="180" r="16"/>
+    <circle cx="2192" cy="192" r="16"/>
+  </g>
+
+  <!-- Studio Floor -->
+  <!-- Shadow first -->
+  <rect x="0" y="770" width="2350" height="230" fill="#000" opacity="0.3" transform="translate(0, 8)"/>
+  <rect x="0" y="770" width="2350" height="230" fill="url(#floor)" stroke="#000" stroke-width="6"/>
+
+  <!-- Floor Plank Lines (Wood texture) -->
+  <g stroke="#1c0d06" stroke-width="3" opacity="0.7">
+    <line x1="0" y1="815" x2="2350" y2="815"/>
+    <line x1="0" y1="875" x2="2350" y2="875"/>
+    <line x1="0" y1="935" x2="2350" y2="935"/>
+    
+    <!-- Plank gaps vertical -->
+    <line x1="300" y1="770" x2="300" y2="815"/>
+    <line x1="900" y1="770" x2="900" y2="815"/>
+    <line x1="1600" y1="770" x2="1600" y2="815"/>
+
+    <line x1="500" y1="815" x2="500" y2="875"/>
+    <line x1="1200" y1="815" x2="1200" y2="875"/>
+    <line x1="1900" y1="815" x2="1900" y2="875"/>
+
+    <line x1="700" y1="875" x2="700" y2="935"/>
+    <line x1="1500" y1="875" x2="1500" y2="935"/>
+  </g>
+
+  <!-- Round Carpet Under the Character Slot -->
+  <ellipse cx="1200" cy="792" rx="440" ry="54" fill="#ffb84d" stroke="#000" stroke-width="5" opacity="0.8"/>
+
+  <!-- Microphones & Stands with shadows -->
+  <g stroke="#000" stroke-width="6" stroke-linejoin="miter">
+    <!-- Stand Left shadow -->
+    <rect x="138" y="420" width="18" height="288" fill="#000" opacity="0.2" stroke="none" transform="translate(6, 6)"/>
+    <circle cx="147" cy="400" r="42" fill="#000" opacity="0.2" stroke="none" transform="translate(6, 6)"/>
+    
+    <!-- Stand Left -->
+    <rect x="130" y="412" width="18" height="288" fill="#666"/>
+    <rect x="120" y="468" width="40" height="16" fill="#111"/>
+    <circle cx="139" cy="392" r="42" fill="#222"/>
+    <circle cx="139" cy="392" r="28" fill="#444"/>
+
+    <!-- Stand Right shadow -->
+    <rect x="2148" y="428" width="18" height="280" fill="#000" opacity="0.2" stroke="none" transform="translate(6, 6)"/>
+    <circle cx="2157" cy="406" r="38" fill="#000" opacity="0.2" stroke="none" transform="translate(6, 6)"/>
+
+    <!-- Stand Right -->
+    <rect x="2140" y="420" width="18" height="280" fill="#666"/>
+    <circle cx="2149" cy="398" r="38" fill="#222"/>
+    <circle cx="2149" cy="398" r="24" fill="#444"/>
+  </g>
+
+  <!-- Acoustic Guitars (Sticker style with shadows) -->
+  <g stroke="#000" stroke-width="6" stroke-linejoin="miter">
+    <!-- Guitar Left shadow -->
+    <path d="M410 760c25-154 62-256 114-256 56 0 103 122 128 256Z" fill="#000" opacity="0.25" stroke="none" transform="translate(8, 8)"/>
+    <!-- Guitar Left -->
+    <path d="M410 760c25-154 62-256 114-256 56 0 103 122 128 256Z" fill="#ab642a"/>
+    <circle cx="518" cy="512" r="54" fill="#c57b36"/>
+    <circle cx="518" cy="512" r="20" fill="#2b1509"/>
+    <!-- Guitar Neck Left -->
+    <rect x="509" y="340" width="18" height="120" fill="#e9b56a"/>
+    <rect x="498" y="310" width="40" height="30" fill="#6d3b14" rx="4"/>
+
+    <!-- Guitar Right shadow -->
+    <path d="M1790 760c25-154 62-256 114-256 56 0 103 122 128 256Z" fill="#000" opacity="0.25" stroke="none" transform="translate(8, 8)"/>
+    <!-- Guitar Right -->
+    <path d="M1790 760c25-154 62-256 114-256 56 0 103 122 128 256Z" fill="#9e5a28"/>
+    <circle cx="1898" cy="512" r="54" fill="#c17834"/>
+    <circle cx="1898" cy="512" r="20" fill="#2b1509"/>
+    <!-- Guitar Neck Right -->
+    <rect x="1889" y="340" width="18" height="120" fill="#e9b56a"/>
+    <rect x="1878" y="310" width="40" height="30" fill="#6d3b14" rx="4"/>
+  </g>
+
+  <!-- Sparkles & Floating Musical Notes (Pop Art Accents) -->
+  <g fill="#FFE600" stroke="#000" stroke-width="4" stroke-linejoin="miter">
+    <!-- Star Left -->
+    <path d="M850 330 l 12 12 l -12 12 l -12 -12 Z" fill="#ffb84d"/>
+    <!-- Note Left -->
+    <path d="M920 420 v -20 h 12 v 5 h -12 Z M920 420 a 6 6 0 1 1 -6 -6 Z"/>
+    
+    <!-- Star Right -->
+    <path d="M1490 308 l 12 12 l -12 12 l -12 -12 Z" fill="#ffb84d"/>
+    <!-- Note Right -->
+    <path d="M1590 398 v -20 h 12 v 5 h -12 Z M1590 398 a 6 6 0 1 1 -6 -6 Z"/>
+  </g>
+</svg>

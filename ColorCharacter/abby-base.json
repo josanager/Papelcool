@@ -1,0 +1,53 @@
+{
+  "character": "Abby",
+  "short_name": "abby-base",
+  "saved_at": "2026-04-20T20:57:02.887Z",
+  "colors_hex": {
+    "Brazo izq": "#fcd5c6",
+    "Brazo der": "#fcd5c6",
+    "Pierna izq": "#91c9fa",
+    "Pierna der": "#91c9fa",
+    "Torso": "#a8f4e4",
+    "Head 1": "#fcd5c6",
+    "Head 2": "#fcd5c6",
+    "Nariz": "#bda095"
+  },
+  "templates": {
+    "Elementos/templates/template-arm-left.svg": {
+      "label": "Brazo izq",
+      "color_hex": "#fcd5c6"
+    },
+    "Elementos/templates/template-arm-right.svg": {
+      "label": "Brazo der",
+      "color_hex": "#fcd5c6"
+    },
+    "Elementos/templates/template-leg-left.svg": {
+      "label": "Pierna izq",
+      "color_hex": "#91c9fa"
+    },
+    "Elementos/templates/template-leg-right.svg": {
+      "label": "Pierna der",
+      "color_hex": "#91c9fa"
+    },
+    "Elementos/templates/template-torso.svg": {
+      "label": "Torso",
+      "color_hex": "#a8f4e4"
+    },
+    "Elementos/templates/template-head-1.svg": {
+      "label": "Head 1",
+      "color_hex": "#fcd5c6"
+    },
+    "Elementos/templates/template-head-2.svg": {
+      "label": "Head 2",
+      "color_hex": "#fcd5c6"
+    }
+  },
+  "dependent_assets": {
+    "nose_default": {
+      "source": "Elementos/Texturas/Basic-Textures/nose/Nose-default.svg",
+      "color_hex": "#bda095",
+      "derived_from": "Head 2",
+      "rule": "25% darker than Head 2"
+    }
+  }
+}

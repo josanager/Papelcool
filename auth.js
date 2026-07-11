@@ -11,6 +11,19 @@
 // EMAIL AUTHENTICATION
 // ============================================
 
+function getUserInitials(value, maxLength = 2) {
+    const cleaned = String(value || '').trim();
+    if (!cleaned) return '?';
+
+    const parts = cleaned.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+        return `${parts[0][0] || ''}${parts[1][0] || ''}`.toUpperCase().slice(0, maxLength);
+    }
+
+    const compact = cleaned.replace(/[^a-zA-Z0-9]/g, '');
+    return compact.slice(0, maxLength).toUpperCase() || cleaned.slice(0, maxLength).toUpperCase();
+}
+
 /**
  * Sign up a new user with email and password
  * @param {string} email - User's email
@@ -85,7 +98,7 @@ async function signInWithGoogle() {
         const { error } = await client.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                redirectTo: window.location.origin
+                redirectTo: window.location.href
             }
         });
 
@@ -226,6 +239,12 @@ async function searchCreators(query) {
     const client = getSupabaseClient();
     if (!client || !query || query.length < 2) return [];
 
+    const normalizedQuery = query.trim().toLocaleLowerCase();
+    const cached = creatorSearchCache.get(normalizedQuery);
+    if (cached && Date.now() - cached.createdAt < CREATOR_SEARCH_CACHE_TTL_MS) {
+        return cached.data;
+    }
+
     try {
         const { data, error } = await client
             .from('profiles')
@@ -238,12 +257,18 @@ async function searchCreators(query) {
             return [];
         }
 
-        return data;
+        const results = Array.isArray(data) ? data : [];
+        creatorSearchCache.set(normalizedQuery, { data: results, createdAt: Date.now() });
+        if (creatorSearchCache.size > 30) creatorSearchCache.delete(creatorSearchCache.keys().next().value);
+        return results;
     } catch (err) {
         console.error('Search exception:', err);
         return [];
     }
 }
+
+const creatorSearchCache = new Map();
+const CREATOR_SEARCH_CACHE_TTL_MS = 60 * 1000;
 /**
  * Check if a nickname is already taken in the profiles table
  * @param {string} nickname - The nickname to check
@@ -286,20 +311,61 @@ window.searchCreators = searchCreators;
 function updateAuthUI(user) {
     const loginBtn = document.getElementById('auth-login-btn');
     const registerBtn = document.getElementById('auth-register-btn');
+    const mobileLoginBtn = document.getElementById('mobile-auth-login-btn');
+    const mobileRegisterBtn = document.getElementById('mobile-auth-register-btn');
     const userMenu = document.getElementById('auth-user-menu');
     const userEmail = document.getElementById('auth-user-email');
     const userAvatar = document.getElementById('auth-user-avatar');
+    const homeGreetingName = document.getElementById('home-greeting-name');
+    const homeProfileInitial = document.getElementById('home-profile-initial');
+    const closeMobileMenu = () => document.getElementById('app-mobile-dropdown-menu')?.classList.remove('active');
+
+    if (document.body) {
+        document.body.dataset.authState = user ? 'authenticated' : 'guest';
+    }
 
     if (user) {
         // User is logged in
-        if (loginBtn) loginBtn.style.display = 'none';
-        if (registerBtn) registerBtn.style.display = 'none';
-        if (userMenu) userMenu.style.display = 'flex';
+        if (loginBtn) {
+            loginBtn.style.display = 'flex';
+            loginBtn.textContent = 'Perfil';
+            loginBtn.setAttribute('aria-label', 'Perfil');
+            loginBtn.onclick = () => {
+                window.cleanupViewArtifacts?.('profile');
+                toggleUserProfile(true);
+            };
+        }
+        if (registerBtn) {
+            registerBtn.style.display = 'flex';
+            registerBtn.textContent = 'Cerrar sesión';
+            registerBtn.setAttribute('aria-label', 'Cerrar sesión');
+            registerBtn.onclick = () => handleSignOut();
+        }
+        if (mobileLoginBtn) {
+            mobileLoginBtn.textContent = 'Perfil';
+            mobileLoginBtn.setAttribute('aria-label', 'Perfil');
+            mobileLoginBtn.onclick = () => {
+                closeMobileMenu();
+                window.cleanupViewArtifacts?.('profile');
+                toggleUserProfile(true);
+            };
+        }
+        if (mobileRegisterBtn) {
+            mobileRegisterBtn.textContent = 'Cerrar sesión';
+            mobileRegisterBtn.setAttribute('aria-label', 'Cerrar sesión');
+            mobileRegisterBtn.onclick = () => {
+                closeMobileMenu();
+                handleSignOut();
+            };
+        }
+        if (userMenu) userMenu.style.display = 'none';
         if (userEmail) userEmail.textContent = user.email;
         if (userAvatar) {
-            // Use Gravatar or first letter of email
-            const initial = user.email?.charAt(0).toUpperCase() || '?';
+            const nickname = user.user_metadata?.nickname || user.email?.split('@')[0] || '';
+            const initial = getUserInitials(nickname || user.email || '?');
             userAvatar.textContent = initial;
+            if (homeProfileInitial) homeProfileInitial.textContent = initial;
+            if (homeGreetingName && nickname) homeGreetingName.textContent = nickname;
         }
 
         // Enable save character button
@@ -307,9 +373,37 @@ function updateAuthUI(user) {
         if (saveCharBtn) saveCharBtn.disabled = false;
     } else {
         // User is logged out
-        if (loginBtn) loginBtn.style.display = 'flex';
-        if (registerBtn) registerBtn.style.display = 'flex';
+        if (loginBtn) {
+            loginBtn.style.display = 'flex';
+            loginBtn.textContent = 'Inicia sesión';
+            loginBtn.setAttribute('aria-label', 'Inicia sesión');
+            loginBtn.onclick = () => navigateToView('login');
+        }
+        if (registerBtn) {
+            registerBtn.style.display = 'flex';
+            registerBtn.textContent = '¡Regístrate!';
+            registerBtn.setAttribute('aria-label', 'Regístrate');
+            registerBtn.onclick = () => navigateToView('register');
+        }
+        if (mobileLoginBtn) {
+            mobileLoginBtn.textContent = 'Inicia sesión';
+            mobileLoginBtn.setAttribute('aria-label', 'Inicia sesión');
+            mobileLoginBtn.onclick = () => {
+                closeMobileMenu();
+                navigateToView('login');
+            };
+        }
+        if (mobileRegisterBtn) {
+            mobileRegisterBtn.textContent = '¡Regístrate!';
+            mobileRegisterBtn.setAttribute('aria-label', 'Regístrate');
+            mobileRegisterBtn.onclick = () => {
+                closeMobileMenu();
+                navigateToView('register');
+            };
+        }
         if (userMenu) userMenu.style.display = 'none';
+        if (homeGreetingName) homeGreetingName.textContent = 'Creator';
+        if (homeProfileInitial) homeProfileInitial.textContent = 'P';
 
         // Disable save character button
         const saveCharBtn = document.getElementById('save-character-btn');
@@ -317,9 +411,56 @@ function updateAuthUI(user) {
     }
 }
 
+/**
+ * Recover an OAuth session when Supabase redirects back with tokens in the URL hash.
+ * This makes the callback flow resilient across static hosting environments.
+ * @returns {Promise<Object|null>} The recovered user, if any
+ */
+async function recoverSessionFromHash() {
+    const client = getSupabaseClient();
+    if (!client) return null;
+    if (!window.location.hash) return null;
+
+    const hash = window.location.hash.startsWith('#')
+        ? window.location.hash.slice(1)
+        : window.location.hash;
+    const params = new URLSearchParams(hash);
+    const accessToken = params.get('access_token');
+    const refreshToken = params.get('refresh_token');
+
+    if (!accessToken || !refreshToken) return null;
+
+    try {
+        const { data, error } = await client.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken
+        });
+
+        if (error) {
+            console.error('Hash session recovery error:', error.message);
+            return null;
+        }
+
+        // Remove OAuth tokens from the address bar once they have been consumed.
+        const cleanUrl = `${window.location.origin}${window.location.pathname}${window.location.search}`;
+        window.history.replaceState({}, document.title, cleanUrl);
+
+        if (data?.user) {
+            await upsertUserProfile(data.user);
+            return data.user;
+        }
+    } catch (err) {
+        console.error('Hash session recovery exception:', err);
+    }
+
+    return null;
+}
+
 // Initialize auth state listener on load
 document.addEventListener('DOMContentLoaded', async () => {
     if (!isSupabaseConfigured()) return;
+
+    await recoverSessionFromHash();
 
     // Check initial auth state
     const user = await getCurrentUser();
@@ -346,3 +487,4 @@ window.upsertUserProfile = upsertUserProfile;
 window.searchCreators = searchCreators;
 window.isNicknameAvailable = isNicknameAvailable;
 window.updateAuthUI = updateAuthUI;
+window.recoverSessionFromHash = recoverSessionFromHash;
