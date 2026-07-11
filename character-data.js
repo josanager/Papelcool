@@ -9,7 +9,9 @@
    ORDEN: Del más NUEVO al más ANTIGUO (NO alfabético)
    ============================================ */
 
-const TEXTURES_REPO_RAW_BASE = 'https://cdn.jsdelivr.net/gh/josanager/Textures-Papelcool@main';
+// Fuente pública directa. Evita que una caché intermedia del CDN sirva un árbol
+// antiguo después de actualizar el catálogo de Textures-Papelcool.
+const TEXTURES_REPO_RAW_BASE = 'https://raw.githubusercontent.com/josanager/Textures-Papelcool/main';
 
 function textureRepoUrl(...segments) {
     return `${TEXTURES_REPO_RAW_BASE}/${segments.map((segment) => encodeURIComponent(segment)).join('/')}`;
