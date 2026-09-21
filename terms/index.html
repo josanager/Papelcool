@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Términos y Reglas | Papelcool</title>
+    <meta name="description"
+        content="Términos de uso y reglas básicas de Papelcool para cuentas, contenido, conducta y uso del servicio.">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Montserrat:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --paper: #fffaf0;
+            --ink: #121212;
+            --pink: #ff4d94;
+            --blue: #407bff;
+            --yellow: #ffe600;
+            --card: #ffffff;
+            --muted: #5a6573;
+            --border: #111111;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at top left, rgba(255, 77, 148, 0.16), transparent 30%),
+                radial-gradient(circle at right, rgba(64, 123, 255, 0.14), transparent 24%),
+                linear-gradient(180deg, #fff8fb 0%, var(--paper) 44%, #fff8d6 100%);
+        }
+
+        a {
+            color: var(--blue);
+        }
+
+        .shell {
+            width: min(980px, calc(100vw - 32px));
+            margin: 0 auto;
+            padding: 32px 0 72px;
+        }
+
+        .hero,
+        .section {
+            background: var(--card);
+            border: 4px solid var(--border);
+            border-radius: 28px;
+            box-shadow: 10px 10px 0 rgba(17, 17, 17, 0.12);
+        }
+
+        .hero {
+            padding: 32px;
+            margin-bottom: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before,
+        .hero::after {
+            content: "";
+            position: absolute;
+            border: 4px solid var(--border);
+            border-radius: 22px;
+            transform: rotate(14deg);
+        }
+
+        .hero::before {
+            width: 150px;
+            height: 150px;
+            background: var(--yellow);
+            right: -28px;
+            top: -30px;
+        }
+
+        .hero::after {
+            width: 110px;
+            height: 110px;
+            background: var(--pink);
+            right: 84px;
+            bottom: -52px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            background: #fff;
+            border: 3px solid var(--border);
+            border-radius: 999px;
+            font: 700 0.85rem 'Fredoka', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1,
+        h2 {
+            margin: 0 0 14px;
+            font-family: 'Fredoka', sans-serif;
+            line-height: 0.95;
+        }
+
+        h1 {
+            font-size: clamp(2.4rem, 7vw, 4.8rem);
+            max-width: 11ch;
+            position: relative;
+            z-index: 1;
+        }
+
+        h2 {
+            font-size: clamp(1.6rem, 3vw, 2.2rem);
+        }
+
+        .hero p,
+        .section p,
+        .section li {
+            line-height: 1.75;
+            color: #283342;
+        }
+
+        .hero p {
+            max-width: 62ch;
+            position: relative;
+            z-index: 1;
+        }
+
+        .grid {
+            display: grid;
+            gap: 18px;
+        }
+
+        .section {
+            padding: 26px 24px;
+        }
+
+        ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .meta-card {
+            padding: 16px;
+            border: 3px solid var(--border);
+            border-radius: 20px;
+            background: #fff;
+        }
+
+        .meta-card strong {
+            display: block;
+            margin-bottom: 8px;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        .back-link {
+            display: inline-flex;
+            margin-top: 24px;
+            padding: 12px 18px;
+            border: 3px solid var(--border);
+            border-radius: 999px;
+            background: #fff;
+            color: var(--ink);
+            text-decoration: none;
+            font: 700 0.95rem 'Fredoka', sans-serif;
+            box-shadow: 5px 5px 0 rgba(17, 17, 17, 0.12);
+        }
+
+        @media (max-width: 640px) {
+            .hero,
+            .section {
+                border-radius: 22px;
+                padding: 22px 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="shell">
+        <section class="hero">
+            <div class="eyebrow">Papelcool Terms</div>
+            <h1>Términos y reglas de uso</h1>
+            <p>
+                Estos términos regulan el acceso y uso de Papelcool, incluyendo la creación de cuentas, el uso de
+                Acceder con Google, la personalización de personajes y la publicación o almacenamiento de contenido
+                dentro del servicio.
+            </p>
+            <div class="meta">
+                <div class="meta-card">
+                    <strong>Servicio</strong>
+                    Papelcool
+                </div>
+                <div class="meta-card">
+                    <strong>Última actualización</strong>
+                    22 de abril de 2026
+                </div>
+                <div class="meta-card">
+                    <strong>Contacto</strong>
+                    <a href="mailto:josanager@gmail.com">josanager@gmail.com</a>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid">
+            <section class="section">
+                <h2>1. Aceptación de estos términos</h2>
+                <p>
+                    Al acceder a Papelcool o usar cualquiera de sus funciones, aceptas cumplir estas reglas. Si no
+                    estás de acuerdo con ellas, no debes usar el servicio.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2>2. Uso permitido</h2>
+                <p>
+                    Puedes usar Papelcool para explorar, personalizar y guardar contenido, siempre que el uso sea
+                    legal, respetuoso y compatible con la finalidad del producto.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2>3. Reglas básicas de la comunidad</h2>
+                <ul>
+                    <li>No uses Papelcool para contenido ilegal, abusivo, fraudulento o engañoso.</li>
+                    <li>No intentes acceder a cuentas ajenas, vulnerar el sistema o automatizar abuso.</li>
+                    <li>No publiques contenido que infrinja derechos de terceros.</li>
+                    <li>No suplantes a otras personas, marcas u organizaciones.</li>
+                    <li>No uses el servicio para distribuir malware, spam o enlaces maliciosos.</li>
+                </ul>
+            </section>
+
+            <section class="section">
+                <h2>4. Cuentas y acceso</h2>
+                <p>
+                    Eres responsable de la actividad realizada desde tu cuenta y de mantener seguros tus métodos de
+                    acceso. Papelcool puede suspender o limitar cuentas cuando detecte abuso, fraude o incumplimiento
+                    de estas reglas.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2>5. Contenido del usuario</h2>
+                <p>
+                    Mantienes la responsabilidad sobre el contenido que creas, subes o guardas en Papelcool. Nos
+                    otorgas únicamente los permisos técnicos necesarios para alojarlo, procesarlo y mostrarlo dentro del
+                    servicio.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2>6. Propiedad intelectual</h2>
+                <p>
+                    El diseño del producto, la identidad visual de Papelcool y los elementos propios del servicio
+                    pertenecen a sus respectivos titulares. No puedes copiar, revender ni explotar comercialmente el
+                    servicio de manera no autorizada.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2>7. Disponibilidad del servicio</h2>
+                <p>
+                    Papelcool puede cambiar, pausar, mejorar o retirar funciones en cualquier momento. No garantizamos
+                    disponibilidad ininterrumpida ni ausencia total de errores.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2>8. Limitación de responsabilidad</h2>
+                <p>
+                    En la medida permitida por la ley, Papelcool no será responsable por pérdidas indirectas, lucro
+                    cesante, pérdida de datos o daños derivados del uso o imposibilidad de uso del servicio.
+                </p>
+            </section>
+
+            <section class="section">
+                <h2>9. Cambios en estos términos</h2>
+                <p>
+                    Podemos actualizar estos términos para reflejar cambios legales, técnicos o funcionales. La versión
+                    vigente será la publicada en esta URL.
+                </p>
+            </section>
+        </div>
+
+        <a class="back-link" href="/">Volver a Papelcool</a>
+    </main>
+</body>
+
+</html>

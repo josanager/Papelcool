@@ -15,3 +15,10 @@ windsurf_deployment.yaml
 # Logs
 *.log
 npm-debug.log*
+.playwright-cli/
+
+# Local secrets
+.env
+.env.*
+!.env.example
+.dev.vars
