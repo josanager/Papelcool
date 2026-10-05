@@ -31,7 +31,7 @@ export async function createCustomTemplateJob(request, env) {
 
   let manifest;
   try {
-    manifest = normalizeManifest(body?.manifest);
+    manifest = normalizeManifest(body?.manifest, new URL(request.url).origin);
   } catch (error) {
     return jsonResponse({ error: error.message }, 400);
   }
@@ -120,7 +120,7 @@ export async function downloadCustomTemplateJob(request, env) {
   });
 }
 
-function normalizeManifest(value) {
+function normalizeManifest(value, appOrigin) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('A customization manifest is required.');
   const colors = {};
   for (const key of COLOR_KEYS) {
@@ -136,12 +136,24 @@ function normalizeManifest(value) {
       continue;
     }
     const textureUrl = String(raw);
-    if (!textureUrl.startsWith(TEXTURE_URL_PREFIX) || !/\.(svg|png|webp)(?:[?#].*)?$/i.test(textureUrl)) {
+    const isLegacyTextureUrl = textureUrl.startsWith(TEXTURE_URL_PREFIX);
+    const isSameOriginTextureUrl = isTextureUrlServedByApp(textureUrl, appOrigin);
+    if ((!isLegacyTextureUrl && !isSameOriginTextureUrl) || !/\.(svg|png|webp)(?:[?#].*)?$/i.test(textureUrl)) {
       throw new Error(`Invalid texture URL: ${key}.`);
     }
     textureUrls[key] = textureUrl;
   }
   return { colors, textureUrls };
+}
+
+function isTextureUrlServedByApp(textureUrl, appOrigin) {
+  try {
+    const parsedUrl = new URL(textureUrl);
+    return parsedUrl.origin === appOrigin
+      && parsedUrl.pathname.startsWith('/assets/textures/Texturas/');
+  } catch {
+    return false;
+  }
 }
 
 async function requirePaidCustomAccess(env, sessionId) {

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-14211.074655,-7080.350937)">
+        <g id="Enderman-hair-up" transform="matrix(1,0,0,1,10202.122324,-371.655701)">
+            <g>
+                <rect x="4008.952" y="7452.007" width="835.946" height="835.946" style="fill:none;"/>
+                <clipPath id="_clip1">
+                    <rect x="4008.952" y="7452.007" width="835.946" height="835.946"/>
+                </clipPath>
+                <g clip-path="url(#_clip1)">
+                    <g transform="matrix(0.797953,0,0,-0.797953,1433.195765,8042.115028)">
+                        <path d="M3343.782,-118.743L3482.417,-118.743L3482.417,178.635L3227.957,178.635L3227.957,40L3343.782,40L3343.782,-118.743ZM3343.782,-118.743L3227.957,-118.743L3227.957,-308.085L3343.782,-308.085L3343.782,-118.743Z"/>
+                    </g>
+                    <g transform="matrix(-0.797953,-0,0,-0.797953,7420.654465,8042.115028)">
+                        <path d="M3343.782,-98.635L3482.417,-98.635L3482.417,178.635L3227.957,178.635L3227.957,40L3343.782,40L3343.782,-98.635ZM3343.782,-98.635L3227.957,-98.635L3227.957,-308.085L3343.782,-308.085L3343.782,-98.635Z"/>
+                    </g>
+                    <g transform="matrix(-0.666667,-0,0,-1.205553,7074.08608,7667.360148)">
+                        <rect x="3343.782" y="40" width="138.635" height="138.635"/>
+                    </g>
+                    <g transform="matrix(-0.666667,-0,0,-1.089815,6330.563617,7646.685444)">
+                        <rect x="3343.782" y="25.277" width="138.635" height="153.358"/>
+                    </g>
+                    <g transform="matrix(-1,-0,0,-1.690732,11352.082547,8721.495227)">
+                        <rect x="6820.856" y="652" width="208.604" height="66"/>
+                    </g>
+                    <g transform="matrix(-2.060612,-0,0,-1.200492,18696.988825,9070.672809)">
+                        <rect x="6820.856" y="652" width="208.604" height="66"/>
+                    </g>
+                    <g transform="matrix(-1.097063,-0,0,-1.331802,12024.260749,9077.054786)">
+                        <rect x="6820.856" y="652" width="208.604" height="66"/>
+                    </g>
+                    <g transform="matrix(-3.121224,-0,0,-0.841562,26041.895103,8056.248179)">
+                        <rect x="6820.856" y="652" width="208.604" height="66"/>
+                    </g>
+                    <g transform="matrix(-1.060612,-0,0,-1.139886,11556.905596,8437.575942)">
+                        <rect x="6820.856" y="652" width="208.604" height="66"/>
+                    </g>
+                    <g transform="matrix(-1.060612,-0,0,-1.139886,11986.757191,8437.575942)">
+                        <rect x="6820.856" y="652" width="208.604" height="66"/>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

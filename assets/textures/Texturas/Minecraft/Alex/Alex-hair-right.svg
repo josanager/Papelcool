@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-11703.237951,-6244.405369)">
+        <g id="Alex-hair-right" transform="matrix(1,0,0,1,7694.28562,-1207.601269)">
+            <g>
+                <rect x="4008.952" y="7452.007" width="835.946" height="835.946" style="fill:none;"/>
+                <clipPath id="_clip1">
+                    <rect x="4008.952" y="7452.007" width="835.946" height="835.946"/>
+                </clipPath>
+                <g clip-path="url(#_clip1)">
+                    <g transform="matrix(-1,0,0,1.0625,11352.082596,7452.006638)">
+                        <path d="M6507.185,786.772L6507.185,0L7343.13,0L7343.13,365.533L7250.13,365.533L7250.13,473.659L7180.37,473.659L7181.37,557.424L7116.37,557.424L7116.37,641.188L7209.37,641.188L7209.37,725.894L7343.13,725.894L7343.13,786.772L6507.185,786.772Z" style="fill:rgb(248,142,54);"/>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

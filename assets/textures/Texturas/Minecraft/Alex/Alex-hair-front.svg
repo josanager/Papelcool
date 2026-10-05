@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-11703.237951,-8752.242073)">
+        <g id="Alex-hair-front" transform="matrix(0.499302,0,0,0.499302,-5432.036029,6034.87176)">
+            <rect x="34318.486" y="5442.343" width="1674.23" height="1674.23" style="fill:none;"/>
+            <g transform="matrix(0.813535,0,0,0.961913,29521.743774,5799.180868)">
+                <path d="M6820.856,328.471L6507.185,328.471L6507.185,0L7343.13,0L7343.13,328.471L7250.707,328.471L7250.707,243.575L7146.405,243.575L7146.405,164.235L6925.157,164.235L6925.157,243.575L6820.856,243.575L6820.856,328.471Z" style="fill:rgb(248,142,54);"/>
+            </g>
+        </g>
+    </g>
+</svg>

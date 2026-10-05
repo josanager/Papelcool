@@ -34,6 +34,7 @@
     <link rel="apple-touch-icon" sizes="76x76" href="webclip.png">
     <!-- Tailwind precompilado: evita generar estilos en el navegador. -->
     <link rel="stylesheet" href="assets/css/tailwind.css?v=20260710">
+    <link rel="stylesheet" href="styles/fourthwall.css?v=20260901">
     <!-- Google Fonts para un estilo futurista - Optimizado -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -998,7 +999,7 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
 
     <!-- Character & Texture Data - Archivo separado para organización -->
-    <script src="character-data.js?v=20260711-textures-v2" defer></script>
+    <script src="character-data.js?v=20260915-live-texture-manifest" defer></script>
 
     <!-- Supabase for Authentication & Database -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
@@ -1006,6 +1007,7 @@
     <script src="auth.js?v=20260630b" defer></script>
     <script src="character-storage.js" defer></script>
     <script src="preset-comments.js?v=20260630e" defer></script>
+    <script src="fourthwall-catalog.js?v=20260903" defer></script>
 
     <style>
         * {
@@ -5979,6 +5981,7 @@
             white-space: nowrap; flex: 0 1 auto;
         }
         .funko-nav-link:hover { color: #FFE600; }
+        .funko-nav-external-link { text-decoration: none; }
 
         .funko-search {
             display: flex; align-items: center; background: #fff; border: 4px solid #000;
@@ -8370,6 +8373,7 @@
         /* === END LANDING PAGE REDESIGN === */
         /* ============================================ */
     </style>
+    <link rel="stylesheet" href="styles/photo-mode.css">
 </head>
 
 
@@ -8453,6 +8457,7 @@
             <!-- Nav (Center) -->
             <nav class="funko-nav-center" aria-label="Navegación principal">
                 <button type="button" class="funko-nav-link" onclick="navigateToView('presets')">Colecciones</button>
+                <a class="funko-nav-link funko-nav-external-link" href="https://store.papel.cool/" target="_blank" rel="noopener noreferrer" aria-label="Abrir Merch Papelcool en una nueva pestaña">Merch</a>
                 <button type="button" class="funko-nav-link" onclick="navigateToView('custom')">Crea el tuyo</button>
             </nav>
 
@@ -8460,7 +8465,7 @@
             <div class="funko-nav-right">
                 <label class="funko-search" aria-label="Buscar">
                     <span class="material-symbols-outlined">search</span>
-                    <input type="text" id="global-search-input" placeholder="Busca ideas o fandoms..." autocomplete="off" />
+                    <input type="text" id="global-search-input" placeholder="Busca productos..." autocomplete="off" />
                 </label>
                 <div id="auth-container" class="funko-auth-actions">
                     <button type="button" id="auth-register-btn" onclick="navigateToView('register')"
@@ -8490,11 +8495,11 @@
 
             <!-- Mobile Dropdown -->
             <div id="app-mobile-dropdown-menu" class="pc-home-mobile-dropdown" style="display: none; flex-direction: column; gap: 0.85rem; padding: 1.5rem; background: #fff; border: 4px solid #000; border-radius: 24px; box-shadow: 8px 8px 0 rgba(0,0,0,1); position: absolute; top: calc(100% + 12px); left: 1rem; right: 1rem; z-index: 10000;">
-                <label class="pc-mobile-menu-search" aria-label="Buscar en colecciones">
+                <label class="pc-mobile-menu-search" aria-label="Buscar productos">
                     <span class="material-symbols-outlined">search</span>
-                    <input type="text" id="mobile-menu-search-input" placeholder="Busca ideas o fandoms..." autocomplete="off" />
+                    <input type="text" id="mobile-menu-search-input" placeholder="Busca productos..." autocomplete="off" />
                 </label>
-                <button type="button" class="pc-home-chip" onclick="navigateToView('presets'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center;">Colecciones</button>
+                <a class="pc-home-chip" href="https://store.papel.cool/" target="_blank" rel="noopener noreferrer" aria-label="Abrir Merch Papelcool en una nueva pestaña" style="width: 100%; justify-content: center;">Merch</a>
                 <button type="button" class="pc-home-chip" onclick="navigateToView('custom'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center;">Crea el tuyo</button>
                 <div style="height: 4px; background: #000; width: 100%; margin: 0.5rem 0; border-radius: 4px;"></div>
                 <button type="button" id="mobile-auth-login-btn" class="pc-home-chip" onclick="navigateToView('login'); document.getElementById('app-mobile-dropdown-menu').classList.remove('active')" style="width: 100%; justify-content: center; background: #D4F0FF;">Inicia sesión</button>
@@ -9382,6 +9387,10 @@
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+        import { createPresetPhotoMode } from './photo-mode.js';
+
+        let presetPhotoMode = null;
+        let presetPhotoReadyPromise = Promise.resolve();
 
         /* --- Internationalization (i18n) --- */
         const translations = {
@@ -9688,6 +9697,7 @@
             if (path.includes('/studio/preset-preview')) return 'preset-preview';
             if (path.includes('/auth/login')) return 'login';
             if (path.includes('/auth/register')) return 'register';
+            if (path.includes('/shop') || path.includes('/tienda')) return 'shop';
             if (path.includes('/stripe-success')) return 'stripe-success';
             if (path.includes('/showcase')) return 'showcase';
             return null;
@@ -9919,8 +9929,19 @@
         }
 
         function cleanupViewArtifacts(nextView) {
+            presetPhotoMode?.close(false);
             const targetView = normalizeLegacyView(nextView);
             document.body.classList.toggle('profile-view-open', targetView === 'profile');
+
+            const homeView = document.getElementById('authenticated-home-view');
+            if (homeView && targetView !== 'home') homeView.classList.remove('active');
+
+            const shopView = document.getElementById('fourthwall-shop-view');
+            if (shopView && targetView !== 'shop') {
+                shopView.style.display = 'none';
+                shopView.setAttribute('aria-hidden', 'true');
+                window.papelcoolFourthwall?.close?.();
+            }
 
             if (targetView !== 'preset-preview') {
                 window.presetCommentsController?.forceClose?.();
@@ -9988,6 +10009,38 @@
         }
         window.cleanupViewArtifacts = cleanupViewArtifacts;
 
+        function openFourthwallShopView() {
+            ensureDeferredViews();
+            stopActiveCustomPdfGeneration();
+            stopShowcase();
+            disposePresetPreviewRuntime();
+            disposeCustomPreviewRuntime();
+            if (window.__papelcoolCustomBuilderReady === true) {
+                resetCustomBuilderView();
+            }
+
+            document.body.classList.remove('main-3d-viewer-active', 'showcase-mode', 'customization-active');
+            if (authenticatedHomeView) authenticatedHomeView.classList.remove('active');
+            if (userProfileView) userProfileView.style.display = 'none';
+            if (stripeSuccessView) stripeSuccessView.style.display = 'none';
+            if (fandomsOverlay) fandomsOverlay.classList.remove('active');
+            if (editorPanelWrapper) editorPanelWrapper.style.display = 'none';
+            if (presetsSection) presetsSection.classList.add('hidden');
+            if (customizeSection) customizeSection.classList.add('hidden');
+            hideMainViewerCanvas();
+            hideCharacterName();
+            shouldRenderScene = false;
+            setGlobalTopbarVisible(true);
+            activeAppView = 'shop';
+
+            const shopView = document.getElementById('fourthwall-shop-view');
+            if (shopView) {
+                shopView.style.display = 'block';
+                shopView.setAttribute('aria-hidden', 'false');
+            }
+            window.papelcoolFourthwall?.open?.();
+        }
+
         function navigateToView(view, options = {}) {
             performWithoutTransitions(() => {
                 view = normalizeLegacyView(view);
@@ -10010,6 +10063,11 @@
 
                 if (view === 'custom') {
                     openCustomizationView();
+                    return;
+                }
+
+                if (view === 'shop') {
+                    openFourthwallShopView();
                     return;
                 }
 
@@ -10358,7 +10416,9 @@
         function setPresetIcon(id, src) {
             const img = document.getElementById(id);
             if (img && src) {
-                img.src = src;
+                img.src = typeof withTexturesRepoRevision === 'function'
+                    ? withTexturesRepoRevision(src)
+                    : src;
             }
         }
 
@@ -10380,6 +10440,17 @@
 
         // Habilitar caché de THREE.js para evitar recargas de red
         THREE.Cache.enabled = true;
+
+        // Las rutas de textura apuntan a los SVG publicados junto con la web.
+        const textureRepositoryApi = window.papelcoolTextureRepository || null;
+
+        function getVersionedTextureUrl(url) {
+            if (!url) return url;
+            if (textureRepositoryApi?.withRevision) {
+                return textureRepositoryApi.withRevision(url);
+            }
+            return url;
+        }
 
         const loader = new GLTFLoader();
         const textureLoader = new THREE.TextureLoader();
@@ -10499,11 +10570,13 @@
         }
 
         function createOverlayMaterial(texture, extra = {}) {
-            return new THREE.MeshBasicMaterial({
+            return new THREE.MeshStandardMaterial({
                 map: texture,
                 transparent: true,
                 side: THREE.DoubleSide,
                 alphaTest: 0.5,
+                roughness: 0.5,
+                metalness: 0.0,
                 ...extra
             });
         }
@@ -10515,7 +10588,7 @@
             'ear-left': Object.freeze({ position: Object.freeze([-1.13, 1.029, 0]), rotation: Object.freeze([0, Math.PI / 2, 0]), scale: Object.freeze([-1, 1, 1]), planeHeight: 2.256 }),
             'ear-right': Object.freeze({ position: Object.freeze([1.13, 1.029, 0]), rotation: Object.freeze([0, -Math.PI / 2, 0]), planeHeight: 2.256 }),
             'hair-front': Object.freeze({ position: Object.freeze([0, 0.563, 1.1295]), planeHeight: 5.556 }),
-            'hair-back': Object.freeze({ position: Object.freeze([0, 0.563, -1.1285]), planeHeight: 5.556 }),
+            'hair-back': Object.freeze({ position: Object.freeze([0, 0.563, -1.1285]), rotation: Object.freeze([0, Math.PI, 0]), planeHeight: 5.556 }),
             'hair-left': Object.freeze({ position: Object.freeze([-1.1285, 1.029, 0]), rotation: Object.freeze([0, -Math.PI / 2, 0]), planeHeight: 2.256 }),
             'hair-right': Object.freeze({ position: Object.freeze([1.1285, 1.029, 0]), rotation: Object.freeze([0, Math.PI / 2, 0]), planeHeight: 2.256 }),
             'hair-up': Object.freeze({ position: Object.freeze([0, 2.157, 0]), rotation: Object.freeze([-Math.PI / 2, 0, 0]), planeHeight: 2.256 }),
@@ -10532,6 +10605,8 @@
             'leg-left-back': Object.freeze({ position: Object.freeze([0, -1.176, -0.452]), planeHeight: 2.145 }),
             'leg-right-front': Object.freeze({ position: Object.freeze([0, -1.176, 0.452]), rotation: Object.freeze([0, Math.PI, 0]), planeHeight: 2.145 }),
             'leg-right-back': Object.freeze({ position: Object.freeze([0, -1.176, -0.452]), rotation: Object.freeze([0, Math.PI, 0]), planeHeight: 2.145 }),
+            // La textura del instrumento comparte la coordenada Y de eyes.
+            // Su altura compensa el espacio transparente superior del SVG.
             instrument: Object.freeze({ position: Object.freeze([0, 0.563, 0.4535]), planeHeight: 5.556 })
         });
 
@@ -10559,8 +10634,9 @@
         // Función para cargar SVG a alta resolución con colores correctos y cache
         // Convierte SVG vectorial a imagen de alta calidad antes de usarlo como textura
         function loadSVGAsHighResTexture(url, onLoad, onError) {
-            const targetLongSide = getAdaptiveRasterLongSide(url);
-            const cacheKey = `${url}::${targetLongSide}`;
+            const versionedUrl = getVersionedTextureUrl(url);
+            const targetLongSide = getAdaptiveRasterLongSide(versionedUrl);
+            const cacheKey = `${versionedUrl}::${targetLongSide}`;
 
             // Verificar cache primero
             const cachedRaster = getCachedRasterSource(cacheKey);
@@ -10597,11 +10673,11 @@
             };
 
             img.onerror = function (error) {
-                console.error('Error cargando SVG:', url, error);
+                console.error('Error cargando SVG:', versionedUrl, error);
                 if (onError) onError(error);
             };
 
-            img.src = url;
+            img.src = versionedUrl;
         }
 
         // Función para cargar texturas SVG únicamente
@@ -10640,19 +10716,20 @@
         function createLazyImage(url, index, maxPreload = 5) {
             const img = document.createElement('img');
             img.dataset.url = url;
+            const versionedUrl = getVersionedTextureUrl(url);
 
             if (isMobileDevice) {
                 // SVG ligeros: precargar 5 imágenes (antes 3)
                 if (index < maxPreload) {
-                    img.src = url;
+                    img.src = versionedUrl;
                 } else {
                     // Placeholder SVG transparente mínimo
                     img.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg"%3E%3C/svg%3E';
-                    img.dataset.src = url;
+                    img.dataset.src = versionedUrl;
                 }
             } else {
                 img.loading = 'lazy';
-                img.src = url;
+                img.src = versionedUrl;
             }
 
             return img;
@@ -10666,7 +10743,7 @@
                     if (entry.isIntersecting) {
                         const img = entry.target;
                         if (img.dataset.src && !img.src.includes(img.dataset.src)) {
-                            img.src = img.dataset.src;
+                            img.src = getVersionedTextureUrl(img.dataset.url || img.dataset.src);
                             globalImageObserver.unobserve(img);
                         }
                     }
@@ -10794,6 +10871,7 @@
             isInitialized: false,
             lastFrameAt: 0,
             currentCharacter: null,
+            texturePlan: null,
             textureGeneration: 0,
             headColor: null,
             isDragging: false,
@@ -10979,8 +11057,9 @@
                     return;
                 }
 
-                const targetLongSide = getPresetPreviewRasterLongSide(url);
-                const cacheKey = `${url}::${targetLongSide}`;
+                const versionedUrl = getVersionedTextureUrl(url);
+                const targetLongSide = getPresetPreviewRasterLongSide(versionedUrl);
+                const cacheKey = `${versionedUrl}::${targetLongSide}`;
                 const cachedSource = getPresetPreviewTextureSource(cacheKey);
                 if (cachedSource) {
                     resolve(createPresetPreviewTexture(cachedSource));
@@ -11017,7 +11096,7 @@
                 };
 
                 img.onerror = (error) => reject(error);
-                img.src = url;
+                img.src = versionedUrl;
             });
         }
 
@@ -11098,11 +11177,14 @@
 
         async function loadShowcaseTexture(url) {
             if (!url) return null;
-            const targetLongSide = getShowcaseRasterLongSide(url);
-            const cacheKey = `${url}::${targetLongSide}`;
-            const source = await loadShowcaseRasterSource(url, targetLongSide, cacheKey);
+            const versionedUrl = getVersionedTextureUrl(url);
+            const targetLongSide = getShowcaseRasterLongSide(versionedUrl);
+            const cacheKey = `${versionedUrl}::${targetLongSide}`;
+            const source = await loadShowcaseRasterSource(versionedUrl, targetLongSide, cacheKey);
             // Cada material conserva su propia Texture; el raster pesado sí se comparte.
-            return createShowcaseTexture(source);
+            const texture = createShowcaseTexture(source);
+            texture.userData.sourceUrl = versionedUrl;
+            return texture;
         }
 
         function extractModelPartsFromRoot(root) {
@@ -11614,6 +11696,21 @@
             return items.find((item) => (item.name || '').toLowerCase().includes(side));
         }
 
+        function getHeadRelativeNoseColor(headColorHex) {
+            const headColor = new THREE.Color(headColorHex || '#F7D5CF');
+            return new THREE.Color(headColor.r * 0.75, headColor.g * 0.75, headColor.b * 0.75);
+        }
+
+        function applyPresetPreviewOverlayColor(mesh, key, options = {}) {
+            if (!mesh?.material?.color) return;
+            if (key === 'nose' && options.colorWithHead) {
+                mesh.material.color.copy(getHeadRelativeNoseColor(options.headColor));
+            } else if (key === 'nose') {
+                mesh.material.color.setHex(0xffffff);
+            }
+            mesh.material.needsUpdate = true;
+        }
+
         function setPresetPreviewOverlay(key, parent, url, options = {}) {
             const existingMesh = presetPreviewRuntime.overlays[key];
 
@@ -11637,19 +11734,23 @@
                         const material = createOverlayMaterial(texture, { alphaTest: 0.45 });
                         const geometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         const mesh = new THREE.Mesh(geometry, material);
+                        mesh.userData.colorWithHead = options.colorWithHead === true;
                         mesh.position.set(options.position?.[0] || 0, options.position?.[1] || 0, options.position?.[2] || 0);
                         mesh.rotation.set(options.rotation?.[0] || 0, options.rotation?.[1] || 0, options.rotation?.[2] || 0);
                         mesh.scale.set(options.scale?.[0] || 1, options.scale?.[1] || 1, options.scale?.[2] || 1);
                         parent.add(mesh);
                         presetPreviewRuntime.overlays[key] = mesh;
+                        applyPresetPreviewOverlayColor(mesh, key, options);
                     } else {
                         const oldMap = existingMesh.material.map;
                         existingMesh.material.map = texture;
                         existingMesh.material.needsUpdate = true;
+                        existingMesh.userData.colorWithHead = options.colorWithHead === true;
                         existingMesh.scale.set(options.scale?.[0] || 1, options.scale?.[1] || 1, options.scale?.[2] || 1);
                         existingMesh.rotation.set(options.rotation?.[0] || 0, options.rotation?.[1] || 0, options.rotation?.[2] || 0);
                         existingMesh.position.set(options.position?.[0] || 0, options.position?.[1] || 0, options.position?.[2] || 0);
                         if (oldMap && oldMap !== texture) oldMap.dispose();
+                        applyPresetPreviewOverlayColor(existingMesh, key, options);
                     }
 
                     requestPresetPreviewRender(isLowPowerMobile ? 14 : 6);
@@ -11665,7 +11766,8 @@
 
         function extractHexColorFromTextureUrl(textureUrl) {
             if (!textureUrl) return null;
-            const match = String(textureUrl).match(/-([0-9a-fA-F]{6})(?=\.(svg|png|jpg|jpeg|webp)(?:$|[?#]))/i);
+            const resolvedTextureUrl = getVersionedTextureUrl(textureUrl);
+            const match = String(resolvedTextureUrl).match(/-([0-9a-fA-F]{6})(?=\.(svg|png|jpg|jpeg|webp)(?:$|[?#]))/i);
             return match ? `#${match[1].toUpperCase()}` : null;
         }
 
@@ -11685,8 +11787,10 @@
                 colors: {
                     head: baseSkin,
                     torso: baseSkin,
-                    arms: baseSkin,
-                    legs: baseSkin
+                    armLeft: baseSkin,
+                    armRight: baseSkin,
+                    legLeft: baseSkin,
+                    legRight: baseSkin
                 },
                 ...characterTextures,
                 hiddenOverlays: [],
@@ -11695,30 +11799,28 @@
 
             config.colors.head = getTextureColorOverride(characterTextures.eyeTexture?.url) || config.colors.head;
             config.colors.torso = getTextureColorOverride(characterTextures.torsoTexture?.frontUrl, characterTextures.torsoTexture?.backUrl) || config.colors.torso;
-            config.colors.arms = getTextureColorOverride(characterTextures.armTexture?.leftUrl, characterTextures.armTexture?.rightUrl) || config.colors.arms;
-            config.colors.legs = getTextureColorOverride(characterTextures.legTexture?.leftUrl, characterTextures.legTexture?.rightUrl) || config.colors.legs;
+            config.colors.armLeft = getTextureColorOverride(characterTextures.armTexture?.leftUrl) || config.colors.armLeft;
+            config.colors.armRight = getTextureColorOverride(characterTextures.armTexture?.rightUrl) || config.colors.armRight;
+            config.colors.legLeft = getTextureColorOverride(characterTextures.legTexture?.leftUrl) || config.colors.legLeft;
+            config.colors.legRight = getTextureColorOverride(characterTextures.legTexture?.rightUrl) || config.colors.legRight;
 
-            if (characterName === 'Baby') {
-                config.colors.head = '#FFEBE8';
-                config.colors.torso = '#6A68E9';
-                config.colors.legs = '#6A68E9';
-            } else if (characterName === 'Mystery') {
-                config.colors.head = '#91C9FA';
-            } else if (characterName === 'Steve') {
+            if (characterName === 'Steve') {
                 config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
             } else if (characterName === 'Enderman') {
-                config.colors.head = '#000000';
-                config.colors.torso = '#000000';
-                config.colors.arms = '#000000';
-                config.colors.legs = '#000000';
-                config.armTexture = null;
-                config.legTexture = null;
+                config.colors.head = '#161616';
+                config.colors.torso = '#161616';
+                config.colors.armLeft = '#161616';
+                config.colors.armRight = '#161616';
+                config.colors.legLeft = '#161616';
+                config.colors.legRight = '#161616';
                 config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
             } else if (characterName === 'Creeper') {
                 config.colors.head = '#08C21F';
                 config.colors.torso = '#08C21F';
-                config.colors.arms = '#08C21F';
-                config.colors.legs = '#08C21F';
+                config.colors.armLeft = '#08C21F';
+                config.colors.armRight = '#08C21F';
+                config.colors.legLeft = '#08C21F';
+                config.colors.legRight = '#08C21F';
                 config.armTexture = null;
                 config.hideArms = true;
                 config.hiddenOverlays.push('ear-left', 'ear-right', 'eyebrows');
@@ -11741,9 +11843,8 @@
             } else if (characterName === 'Romance') {
                 config.hiddenOverlays.push('ear-left', 'ear-right');
             } else if (characterName === 'Mystery') {
-                config.eyeTexture = null;
                 config.eyebrowTexture = null;
-                config.hiddenOverlays.push('eyes', 'eyebrows');
+                config.hiddenOverlays.push('eyebrows');
             }
 
             return config;
@@ -11775,10 +11876,11 @@
 
             if (parts.head) applyColorToPresetPreviewPart(parts.head, new THREE.Color(config.colors.head));
             if (parts.torso) applyColorToPresetPreviewPart(parts.torso, new THREE.Color(config.colors.torso));
-            if (leftArm) applyColorToPresetPreviewPart(leftArm, new THREE.Color(config.colors.arms));
-            if (rightArm) applyColorToPresetPreviewPart(rightArm, new THREE.Color(config.colors.arms));
-            if (leftLeg) applyColorToPresetPreviewPart(leftLeg, new THREE.Color(config.colors.legs));
-            if (rightLeg) applyColorToPresetPreviewPart(rightLeg, new THREE.Color(config.colors.legs));
+            // Las texturas de brazo se montan espejadas sobre los meshes del modelo.
+            if (leftArm) applyColorToPresetPreviewPart(leftArm, new THREE.Color(config.colors.armRight));
+            if (rightArm) applyColorToPresetPreviewPart(rightArm, new THREE.Color(config.colors.armLeft));
+            if (leftLeg) applyColorToPresetPreviewPart(leftLeg, new THREE.Color(config.colors.legLeft));
+            if (rightLeg) applyColorToPresetPreviewPart(rightLeg, new THREE.Color(config.colors.legRight));
 
             if (leftArm) leftArm.visible = !config.hideArms;
             if (rightArm) rightArm.visible = !config.hideArms;
@@ -11829,6 +11931,8 @@
             if (config.noseTexture?.url && !config.hiddenOverlays.includes('nose')) {
                 textureTasks.push(overlay('nose', parts.head, config.noseTexture.url, {
                     position: [...noseLayout.position],
+                    colorWithHead: shouldColorNoseWithHead(config.noseTexture.url),
+                    headColor: config.colors.head,
                     planeHeight: noseLayout.planeHeight
                 }));
             }
@@ -11851,6 +11955,7 @@
                 }));
                 textureTasks.push(overlay('hair-back', parts.head, config.hairTexture.backUrl, {
                     position: [...hairBackLayout.position],
+                    rotation: [...hairBackLayout.rotation],
                     planeHeight: hairBackLayout.planeHeight
                 }));
                 textureTasks.push(overlay('hair-left', parts.head, config.hairTexture.leftUrl, {
@@ -12014,7 +12119,7 @@
 
         function getShowcaseNoseColor() {
             const color = showcaseRuntime.headColor || new THREE.Color(0xffffff);
-            return new THREE.Color(color.r * 0.5, color.g * 0.5, color.b * 0.5);
+            return new THREE.Color(color.r * 0.75, color.g * 0.75, color.b * 0.75);
         }
 
         function applyShowcaseNoseColor() {
@@ -12139,7 +12244,7 @@
                     key: 'nose',
                     parent: parts.head,
                     url: noseTexture.url,
-                    options: getSharedOverlayOptions('nose', { colorWithHead: noseTexture.name === 'Default' })
+                    options: getSharedOverlayOptions('nose', { colorWithHead: shouldColorNoseWithHead(noseTexture.url) })
                 });
             }
             if (earTexture?.url && parts.head) {
@@ -12236,7 +12341,9 @@
             if (leftLeg) leftLeg.visible = true;
             if (rightLeg) rightLeg.visible = true;
 
-            await applyShowcaseTexturePlan(createShowcaseTexturePlan(parts), textureGeneration);
+            const plan = showcaseRuntime.texturePlan || createShowcaseTexturePlan(parts);
+            showcaseRuntime.texturePlan = plan;
+            await applyShowcaseTexturePlan(plan, textureGeneration);
         }
 
         function cycleShowcaseColors(now) {
@@ -12283,6 +12390,7 @@
             const textureGeneration = invalidateShowcaseTextureGeneration();
 
             const plan = createShowcaseTexturePlan(showcaseRuntime.parts);
+            showcaseRuntime.texturePlan = plan;
             applyShowcaseTexturePlan(plan, textureGeneration)
                 .catch((error) => {
                     console.warn('Showcase batch texture error:', error);
@@ -12480,6 +12588,7 @@
             showcaseRuntime.overlays = {};
             showcaseRuntime.isInitialized = false;
             showcaseRuntime.currentCharacter = null;
+            showcaseRuntime.texturePlan = null;
             showcaseRuntime.headColor = null;
             invalidateShowcaseTextureGeneration();
             showcaseRuntime.isDragging = false;
@@ -12924,7 +13033,7 @@
                     console.error("No se pudo cargar la textura de los ojos.", error);
                     // Fallback si la textura falla al cargar (crea un placeholder rojo)
                     if (isInitialLoad && !eyesMesh) {
-                        const placeholderMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+                        const placeholderMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide, roughness: 0.5, metalness: 0.0 });
                         const headBox = new THREE.Box3().setFromObject(modelParts.head);
                         const headSize = headBox.getSize(new THREE.Vector3());
                         const eyeGeometry = new THREE.PlaneGeometry(headSize.x * 0.5, headSize.y * 0.2);
@@ -12993,7 +13102,7 @@
                     console.error("No se pudo cargar la textura de las cejas.", error);
                     // Fallback si la textura falla al cargar
                     if (isInitialLoad && !eyebrowsMesh) {
-                        const placeholderMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+                        const placeholderMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide, roughness: 0.5, metalness: 0.0 });
                         const headBox = new THREE.Box3().setFromObject(modelParts.head);
                         const headSize = headBox.getSize(new THREE.Vector3());
                         const eyebrowGeometry = new THREE.PlaneGeometry(headSize.x * 0.5, headSize.y * 0.2);
@@ -13007,6 +13116,13 @@
 
         // updateEyebrowCarousel removed
 
+
+        function getCurrentModelHeadColorHex() {
+            // La cabeza puede ser un Group, por lo que no siempre tiene
+            // material.color directamente. getPartColor excluye las capas
+            // SVG y devuelve el color del mesh base de la cabeza.
+            return getPartColor(modelParts.head) || '#F7D5CF';
+        }
 
         function changeNoseTexture(url, isInitialLoad = false) {
             if (!modelParts.head) return;
@@ -13038,11 +13154,7 @@
                         modelParts.head.add(noseMesh);
 
                         // Aplicar el color inicial de la cabeza solo si esta nariz usa el tono de la cabeza
-                        if (modelParts.head && modelParts.head.material && modelParts.head.material.color) {
-                            applyNoseColor(modelParts.head.material.color.getHex());
-                        } else {
-                            applyNoseColor(0xffffff);
-                        }
+                        applyNoseColor(getCurrentModelHeadColorHex());
                     } else {
                         // Actualizar textura del mesh existente
                         const oldMap = noseMesh.material.map;
@@ -13055,11 +13167,7 @@
                             oldMap.dispose();
                         }
 
-                        if (modelParts.head && modelParts.head.material && modelParts.head.material.color) {
-                            applyNoseColor(modelParts.head.material.color.getHex());
-                        } else {
-                            applyNoseColor(0xffffff);
-                        }
+                        applyNoseColor(getCurrentModelHeadColorHex());
 
                         // Limpiar memoria en móvil
                         if (isMobileDevice) {
@@ -13074,7 +13182,7 @@
                     console.error("No se pudo cargar la textura de la nariz.", error);
                     // Fallback si la textura falla al cargar
                     if (isInitialLoad && !noseMesh) {
-                        const placeholderMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, side: THREE.DoubleSide });
+                        const placeholderMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000, side: THREE.DoubleSide, roughness: 0.5, metalness: 0.0 });
                         const headBox = new THREE.Box3().setFromObject(modelParts.head);
                         const headSize = headBox.getSize(new THREE.Vector3());
                         const noseGeometry = new THREE.PlaneGeometry(headSize.x * 0.5, headSize.y * 0.2);
@@ -13088,7 +13196,15 @@
 
         function shouldColorNoseWithHead(textureUrl) {
             const defaultNoseTexture = getTextureByName(noseTextures, 'Default');
-            return Boolean(textureUrl && defaultNoseTexture?.url && textureUrl === defaultNoseTexture.url);
+            const noseTexture = (noseTextures || []).find((texture) => texture.url === textureUrl);
+            return Boolean(
+                textureUrl &&
+                (
+                    (defaultNoseTexture?.url && textureUrl === defaultNoseTexture.url) ||
+                    noseTexture?.colorWithHead === true ||
+                    extractHexColorFromTextureUrl(textureUrl) === '#000000'
+                )
+            );
         }
 
         // Función para aplicar color a la nariz (25% más oscuro que la cabeza)
@@ -13105,11 +13221,7 @@
             const color = new THREE.Color(headColorHex);
 
             // Oscurecer el color un 25% (multiplicar por 0.75)
-            const darkenedColor = new THREE.Color(
-                color.r * 0.75,
-                color.g * 0.75,
-                color.b * 0.75
-            );
+            const darkenedColor = getHeadRelativeNoseColor(color.getHex());
 
             // Aplicar el color oscurecido a la nariz
             noseMesh.material.color.copy(darkenedColor);
@@ -13342,12 +13454,14 @@
                         const hairGeometry = new THREE.PlaneGeometry(planeWidth, planeHeight);
                         hairBackMesh = new THREE.Mesh(hairGeometry, hairMaterial);
                         hairBackMesh.position.set(...hairBackLayout.position);
+                        hairBackMesh.rotation.set(...hairBackLayout.rotation);
                         modelParts.head.add(hairBackMesh);
                     } else {
                         // Solo actualiza la textura si el mesh ya existe
                         const oldMap = hairBackMesh.material.map;
                         hairBackMesh.material.map = texture;
                         hairBackMesh.material.needsUpdate = true;
+                        hairBackMesh.rotation.set(...hairBackLayout.rotation);
                         if (oldMap && oldMap !== texture) oldMap.dispose();
                     }
 
@@ -14618,7 +14732,7 @@
             return new Promise((resolve, reject) => {
                 const img = new Image();
                 img.crossOrigin = "Anonymous";
-                img.src = imageUrl;
+                img.src = getVersionedTextureUrl(imageUrl);
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
                     const size = 50;
@@ -15090,7 +15204,9 @@
         ];
 
         function getPresetIconSource(name) {
-            return (typeof presetIcons !== 'undefined' && presetIcons[name]) ? presetIcons[name] : null;
+            return (typeof presetIcons !== 'undefined' && presetIcons[name])
+                ? getVersionedTextureUrl(presetIcons[name])
+                : null;
         }
 
         function getPresetIconMarkup(name, options = {}) {
@@ -16399,6 +16515,11 @@
                 return;
             }
 
+            if (requestedView === 'shop') {
+                navigateToView('shop', { updateHistory: false, replaceHistory: true });
+                return;
+            }
+
             const authenticatedUser = typeof getCurrentUser === 'function'
                 ? await getCurrentUser().catch(() => null)
                 : null;
@@ -16446,7 +16567,7 @@
                 card.className = 'mobile-option-card';
 
                 const img = new Image();
-                img.src = option.url;
+                img.src = getVersionedTextureUrl(option.url);
                 img.alt = option.name;
                 // SOLUCIÓN 2: Carga INMEDIATA sin lazy loading
                 img.loading = 'eager';
@@ -16972,8 +17093,8 @@
         }
 
         function getCustomPreviewColorsSnapshot() {
-            const armLeft = modelParts.arms.find((arm) => arm.name.toLowerCase().includes('l'));
-            const armRight = modelParts.arms.find((arm) => arm.name.toLowerCase().includes('r'));
+            const armLeft = modelParts.arms.find((arm) => arm.name.toLowerCase().includes('r'));
+            const armRight = modelParts.arms.find((arm) => arm.name.toLowerCase().includes('l'));
             const legLeft = modelParts.legs.find((leg) => leg.name.toLowerCase().includes('l'));
             const legRight = modelParts.legs.find((leg) => leg.name.toLowerCase().includes('r'));
 
@@ -17020,6 +17141,19 @@
             };
         }
 
+        function buildResolvedCustomPdfSnapshot() {
+            const snapshot = buildCurrentCustomPdfSnapshot();
+            return {
+                ...snapshot,
+                textureUrls: Object.fromEntries(
+                    Object.entries(snapshot.textureUrls).map(([key, url]) => [
+                        key,
+                        url ? getVersionedTextureUrl(url) : null
+                    ])
+                )
+            };
+        }
+
         function buildCustomPdfSnapshotKey(snapshot) {
             return JSON.stringify(snapshot);
         }
@@ -17033,14 +17167,15 @@
 
         async function loadCachedTextureSvg(textureURL) {
             if (!textureURL) return null;
-            if (!pdfTextureSourceCache.has(textureURL)) {
-                pdfTextureSourceCache.set(textureURL, (async () => {
+            const versionedTextureURL = getVersionedTextureUrl(textureURL);
+            if (!pdfTextureSourceCache.has(versionedTextureURL)) {
+                pdfTextureSourceCache.set(versionedTextureURL, (async () => {
                     try {
-                        const response = await fetch(textureURL);
+                        const response = await fetch(versionedTextureURL);
                         if (!response.ok) return null;
                         return await response.text();
                     } catch (error) {
-                        console.warn('No se pudo precargar textura SVG para PDF:', textureURL, error);
+                        console.warn('No se pudo precargar textura SVG para PDF:', versionedTextureURL, error);
                         return null;
                     }
                 })());
@@ -17049,7 +17184,7 @@
                     pdfTextureSourceCache.delete(firstKey);
                 }
             }
-            return pdfTextureSourceCache.get(textureURL);
+            return pdfTextureSourceCache.get(versionedTextureURL);
         }
 
         function shouldDeferCustomPdfPreparationUntilDownload() {
@@ -17794,7 +17929,7 @@
             }
 
             if (!favorites.length) {
-                cartList.innerHTML = '<p class="pc-cart-empty">Tu carrito está vacío. Guarda personajes desde Colecciones.</p>';
+                cartList.innerHTML = '<p class="pc-cart-empty">Tu carrito está vacío. Guarda personajes desde la Tienda.</p>';
                 return;
             }
 
@@ -17945,26 +18080,23 @@
 
             if (globalSearchWrapper) {
                 globalSearchWrapper.addEventListener('click', () => {
-                    if (window.matchMedia('(min-width: 769px) and (max-width: 1040px)').matches && activeAppView !== 'presets') {
-                        navigateToView('presets');
+                    if (window.matchMedia('(min-width: 769px) and (max-width: 1040px)').matches && activeAppView !== 'shop') {
+                        navigateToView('shop');
                     }
                 });
             }
 
             globalSearchInput.addEventListener('focus', () => {
-                if (activeAppView !== 'presets') {
-                    navigateToView('presets');
+                if (activeAppView !== 'shop') {
+                    navigateToView('shop');
                 }
             });
 
             globalSearchInput.addEventListener('input', (e) => {
-                globalPresetSearchQuery = normalizePresetSearchValue(e.target.value).trim();
-                if (activeAppView !== 'presets') {
-                    navigateToView('presets');
-                    return;
-                }
-                const selectedFilter = fandomFilter ? fandomFilter.value : 'all';
-                renderFandomsGrid(selectedFilter);
+                const searchValue = normalizePresetSearchValue(e.target.value).trim();
+                globalPresetSearchQuery = searchValue;
+                if (activeAppView !== 'shop') navigateToView('shop');
+                        window.papelcoolFourthwall?.setSearch?.(searchValue);
             });
         }
 
@@ -17976,19 +18108,13 @@
             if (mobileMenuSearchInput && mobileMenuSearchInput.value !== value) {
                 mobileMenuSearchInput.value = value;
             }
-            if (activeAppView !== 'presets') {
-                navigateToView('presets');
-                return;
-            }
-            const selectedFilter = fandomFilter ? fandomFilter.value : 'all';
-            renderFandomsGrid(selectedFilter);
+            if (activeAppView !== 'shop') navigateToView('shop');
+                window.papelcoolFourthwall?.setSearch?.(globalPresetSearchQuery);
         }
 
         if (mobileMenuSearchInput) {
             mobileMenuSearchInput.addEventListener('focus', () => {
-                if (activeAppView !== 'presets') {
-                    navigateToView('presets');
-                }
+                if (activeAppView !== 'shop') navigateToView('shop');
             });
 
             mobileMenuSearchInput.addEventListener('input', (event) => {
@@ -18154,49 +18280,77 @@
         }
 
         // Función para aplicar personaje preestablecido (OPTIMIZADA PARA MÓVIL)
-        async function applyPresetCharacter(characterName) {
+        function clearPresetCharacterOverlays() {
+            const clear = (mesh) => removeOverlayMesh(mesh?.parent || null, mesh);
+
+            eyesMesh = clear(eyesMesh);
+            eyebrowsMesh = clear(eyebrowsMesh);
+            noseMesh = clear(noseMesh);
+            earLeftMesh = clear(earLeftMesh);
+            earRightMesh = clear(earRightMesh);
+            hairFrontMesh = clear(hairFrontMesh);
+            hairBackMesh = clear(hairBackMesh);
+            hairLeftMesh = clear(hairLeftMesh);
+            hairRightMesh = clear(hairRightMesh);
+            hairUpMesh = clear(hairUpMesh);
+            beardFrontMesh = clear(beardFrontMesh);
+            beardLeftMesh = clear(beardLeftMesh);
+            beardRightMesh = clear(beardRightMesh);
+            torsoFrontMesh = clear(torsoFrontMesh);
+            torsoBackMesh = clear(torsoBackMesh);
+            instrumentMesh = clear(instrumentMesh);
+            armLeftFrontMesh = clear(armLeftFrontMesh);
+            armLeftBackMesh = clear(armLeftBackMesh);
+            armRightFrontMesh = clear(armRightFrontMesh);
+            armRightBackMesh = clear(armRightBackMesh);
+            legLeftFrontMesh = clear(legLeftFrontMesh);
+            legLeftBackMesh = clear(legLeftBackMesh);
+            legRightFrontMesh = clear(legRightFrontMesh);
+            legRightBackMesh = clear(legRightBackMesh);
+
+            currentEyeTextureURL = null;
+            currentEyebrowTextureURL = null;
+            currentNoseTextureURL = null;
+            currentEarTextureURL = null;
+            currentHairFrontURL = null;
+            currentHairBackURL = null;
+            currentHairLeftURL = null;
+            currentHairRightURL = null;
+            currentHairUpURL = null;
+            currentBeardFrontURL = null;
+            currentBeardLeftURL = null;
+            currentBeardRightURL = null;
+            currentTorsoFrontURL = null;
+            currentTorsoBackURL = null;
+            currentInstrumentURL = null;
+            currentArmLeftURL = null;
+            currentArmRightURL = null;
+            currentLegLeftURL = null;
+            currentLegRightURL = null;
+        }
+
+        function applyPresetCharacter(characterName) {
+            presetPhotoMode?.close(false);
+            presetPhotoReadyPromise = applyPresetCharacterMaterials(characterName);
+            presetPhotoReadyPromise.then(() => presetPhotoMode?.refresh(), () => presetPhotoMode?.refresh());
+            return presetPhotoReadyPromise;
+        }
+
+        async function applyPresetCharacterMaterials(characterName) {
             const runVersion = ++presetApplicationVersion;
+            // Invalida cargas asíncronas del preset anterior antes de comenzar
+            // la precarga del nuevo personaje. Así una respuesta tardía no
+            // puede volver a pintar una textura antigua sobre Zoey.
+            invalidateAllCustomTextureVersions();
+            clearPresetCharacterOverlays();
             const presetConfig = buildPresetCharacterConfig(characterName);
 
-            // Aplicar color de piel más claro (#F7D5CF) a todos los personajes preestablecidos
-            const lightestSkinColor = new THREE.Color('#F7D5CF');
-
-            // Aplicar color de piel base
-            const skinColor = new THREE.Color('#F7D5CF');
-
-            // Determinar colores específicos basados en el personaje
-            let headColor = skinColor;
-            let torsoColor = skinColor;
-            let armsColor = skinColor;
-            let legsColor = skinColor;
-
-            if (characterName === 'Baby') {
-                headColor = new THREE.Color('#FFEBE8');
-                torsoColor = new THREE.Color('#6A68E9');
-                legsColor = new THREE.Color('#6A68E9');
-            } else if (characterName === 'Mystery') {
-                headColor = new THREE.Color('#91C9FA');
-            } else if (characterName === 'Steve') {
-                headColor = new THREE.Color('#AF7E5C');
-                torsoColor = new THREE.Color('#00A9AF');
-                armsColor = new THREE.Color('#AF7E5C');
-                legsColor = new THREE.Color('#4332A0');
-            } else if (characterName === 'Enderman') {
-                headColor = new THREE.Color('#000000');
-                torsoColor = new THREE.Color('#000000');
-                armsColor = new THREE.Color('#000000');
-                legsColor = new THREE.Color('#000000');
-            } else if (characterName === 'Creeper') {
-                headColor = new THREE.Color('#08C21F');
-                torsoColor = new THREE.Color('#08C21F');
-                armsColor = new THREE.Color('#08C21F');
-                legsColor = new THREE.Color('#08C21F');
-            }
-
-            headColor = new THREE.Color(presetConfig.colors.head);
-            torsoColor = new THREE.Color(presetConfig.colors.torso);
-            armsColor = new THREE.Color(presetConfig.colors.arms);
-            legsColor = new THREE.Color(presetConfig.colors.legs);
+            const headColor = new THREE.Color(presetConfig.colors.head);
+            const torsoColor = new THREE.Color(presetConfig.colors.torso);
+            const armLeftColor = new THREE.Color(presetConfig.colors.armLeft);
+            const armRightColor = new THREE.Color(presetConfig.colors.armRight);
+            const legLeftColor = new THREE.Color(presetConfig.colors.legLeft);
+            const legRightColor = new THREE.Color(presetConfig.colors.legRight);
 
             // === RESTAURAR ESTADO INICIAL (RESET) ===
             // 1. Asegurar que todas las partes removibles estén adheridas a la cabeza
@@ -18254,14 +18408,16 @@
 
             if (modelParts.arms) {
                 modelParts.arms.forEach(arm => {
+                    // La textura izquierda vive en el mesh derecho y viceversa.
+                    const armColor = arm.name.toLowerCase().includes('l') ? armRightColor : armLeftColor;
                     arm.traverse(child => {
                         if (child.isMesh && child.material) {
                             if (child !== armLeftFrontMesh && child !== armLeftBackMesh &&
                                 child !== armRightFrontMesh && child !== armRightBackMesh) {
                                 if (Array.isArray(child.material)) {
-                                    child.material.forEach(mat => { if (mat.color) mat.color.copy(armsColor); });
+                                    child.material.forEach(mat => { if (mat.color) mat.color.copy(armColor); });
                                 } else {
-                                    child.material.color.copy(armsColor);
+                                    child.material.color.copy(armColor);
                                 }
                             }
                         }
@@ -18273,14 +18429,15 @@
 
             if (modelParts.legs) {
                 modelParts.legs.forEach(leg => {
+                    const legColor = leg.name.toLowerCase().includes('l') ? legLeftColor : legRightColor;
                     leg.traverse(child => {
                         if (child.isMesh && child.material) {
                             if (child !== legLeftFrontMesh && child !== legLeftBackMesh &&
                                 child !== legRightFrontMesh && child !== legRightBackMesh) {
                                 if (Array.isArray(child.material)) {
-                                    child.material.forEach(mat => { if (mat.color) mat.color.copy(legsColor); });
+                                    child.material.forEach(mat => { if (mat.color) mat.color.copy(legColor); });
                                 } else {
-                                    child.material.color.copy(legsColor);
+                                    child.material.color.copy(legColor);
                                 }
                             }
                         }
@@ -18323,9 +18480,6 @@
                 // Skeleton no tiene orejas, cejas ni pelo
                 [earLeftMesh, earRightMesh, eyebrowsMesh, hairFrontMesh, hairBackMesh, hairLeftMesh, hairRightMesh, hairUpMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
             } else if (characterName === 'Enderman') {
-                armTexture = null;
-                legTexture = null;
-
                 // Asegurar visibilidad de brazos y piernas para Enderman
                 modelParts.arms.forEach(arm => { if (arm) arm.visible = true; });
                 modelParts.legs.forEach(leg => { if (leg) leg.visible = true; });
@@ -18333,8 +18487,7 @@
             } else if (characterName === 'Romance') {
                 [earLeftMesh, earRightMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
             } else if (characterName === 'Mystery') {
-                [eyesMesh, eyebrowsMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
-                eyeTexture = null;
+                [eyebrowsMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
                 eyebrowTexture = null;
             } else if (characterName === 'Steve') {
                 [earLeftMesh, earRightMesh, eyebrowsMesh].forEach(m => { if (m && modelParts.head) modelParts.head.remove(m); });
@@ -18432,6 +18585,7 @@
 
         // Función unificada para cargar personajes preestablecidos
         async function setPresetCharacter(name) {
+            presetPhotoMode?.close(false);
             clearReadyPresetTemplateBlob();
             currentPresetCharacter = name;
             rememberPresetCharacter(name);
@@ -18617,7 +18771,7 @@
                     : (customCheckoutState.sessionId || getVerifiedStripeSessionId());
                 if (!sessionId) throw new Error('No hay una sesión de pago verificada.');
 
-                const manifest = buildCurrentCustomPdfSnapshot();
+                const manifest = buildResolvedCustomPdfSnapshot();
                 const createResponse = await fetch('/api/custom-template-job', {
                     method: 'POST',
                     headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
@@ -18906,7 +19060,7 @@
 
             try {
                 // Cargar la textura SVG
-                const response = await fetch(textureURL);
+                const response = await fetch(getVersionedTextureUrl(textureURL));
                 if (!response.ok) return templateSVG;
                 const textureSVG = await response.text();
 
@@ -19352,8 +19506,8 @@
                 const torsoColor = getPartColor(modelParts.torso);
 
                 // Buscar brazos y piernas específicos
-                const armLeft = modelParts.arms.find(a => a.name.toLowerCase().includes('l'));
-                const armRight = modelParts.arms.find(a => a.name.toLowerCase().includes('r'));
+                const armLeft = modelParts.arms.find(a => a.name.toLowerCase().includes('r'));
+                const armRight = modelParts.arms.find(a => a.name.toLowerCase().includes('l'));
                 const legLeft = modelParts.legs.find(l => l.name.toLowerCase().includes('l'));
                 const legRight = modelParts.legs.find(l => l.name.toLowerCase().includes('r'));
 
@@ -19517,7 +19671,7 @@
                                     const b = parseInt(headColorHex.substr(4, 2), 16);
                                     const darkenedColor = `#${Math.floor(r * 0.75).toString(16).padStart(2, '0')}${Math.floor(g * 0.75).toString(16).padStart(2, '0')}${Math.floor(b * 0.75).toString(16).padStart(2, '0')}`;
 
-                                    const noseResponse = await fetch(textureURL);
+                                    const noseResponse = await fetch(getVersionedTextureUrl(textureURL));
                                     if (noseResponse.ok) {
                                         let noseSVG = await noseResponse.text();
                                         noseSVG = colorSVG(noseSVG, darkenedColor);
@@ -19832,23 +19986,19 @@
 
         function getCustomBuilderSteps() {
             const copy = getCustomBuilderCopy();
-            const applyTextureColorTarget = (target, textureUrl) => {
-                const color = extractHexColorFromTextureUrl(textureUrl);
-                if (color) applyColorToCustomizationTarget(target, color);
-            };
 
             return [
                 { id: 'skin', title: copy.skin },
-                { id: 'eyes', title: copy.eyes, items: eyeTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentEyeTextureURL === item.url, apply: (item) => { currentEyeTextureURL = item.url; changeEyeTexture(item.url); applyTextureColorTarget('head', item.url); } },
+                { id: 'eyes', title: copy.eyes, items: eyeTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentEyeTextureURL === item.url, apply: (item) => { currentEyeTextureURL = item.url; changeEyeTexture(item.url); applyTextureCodeColorToModel('head', item.url); } },
                 { id: 'eyebrows', title: copy.eyebrows, items: eyebrowTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentEyebrowTextureURL === item.url, apply: (item) => { currentEyebrowTextureURL = item.url; changeEyebrowTexture(item.url); } },
                 { id: 'nose', title: copy.nose, items: noseTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentNoseTextureURL === item.url, apply: (item) => { currentNoseTextureURL = item.url; changeNoseTexture(item.url); } },
                 { id: 'ears', title: copy.ears, items: earTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentEarTextureURL === item.url, apply: (item) => { currentEarTextureURL = item.url; changeEarTexture('left', item.url); changeEarTexture('right', item.url); } },
                 { id: 'hair', title: copy.hair, items: hairTextures || [], preview: (item) => item.preview || item.frontUrl || item.leftUrl, isSelected: (item) => currentHairFrontURL === item.frontUrl && currentHairBackURL === item.backUrl && currentHairLeftURL === item.leftUrl && currentHairRightURL === item.rightUrl && currentHairUpURL === item.upUrl, apply: (item) => { currentHairFrontURL = item.frontUrl; currentHairBackURL = item.backUrl; currentHairLeftURL = item.leftUrl; currentHairRightURL = item.rightUrl; currentHairUpURL = item.upUrl; changeHairTexture(item.frontUrl, item.backUrl, item.leftUrl, item.rightUrl, item.upUrl); } },
-                { id: 'torso', title: copy.torso, items: torsoClothingTextures || [], preview: (item) => item.preview || item.frontUrl, isSelected: (item) => currentTorsoFrontURL === item.frontUrl && currentTorsoBackURL === item.backUrl, apply: (item) => { currentTorsoFrontURL = item.frontUrl; currentTorsoBackURL = item.backUrl; changeTorsoClothing(item.frontUrl, item.backUrl); applyTextureColorTarget('torso', item.frontUrl || item.backUrl); } },
-                { id: 'arm-left', title: copy.armLeft, items: armTextures || [], preview: (item) => item.preview || item.leftUrl, isSelected: (item) => currentArmLeftURL === item.leftUrl, apply: (item) => { currentArmLeftURL = item.leftUrl; changeArmClothing('left', item.leftUrl); applyTextureColorTarget('arm-l', item.leftUrl); } },
-                { id: 'arm-right', title: copy.armRight, items: armTextures || [], preview: (item) => item.preview || item.rightUrl, isSelected: (item) => currentArmRightURL === item.rightUrl, apply: (item) => { currentArmRightURL = item.rightUrl; changeArmClothing('right', item.rightUrl); applyTextureColorTarget('arm-r', item.rightUrl); } },
-                { id: 'leg-left', title: copy.legLeft, items: legTextures || [], preview: (item) => item.preview || item.leftUrl, isSelected: (item) => currentLegLeftURL === item.leftUrl, apply: (item) => { currentLegLeftURL = item.leftUrl; changeLegClothing('left', item.leftUrl); applyTextureColorTarget('leg-l', item.leftUrl); } },
-                { id: 'leg-right', title: copy.legRight, items: legTextures || [], preview: (item) => item.preview || item.rightUrl, isSelected: (item) => currentLegRightURL === item.rightUrl, apply: (item) => { currentLegRightURL = item.rightUrl; changeLegClothing('right', item.rightUrl); applyTextureColorTarget('leg-r', item.rightUrl); } },
+                { id: 'torso', title: copy.torso, items: torsoClothingTextures || [], preview: (item) => item.preview || item.frontUrl, isSelected: (item) => currentTorsoFrontURL === item.frontUrl && currentTorsoBackURL === item.backUrl, apply: (item) => { currentTorsoFrontURL = item.frontUrl; currentTorsoBackURL = item.backUrl; changeTorsoClothing(item.frontUrl, item.backUrl); applyTextureCodeColorToModel('torso', item.frontUrl || item.backUrl); } },
+                { id: 'arm-left', title: copy.armLeft, items: armTextures || [], preview: (item) => item.preview || item.leftUrl, isSelected: (item) => currentArmLeftURL === item.leftUrl, apply: (item) => { currentArmLeftURL = item.leftUrl; changeArmClothing('left', item.leftUrl); applyTextureCodeColorToModel('arm-left', item.leftUrl); } },
+                { id: 'arm-right', title: copy.armRight, items: armTextures || [], preview: (item) => item.preview || item.rightUrl, isSelected: (item) => currentArmRightURL === item.rightUrl, apply: (item) => { currentArmRightURL = item.rightUrl; changeArmClothing('right', item.rightUrl); applyTextureCodeColorToModel('arm-right', item.rightUrl); } },
+                { id: 'leg-left', title: copy.legLeft, items: legTextures || [], preview: (item) => item.preview || item.leftUrl, isSelected: (item) => currentLegLeftURL === item.leftUrl, apply: (item) => { currentLegLeftURL = item.leftUrl; changeLegClothing('left', item.leftUrl); applyTextureCodeColorToModel('leg-left', item.leftUrl); } },
+                { id: 'leg-right', title: copy.legRight, items: legTextures || [], preview: (item) => item.preview || item.rightUrl, isSelected: (item) => currentLegRightURL === item.rightUrl, apply: (item) => { currentLegRightURL = item.rightUrl; changeLegClothing('right', item.rightUrl); applyTextureCodeColorToModel('leg-right', item.rightUrl); } },
                 { id: 'beard', title: copy.beard, items: beardTextures || [], preview: (item) => item.preview || item.frontUrl || item.leftUrl, isSelected: (item) => currentBeardFrontURL === item.frontUrl && currentBeardLeftURL === item.leftUrl && currentBeardRightURL === item.rightUrl, apply: (item) => { currentBeardFrontURL = item.frontUrl; currentBeardLeftURL = item.leftUrl; currentBeardRightURL = item.rightUrl; changeBeardTexture(item.frontUrl, item.leftUrl, item.rightUrl); } },
                 { id: 'instrument', title: copy.instrument, items: instrumentTextures || [], preview: (item) => item.preview || item.url, isSelected: (item) => currentInstrumentURL === item.url, apply: (item) => { currentInstrumentURL = item.url; changeInstrumentTexture(item.url); } }
             ];
@@ -20131,11 +20281,13 @@
             });
         }
 
-        function applyColorToCustomizationTarget(target, hexColor) {
+        function applyColorToCustomizationTarget(target, hexColor, { trackChange = true } = {}) {
             if (!modelParts.head && !modelParts.torso && !modelParts.arms.length && !modelParts.legs.length) return;
 
-            isCustomSkinColorSelected = true;
-            hasCustomizationInteracted = true;
+            if (trackChange) {
+                isCustomSkinColorSelected = true;
+                hasCustomizationInteracted = true;
+            }
 
             const colorHex = parseInt(hexColor.replace('#', '0x'), 16);
             const colorObject = new THREE.Color(colorHex);
@@ -20184,6 +20336,8 @@
             }
 
             requestCustomRender(isLowPowerMobile ? 14 : 22);
+            if (!trackChange) return;
+
             notifyCustomPdfStateChanged(`color-${target}`);
 
             if (!isRestoringCustomStripeDraft && customCheckoutState.status === 'paid') {
@@ -20191,6 +20345,25 @@
                 setCustomCheckoutState('unpaid');
                 stripCustomStripeReturnParamsFromUrl();
             }
+        }
+
+        function applyTextureCodeColorToModel(texturePart, textureUrl, options = {}) {
+            const color = extractHexColorFromTextureUrl(textureUrl);
+            if (!color) return false;
+
+            const targetByTexturePart = {
+                head: 'head',
+                torso: 'torso',
+                'arm-left': 'arm-r',
+                'arm-right': 'arm-l',
+                'leg-left': 'leg-l',
+                'leg-right': 'leg-r'
+            };
+            const target = targetByTexturePart[texturePart];
+            if (!target) return false;
+
+            applyColorToCustomizationTarget(target, color, options);
+            return true;
         }
 
         function stripCustomStripeReturnParamsFromUrl() {
@@ -20201,8 +20374,8 @@
         }
 
         function applyCustomColorSnapshotToModel(colors = {}) {
-            const leftArm = modelParts.arms?.find((arm) => arm.name.toLowerCase().includes('l'));
-            const rightArm = modelParts.arms?.find((arm) => arm.name.toLowerCase().includes('r'));
+            const leftArm = modelParts.arms?.find((arm) => arm.name.toLowerCase().includes('r'));
+            const rightArm = modelParts.arms?.find((arm) => arm.name.toLowerCase().includes('l'));
             const leftLeg = modelParts.legs?.find((leg) => leg.name.toLowerCase().includes('l'));
             const rightLeg = modelParts.legs?.find((leg) => leg.name.toLowerCase().includes('r'));
 
@@ -21391,7 +21564,7 @@
                 <div class="pc-favorites-empty">
                     <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: #FFC700;">star</span>
                     <p>No tienes favoritos todavía.</p>
-                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Guarda tus Papelcools desde Colecciones y aparecerán aquí automáticamente.</p>
+                    <p style="font-size: 0.9rem; margin-top: 0.5rem;">Guarda tus Papelcools desde la Tienda y aparecerán aquí automáticamente.</p>
                 </div>
             `;
         }
@@ -21589,7 +21762,7 @@
                     <span class="material-symbols-outlined" style="font-size: 3rem; margin-bottom: 1rem; display: block;">brush</span>
                     <p>Todavía no has creado ningún Papelcool.</p>
                     <button type="button" class="pc-home-chip" onclick="document.getElementById('user-profile-view').style.display='none'; navigateToView('presets');" style="margin-top: 1rem; border: 2px solid #000; box-shadow: 2px 2px 0px rgba(0,0,0,1);">
-                        Ver colecciones
+                        Ir a la tienda
                     </button>
                 </div>
             `;
@@ -21630,7 +21803,25 @@
 
         window.isFavorite = isFavorite;
 
-
+        let photoControlsWereEnabled = true;
+        presetPhotoMode = createPresetPhotoMode({
+            container: canvasContainer,
+            getSource: () => ({
+                available: activeAppView === 'preset-preview' && !!loadedModel && presetHas3dModel(currentPresetCharacter),
+                model: loadedModel,
+                shadow: footShadow,
+                name: currentPresetCharacter || 'personaje'
+            }),
+            prepare: async () => {
+                await presetPhotoReadyPromise;
+                await Promise.all([...showcaseTextureLoads.values()]);
+                await new Promise((resolve) => requestAnimationFrame(resolve));
+            },
+            onActiveChange: (active) => {
+                if (active) { photoControlsWereEnabled = controls.enabled; controls.enabled = false; }
+                else { controls.enabled = photoControlsWereEnabled; requestCustomRender(4); }
+            }
+        });
 
     </script>
     <div id="authenticated-home-view">
@@ -21811,7 +22002,7 @@
                     <div class="lp-hero-copy">
                         <h1>Armalo como quieras!!</h1>
                         <div class="lp-hero-ctas">
-                            <button type="button" class="lp-btn lp-btn--pink" onclick="navigateToView('presets')">Comprar ahora</button>
+                            <button type="button" class="lp-btn lp-btn--pink" onclick="navigateToView('shop')">Comprar ahora</button>
                             <button type="button" class="lp-btn lp-btn--yellow" onclick="navigateToView('custom')">Crea el tuyo</button>
                         </div>
                     </div>
@@ -22015,6 +22206,53 @@
             </footer>
 
         </div><!-- /.lp-landing-wrapper -->
+    </div>
+    <div id="fourthwall-shop-view" aria-hidden="true">
+        <div class="pc-home-shell">
+            <main class="fourthwall-shop-page">
+                <header class="fourthwall-shop-header">
+                    <button type="button" class="pc-home-icon fourthwall-shop-back" onclick="navigateToView('home')" aria-label="Volver a Inicio">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                    </button>
+                    <div class="fourthwall-shop-heading">
+                        <h1>Tienda Papelcool</h1>
+                        <p>Encuentra todos nuestros kits y creaciones. Cada producto se abrirá en Fourthwall para completar tu compra y descargar tu PDF de forma segura.</p>
+                    </div>
+                    <a id="fourthwall-store-link" class="fourthwall-store-link" href="#" target="_blank" rel="noopener noreferrer" hidden>
+                        Ver tienda completa
+                        <span class="material-symbols-outlined" aria-hidden="true">open_in_new</span>
+                    </a>
+                </header>
+
+                <section class="fourthwall-shop-toolbar" aria-label="Filtros del catálogo">
+                    <label class="fourthwall-field" for="fourthwall-product-search">
+                        Buscar productos
+                        <input type="search" id="fourthwall-product-search" placeholder="Escribe un producto…" autocomplete="off">
+                    </label>
+                    <label class="fourthwall-field" for="fourthwall-product-order">
+                        Ordenar por
+                        <select id="fourthwall-product-order">
+                            <option value="date-desc">Más recientes</option>
+                            <option value="popularity-desc">Más populares</option>
+                            <option value="price-asc">Precio más bajo</option>
+                            <option value="price-desc">Precio más alto</option>
+                            <option value="title-asc">Nombre A–Z</option>
+                        </select>
+                    </label>
+                </section>
+
+                <div id="fourthwall-catalog-status" class="fourthwall-catalog-status" role="status" aria-live="polite">
+                    Cargando catálogo…
+                </div>
+                <div id="fourthwall-product-grid" class="fourthwall-product-grid" aria-live="polite"></div>
+
+                <nav id="fourthwall-pagination" class="fourthwall-pagination" aria-label="Paginación del catálogo" hidden>
+                    <button type="button" id="fourthwall-page-previous" class="fourthwall-page-button">Anterior</button>
+                    <span id="fourthwall-page-label" class="fourthwall-page-label">Página 1 de 1</span>
+                    <button type="button" id="fourthwall-page-next" class="fourthwall-page-button">Siguiente</button>
+                </nav>
+            </main>
+        </div>
     </div>
     <div id="stripe-success-view" style="display: none; position: fixed; inset: 0; z-index: 9000; overflow-y: auto; background: linear-gradient(135deg, #E0F2FE 0%, #F8FAFC 100%); padding: 7rem 1rem 3rem;">
         <section class="stripe-success-card" id="stripe-success-content" aria-live="polite" style="margin: 0 auto;">

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:affinity="https://www.affinity.studio/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-miterlimit:10;">
+    <g transform="matrix(1,0,0,1,-23406.475903,-21434.841542)">
+        <g id="Martin-faltas-tu-torso-front-FAF4EF" affinity:id="Martin faltas tu-torso-front-FAF4EF" transform="matrix(0.238305,0,0,0.337032,23406.475903,21434.841542)">
+            <rect x="0" y="0" width="3507.874" height="2480.315" style="fill:none;"/>
+            <g transform="matrix(3.891784,0,0,3.891784,-5072.006807,-4909.608558)">
+                <g>
+                    <g transform="matrix(4.611484,0,0,3.26061,-187.243986,723.987417)">
+                        <rect x="379.799" y="164.86" width="82.292" height="102.054" style="fill:rgb(250,244,239);fill-opacity:0;"/>
+                        <clipPath id="_clip1">
+                            <rect x="379.799" y="164.86" width="82.292" height="102.054"/>
+                        </clipPath>
+                        <g clip-path="url(#_clip1)">
+                            <g transform="matrix(1,0,0,1,420.9449,164.8597)">
+                                <path d="M0,19.32C12.281,19.32 22.237,10.67 22.237,0L-22.237,0C-22.237,10.67 -12.281,19.32 0,19.32" style="fill:rgb(252,199,148);"/>
+                            </g>
+                            <g transform="matrix(1,0,0,1,401.3163,182.76965)">
+                                <path d="M0,-18.665C3.371,-9.549 10.015,-2.669 19.651,2.165C28.284,-2.969 34.396,-10.276 39.254,-18.665" style="fill:none;fill-rule:nonzero;stroke:rgb(122,124,127);stroke-width:0.49px;"/>
+                            </g>
+                        </g>
+                    </g>
+                    <g transform="matrix(1.308386,0,0,0.816222,-3284.255577,-1882.342565)">
+                        <rect x="3705.67" y="4164.718" width="290.043" height="94.702" style="fill:rgb(195,170,151);"/>
+                    </g>
+                    <g transform="matrix(1.434097,0,0,0.690122,-21.911054,448.566126)">
+                        <rect x="1105.995" y="1550.468" width="264.618" height="26.751" style="fill:rgb(86,52,31);"/>
+                    </g>
+                </g>
+                <g transform="matrix(1.414286,0,0,1.183431,211.552777,-277.002633)">
+                    <path d="M1096.759,1515.927C1099.744,1515.927 1102.167,1517.975 1102.167,1520.497L1102.167,1529.638C1102.167,1532.161 1099.744,1534.208 1096.759,1534.208L1080.684,1534.208C1077.699,1534.208 1075.275,1532.161 1075.275,1529.638L1075.275,1520.497C1075.275,1517.975 1077.699,1515.927 1080.684,1515.927L1096.759,1515.927ZM1096.759,1518.627L1080.684,1518.627C1079.463,1518.627 1078.471,1519.465 1078.471,1520.497L1078.471,1529.638C1078.471,1530.67 1079.463,1531.508 1080.684,1531.508L1096.759,1531.508C1097.98,1531.508 1098.972,1530.67 1098.972,1529.638L1098.972,1520.497C1098.972,1519.465 1097.98,1518.627 1096.759,1518.627Z" style="fill:rgb(202,183,147);"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-21734.584767,-14623.117927)">
+        <g id="ZocoVR-hair-right" transform="matrix(1,0,0,1,17725.632435,7171.11129)">
+            <rect x="4008.952" y="7452.007" width="835.946" height="835.946" style="fill:none;"/>
+            <clipPath id="_clip1">
+                <rect x="4008.952" y="7452.007" width="835.946" height="835.946"/>
+            </clipPath>
+            <g clip-path="url(#_clip1)">
+                <g transform="matrix(0.92866,0,0,1.462573,1784.724104,-5262.062246)">
+                    <path d="M3341.031,8737.982L3341.031,8798.507C3341.031,8815.209 3319.674,8828.769 3293.37,8828.769L2396.982,8828.769C2370.678,8828.769 2349.322,8815.209 2349.322,8798.507L2349.322,8737.982C2349.322,8721.28 2370.678,8707.72 2396.982,8707.72L3293.37,8707.72C3319.674,8707.72 3341.031,8721.28 3341.031,8737.982Z" style="fill:rgb(245,245,245);"/>
+                    <clipPath id="_clip2">
+                        <path d="M3341.031,8737.982L3341.031,8798.507C3341.031,8815.209 3319.674,8828.769 3293.37,8828.769L2396.982,8828.769C2370.678,8828.769 2349.322,8815.209 2349.322,8798.507L2349.322,8737.982C2349.322,8721.28 2370.678,8707.72 2396.982,8707.72L3293.37,8707.72C3319.674,8707.72 3341.031,8721.28 3341.031,8737.982Z"/>
+                    </clipPath>
+                    <g clip-path="url(#_clip2)">
+                        <g transform="matrix(1,0,0,1,0.000053,-0.812366)">
+                            <g transform="matrix(1.53116,0,0,0.8402,-1382.117672,1442.461784)">
+                                <rect x="2413.96" y="8733.618" width="693.768" height="34.951" style="fill:rgb(237,28,36);"/>
+                            </g>
+                            <g transform="matrix(1.53116,0,0,0.8402,-1382.117672,1390.312581)">
+                                <rect x="2413.96" y="8733.618" width="693.768" height="34.951" style="fill:rgb(49,65,154);"/>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

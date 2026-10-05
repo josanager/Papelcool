@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:affinity="https://www.affinity.studio/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-22570.530335,-23106.732677)">
+        <g id="Simon-faltas-tu-arm-right-FBC694" affinity:id="Simon faltas tu-arm-right-FBC694" transform="matrix(-0.238305,0,0,0.337032,23406.475903,23106.732677)">
+            <rect x="0" y="0" width="3507.874" height="2480.315" style="fill:none;"/>
+            <clipPath id="_clip1">
+                <rect x="0" y="0" width="3507.874" height="2480.315"/>
+            </clipPath>
+            <g clip-path="url(#_clip1)">
+                <g transform="matrix(-7.11374,0,0,5.029917,26622.465806,-19872.761949)">
+                    <path d="M3742.401,3950.912L3674.585,4002.008L3700.073,4127.615L3742.401,4105.333L3742.401,3950.912Z" style="fill:rgb(250,249,237);"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

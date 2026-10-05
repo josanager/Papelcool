@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-12539.183519,-21434.841542)">
+        <g id="Creeper-torso-front-08C21F" transform="matrix(1,0,0,1,8530.231188,13982.834904)">
+            <g>
+                <rect x="4008.952" y="7452.007" width="835.946" height="835.946" style="fill:none;"/>
+                <g transform="matrix(0,0.527479,-0.651583,0,4410.439179,8036.981192)">
+                    <rect x="-1109" y="-225" width="84" height="84" style="fill:rgb(99,208,79);"/>
+                </g>
+                <g transform="matrix(0,0.463241,-0.545903,0,4480.07306,8278.781159)">
+                    <rect x="-1109" y="-225" width="84" height="84" style="fill:rgb(99,208,79);"/>
+                </g>
+                <g transform="matrix(0,1.06271,-0.545903,0,4480.07306,8674.860389)">
+                    <rect x="-1109" y="-225" width="84" height="84" style="fill:rgb(99,208,79);"/>
+                </g>
+                <g transform="matrix(0,0.905842,-0.894793,0,4238.056259,8521.410282)">
+                    <path d="M-964.578,-141L-964.578,-14.409L-1025,-14.409L-1025,-141L-1109,-141L-1109,-225L-880.578,-225L-880.578,-141L-964.578,-141Z" style="fill:rgb(99,208,79);"/>
+                </g>
+                <g transform="matrix(0,0.659629,-0.651583,0,4410.439179,8564.59368)">
+                    <rect x="-1109" y="-225" width="84" height="84" style="fill:rgb(99,208,79);"/>
+                </g>
+                <g transform="matrix(0,0.527479,-0.441922,0,4188.637989,8093.060996)">
+                    <rect x="-1109" y="-225" width="84" height="84" style="fill:rgb(99,208,79);"/>
+                </g>
+                <g transform="matrix(0,0.460402,-1.13435,0,4091.005656,7962.831034)">
+                    <rect x="-1109" y="-225" width="84" height="84" style="fill:rgb(99,208,79);"/>
+                </g>
+                <g transform="matrix(0,0.463241,-1.858073,0,4084.246043,8278.781159)">
+                    <rect x="-1109" y="-225" width="84" height="84" style="fill:rgb(99,208,79);"/>
+                </g>
+                <g transform="matrix(0.463241,0,0,1.061692,4792.902276,8003.927401)">
+                    <rect x="-1109" y="-225" width="84" height="84" style="fill:rgb(99,208,79);"/>
+                </g>
+                <g transform="matrix(0,2.136478,-0.651583,0,4410.439179,9954.936988)">
+                    <rect x="-1109" y="-225" width="84" height="84" style="fill:rgb(99,208,79);"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

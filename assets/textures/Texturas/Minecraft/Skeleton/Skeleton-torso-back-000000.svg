@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-15047.020223,-22270.787109)">
+        <g id="Skeleton-torso-back-000000" transform="matrix(1,0,0,1,11038.067892,14818.780472)">
+            <g>
+                <rect x="4008.952" y="7452.007" width="835.946" height="835.946" style="fill:none;"/>
+                <clipPath id="_clip1">
+                    <rect x="4008.952" y="7452.007" width="835.946" height="835.946"/>
+                </clipPath>
+                <g clip-path="url(#_clip1)">
+                    <g transform="matrix(5.465268,0,0,5.465268,2799.55952,6289.844674)">
+                        <rect x="265.566" y="212.645" width="64.398" height="79.862" style="fill-opacity:0;"/>
+                    </g>
+                    <g transform="matrix(2.023564,0,0,1.153331,-35689.793332,-6088.260666)">
+                        <rect x="19737.822" y="12059.619" width="173.927" height="58.961" style="fill:rgb(188,185,176);"/>
+                    </g>
+                    <g transform="matrix(2.023564,0,0,1.153331,-35689.793332,-6456.726421)">
+                        <rect x="19737.822" y="12059.619" width="173.927" height="58.961" style="fill:rgb(188,185,176);"/>
+                    </g>
+                    <g transform="matrix(2.023564,0,0,0.927727,-35689.793332,-3643.913983)">
+                        <rect x="19737.822" y="12059.619" width="173.927" height="58.961" style="fill:rgb(188,185,176);"/>
+                    </g>
+                    <g transform="matrix(2.023564,0,0,1.153331,-35689.793332,-6282.593169)">
+                        <path d="M19855.886,12118.58L19793.685,12118.58L19788.085,12163.612L19737.822,12163.612L19737.822,12059.619L19911.749,12059.619L19911.749,12163.612L19861.486,12163.612L19855.886,12118.58Z" style="fill:rgb(188,185,176);"/>
+                    </g>
+                    <g transform="matrix(0,-2.118508,1.153331,0,-9515.808691,49635.212435)">
+                        <rect x="19737.822" y="12059.619" width="173.927" height="58.961" style="fill:rgb(188,185,176);"/>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

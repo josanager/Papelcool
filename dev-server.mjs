@@ -11,6 +11,7 @@ import {
   downloadCustomTemplateJob,
   getCustomTemplateJob
 } from './functions/_lib/custom-template-jobs.js';
+import { handleFourthwallProducts } from './functions/_lib/fourthwall-catalog.js';
 
 const root = process.cwd();
 
@@ -201,6 +202,13 @@ http.createServer(async (req, res) => {
     if (requestUrl.pathname === '/api/custom-template-download') {
       const webRequest = await toWebRequest(req, requestUrl);
       const response = await downloadCustomTemplateJob(webRequest, getLocalFunctionEnv());
+      await sendWebResponse(res, response);
+      return;
+    }
+
+    if (requestUrl.pathname === '/api/fourthwall/products') {
+      const webRequest = await toWebRequest(req, requestUrl);
+      const response = await handleFourthwallProducts(webRequest, getLocalFunctionEnv());
       await sendWebResponse(res, response);
       return;
     }
