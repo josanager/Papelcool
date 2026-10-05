@@ -2,8 +2,8 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const EXPORT_SIZE = 4096;
-// NDC spans -1…1, so this gives the reference model about 67.5% of the frame.
-const PHOTO_REFERENCE_FRAME_HEIGHT = 1.35;
+// NDC spans -1…1, so this gives the reference model about 80% of the frame.
+const PHOTO_REFERENCE_FRAME_HEIGHT = 1.6;
 // Calibrated from ZocoVR's normalized model so every preset shares the same
 // square-photo framing, regardless of the size of its SVG accessories.
 const PHOTO_CAMERA_TARGET = new THREE.Vector3(0, 1.23157, 0.00028);
