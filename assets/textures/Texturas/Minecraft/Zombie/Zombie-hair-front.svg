@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-13375.129087,-8752.242073)">
+        <g id="Zombie-hair-front" transform="matrix(0.499302,0,0,0.499302,-3760.144893,6034.87176)">
+            <rect x="34318.486" y="5442.343" width="1674.23" height="1674.23" style="fill:none;"/>
+            <g transform="matrix(3.177901,0,0,3.177901,21967.311045,5751.512352)">
+                <path d="M4043,15L4257,15L4257,96L4233,96L4233,69L4205,69L4205,41L4149.981,41L4149.981,67L4069,67L4069,97L4043,97L4043,15Z" style="fill:rgb(68,117,55);"/>
+            </g>
+        </g>
+    </g>
+</svg>

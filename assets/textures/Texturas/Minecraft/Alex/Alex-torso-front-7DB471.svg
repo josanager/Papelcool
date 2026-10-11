@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-11703.237951,-21434.841542)">
+        <g id="Alex-torso-front-7DB471" transform="matrix(1,0,0,1,7694.28562,13982.834904)">
+            <g>
+                <rect x="4008.952" y="7452.007" width="835.946" height="835.946" style="fill:none;"/>
+                <clipPath id="_clip1">
+                    <rect x="4008.952" y="7452.007" width="835.946" height="835.946"/>
+                </clipPath>
+                <g clip-path="url(#_clip1)">
+                    <g transform="matrix(5.465268,0,0,5.465268,2799.55952,6289.844674)">
+                        <rect x="265.566" y="212.645" width="64.398" height="79.862" style="fill:none;"/>
+                    </g>
+                    <g transform="matrix(1.150457,0,0,1.150457,-18422.805515,-473.321508)">
+                        <rect x="19730.833" y="6888.854" width="38.725" height="38.725" style="fill:rgb(96,95,65);"/>
+                    </g>
+                    <g transform="matrix(1.150457,0,0,1.150457,-18378.253803,-428.769796)">
+                        <rect x="19730.833" y="6888.854" width="38.725" height="38.725" style="fill:rgb(96,95,65);"/>
+                    </g>
+                    <g transform="matrix(3.158658,0,0,1.150457,-57957.193685,-384.218083)">
+                        <rect x="19730.833" y="6888.854" width="38.725" height="38.725" style="fill:rgb(96,95,65);"/>
+                    </g>
+                    <g transform="matrix(9.088448,0,0,1.150457,-175071.691841,-159.788326)">
+                        <rect x="19730.833" y="6888.854" width="38.725" height="38.725" style="fill:rgb(19,55,19);"/>
+                    </g>
+                    <g transform="matrix(1.150457,0,0,1.150457,-18434.403096,-447.006754)">
+                        <path d="M19963.412,6865.981L19963.412,6904.706L19924.687,6904.706L19924.687,6943.431L19818.364,6943.431L19818.364,6904.706L19779.639,6904.706L19779.639,6865.981L19963.412,6865.981Z" style="fill:rgb(255,208,179);"/>
+                    </g>
+                    <g transform="matrix(-1.150457,0,0,1.150457,27232.104033,-428.769796)">
+                        <path d="M19769.558,6888.854L19769.558,6850.129L19669.757,6850.129L19669.757,6927.58L19715.966,6927.58L19715.966,6966.305L19759.542,6966.305L19759.542,7001.447L19808.283,7001.447L19808.283,6888.854L19769.558,6888.854Z" style="fill:rgb(248,142,54);"/>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

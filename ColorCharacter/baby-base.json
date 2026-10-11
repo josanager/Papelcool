@@ -1,0 +1,53 @@
+{
+  "character": "Baby",
+  "short_name": "baby-base",
+  "saved_at": "2026-04-20T21:00:43.678Z",
+  "colors_hex": {
+    "Brazo izq": "#fcd5c6",
+    "Brazo der": "#fcd5c6",
+    "Pierna izq": "#6a68e9",
+    "Pierna der": "#6a68e9",
+    "Torso": "#fe50c6",
+    "Head 1": "#fcd5c6",
+    "Head 2": "#fcd5c6",
+    "Nariz": "#bda095"
+  },
+  "templates": {
+    "Elementos/templates/template-arm-left.svg": {
+      "label": "Brazo izq",
+      "color_hex": "#fcd5c6"
+    },
+    "Elementos/templates/template-arm-right.svg": {
+      "label": "Brazo der",
+      "color_hex": "#fcd5c6"
+    },
+    "Elementos/templates/template-leg-left.svg": {
+      "label": "Pierna izq",
+      "color_hex": "#6a68e9"
+    },
+    "Elementos/templates/template-leg-right.svg": {
+      "label": "Pierna der",
+      "color_hex": "#6a68e9"
+    },
+    "Elementos/templates/template-torso.svg": {
+      "label": "Torso",
+      "color_hex": "#fe50c6"
+    },
+    "Elementos/templates/template-head-1.svg": {
+      "label": "Head 1",
+      "color_hex": "#fcd5c6"
+    },
+    "Elementos/templates/template-head-2.svg": {
+      "label": "Head 2",
+      "color_hex": "#fcd5c6"
+    }
+  },
+  "dependent_assets": {
+    "nose_default": {
+      "source": "Elementos/Texturas/Basic-Textures/nose/Nose-default.svg",
+      "color_hex": "#bda095",
+      "derived_from": "Head 2",
+      "rule": "25% darker than Head 2"
+    }
+  }
+}

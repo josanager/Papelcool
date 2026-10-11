@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-19226.748063,-5030.353194)">
+        <g id="Camilo-hair-right" transform="matrix(1,0,0,1,15217.795732,-2421.653444)">
+            <g>
+                <rect x="4008.952" y="7452.007" width="835.946" height="835.946" style="fill:none;"/>
+                <clipPath id="_clip1">
+                    <rect x="4008.952" y="7452.007" width="835.946" height="835.946"/>
+                </clipPath>
+                <g clip-path="url(#_clip1)">
+                    <g transform="matrix(-1.229207,-0,0,1.229207,11499.335536,3968.365058)">
+                        <path d="M5413.6,2834.056L5413.6,3514.125L5526.374,3514.125C5787.641,3513.322 5640.625,3167.05 5776.026,3217.995C5782.632,3220.48 5790.46,3227.801 5796.132,3235.839C5807.91,3252.53 5866.557,3252.983 5867.483,3232.799C5872.636,3120.475 5922.296,3118.6 5938.789,3094.096C5956.142,3068.312 5904.325,3002.007 5908.903,2979.81C5915.177,2949.392 6045,2893.783 6093.669,2902.682L6093.669,2834.056L5413.6,2834.056Z"/>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

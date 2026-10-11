@@ -1,0 +1,20 @@
+.preset-photo-toolbar { position: absolute; top: 18px; right: 18px; z-index: 8; pointer-events: auto; }
+.preset-photo-button { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 10px 16px; border: 3px solid #111; border-radius: 10px; background: #fff; color: #111; font: 700 15px 'Fredoka', sans-serif; cursor: pointer; }
+.preset-photo-button:hover { background: #FFE600; }
+.preset-photo-button:focus-visible { outline: 3px solid #111; outline-offset: 4px; }
+.preset-photo-button:disabled { cursor: wait; opacity: .6; }
+.preset-photo-button svg { width: 21px; height: 21px; flex-shrink: 0; }
+.preset-photo-surface { position: absolute; inset: 0; z-index: 7; background: #fff; pointer-events: auto; }
+.preset-photo-frame { position: absolute; inset: 72px 16px 104px; display: flex; align-items: center; justify-content: center; }
+.preset-photo-frame canvas { width: var(--photo-size) !important; height: var(--photo-size) !important; max-width: 100%; max-height: 100%; display: block; }
+.preset-photo-footer { position: absolute; bottom: 22px; left: 12px; right: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.preset-photo-download { background: #FFE600; }
+.preset-photo-status { margin: 0; color: #555; font: 500 13px 'Fredoka', sans-serif; text-align: center; }
+.preset-photo-error { max-width: 240px; margin: 8px 0 0; color: #a32323; font: 500 13px 'Fredoka', sans-serif; }
+.preset-photo-toolbar[hidden], .preset-photo-surface[hidden] { display: none; }
+body.preset-photo-active #preset-template-download { display: none !important; }
+@media (max-width: 767px) { .preset-photo-toolbar { top: 12px; right: 12px; } .preset-photo-button { font-size: 14px; padding: 9px 12px; } .preset-photo-frame { inset: 64px 8px 100px; } .preset-photo-footer { bottom: 18px; } }
+@media (max-width: 979px) {
+    body.preset-photo-active .pc-comments-root { display: none !important; }
+    body.preset-photo-active #canvas-container { width: 100vw !important; right: 0 !important; }
+}

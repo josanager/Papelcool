@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-20062.693631,-5030.353194)">
+        <g id="Ladybug-hair-right" transform="matrix(1,0,0,1,16053.741299,-2421.653444)">
+            <g>
+                <rect x="4008.952" y="7452.007" width="835.946" height="835.946" style="fill:none;"/>
+                <clipPath id="_clip1">
+                    <rect x="4008.952" y="7452.007" width="835.946" height="835.946"/>
+                </clipPath>
+                <g clip-path="url(#_clip1)">
+                    <g transform="matrix(1.245615,0,0,1.245615,-1189.981041,-1830.327132)">
+                        <g transform="matrix(0,-4.110598,4.110598,0,4844.706822,7452.197693)">
+                            <path d="M0.046,-163.217L0.046,0.046L-163.217,0.046C-162.303,-11.84 -158.858,-40.512 -149.372,-54.282C-141.251,-66.071 -121.597,-77.388 -117.907,-75.485C-92.282,-62.267 -83.884,-87.228 -99.364,-89.985C-143.146,-97.782 -163.217,-125.101 -163.217,-125.101C-163.217,-125.101 -119.241,-122.618 -79.633,-93.932C-79.633,-93.932 -84.032,-112.019 -61.024,-123.055C-61.024,-123.055 -69.41,-120.131 -73.233,-119.653C-73.233,-119.653 -69.123,-143.641 -44.162,-152.593C-44.162,-152.593 -50.054,-153.275 -63.403,-142.58C-63.403,-142.58 -68.92,-156.404 -55.909,-163.217L0.046,-163.217Z" style="fill:rgb(45,62,109);"/>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

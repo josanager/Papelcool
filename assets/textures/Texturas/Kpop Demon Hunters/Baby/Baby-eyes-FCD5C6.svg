@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:affinity="https://www.affinity.studio/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-5851.618976,-18091.05927)">
+        <g id="Baby-eyes-FCD5C6" transform="matrix(1,0,0,1,1842.666644,10639.052632)">
+            <g>
+                <rect x="4008.952" y="7452.007" width="835.946" height="835.946" style="fill:none;"/>
+                <g transform="matrix(0.499302,0,0,0.499302,0.860968,1493.894816)">
+                    <g transform="matrix(0.707071,0,0,1,7624.353192,11708.269384)">
+                        <g transform="matrix(1.414286,0,0,1,-0.992538,-5262.953821)">
+                            <path d="M1011.79,6174.111C977.525,6182.607 993.778,6196.187 1003.71,6205.339L1151.924,6223.509C1132.138,6167.929 1035.597,6168.208 1011.79,6174.111Z" style="fill:url(#_Linear1);"/>
+                        </g>
+                        <g transform="matrix(1,0,0,1,227.55302,0)">
+                            <g transform="matrix(-1.414286,0,0,1,3281.313534,-5262.953821)">
+                                <path d="M1011.79,6174.111C977.525,6182.607 993.778,6196.187 1003.71,6205.339L1151.924,6223.509C1132.138,6167.929 1035.597,6168.208 1011.79,6174.111Z" style="fill:url(#_Linear2);"/>
+                            </g>
+                            <g transform="matrix(-1.840169,0,0,1.840169,2806.78063,-2408.297518)">
+                                <path d="M509.984,1812.551C549.087,1808.97 625.86,1827.121 627.451,1830.73C629.478,1835.329 630.57,1840.218 630.57,1845.285C630.57,1872.286 599.57,1894.206 561.383,1894.206C523.198,1894.206 492.195,1872.286 492.195,1845.285C492.195,1832.703 498.929,1821.223 509.984,1812.551Z"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1.840169,0,0,1.840169,473.540366,-2408.297518)">
+                            <path d="M509.984,1812.551C549.087,1808.97 625.86,1827.121 627.451,1830.73C629.478,1835.329 630.57,1840.218 630.57,1845.285C630.57,1872.286 599.57,1894.206 561.383,1894.206C523.198,1894.206 492.195,1872.286 492.195,1845.285C492.195,1832.703 498.929,1821.223 509.984,1812.551Z"/>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+    <defs>
+        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(180.642442,7.006017,-7.006017,180.642442,945.355265,6140.243597)"><stop offset="0" style="stop-color:rgb(7,0,80);stop-opacity:0.63"/><stop offset="1" style="stop-color:rgb(185,94,188);stop-opacity:0"/></linearGradient>
+        <linearGradient id="_Linear2" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(180.642442,7.006017,-7.006017,180.642442,945.355265,6140.243597)"><stop offset="0" style="stop-color:rgb(7,0,80);stop-opacity:0.63"/><stop offset="1" style="stop-color:rgb(185,94,188);stop-opacity:0"/></linearGradient>
+    </defs>
+</svg>

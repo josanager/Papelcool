@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2350 1000" role="img" aria-label="Voxel valley background">
+  <defs>
+    <!-- Sky gradient -->
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4ed2ff"/>
+      <stop offset="55%" stop-color="#7be0ff"/>
+      <stop offset="100%" stop-color="#c8f4ff"/>
+    </linearGradient>
+    
+    <!-- Grass gradient -->
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8fe75a"/>
+      <stop offset="100%" stop-color="#4ba63b"/>
+    </linearGradient>
+    
+    <!-- Ground gradient -->
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9f7b57"/>
+      <stop offset="100%" stop-color="#775336"/>
+    </linearGradient>
+
+    <!-- Cloud shadow filter or simple offset shadow -->
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="8" dy="8" stdDeviation="0" flood-color="#000000" flood-opacity="0.8"/>
+    </filter>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="2350" height="1000" fill="url(#sky)"/>
+
+  <!-- Voxel Sun & Shadow -->
+  <rect x="206" y="86" width="130" height="130" fill="#000" opacity="0.15"/>
+  <rect x="200" y="80" width="130" height="130" fill="#FFE600" stroke="#000" stroke-width="8"/>
+  <rect x="230" y="110" width="70" height="70" fill="#FFF275"/>
+
+  <!-- Background Mountains (Far) -->
+  <!-- Shadow first -->
+  <path d="M-50 670 190 410 370 410 280 670ZM280 670 490 360 650 360 520 670ZM1700 670 1890 390 2090 390 1970 670ZM1940 670 2160 340 2380 340 2380 670Z" fill="#000" opacity="0.15" transform="translate(10, 10)"/>
+  <!-- Mountain shapes -->
+  <g stroke="#000" stroke-width="6" stroke-linejoin="miter">
+    <path d="M-50 650 190 430 330 430 280 650Z" fill="#4c7c34"/>
+    <path d="M280 650 470 380 610 380 520 650Z" fill="#5c9a3d"/>
+    <path d="M1730 650 1890 410 2050 410 1970 650Z" fill="#5c9a3d"/>
+    <path d="M1960 650 2160 360 2380 360 2380 650Z" fill="#4c7c34"/>
+  </g>
+
+  <!-- Clouds (Sticker style with hard borders & shadows) -->
+  <g fill="#ffffff" stroke="#000" stroke-width="6" stroke-linejoin="miter">
+    <!-- Cloud 1 Shadow -->
+    <path d="M110 130 h260 v40 h-260 Z M210 100 h110 v30 h-110 Z" fill="#000" opacity="0.15" stroke="none" transform="translate(8, 8)"/>
+    <!-- Cloud 1 -->
+    <path d="M110 120 h260 v40 h-260 Z M210 90 h110 v30 h-110 Z" fill="#fff"/>
+    
+    <!-- Cloud 2 Shadow -->
+    <path d="M1410 110 h260 v45 h-260 Z M1490 80 h110 v30 h-110 Z" fill="#000" opacity="0.15" stroke="none" transform="translate(8, 8)"/>
+    <!-- Cloud 2 -->
+    <path d="M1410 100 h260 v45 h-260 Z M1490 70 h110 v30 h-110 Z" fill="#fff"/>
+
+    <!-- Cloud 3 Shadow -->
+    <path d="M1890 150 h210 v40 h-210 Z M1940 120 h100 v30 h-100 Z" fill="#000" opacity="0.15" stroke="none" transform="translate(8, 8)"/>
+    <!-- Cloud 3 -->
+    <path d="M1890 140 h210 v40 h-210 Z M1940 110 h100 v30 h-100 Z" fill="#fff"/>
+  </g>
+
+  <!-- Voxel Trees -->
+  <g stroke="#000" stroke-width="6" stroke-linejoin="miter">
+    <!-- Tree Left -->
+    <!-- Shadow -->
+    <rect x="368" y="368" width="48" height="185" fill="#000" opacity="0.15" stroke="none"/>
+    <rect x="372" y="258" width="165" height="150" fill="#000" opacity="0.15" stroke="none"/>
+    <!-- Body -->
+    <rect x="360" y="360" width="48" height="185" fill="#65451e"/>
+    <rect x="392" y="320" width="130" height="70" fill="#3b7829"/>
+    <rect x="366" y="250" width="120" height="80" fill="#468e31"/>
+    <rect x="420" y="210" width="80" height="60" fill="#58ad3e"/>
+
+    <!-- Tree Right -->
+    <!-- Shadow -->
+    <rect x="1888" y="348" width="48" height="200" fill="#000" opacity="0.15" stroke="none"/>
+    <rect x="1808" y="248" width="170" height="160" fill="#000" opacity="0.15" stroke="none"/>
+    <!-- Body -->
+    <rect x="1880" y="340" width="48" height="200" fill="#65451e"/>
+    <rect x="1790" y="300" width="140" height="80" fill="#3b7829"/>
+    <rect x="1840" y="240" width="120" height="80" fill="#468e31"/>
+    <rect x="1810" y="200" width="70" height="60" fill="#58ad3e"/>
+  </g>
+
+  <!-- Ground Landscape with hard sticker shadows -->
+  <!-- Shadow Layer -->
+  <g fill="#000" opacity="0.15" transform="translate(10, 12)">
+    <path d="M-20 1000V640l290-110 310 110 210-80 255 80 220-70 290 70 200-95 285 95v360Z"/>
+  </g>
+  <!-- Grass & Dirt Layer -->
+  <g stroke="#000" stroke-width="8" stroke-linejoin="miter">
+    <path d="M-20 1000V640l290-110 310 110 210-80 255 80 220-70 290 70 200-95 285 95v360Z" fill="url(#grass)"/>
+    <path d="M-20 1000V690l290-110v80l310 110v-70l210-80v80l255 80v-75l220-70v70l290 70v-70l200-95v70l285 95v325Z" fill="url(#ground)"/>
+  </g>
+
+  <!-- Decorative Ground Grid Details (Pixel lines to give voxel look) -->
+  <g fill="#77b649" opacity="0.6">
+    <rect x="120" y="650" width="60" height="15"/>
+    <rect x="450" y="680" width="80" height="20"/>
+    <rect x="750" y="660" width="90" height="18"/>
+    <rect x="1650" y="670" width="70" height="15"/>
+  </g>
+  
+  <!-- Standing platforms in center (Sticker pop-art styled) -->
+  <!-- Shadow first -->
+  <g fill="#000" opacity="0.15" transform="translate(8, 8)">
+    <rect x="945" y="638" width="460" height="74" rx="6"/>
+    <rect x="985" y="602" width="380" height="46" rx="6"/>
+    <rect x="1040" y="560" width="270" height="44" rx="6"/>
+  </g>
+  <!-- Platforms -->
+  <g stroke="#000" stroke-width="7" stroke-linejoin="miter">
+    <rect x="945" y="638" width="460" height="74" rx="6" fill="#8ee550"/>
+    <rect x="985" y="602" width="380" height="46" rx="6" fill="#a5f36b"/>
+    <rect x="1040" y="560" width="270" height="44" rx="6" fill="#c3f997"/>
+  </g>
+
+  <!-- Red & Yellow Pixel Flowers -->
+  <g stroke="#000" stroke-width="4" stroke-linejoin="miter">
+    <!-- Red Flower Left -->
+    <rect x="580" y="590" width="16" height="16" fill="#FF4D94"/>
+    <rect x="586" y="606" width="4" height="16" fill="#4ba63b"/>
+    
+    <!-- Yellow Flower Right -->
+    <rect x="1680" y="610" width="16" height="16" fill="#FFE600"/>
+    <rect x="1686" y="626" width="4" height="16" fill="#4ba63b"/>
+  </g>
+</svg>

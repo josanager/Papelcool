@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-19226.748063,-10881.972169)">
+        <g id="Camilo-eyebrows" transform="matrix(1,0,0,1,15217.795732,3429.965532)">
+            <g>
+                <rect x="4008.952" y="7452.007" width="835.946" height="835.946" style="fill:none;"/>
+                <g transform="matrix(0.868886,-0,0,1.228854,2902.952958,6737.714374)">
+                    <g transform="matrix(3.111151,0,0,2.496245,1883.591363,847.867901)">
+                        <path d="M0,-9.761C1.565,-11.326 44.282,-15.837 67.192,-10.372C85.292,-6.055 96.05,13.557 96.05,13.557C96.05,13.557 75.804,2.624 59.741,0.173C49.848,-1.337 3.238,2.984 0.723,2.081C-7.251,-0.785 -3.984,-6.794 0,-9.761"/>
+                    </g>
+                    <g transform="matrix(-3.111151,0,0,2.496245,1624.282653,847.867901)">
+                        <path d="M0,-9.761C1.565,-11.326 44.282,-15.837 67.192,-10.372C85.292,-6.055 96.05,13.557 96.05,13.557C96.05,13.557 75.804,2.624 59.741,0.173C49.848,-1.337 3.238,2.984 0.723,2.081C-7.251,-0.785 -3.984,-6.794 0,-9.761"/>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

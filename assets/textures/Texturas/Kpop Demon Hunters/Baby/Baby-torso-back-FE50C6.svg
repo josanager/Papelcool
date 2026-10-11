@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:affinity="https://www.affinity.studio/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-5851.618976,-22270.787109)">
+        <g id="Baby-torso-back-FE50C6" transform="matrix(1,0,0,1,1842.666644,14818.780472)">
+            <g>
+                <rect x="4008.952" y="7452.007" width="835.946" height="835.946" style="fill:none;"/>
+                <clipPath id="_clip1">
+                    <rect x="4008.952" y="7452.007" width="835.946" height="835.946"/>
+                </clipPath>
+                <g clip-path="url(#_clip1)">
+                    <g transform="matrix(5.465233,0,0,5.465233,2799.570159,6289.852272)">
+                        <rect x="265.566" y="212.645" width="64.398" height="79.862" style="fill:rgb(254,80,198);fill-opacity:0;"/>
+                    </g>
+                    <g transform="matrix(1.251295,0,0,1.769688,1718.384975,5206.599155)">
+                        <clipPath id="_clip2">
+                            <rect x="2071.046" y="1268.815" width="187.088" height="37.255"/>
+                        </clipPath>
+                        <g clip-path="url(#_clip2)">
+                            <g transform="matrix(3.415199,0,0,2.414787,2164.590089,1252.729175)">
+                                <path d="M0,13.323C12.281,13.323 22.237,7.358 22.237,0L-22.237,0C-22.237,7.358 -12.281,13.323 0,13.323" style="fill:rgb(0,207,210);"/>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

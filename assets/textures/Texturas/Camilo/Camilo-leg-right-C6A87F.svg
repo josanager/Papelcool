@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-miterlimit:1.5;">
+    <g transform="matrix(1,0,0,1,-19226.748063,-16733.591145)">
+        <g id="Camilo-leg-right-C6A87F" transform="matrix(1,0,0,1,15217.795732,9281.584507)">
+            <rect x="4008.952" y="7452.007" width="835.946" height="835.946" style="fill:none;"/>
+            <g transform="matrix(1.311656,0,0,1.311656,-1340.125446,-2358.067744)">
+                <g transform="matrix(1,0,0,0.672412,3156.613805,6730.393969)">
+                    <path d="M1157.802,1625.156C1155.247,1647.157 1150.991,1668.096 1144.214,1678.333" style="fill:none;stroke:rgb(166,123,73);stroke-width:4.89px;"/>
+                </g>
+                <g transform="matrix(1,0,0,0.431709,3115.249192,7124.846107)">
+                    <path d="M1158.614,1617.575C1156.188,1642.225 1151.766,1666.925 1144.214,1678.333" style="fill:none;stroke:rgb(166,123,73);stroke-width:4.89px;"/>
+                </g>
+            </g>
+            <g transform="matrix(0.927433,0,0,1.311656,2800.265362,5797.311335)">
+                <path d="M1740.522,1793.008L1733.377,1898.852L1403.336,1898.852L1437.302,1839.844L1530.562,1797.64L1740.522,1793.008Z"/>
+            </g>
+        </g>
+    </g>
+</svg>

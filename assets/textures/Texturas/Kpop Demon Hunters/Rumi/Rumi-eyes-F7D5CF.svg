@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 836 836" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g transform="matrix(1,0,0,1,-835.945568,-19638.791335)">
+        <g id="Rumi-eyes-F7D5CF" transform="matrix(1,0,0,1,-3173.006763,12186.784697)">
+            <g>
+                <rect x="4008.952" y="7452.007" width="835.946" height="835.946" style="fill:none;"/>
+                <g transform="matrix(0.353042,0,0,0.499302,3807.712531,7339.85217)">
+                    <g transform="matrix(-1,0,0,1,3175.785005,83.239432)">
+                        <g transform="matrix(1,0,0,1,30.115733,22.463015)">
+                            <g transform="matrix(2.294024,0,0,1.622037,-2215.46505,-10762.516589)">
+                                <circle cx="1618.07" cy="7184.964" r="3.539" style="fill:rgb(248,240,239);"/>
+                            </g>
+                            <g transform="matrix(1.414286,0,0,1,-752.163203,-6291.927611)">
+                                <circle cx="1592.276" cy="7180.552" r="1.311" style="fill:white;"/>
+                            </g>
+                        </g>
+                        <g transform="matrix(1,0,0,1,-180.612697,22.463015)">
+                            <g transform="matrix(2.294024,0,0,1.622037,-2215.46505,-10762.516589)">
+                                <circle cx="1618.07" cy="7184.964" r="3.539" style="fill:rgb(248,240,239);"/>
+                            </g>
+                            <g transform="matrix(1.414286,0,0,1,-752.163203,-6291.927611)">
+                                <circle cx="1592.276" cy="7180.552" r="1.311" style="fill:white;"/>
+                            </g>
+                        </g>
+                    </g>
+                    <g>
+                        <g transform="matrix(1.374013,0,0,0.971524,39.711417,-5093.876009)">
+                            <path d="M941.093,6166.989C946.469,6189.862 950.033,6211.511 977.589,6235.356L1148.642,6230.843C1058.794,6157.169 1029.224,6200.297 941.093,6166.989Z" style="fill:rgb(236,0,140);"/>
+                        </g>
+                        <g transform="matrix(1.374013,0,0,0.971524,46.321533,-5085.397312)">
+                            <path d="M947.541,6166.995C949.502,6188.504 953.591,6208.344 977.589,6235.356L1134.402,6192.038C1043.731,6143.055 978.773,6174.652 947.541,6166.995Z" style="fill:url(#_Linear1);"/>
+                        </g>
+                        <g transform="matrix(5.892857,0,0,4.166667,1506.650329,1077.414147)">
+                            <path d="M-23.998,-39.384C-9.184,-40.81 4.464,-39.569 16.69,-35.303C19.757,-31.574 21.599,-26.8 21.599,-21.599C21.599,-9.678 11.921,0 0,0C-11.921,0 -21.6,-9.678 -21.6,-21.599C-21.6,-22.414 -21.545,-23.217 -21.457,-24.009L-21.46,-24.005C-21.46,-24.005 -25.505,-29.9 -23.998,-39.384Z" style="fill:rgb(8,6,5);"/>
+                        </g>
+                    </g>
+                    <g transform="matrix(-1,0,0,1,3507.868123,0)">
+                        <g transform="matrix(1.374013,0,0,0.971524,39.711417,-5093.876009)">
+                            <path d="M941.093,6166.989C946.469,6189.862 950.033,6211.511 977.589,6235.356L1148.642,6230.843C1058.794,6157.169 1029.224,6200.297 941.093,6166.989Z" style="fill:rgb(236,0,140);"/>
+                        </g>
+                        <g transform="matrix(1.374013,0,0,0.971524,46.321533,-5085.397312)">
+                            <path d="M947.541,6166.995C949.502,6188.504 953.591,6208.344 977.589,6235.356L1134.402,6192.038C1043.731,6143.055 978.773,6174.652 947.541,6166.995Z" style="fill:url(#_Linear2);"/>
+                        </g>
+                        <g transform="matrix(5.892857,0,0,4.166667,1506.650329,1077.414147)">
+                            <path d="M-23.998,-39.384C-9.184,-40.81 4.464,-39.569 16.69,-35.303C19.757,-31.574 21.599,-26.8 21.599,-21.599C21.599,-9.678 11.921,0 0,0C-11.921,0 -21.6,-9.678 -21.6,-21.599C-21.6,-22.414 -21.545,-23.217 -21.457,-24.009L-21.46,-24.005C-21.46,-24.005 -25.505,-29.9 -23.998,-39.384Z" style="fill:rgb(8,6,5);"/>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+    <defs>
+        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(85.447192,1.459882,-1.459882,85.447192,965.153111,6157.363226)"><stop offset="0" style="stop-color:rgb(0,174,239);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(249,208,87);stop-opacity:0.64"/></linearGradient>
+        <linearGradient id="_Linear2" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(85.447192,1.459882,-1.459882,85.447192,965.153111,6157.363226)"><stop offset="0" style="stop-color:rgb(0,174,239);stop-opacity:1"/><stop offset="1" style="stop-color:rgb(249,208,87);stop-opacity:0.64"/></linearGradient>
+    </defs>
+</svg>
