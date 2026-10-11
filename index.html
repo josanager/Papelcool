@@ -4236,6 +4236,38 @@
             pointer-events: auto !important;
         }
 
+        /* En el modo custom (especialmente en la fase final terminada),
+           el contenedor del canvas ocupa el 100% de la pantalla visible sin márgenes ni offsets */
+        body.customization-active:not(.custom-editor-open) #canvas-container,
+        body.custom-editor-finished #canvas-container {
+            position: fixed !important;
+            inset: 0 !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            z-index: 2 !important;
+            overflow: hidden !important;
+            pointer-events: auto !important;
+            display: block !important;
+        }
+
+        body.customization-active:not(.custom-editor-open) #preset-preview-stage,
+        body.custom-editor-finished #preset-preview-stage {
+            position: fixed !important;
+            inset: 0 !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+        }
+
         #editor-panel-wrapper {
             display: none;
         }
@@ -4290,16 +4322,33 @@
         }
 
         #custom-builder-finished-actions {
-            top: calc(var(--header-height, 84px) + 18px + env(safe-area-inset-top, 0px));
-            right: 16px;
+            position: fixed;
+            top: calc(14px + env(safe-area-inset-top, 0px));
+            right: calc(14px + env(safe-area-inset-right, 0px));
             left: auto;
+            bottom: auto;
             display: flex;
-            gap: 10px;
-            transform: translate(0, -16px);
+            flex-direction: column;
+            align-items: stretch;
+            gap: 8px;
+            z-index: 50;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(0, -12px);
+            transition: opacity 0.24s ease, transform 0.24s ease;
         }
 
         #custom-builder-finished-actions.active {
+            pointer-events: auto;
+            opacity: 1;
             transform: translate(0, 0);
+        }
+
+        #custom-builder-finished-actions .custom-builder-mini-btn {
+            white-space: nowrap;
+            text-align: center;
+            justify-content: center;
+            min-width: 160px;
         }
 
         .custom-builder-cta,
@@ -4636,10 +4685,10 @@
             body.customization-active.custom-editor-open #editor-panel-wrapper {
                 display: block !important;
                 position: fixed;
-                inset: var(--header-height, 84px) 0 0 auto;
+                inset: 0 0 0 auto !important;
                 width: var(--custom-editor-width);
-                height: calc(100vh - var(--header-height, 84px));
-                height: calc(100dvh - var(--header-height, 84px));
+                height: 100vh !important;
+                height: 100dvh !important;
                 z-index: 40;
                 pointer-events: auto;
                 padding: 0;
@@ -4647,12 +4696,16 @@
 
             body.main-3d-viewer-active.customization-active.custom-editor-open #canvas-container {
                 left: 0;
+                top: 0;
+                bottom: 0;
                 right: var(--custom-editor-width);
                 width: auto;
+                height: 100vh !important;
+                height: 100dvh !important;
             }
 
             body.customization-active.custom-editor-open #preset-preview-stage {
-                inset: var(--header-height, 84px) var(--custom-editor-width) 0 0;
+                inset: 0 var(--custom-editor-width) 0 0;
             }
 
             .custom-builder-panel {
@@ -4665,11 +4718,11 @@
             body.customization-active.custom-editor-open #editor-panel-wrapper {
                 display: block !important;
                 position: fixed;
-                inset: auto 0 0 0;
+                inset: auto 0 0 0 !important;
                 width: 100vw;
                 max-width: 100vw;
-                height: 48vh;
-                height: 48dvh;
+                height: 50vh;
+                height: 50dvh;
                 padding: 0;
                 margin: 0;
                 z-index: 40;
@@ -4678,14 +4731,16 @@
 
             body.main-3d-viewer-active.customization-active.custom-editor-open #canvas-container {
                 left: 0;
+                top: 0;
+                right: 0;
                 width: 100vw;
-                height: calc(100vh - var(--header-height, 76px) - 48vh);
-                height: calc(100dvh - var(--header-height, 76px) - 48dvh);
+                height: 50vh !important;
+                height: 50dvh !important;
             }
 
             body.customization-active.custom-editor-open #preset-preview-stage {
-                inset: var(--header-height, 76px) 0 48vh 0;
-                inset: var(--header-height, 76px) 0 48dvh 0;
+                inset: 0 0 50vh 0;
+                inset: 0 0 50dvh 0;
             }
 
             .custom-builder-panel {
@@ -4711,22 +4766,29 @@
             }
 
             #custom-builder-finished-actions {
-                left: 50%;
-                right: auto;
-                top: auto;
-                bottom: calc(18px + env(safe-area-inset-bottom, 0px));
-                width: min(calc(100vw - 24px), 360px);
-                transform: translate(-50%, 18px);
+                top: calc(12px + env(safe-area-inset-top, 0px));
+                right: calc(12px + env(safe-area-inset-right, 0px));
+                left: auto;
+                bottom: auto;
+                width: auto;
+                max-width: calc(100vw - 24px);
+                transform: translate(0, -10px);
                 flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
             }
 
             #custom-builder-finished-actions.active {
-                transform: translate(-50%, 0);
+                transform: translate(0, 0);
             }
 
-            .custom-builder-mini-btn {
+            #custom-builder-finished-actions .custom-builder-mini-btn {
                 width: 100%;
                 justify-content: center;
+                min-height: 42px;
+                padding: 8px 14px;
+                font-size: 0.84rem;
+                min-width: 135px;
             }
         }
 
@@ -6600,119 +6662,188 @@
             }
         }
 
-        /* --- HERO SECTION (Desktop split) --- */
+        /* --- PAPELCOOL FULLSCREEN HERO VIEW --- */
+        #authenticated-home-view {
+            position: fixed !important;
+            inset: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            padding-top: 0 !important;
+            overflow: hidden !important;
+            background: transparent !important;
+        }
+
+        .lp-landing-wrapper {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Keep landing sections in code, cleanly hide them via CSS */
+        .lp-promo-bar,
+        .lp-worlds-section,
+        .lp-bestsellers-section,
+        .lp-bundle-section,
+        .lp-top-downloads-section,
+        .lp-proof-section,
+        .lp-footer {
+            display: none !important;
+        }
+
+        .lp-hero-bg {
+            display: none !important;
+        }
+
+        .lp-hero::before {
+            display: none !important;
+        }
+
+        body.showcase-mode #app-global-topbar,
+        body.customization-active #app-global-topbar {
+            display: none !important;
+        }
+
+        body.customization-active {
+            background: radial-gradient(circle at 50% 50%, #38BDF8 0%, #1693E6 55%, #0284C7 100%) !important;
+        }
+
+        body.customization-active .popart-floating-shape,
+        body.showcase-mode .popart-floating-shape,
+        body.customization-active > div[style*="clip-path: polygon"] {
+            display: none !important;
+        }
+
+        body.customization-active #custom-builder-intro,
+        #custom-builder-intro {
+            display: none !important;
+        }
+
+        body.customization-active #custom-builder-stage-veil {
+            display: none !important;
+        }
+
+        .lp-hero {
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            min-height: 100% !important;
+            border-bottom: none !important;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 50% 50%, #38BDF8 0%, #1693E6 55%, #0284C7 100%) !important;
+            isolation: isolate;
+        }
+
+        .lp-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            border: 4px solid #000;
+            border-radius: 999px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 6px 6px 0 rgba(0,0,0,1);
+            transition: all 0.18s ease;
+            text-decoration: none;
+            line-height: 1;
+        }
+        .lp-btn:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 8px 8px 0 rgba(0,0,0,1);
+        }
+        .lp-btn:active {
+            transform: translate(3px, 3px);
+            box-shadow: 3px 3px 0 rgba(0,0,0,1);
+        }
+        .lp-btn--pink { background: #FF4D94; color: #fff; }
+        .lp-btn--yellow { background: #FFE600; color: #000; }
+        .lp-btn--white { background: #fff; color: #000; }
+        .lp-btn--dark { background: #111827; color: #FFE600; }
+
+        /* Desktop / Horizontal layout */
         @media (min-width: 769px) {
-            .lp-hero {
-                width: 100%;
-                min-height: 520px;
-                background: #1fa4ee;
-                border-bottom: 5px solid #000;
-                position: relative;
-                overflow: hidden;
-                isolation: isolate;
-            }
-            .lp-hero::before {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background: linear-gradient(90deg, rgba(7, 20, 40, 0.66) 0%, rgba(7, 20, 40, 0.3) 42%, rgba(7, 20, 40, 0) 100%);
-                pointer-events: none;
-                z-index: 1;
-            }
             .lp-hero-inner {
-                width: min(1600px, 100%);
+                width: 100%;
+                max-width: 1680px;
+                height: 100%;
                 margin: 0 auto;
                 display: grid;
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr 1.25fr;
                 align-items: center;
-                min-height: 520px;
-                padding: clamp(2rem, 3vw, 3.25rem);
-                gap: clamp(2rem, 3vw, 3.75rem);
+                padding: clamp(1.2rem, 3vh, 2.8rem) clamp(2rem, 4vw, 4.5rem);
+                gap: clamp(1.5rem, 3vw, 3.5rem);
+                box-sizing: border-box;
                 position: relative;
                 z-index: 2;
             }
             .lp-hero-copy {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: center;
                 z-index: 2;
                 position: relative;
             }
             .lp-hero-copy h1 {
                 font-family: 'Fredoka', sans-serif;
-                font-size: clamp(3.5rem, 4.8vw, 5.95rem);
+                font-size: clamp(3.2rem, 5.2vw, 5.6rem);
                 font-weight: 900;
                 line-height: 1.05;
                 color: #fff;
                 text-transform: uppercase;
                 text-shadow: 4px 4px 0 rgba(0,0,0,0.35);
-                margin: 0 0 clamp(2.5rem, 3.5vw, 3.6rem);
-                max-width: 14ch;
+                margin: 0 0 clamp(2rem, 3.5vh, 3.2rem);
+                max-width: 12ch;
             }
             .lp-hero-copy p {
-                font-family: 'Montserrat', sans-serif;
-                font-size: 1.1rem;
-                font-weight: 600;
-                color: rgba(255,255,255,0.92);
-                line-height: 1.55;
-                margin: 0 0 1.8rem;
-                max-width: 42ch;
-                text-shadow: 1px 1px 0 rgba(0,0,0,0.15);
+                display: none;
             }
             .lp-hero-ctas {
                 display: flex;
                 flex-wrap: wrap;
-                gap: clamp(1rem, 1.1vw, 1.25rem);
+                align-items: center;
+                gap: clamp(1rem, 1.4vw, 1.35rem);
             }
             .lp-hero-ctas .lp-btn {
                 flex: 0 0 auto;
                 min-width: 0;
-                padding: 1.08rem 1.6rem;
-                font-size: 1.08rem;
+                padding: clamp(1rem, 1.8vh, 1.25rem) clamp(1.6rem, 2.2vw, 2.2rem);
+                font-size: clamp(1rem, 1.3vw, 1.15rem);
             }
-            .lp-btn {
-                display: inline-flex;
-                align-items: center;
-                justify-content: center;
-                gap: 0.5rem;
-                padding: 1rem 1.8rem;
-                border: 4px solid #000;
-                border-radius: 999px;
-                font-family: 'Fredoka', sans-serif;
-                font-weight: 700;
-                font-size: 1rem;
-                text-transform: uppercase;
-                cursor: pointer;
-                box-shadow: 6px 6px 0 rgba(0,0,0,1);
-                transition: all 0.18s ease;
-                text-decoration: none;
-                line-height: 1;
-            }
-            .lp-btn:hover {
-                transform: translate(-2px, -2px);
-                box-shadow: 8px 8px 0 rgba(0,0,0,1);
-            }
-            .lp-btn:active {
-                transform: translate(3px, 3px);
-                box-shadow: 3px 3px 0 rgba(0,0,0,1);
-            }
-            .lp-btn--pink { background: #FF4D94; color: #fff; }
-            .lp-btn--yellow { background: #FFE600; color: #000; }
-            .lp-btn--white { background: #fff; color: #000; }
-            .lp-btn--dark { background: #111827; color: #FFE600; }
             .lp-hero-3d-slot {
                 position: relative;
-                height: clamp(540px, 40vw, 850px);
+                width: 100%;
+                height: min(94vh, 920px);
+                margin-right: clamp(1rem, 2.5vw, 3rem);
                 border-radius: 28px;
-                overflow: hidden;
+                overflow: visible;
                 z-index: 2;
             }
         }
 
-        @media (min-width: 769px) and (min-aspect-ratio: 16/9) {
-            .lp-hero {
-                min-height: auto;
-                aspect-ratio: 2.35 / 1;
-            }
+        @media (orientation: landscape) and (max-height: 600px) {
             .lp-hero-inner {
-                min-height: 100%;
+                padding: 0.75rem 2rem !important;
+                gap: 1.5rem !important;
+            }
+            .lp-hero-copy h1 {
+                font-size: clamp(2rem, 5vw, 2.8rem) !important;
+                margin-bottom: 0.8rem !important;
+            }
+            .lp-hero-ctas .lp-btn {
+                padding: 0.7rem 1.25rem !important;
+                font-size: 0.9rem !important;
+            }
+            .lp-hero-3d-slot {
+                height: 85vh !important;
+                margin-right: 2rem !important;
             }
         }
 
@@ -7626,78 +7757,91 @@
                 line-height: 1.25;
             }
 
-            /* --- HERO (stacked, 3D below copy) --- */
+            /* --- HERO (Vertical / Portrait full-screen centered) --- */
             .lp-hero {
-                width: 100%;
-                min-height: auto;
-                background: #1fa4ee;
-                border-bottom: 4px solid #000;
+                width: 100vw !important;
+                height: 100vh !important;
+                height: 100dvh !important;
+                min-height: 100% !important;
+                border-bottom: none !important;
                 position: relative;
                 overflow: hidden;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: radial-gradient(circle at 50% 50%, #38BDF8 0%, #1693E6 55%, #0284C7 100%) !important;
                 isolation: isolate;
             }
             .lp-hero::before {
-                content: '';
-                position: absolute;
-                inset: 0;
-                background: linear-gradient(180deg, rgba(7, 20, 40, 0.62) 0%, rgba(7, 20, 40, 0.18) 40%, rgba(7, 20, 40, 0) 100%);
-                pointer-events: none;
-                z-index: 1;
+                display: none !important;
             }
             .lp-hero-inner {
                 display: flex;
                 flex-direction: column;
-                padding: 2rem 1.25rem 1rem;
-                gap: 1rem;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                width: 100%;
+                height: 100%;
+                max-height: 100dvh;
+                padding: clamp(0.75rem, 2vh, 1.5rem) 1.25rem;
+                gap: 0;
+                box-sizing: border-box;
                 position: relative;
                 z-index: 2;
             }
             .lp-hero-copy {
-                z-index: 2;
-                position: relative;
-                text-align: center;
+                display: contents;
             }
             .lp-hero-copy h1 {
+                order: 1;
                 font-family: 'Fredoka', sans-serif;
-                font-size: clamp(3.25rem, 14vw, 3.95rem);
+                font-size: clamp(2.2rem, 8.5vw, 3.5rem);
                 font-weight: 900;
-                line-height: 1.08;
+                line-height: 1.05;
                 color: #fff;
                 text-transform: uppercase;
                 text-shadow: 3px 3px 0 rgba(0,0,0,0.35);
-                margin: 0 0 clamp(2rem, 7vw, 2.35rem);
+                text-align: center;
+                margin: 0 0 clamp(0.5rem, 1.8vh, 1.25rem);
+                max-width: 14ch;
             }
             .lp-hero-copy p {
-                font-family: 'Montserrat', sans-serif;
-                font-size: 1.05rem;
-                color: rgba(255,255,255,0.9);
-                line-height: 1.55;
-                margin: 0 0 1.5rem;
-                max-width: 30ch;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            .lp-hero-ctas {
-                display: flex;
-                flex-wrap: nowrap;
-                justify-content: center;
-                gap: 0.6rem;
-                align-items: center;
-            }
-            .lp-hero-ctas .lp-btn {
-                min-width: 0;
-                width: auto;
-                flex: 0 1 auto;
-                padding: 0.85rem 0.9rem;
-                font-size: 0.86rem;
+                display: none;
             }
             .lp-hero-3d-slot {
+                order: 2;
                 position: relative;
                 width: 100%;
-                height: clamp(380px, 100vw, 480px);
-                border-radius: 20px;
-                overflow: hidden;
+                max-width: min(92vw, 480px);
+                height: clamp(320px, 56vh, 520px);
+                margin: 0 auto;
+                border-radius: 24px;
+                overflow: visible;
                 z-index: 2;
+            }
+            .lp-hero-ctas {
+                order: 3;
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                justify-content: center;
+                align-items: center;
+                gap: clamp(0.6rem, 2.5vw, 1rem);
+                width: 100%;
+                margin-top: clamp(0.6rem, 2vh, 1.4rem);
+            }
+            .lp-hero-ctas .lp-btn {
+                flex: 0 1 auto;
+                min-width: 0;
+                padding: clamp(0.8rem, 1.8vh, 1.05rem) clamp(1rem, 3.5vw, 1.6rem);
+                font-size: clamp(0.85rem, 2.8vw, 1rem);
+                border: 3.5px solid #000;
+                border-radius: 999px;
+                box-shadow: 4px 4px 0 #000;
+                line-height: 1;
+                text-decoration: none;
+                white-space: nowrap;
             }
 
             /* --- Shared button base (mobile) --- */
@@ -8381,9 +8525,9 @@
 
 
     <!-- Pop-art global background floating shapes -->
-    <div style="position: fixed; top: -50px; right: -50px; width: 500px; height: 500px; background: #FFE600; opacity: 0.2; clip-path: polygon(10% 0%, 100% 5%, 90% 95%, 5% 100%); transform: rotate(12deg); pointer-events: none; z-index: 0;"></div>
-    <div style="position: fixed; bottom: -100px; left: -50px; width: 600px; height: 600px; background: #407BFF; opacity: 0.1; clip-path: polygon(5% 15%, 95% 0%, 100% 85%, 15% 100%); transform: rotate(-12deg); pointer-events: none; z-index: 0;"></div>
-    <div style="position: fixed; top: 25%; left: -100px; width: 384px; height: 384px; background: #FF4D94; opacity: 0.15; clip-path: polygon(0% 5%, 100% 15%, 85% 100%, 10% 90%); transform: rotate(45deg); pointer-events: none; z-index: 0;"></div>
+    <div class="popart-floating-shape" style="position: fixed; top: -50px; right: -50px; width: 500px; height: 500px; background: #FFE600; opacity: 0.2; clip-path: polygon(10% 0%, 100% 5%, 90% 95%, 5% 100%); transform: rotate(12deg); pointer-events: none; z-index: 0;"></div>
+    <div class="popart-floating-shape" style="position: fixed; bottom: -100px; left: -50px; width: 600px; height: 600px; background: #407BFF; opacity: 0.1; clip-path: polygon(5% 15%, 95% 0%, 100% 85%, 15% 100%); transform: rotate(-12deg); pointer-events: none; z-index: 0;"></div>
+    <div class="popart-floating-shape" style="position: fixed; top: 25%; left: -100px; width: 384px; height: 384px; background: #FF4D94; opacity: 0.15; clip-path: polygon(0% 5%, 100% 15%, 85% 100%, 10% 90%); transform: rotate(45deg); pointer-events: none; z-index: 0;"></div>
 
     <!-- Background dots pattern REMOVED for clean look -->
     <!--
@@ -10191,18 +10335,46 @@
         function syncCustomEditorViewportLayout() {
             if (!canvasContainer) return;
 
-            const isDesktopEditorOpen = window.innerWidth >= 1025
-                && document.body.classList.contains('customization-active')
+            const isCustomActive = document.body.classList.contains('customization-active') || activeAppView === 'custom';
+            const isDesktopEditorOpen = isCustomActive
+                && window.innerWidth >= 1025
                 && document.body.classList.contains('custom-editor-open');
+
+            const isMobileEditorOpen = isCustomActive
+                && window.innerWidth < 1025
+                && document.body.classList.contains('custom-editor-open');
+
+            const isCustomFinished = isCustomActive
+                && (document.body.classList.contains('custom-editor-finished') || !document.body.classList.contains('custom-editor-open'));
 
             if (isDesktopEditorOpen) {
                 canvasContainer.style.left = '0px';
                 canvasContainer.style.right = 'auto';
+                canvasContainer.style.top = '0px';
+                canvasContainer.style.bottom = '0px';
                 canvasContainer.style.width = 'calc(100vw - var(--custom-editor-width))';
+                canvasContainer.style.height = '100dvh';
+            } else if (isMobileEditorOpen) {
+                canvasContainer.style.left = '0px';
+                canvasContainer.style.right = '0px';
+                canvasContainer.style.top = '0px';
+                canvasContainer.style.bottom = 'auto';
+                canvasContainer.style.width = '100vw';
+                canvasContainer.style.height = '50dvh';
+            } else if (isCustomFinished) {
+                canvasContainer.style.left = '0px';
+                canvasContainer.style.right = '0px';
+                canvasContainer.style.top = '0px';
+                canvasContainer.style.bottom = '0px';
+                canvasContainer.style.width = '100vw';
+                canvasContainer.style.height = '100dvh';
             } else {
                 canvasContainer.style.left = '';
                 canvasContainer.style.right = '';
+                canvasContainer.style.top = '';
+                canvasContainer.style.bottom = '';
                 canvasContainer.style.width = '';
+                canvasContainer.style.height = '';
             }
 
             requestAnimationFrame(() => {
@@ -10232,8 +10404,8 @@
 
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const originalCameraPos = new THREE.Vector3(0, 1.5, 5.8);
-        const mobileCustomizationCameraPos = new THREE.Vector3(0, 1.6, 4.0);
-        const desktopCustomizationCameraPos = new THREE.Vector3(0, 1.5, 5.0);
+        const mobileCustomizationCameraPos = new THREE.Vector3(0, 1.45, 5.6);
+        const desktopCustomizationCameraPos = new THREE.Vector3(0, 1.5, 5.8);
         camera.position.copy(originalCameraPos);
 
         // Detectar si es móvil para reducir calidad y memoria
@@ -10588,7 +10760,7 @@
             'ear-left': Object.freeze({ position: Object.freeze([-1.13, 1.029, 0]), rotation: Object.freeze([0, Math.PI / 2, 0]), scale: Object.freeze([-1, 1, 1]), planeHeight: 2.256 }),
             'ear-right': Object.freeze({ position: Object.freeze([1.13, 1.029, 0]), rotation: Object.freeze([0, -Math.PI / 2, 0]), planeHeight: 2.256 }),
             'hair-front': Object.freeze({ position: Object.freeze([0, 0.563, 1.1295]), planeHeight: 5.556 }),
-            'hair-back': Object.freeze({ position: Object.freeze([0, 0.563, -1.1285]), rotation: Object.freeze([0, Math.PI, 0]), planeHeight: 5.556 }),
+            'hair-back': Object.freeze({ position: Object.freeze([0, 0.563, -1.1285]), rotation: Object.freeze([0, 0, 0]), planeHeight: 5.556 }),
             'hair-left': Object.freeze({ position: Object.freeze([-1.1285, 1.029, 0]), rotation: Object.freeze([0, -Math.PI / 2, 0]), planeHeight: 2.256 }),
             'hair-right': Object.freeze({ position: Object.freeze([1.1285, 1.029, 0]), rotation: Object.freeze([0, Math.PI / 2, 0]), planeHeight: 2.256 }),
             'hair-up': Object.freeze({ position: Object.freeze([0, 2.157, 0]), rotation: Object.freeze([-Math.PI / 2, 0, 0]), planeHeight: 2.256 }),
@@ -12112,9 +12284,20 @@
             if (!showcaseRuntime.isInitialized || !showcaseRuntime.mountEl) return;
             const width = showcaseRuntime.mountEl.clientWidth || window.innerWidth;
             const height = showcaseRuntime.mountEl.clientHeight || Math.max(320, Math.round(window.innerHeight * 0.56));
-            showcaseRuntime.camera.aspect = width / height;
-            showcaseRuntime.camera.updateProjectionMatrix();
-            showcaseRuntime.renderer.setSize(width, height);
+            if (width === 0 || height === 0) return;
+            const isMobile = window.innerWidth <= 768;
+            const showcaseScaleBoost = isMobile ? 1.54 : 1.62;
+            const showcaseFocusY = baseGroundY * showcaseScaleBoost * (isMobile ? 1.03 : 1.01);
+            if (showcaseRuntime.camera) {
+                showcaseRuntime.camera.fov = isMobile ? 50 : 52;
+                showcaseRuntime.camera.aspect = width / height;
+                showcaseRuntime.camera.position.set(0, isMobile ? 1.68 : 1.76, 7.15);
+                showcaseRuntime.camera.lookAt(0, showcaseFocusY, 0);
+                showcaseRuntime.camera.updateProjectionMatrix();
+            }
+            if (showcaseRuntime.renderer) {
+                showcaseRuntime.renderer.setSize(width, height);
+            }
         }
 
         function getShowcaseNoseColor() {
@@ -12521,17 +12704,19 @@
             sideLight.position.set(-4, 4, 3);
             runtimeScene.add(sideLight);
 
-            const shadow = createFootShadow(window.innerWidth <= 768 ? 2.2 : 2.05);
+            const isMobile = window.innerWidth <= 768;
+            const shadow = createFootShadow(isMobile ? 2.2 : 2.4);
             shadow.visible = true;
             shadow.position.y = -0.03;
             runtimeScene.add(shadow);
 
             const runtimeModel = cloneCleanPresetPreviewModel(loadedModel);
-            const showcaseScaleBoost = window.innerWidth <= 768 ? 1.42 : 1.52;
-            const showcaseFocusY = baseGroundY * showcaseScaleBoost * (window.innerWidth <= 768 ? 1.06 : 1.02);
+            const showcaseScaleBoost = isMobile ? 1.54 : 1.62;
+            const showcaseFocusY = baseGroundY * showcaseScaleBoost * (isMobile ? 1.03 : 1.01);
             runtimeModel.scale.multiplyScalar(showcaseScaleBoost);
             runtimeModel.position.set(0, (baseGroundY * showcaseScaleBoost) + 0.015, 0);
             runtimeScene.add(runtimeModel);
+            runtimeCamera.position.set(0, isMobile ? 1.68 : 1.76, 7.15);
             runtimeCamera.lookAt(0, showcaseFocusY, 0);
 
             showcaseRuntime.scene = runtimeScene;
@@ -14976,7 +15161,11 @@
                 console.warn('initializeShowcaseModel: No showcase runtime available yet.');
                 return;
             }
-            showcaseRuntime.camera.position.copy(originalCameraPos);
+            const isMobile = window.innerWidth <= 768;
+            const showcaseScaleBoost = isMobile ? 1.54 : 1.62;
+            const showcaseFocusY = baseGroundY * showcaseScaleBoost * (isMobile ? 1.03 : 1.01);
+            showcaseRuntime.camera.position.set(0, isMobile ? 1.68 : 1.76, 7.15);
+            showcaseRuntime.camera.lookAt(0, showcaseFocusY, 0);
             showcaseRuntime.modelRoot.rotation.set(0, 0, 0);
             applyShowcaseCharacter();
         }
@@ -15983,25 +16172,10 @@
         let lpHeroBackgroundRotationTimer = null;
 
         function startLpHeroBackgroundRotation() {
-            const slides = Array.from(document.querySelectorAll('.lp-hero-bg-slide'));
-            if (slides.length === 0) return;
-
-            slides.forEach((slide, index) => {
-                slide.classList.toggle('is-active', index === 0);
-            });
-
             if (lpHeroBackgroundRotationTimer) {
                 clearInterval(lpHeroBackgroundRotationTimer);
+                lpHeroBackgroundRotationTimer = null;
             }
-
-            if (slides.length === 1) return;
-
-            let activeIndex = 0;
-            lpHeroBackgroundRotationTimer = window.setInterval(() => {
-                slides[activeIndex].classList.remove('is-active');
-                activeIndex = (activeIndex + 1) % slides.length;
-                slides[activeIndex].classList.add('is-active');
-            }, 5000);
         }
 
         window.addEventListener('load', startLpHeroBackgroundRotation);
@@ -16018,7 +16192,7 @@
             // Inject 3D showcase into hero if not already present
             if (heroSlot && !heroSlot.querySelector('#home-showcase-scene')) {
                 heroSlot.innerHTML = `
-                    <div class="funko-showcase-stage" id="home-showcase-stage" style="position: absolute; inset: 0; border-radius: 28px; overflow: hidden;">
+                    <div class="funko-showcase-stage" id="home-showcase-stage" style="position: absolute; inset: 0; border-radius: 28px; overflow: visible;">
                         <div class="funko-showcase-scene" id="home-showcase-scene"></div>
                     </div>
                 `;
@@ -16155,7 +16329,8 @@
                 activeAppView = 'home';
                 applyPresetPreviewPerformanceProfile();
                 authenticatedHomeView.classList.add('active');
-                setGlobalTopbarVisible(true);
+                setGlobalTopbarVisible(false);
+                document.body.classList.add('showcase-mode');
 
                 if (userProfileView) userProfileView.style.display = 'none';
                 syncAuthenticatedHomeUser();
@@ -16176,6 +16351,7 @@
             openAuthenticatedHome(true);
             document.body.classList.add('showcase-mode');
             activeAppView = 'showcase';
+            setGlobalTopbarVisible(false);
         }
 
         function openCustomizationView() {
@@ -16203,7 +16379,7 @@
             shouldRenderScene = true;
             customRenderBurstFrames = 0;
             forceMemoryCleanup();
-            setGlobalTopbarVisible(true);
+            setGlobalTopbarVisible(false);
             activeAppView = 'custom';
             updatePresetTemplateDownloadButton();
             const shouldRestoreStripeDraft = shouldAttemptCustomStripeDraftRestore();
@@ -20718,7 +20894,12 @@
 
             if (stepCount) stepCount.textContent = `${customBuilderState.currentStepIndex + 1} / ${steps.length}`;
             if (stepTitle) stepTitle.textContent = step.title;
-            if (prevBtn) prevBtn.disabled = customBuilderState.currentStepIndex === 0;
+            if (prevBtn) {
+                prevBtn.disabled = false;
+                prevBtn.textContent = customBuilderState.currentStepIndex === 0
+                    ? 'Inicio'
+                    : getCustomBuilderCopy().prev;
+            }
             if (nextBtn) nextBtn.textContent = customBuilderState.currentStepIndex === steps.length - 1
                 ? getCustomBuilderCopy().finish
                 : getCustomBuilderCopy().next;
@@ -20747,7 +20928,10 @@
             const steps = getCustomBuilderSteps();
 
             if (direction < 0) {
-                if (customBuilderState.currentStepIndex === 0) return;
+                if (customBuilderState.currentStepIndex === 0) {
+                    navigateToView('home');
+                    return;
+                }
                 customBuilderState.currentStepIndex -= 1;
                 renderCustomBuilderStep();
                 return;
@@ -20771,8 +20955,28 @@
             hideCustomBuilderFloating(customBuilderState.elements.intro);
             showCustomBuilderFloating(customBuilderState.elements.finishedActions);
             forceMemoryCleanup();
-            queueCustomBuilderTimer(() => onWindowResize(), 40);
-            queueCustomBuilderTimer(() => onWindowResize(), 180);
+            syncCustomEditorViewportLayout();
+
+            // Calibrar la cámara para el modo final terminado con encuadre completo de toda la pantalla
+            if (camera && controls) {
+                const targetZ = isLowPowerMobile ? 6.35 : 6.1;
+                const targetY = isLowPowerMobile ? 1.38 : 1.48;
+                const lookY = isLowPowerMobile ? 1.12 : 1.18;
+                camera.position.set(0, targetY, targetZ);
+                controls.target.set(0, lookY, 0);
+                controls.update();
+            }
+
+            queueCustomBuilderTimer(() => {
+                syncCustomEditorViewportLayout();
+                if (typeof onWindowResize === 'function') onWindowResize();
+                if (typeof requestCustomRender === 'function') requestCustomRender(16);
+            }, 40);
+            queueCustomBuilderTimer(() => {
+                syncCustomEditorViewportLayout();
+                if (typeof onWindowResize === 'function') onWindowResize();
+                if (typeof requestCustomRender === 'function') requestCustomRender(16);
+            }, 180);
         }
 
         function launchCustomBuilderExperience() {
@@ -20788,22 +20992,9 @@
             customBuilderState.sliderHue = 32;
             customBuilderState.sliderLightness = 74;
 
-            renderCustomBuilderStep();
             hideCustomBuilderFloating(customBuilderState.elements.finishedActions);
             hideCustomBuilderFloating(customBuilderState.elements.intro);
-            setCustomBuilderPhase('intro');
-
-            const veil = customBuilderState.elements.stageVeil;
-            if (veil) {
-                veil.classList.add('active');
-                queueCustomBuilderTimer(() => {
-                    veil.classList.remove('active');
-                }, 30);
-            }
-
-            queueCustomBuilderTimer(() => {
-                showCustomBuilderFloating(customBuilderState.elements.intro);
-            }, 360);
+            openCustomBuilderEditor(0);
 
             queueCustomBuilderTimer(() => onWindowResize(), 40);
             queueCustomBuilderTimer(() => onWindowResize(), 180);
@@ -20822,6 +21013,16 @@
         window.startCustomBuilderFlow = () => openCustomBuilderEditor(0);
         window.resumeCustomBuilderFlow = () => openCustomBuilderEditor(customBuilderState.lastStepIndex);
         window.stepCustomBuilderFlow = stepCustomBuilderFlow;
+        window.finishCustomBuilderFlow = finishCustomBuilderFlow;
+        window.getCustomBuilderSteps = getCustomBuilderSteps;
+        window.applyCustomBuilderStepItem = (stepId, index) => {
+            const steps = getCustomBuilderSteps();
+            const step = steps.find(s => s.id === stepId);
+            if (step && step.items && step.items[index]) {
+                step.apply(step.items[index]);
+                requestCustomRender(16);
+            }
+        };
         window.__papelcoolCustomBuilderReady = true;
 
         if (activeAppView === 'custom' && document.body.classList.contains('customization-active')) {
@@ -22000,14 +22201,16 @@
                 </div>
                 <div class="lp-hero-inner">
                     <div class="lp-hero-copy">
-                        <h1>Armalo como quieras!!</h1>
+                        <h1>Armalo como<br>quieras!!</h1>
                         <div class="lp-hero-ctas">
-                            <button type="button" class="lp-btn lp-btn--pink" onclick="navigateToView('shop')">Comprar ahora</button>
+                            <button type="button" class="lp-btn lp-btn--pink" onclick="window.location.href = 'https://store.papel.cool'">Comprar ahora</button>
                             <button type="button" class="lp-btn lp-btn--yellow" onclick="navigateToView('custom')">Crea el tuyo</button>
                         </div>
                     </div>
                     <div class="lp-hero-3d-slot" id="lp-hero-3d-slot">
-                        <!-- 3D showcase scene injected here by JS -->
+                        <div class="funko-showcase-stage" id="home-showcase-stage" style="position: absolute; inset: 0; border-radius: 28px; overflow: visible;">
+                            <div class="funko-showcase-scene" id="home-showcase-scene"></div>
+                        </div>
                     </div>
                 </div>
             </section>

@@ -2,12 +2,10 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const EXPORT_SIZE = 4096;
-// NDC spans -1…1, so this gives the reference model about 80% of the frame.
-const PHOTO_REFERENCE_FRAME_HEIGHT = 1.6;
 // Calibrated from ZocoVR's normalized model so every preset shares the same
 // square-photo framing, regardless of the size of its SVG accessories.
-const PHOTO_CAMERA_TARGET = new THREE.Vector3(0, 1.23157, 0.00028);
-const PHOTO_CAMERA_POSITION = new THREE.Vector3(-2.42029, 2.05956, 6.36947);
+const PHOTO_CAMERA_TARGET = new THREE.Vector3(0, 1.61157, 0.00028);
+const PHOTO_CAMERA_POSITION = new THREE.Vector3(-2.42029, 2.43956, 6.36947);
 const CAMERA_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h4l2-3h4l2 3h4a1 1 0 0 1 1 1v13H3V7a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="4"/></svg>';
 const DOWNLOAD_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg>';
 
@@ -45,8 +43,8 @@ function paperMaterial(source) {
         polygonOffset: source.polygonOffset,
         polygonOffsetFactor: source.polygonOffsetFactor,
         polygonOffsetUnits: source.polygonOffsetUnits,
-        roughness: 0.76, metalness: 0, envMapIntensity: 0.65,
-        sheen: 0.18, sheenColor: new THREE.Color(0xfffaf2), sheenRoughness: 0.85,
+        roughness: 0.74, metalness: 0, envMapIntensity: 0.38,
+        sheen: 0, sheenColor: new THREE.Color(0xfffaf2), sheenRoughness: 0.85,
         clearcoat: 0
     });
     material.onBeforeCompile = (shader) => {
@@ -55,8 +53,11 @@ function paperMaterial(source) {
         shader.fragmentShader = shader.fragmentShader.replace('#include <common>', `#include <common>\n${PAPER_SHADER}`)
             .replace('#include <color_fragment>', '#include <color_fragment>\nfloat paperFiber = paperGrain(vPaperPosition);\ndiffuseColor.rgb *= 0.975 + 0.04 * paperFiber;')
             .replace('#include <tonemapping_fragment>', `float photoLuma = dot(gl_FragColor.rgb, vec3(0.2126, 0.7152, 0.0722));
-                gl_FragColor.rgb = mix(vec3(photoLuma), gl_FragColor.rgb, 1.18);
-                #include <tonemapping_fragment>`)
+                gl_FragColor.rgb = mix(vec3(photoLuma), gl_FragColor.rgb, 1.10);
+                #include <tonemapping_fragment>
+                vec3 photoColor = clamp(gl_FragColor.rgb, 0.0, 1.0);
+                vec3 photoSCurve = photoColor * photoColor * (3.0 - 2.0 * photoColor);
+                gl_FragColor.rgb = mix(photoColor, photoSCurve, 0.20);`)
             .replace('#include <roughnessmap_fragment>', '#include <roughnessmap_fragment>\nroughnessFactor = clamp(roughnessFactor + (paperFiber - 0.5) * 0.1, 0.58, 0.94);')
             .replace('#include <normal_fragment_maps>', `#include <normal_fragment_maps>
                 float paperHeight = paperFiber * 0.00018 + paperNoise(vPaperPosition * 48.0) * 0.00008;
@@ -67,70 +68,20 @@ function paperMaterial(source) {
                 normal = normalize(abs(paperDet)*normal - paperGradient);
             `);
     };
-    material.customProgramCacheKey = () => 'papelcool-paper-photo-v1';
+    material.customProgramCacheKey = () => 'papelcool-paper-photo-v3';
     return material;
 }
 
-function visibleCharacterBounds(root) {
-    const bounds = new THREE.Box3();
-    const alphaCanvas = document.createElement('canvas');
-    alphaCanvas.width = alphaCanvas.height = 64;
-    const alphaContext = alphaCanvas.getContext('2d', { willReadFrequently: true });
-    root.updateMatrixWorld(true);
-    root.traverseVisible((mesh) => {
-        if (!mesh.isMesh) return;
-        const map = Array.isArray(mesh.material) ? mesh.material.find((material) => material.map?.image)?.map : mesh.material?.map;
-        if (mesh.geometry.type === 'PlaneGeometry' && map?.image && alphaContext) {
-            // Use visible ink for SVG planes so transparent padding does not
-            // make one hairstyle or instrument change the shared framing.
-            alphaContext.clearRect(0, 0, 64, 64);
-            alphaContext.drawImage(map.image, 0, 0, 64, 64);
-            const pixels = alphaContext.getImageData(0, 0, 64, 64).data;
-            let minX = 64, minY = 64, maxX = -1, maxY = -1;
-            for (let y = 0; y < 64; y++) for (let x = 0; x < 64; x++) {
-                if (pixels[(y * 64 + x) * 4 + 3] < 115) continue;
-                minX = Math.min(minX, x); maxX = Math.max(maxX, x + 1);
-                minY = Math.min(minY, y); maxY = Math.max(maxY, y + 1);
-            }
-            if (maxX >= 0) {
-                for (const x of [minX, maxX]) for (const y of [minY, maxY]) {
-                    bounds.expandByPoint(new THREE.Vector3(
-                        (x / 64 - 0.5) * mesh.geometry.parameters.width,
-                        (0.5 - y / 64) * mesh.geometry.parameters.height, 0
-                    ).applyMatrix4(mesh.matrixWorld));
-                }
-            }
-            return;
-        }
-        mesh.geometry.computeBoundingBox();
-        bounds.union(mesh.geometry.boundingBox.clone().applyMatrix4(mesh.matrixWorld));
-    });
-    if (bounds.isEmpty()) throw new Error('El personaje todavía no está listo.');
-    return bounds;
-}
+// Calibrated from ZocoVR so every character model shares the exact same
+// size and position in photo mode, regardless of hair, instruments, or accessories.
+const PHOTO_MODEL_SCALE = 0.613699137864634;
+const PHOTO_MODEL_POSITION = new THREE.Vector3(0, 1.3746524748231401, 0);
 
 function fitPhotoModelToReference(model, camera) {
-    const groundY = visibleCharacterBounds(model).min.y;
-    // Normalize the projected height, not the raw world height: accessories at
-    // different depths otherwise still look like they have different zoom.
-    for (let pass = 0; pass < 3; pass++) {
-        const bounds = visibleCharacterBounds(model);
-        let minY = Infinity, maxY = -Infinity;
-        for (const x of [bounds.min.x, bounds.max.x]) for (const y of [bounds.min.y, bounds.max.y]) for (const z of [bounds.min.z, bounds.max.z]) {
-            const projectedY = new THREE.Vector3(x, y, z).project(camera).y;
-            minY = Math.min(minY, projectedY);
-            maxY = Math.max(maxY, projectedY);
-        }
-        const projectedHeight = maxY - minY;
-        if (!Number.isFinite(projectedHeight) || projectedHeight <= 0) throw new Error('No se pudo medir el encuadre del personaje.');
-        const scale = PHOTO_REFERENCE_FRAME_HEIGHT / projectedHeight;
-        model.scale.multiplyScalar(scale);
-        model.updateMatrixWorld(true);
-        const scaledBounds = visibleCharacterBounds(model);
-        // Keep every pair of feet on the same baseline as the ZocoVR reference.
-        model.position.y += groundY - scaledBounds.min.y;
-        model.updateMatrixWorld(true);
-    }
+    model.scale.set(PHOTO_MODEL_SCALE, PHOTO_MODEL_SCALE, PHOTO_MODEL_SCALE);
+    model.position.copy(PHOTO_MODEL_POSITION);
+    model.rotation.set(0, 0, 0);
+    model.updateMatrixWorld(true);
 }
 
 function fitPhotoCamera(camera) {
@@ -229,7 +180,7 @@ export function createPresetPhotoMode({ container, getSource, prepare, onActiveC
             const photoRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' });
             photoRenderer.outputColorSpace = THREE.SRGBColorSpace;
             photoRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-            photoRenderer.toneMappingExposure = 1.1;
+            photoRenderer.toneMappingExposure = 0.98;
             const photoScene = new THREE.Scene();
             const materials = [];
             runtime = { renderer: photoRenderer, scene: photoScene, materials, environment: null, name: source.name };
@@ -240,10 +191,10 @@ export function createPresetPhotoMode({ container, getSource, prepare, onActiveC
             runtime.environment = environment;
             room.dispose(); pmrem.dispose();
             photoScene.environment = environment.texture;
-            photoScene.add(new THREE.HemisphereLight(0xffffff, 0xcfc9c0, 0.8));
-            const key = new THREE.DirectionalLight(0xffffff, 2.0);
+            photoScene.add(new THREE.HemisphereLight(0xffffff, 0xcfc9c0, 0.42));
+            const key = new THREE.DirectionalLight(0xffffff, 1.52);
             key.position.set(-3, 6, 5); photoScene.add(key);
-            const fill = new THREE.DirectionalLight(0xffffff, 0.5);
+            const fill = new THREE.DirectionalLight(0xffffff, 0.28);
             fill.position.set(4, 2, 3); photoScene.add(fill);
             const model = source.model.clone(true);
             model.traverse((mesh) => {
